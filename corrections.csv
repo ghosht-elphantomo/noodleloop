@@ -9011,9 +9011,221 @@ constate_le,fichier,cle,champ,ancienne_valeur,nouvelle_valeur
 2026-10-18,dividendes.csv,SAFC | 2009 | avis |,facteur_ajustement,62.5,88.447938
 2026-10-18,dividendes.csv,SAFC | 2010 | avis |,dividende_ajuste,23.04,16.2808
 2026-10-18,dividendes.csv,SAFC | 2010 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,etats_financiers.csv,BICC | 2006 | resultat_net,valeur,5197.634,5198
+2026-10-18,etats_financiers.csv,BOAB | 1999 | total_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,BOAB | 1999 | total_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,BOAC | 2009 | b_creances_clientele,valeur,114697,114697.104
+2026-10-18,etats_financiers.csv,BOAC | 2010 | b_caisse,valeur,5776,5775.715
+2026-10-18,etats_financiers.csv,BOAC | 2010 | b_creances_clientele,valeur,124301,124301.051
+2026-10-18,etats_financiers.csv,BOAC | 2010 | b_creances_interbancaires,valeur,33810,33810.082
+2026-10-18,etats_financiers.csv,BOAC | 2010 | b_dettes_clientele,valeur,142408,142408.619
+2026-10-18,etats_financiers.csv,BOAC | 2010 | b_dettes_interbancaires,valeur,43971,43970.571
+2026-10-18,etats_financiers.csv,BOAC | 2010 | b_titres_placement,valeur,26037,26036.82
+2026-10-18,etats_financiers.csv,BOAC | 2010 | immo_corp,valeur,6419,6419.113
+2026-10-18,etats_financiers.csv,BOAC | 2010 | immo_fin,valeur,4946,4946.268
+2026-10-18,etats_financiers.csv,BOAC | 2010 | immo_incorp,valeur,227,226.656
+2026-10-18,etats_financiers.csv,BOAC | 2010 | total_actif,valeur,211114,211114.287
+2026-10-18,etats_financiers.csv,BOAC | 2010 | total_passif,valeur,211114,211114.287
+2026-10-18,etats_financiers.csv,BOAC | 2011 | resultat_net,valeur,0,-487
+2026-10-18,etats_financiers.csv,BOAN | 2011 | b_charges_generales,valeur,2750.309,4159.846
+2026-10-18,etats_financiers.csv,BOAN | 2011 | b_creances_clientele,valeur,93880.257,96219.972
+2026-10-18,etats_financiers.csv,BOAN | 2011 | b_creances_interbancaires,valeur,17448.434,28469.775
+2026-10-18,etats_financiers.csv,BOAN | 2011 | b_interets_charges,valeur,2898.793,4042.436
+2026-10-18,etats_financiers.csv,BOAN | 2011 | b_interets_produits,valeur,6470.46,8847.01
+2026-10-18,etats_financiers.csv,BOAN | 2011 | b_titres_placement,valeur,24945,22986.6
+2026-10-18,etats_financiers.csv,BOAN | 2011 | charges_personnel,valeur,972.812,1583.712
+2026-10-18,etats_financiers.csv,CABC | 2005 | autres_cp,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | cafg,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | capital,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | charges_personnel,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | dotations,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | dotations,valeur,256.658,512.122
+2026-10-18,etats_financiers.csv,CABC | 2005 | ebe,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | frais_financiers,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | immo_fin,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | impots_resultat,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | primes_reserves,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | produits_accessoires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | revenus_financiers,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | total_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | total_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | travaux_services,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | tresorerie_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | tresorerie_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | variation_tresorerie,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | ventes_marchandises,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CABC | 2005 | ventes_produits,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,CIEC | 2002 | impots_resultat,valeur,370.529,1911.155
+2026-10-18,etats_financiers.csv,CIEC | 2002 | resultat_exploitation,valeur,1130.513,4630.022
+2026-10-18,etats_financiers.csv,CIEC | 2002 | resultat_financier,valeur,1083.374,1691.219
+2026-10-18,etats_financiers.csv,CIEC | 2002 | resultat_net,valeur,1842.042,4425.894
+2026-10-18,etats_financiers.csv,CIEC | 2002 | rhao,valeur,-1.316,15.808
+2026-10-18,etats_financiers.csv,CIEC | 2003 | dettes_financieres,valeur,29383.796,29383.797
+2026-10-18,etats_financiers.csv,CIEC | 2003 | immo_corp,valeur,25784.139,25784.14
+2026-10-18,etats_financiers.csv,CIEC | 2003 | immo_fin,valeur,3551.913,3752.339
+2026-10-18,etats_financiers.csv,CIEC | 2003 | produits_accessoires,valeur,279.628,279.629
+2026-10-18,etats_financiers.csv,CIEC | 2003 | total_passif,valeur,201720.91,201726.91
+2026-10-18,etats_financiers.csv,CIEC | 2009 | dettes_financieres,valeur,22114.903,31321.481
+2026-10-18,etats_financiers.csv,CIEC | 2009 | impots_resultat,valeur,2767.43,2767.431
+2026-10-18,etats_financiers.csv,CIEC | 2009 | tresorerie_passif,valeur,9418.048,9418.049
+2026-10-18,etats_financiers.csv,CIEC | 2010 | dettes_financieres,valeur,23531.544,34222.495
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_caisse,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_charges_generales,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_commissions_charges,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_commissions_produits,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_cout_risque,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_creances_clientele,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_dettes_clientele,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_effets_publics,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_interets_charges,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_interets_produits,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_pnb,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_rbe,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | b_titres_placement,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | capital,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | capitaux_propres,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | ecart_reevaluation,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | immo_corp,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | immo_incorp,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | impots_resultat,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | report_nouveau,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | reserves,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | resultat_avant_impot,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | resultat_bilan,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | resultat_exploitation,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | resultat_net,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | total_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SAFC | 2024 | total_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2000 | charges_personnel,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2000 | ebe,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2000 | resultat_bilan,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2000 | resultat_net,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2000 | valeur_ajoutee,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2001 | resultat_bilan,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2001 | resultat_net,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SDCC | 2009 | passif_circulant,valeur,67536.139,67536.14
+2026-10-18,etats_financiers.csv,SEMC | 2007 | immo_fin,valeur,1436.851,1447.325
+2026-10-18,etats_financiers.csv,SEMC | 2008 | capitaux_propres,valeur,6572.737,572.737
+2026-10-18,etats_financiers.csv,SEMC | 2010 | clients,valeur,3268.775,4060.811
+2026-10-18,etats_financiers.csv,SEMC | 2017 | actif_circulant,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | autres_dettes,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | cafg,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | capital,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | capitaux_propres,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | charges_immobilisees,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | charges_personnel,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | chiffre_affaires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | clients,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | clients_avances,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | dettes_financieres,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | dettes_fiscales_sociales,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | dettes_sociales,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | ecart_reevaluation,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | fournisseurs,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | immo_corp,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | immo_fin,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | immo_incorp,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | impots_resultat,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | passif_circulant,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | produits_accessoires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | report_nouveau,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | reserves_indisponibles,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | reserves_libres,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | ressources_stables,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | resultat_avant_impot,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | resultat_bilan,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | resultat_exploitation,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | resultat_financier,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | resultat_net,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | total_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | total_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | tresorerie_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | tresorerie_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | ventes_marchandises,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2017 | ventes_produits,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | cafg,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | capital,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | charges_personnel,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | chiffre_affaires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | creances,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | dotations,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | ebe,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | flux_investissement,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | flux_operationnels,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | frais_financiers,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | immo_corp,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | immo_fin,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | impots_resultat,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | marge_commerciale,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | passif_circulant,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | primes_reserves,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | produits_accessoires,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | rao,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | resultat_bilan,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | resultat_exploitation,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | resultat_financier,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | resultat_net,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | revenus_financiers,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | stocks,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | total_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | total_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | travaux_services,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | travaux_services,valeur,25.066,25.064
+2026-10-18,etats_financiers.csv,SEMC | 2018 | tresorerie_actif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | tresorerie_passif,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | valeur_ajoutee,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | variation_tresorerie,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | ventes_marchandises,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SEMC | 2018 | ventes_produits,documents_concordants,1,2
+2026-10-18,etats_financiers.csv,SMBC | 2008 | ebe,valeur,3775.487,3775
+2026-10-18,etats_financiers.csv,SMBC | 2008 | rao,valeur,1611.195,1611
+2026-10-18,etats_financiers.csv,SMBC | 2008 | resultat_exploitation,valeur,4278.369,4278
+2026-10-18,etats_financiers.csv,SMBC | 2008 | resultat_financier,valeur,-2667.175,-2667
+2026-10-18,etats_financiers.csv,SMBC | 2008 | resultat_net,valeur,1050.792,1051
+2026-10-18,etats_financiers.csv,SMBC | 2008 | tresorerie_passif,valeur,17264.481,17264
+2026-10-18,etats_financiers.csv,SMBC | 2008 | valeur_ajoutee,valeur,5586.92,5587
+2026-10-18,etats_financiers.csv,SPHC | 1997 | total_actif,valeur,47259.489,43877.517
+2026-10-18,etats_financiers.csv,SPHC | 1997 | total_passif,valeur,47259.489,43877.517
+2026-10-18,etats_financiers.csv,SPHC | 1998 | total_actif,valeur,43877.517,47259.489
+2026-10-18,etats_financiers.csv,SPHC | 1998 | total_passif,valeur,43877.517,47259.489
+2026-10-18,etats_financiers.csv,STAC | 2012 | actif_immobilise,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | dettes_financieres,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | resultat_bilan,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | resultat_net,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | total_actif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | total_passif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | tresorerie_actif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2012 | tresorerie_passif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | actif_immobilise,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | capitaux_propres,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | dettes_financieres,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | resultat_bilan,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | resultat_net,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | total_actif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | total_passif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | tresorerie_actif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STAC | 2013 | tresorerie_passif,documents_concordants,2,1
+2026-10-18,etats_financiers.csv,STBC | 1999 | chiffre_affaires,valeur,62610.057,65649.194
+2026-10-18,etats_financiers.csv,STBC | 1999 | produits_accessoires,valeur,368.524,3685.241
+2026-10-18,resultats.csv,BICC | 2006,resultat_net,5197.6,5198
+2026-10-18,resultats.csv,BOAB | 2022,cout_du_risque,3668,-3667.9
+2026-10-18,resultats.csv,BOAB | 2022,ebit,3668,23196.8
+2026-10-18,resultats.csv,BOAC | 2009,credits_clientele,114697,114697.1
+2026-10-18,resultats.csv,BOAC | 2010,credits_clientele,124301,124301.1
+2026-10-18,resultats.csv,BOAC | 2010,depots_clientele,142408,142408.6
+2026-10-18,resultats.csv,BOAC | 2010,total_bilan,211114,211114.3
+2026-10-18,resultats.csv,BOAC | 2011,resultat_net,0,-487
+2026-10-18,resultats.csv,BOAN | 2011,credits_clientele,93880.3,96220
+2026-10-18,resultats.csv,CABC | 2017,resultat_net,980,980.2
+2026-10-18,resultats.csv,CABC | 2018,resultat_net,763,762.7
 2026-10-18,resultats.csv,CABC | 2021,dette_nette,2050,-2050
 2026-10-18,resultats.csv,CABC | 2023,tresorerie,6491,-6491.4
+2026-10-18,resultats.csv,CIEC | 2002,ebit,1130.5,4630
+2026-10-18,resultats.csv,CIEC | 2002,resultat_net,1842,4425.9
 2026-10-18,resultats.csv,NEIC | 2021,dette_nette,6090,-6090.2
+2026-10-18,resultats.csv,NTLC | 2018,resultat_net,819,819.3
 2026-10-18,resultats.csv,NTLC | 2021,tresorerie,8815,-8815
 2026-10-18,resultats.csv,PALC | 2022,dette_nette,49871,-20579.3
 2026-10-18,resultats.csv,PALC | 2023,dette_nette,-904,15560.8
@@ -9022,13 +9234,20 @@ constate_le,fichier,cle,champ,ancienne_valeur,nouvelle_valeur
 2026-10-18,resultats.csv,SAFC | 2018,bnpa,8.25,5.83
 2026-10-18,resultats.csv,SAFC | 2020,bnpa,-201.98,-142.73
 2026-10-18,resultats.csv,SCRC | 2025,tresorerie,-6928,-6504.6
+2026-10-18,resultats.csv,SEMC | 2008,capitaux_propres,6572.7,572.7
 2026-10-18,resultats.csv,SEMC | 2020,tresorerie,339,-339
+2026-10-18,resultats.csv,SMBC | 2008,ebit,4278.4,4278
+2026-10-18,resultats.csv,SMBC | 2008,ebitda,3775.5,3775
+2026-10-18,resultats.csv,SMBC | 2008,resultat_net,1050.8,1051
 2026-10-18,resultats.csv,SOGC | 2021,tresorerie,796,-6585.8
 2026-10-18,resultats.csv,SOGC | 2022,dette_nette,10498,2836
+2026-10-18,resultats.csv,SPHC | 1997,total_bilan,47259.5,43877.5
+2026-10-18,resultats.csv,SPHC | 1998,total_bilan,43877.5,47259.5
 2026-10-18,resultats.csv,SPHC | 2021,dette_nette,44694,38786.3
 2026-10-18,resultats.csv,SPHC | 2022,dette_nette,41380,36142.2
 2026-10-18,resultats.csv,SPHC | 2023,tresorerie,-227560,-22756
 2026-10-18,resultats.csv,STAC | 2021,dette_nette,6896,-6896.2
+2026-10-18,resultats.csv,STBC | 1999,chiffre_affaires,62610.1,65649.2
 2026-10-18,resultats.csv,STBC | 2023,tresorerie,6779,7179.1
 2026-10-18,resultats.csv,TTLC | 2021,tresorerie,8877,2145
 2026-10-18,resultats.csv,TTLC | 2022,dette_nette,-836,12623
