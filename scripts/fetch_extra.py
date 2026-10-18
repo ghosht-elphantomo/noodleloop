@@ -1109,12 +1109,21 @@ def cpt_find_pages(pdf_path, n_pages, td, top=8, dpi=100, lang="eng", thr=15):
 
 def cpt_events(out):
     """Liste des publications des sociétés cotées (liste tierce + pages « rapports des sociétés cotées » de brvm.org relues
-    directement : rien n'échappe à la liste). None si la liste tierce est injoignable."""
+    directement : rien n'échappe à la liste). Liste tierce injoignable (ni elle ni son miroir) : pages de brvm.org seules ; None
+    si rien n'est disponible."""
     try:
         evs = harzat_json("events.json")["events"]
     except Exception as e:  # noqa: BLE001
+        # liste tierce et son miroir injoignables : la liste vient alors des seules pages « rapports des sociétés cotées » de
+        # brvm.org (pages des sociétés gardées dans brvm_rapports.json, documents déjà relevés compris) ; rien n'est retiré du registre
         note("comptes", False, f"liste des publications : {e}")
-        return None
+        try:
+            evs = brvm_reports(out, [])
+        except Exception as e2:  # noqa: BLE001
+            note("comptes", False, f"pages des rapports : {e2}")
+            return None
+        log(f"liste tierce injoignable : {len(evs)} publications prises directement sur brvm.org")
+        return evs or None
     try:
         evs = evs + brvm_reports(out, evs)
     except Exception as e:  # noqa: BLE001

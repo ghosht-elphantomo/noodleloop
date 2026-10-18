@@ -50,6 +50,8 @@ jobs:
           fi
       - name: Liste des documents publiés
         run: |
+          # miroir de la liste tierce (branche raw) : utilisé si elle ne répond plus ; à défaut, pages de brvm.org seules
+          mkdir -p /tmp/raw && (git fetch -q --depth 1 origin raw && git archive FETCH_HEAD brvm_src/events.json | tar -x -C /tmp/raw) || true
           python3 scripts/fetch_extra.py --out /tmp/cpt --only comptes_list
           test -s /tmp/cpt/cpt_evs.json
       - name: Nombre de machines de lecture
