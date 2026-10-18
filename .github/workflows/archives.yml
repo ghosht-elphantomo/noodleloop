@@ -1,13 +1,13 @@
 name: Archives BRVM (vérification)
 
 # Documents PDF du site de la BRVM gardés par l'archive web et absents de la liste des publications (scripts/archives_brvm.py).
-# Vérification seulement, lancée à la main : ne lit aucun document, n'écrit aucune branche et ne publie rien ; la liste trouvée
-# est gardée 7 jours dans les fichiers du passage (archives-brvm) et résumée dans ses annotations.
+# Vérification seulement, lancée à la main : ne lit aucun document et ne touche ni aux données ni au site ; la liste trouvée est
+# résumée dans les annotations et publiée sur la branche de diagnostic `probe` (archives.json, remplacée à chaque vérification).
 on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   archives:
@@ -23,9 +23,12 @@ jobs:
           test -s /tmp/cpt/cpt_evs.json
       - name: Documents gardés par l'archive web
         run: timeout 1800 python3 scripts/archives_brvm.py --evs /tmp/cpt/cpt_evs.json --out /tmp/arch || echo "::warning::Vérification des archives interrompue (durée)"
-      - uses: actions/upload-artifact@v7
-        with:
-          name: archives-brvm
-          path: /tmp/arch/archives.json
-          retention-days: 7
-          if-no-files-found: ignore
+      - name: Publier la liste (branche de diagnostic probe)
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -s /tmp/arch/archives.json ] || exit 0
+          mkdir -p /tmp/pub && cp /tmp/arch/archives.json /tmp/pub/
+          printf '{"git":{"deploymentEnabled":false}}\n' > /tmp/pub/vercel.json
+          cd /tmp/pub && git init -q -b probe && git config user.name fqt-bot && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "Archives BRVM $(date -u +%H:%M)" && git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" probe || echo "::warning::Liste non publiée"

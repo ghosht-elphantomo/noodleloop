@@ -21,16 +21,22 @@ def get_json(url):
 
 
 def cdx_rows(pre, warn):
-    """Captures PDF (code 200) d'un préfixe d'adresses, par tranches de 5 000 (clé de reprise de l'archive web)."""
+    """Captures PDF (code 200) d'un préfixe d'adresses, par tranches de 2 000 (clé de reprise de l'archive web)."""
     q = {"url": pre, "matchType": "prefix", "output": "json", "fl": "original,timestamp,length,mimetype,statuscode", "collapse": "urlkey",
-         "filter": ["statuscode:200", "mimetype:application/pdf"], "limit": 5000, "showResumeKey": "true"}
+         "filter": ["statuscode:200", "mimetype:application/pdf"], "limit": 2000, "showResumeKey": "true"}
     key, n = None, 0
     while n < 200:
         n += 1
-        try:
-            res = get_json(CDX + "?" + urllib.parse.urlencode({**q, **({"resumeKey": key} if key else {})}, doseq=True))
-        except Exception as e:  # noqa: BLE001
-            warn.append(f"{pre} (tranche {n}) : {str(e)[:160]}")
+        res, err = None, None
+        for k_ in range(4):  # (archive surchargée : 504 ou coupure, nouvel essai après une pause)
+            try:
+                res = get_json(CDX + "?" + urllib.parse.urlencode({**q, **({"resumeKey": key} if key else {})}, doseq=True))
+                break
+            except Exception as e:  # noqa: BLE001
+                err = e
+                time.sleep(30 * (k_ + 1))
+        if res is None:
+            warn.append(f"{pre} (tranche {n}) : {str(err)[:160]}")
             return
         key = None
         if res and res[-1] and len(res) >= 2 and res[-2] == [] and len(res[-1]) == 1:
@@ -86,9 +92,17 @@ def main():
         # (vérification seulement : un passage sans réponse de l'archive web n'est pas un échec, il est signalé et rien n'est écrit)
         print("::warning::Archive web : aucune capture obtenue (site injoignable ou réponse vide) ; vérification à relancer plus tard")
         sys.exit(0)
-    out = []
+    def stem(k):
+        n_ = k.rsplit("/", 1)[-1]
+        n_ = re.sub(r"\.pdf$", "", n_)
+        return re.sub(r"[^a-z0-9]+", "", re.sub(r"_\d$", "", n_))
+    known_stems = {stem(k) for k in known}
+    out, n_var = [], 0
     for k, r in rows.items():
         if k in known:
+            continue
+        if stem(k) in known_stems:
+            n_var += 1  # (même document déposé sous un nom voisin : doublon d'un document déjà connu, pas un manque)
             continue
         name = k.rsplit("/", 1)[-1]
         n_ = CPT.nrm(name).replace("_", " ").replace("-", " ")
@@ -100,11 +114,11 @@ def main():
     out.sort(key=lambda r: (r["t"] or "~", r["fy"] or 0, r["u"]))
     by_t = collections.Counter(r["t"] or "?" for r in out)
     by_c = collections.Counter(r["cat"] for r in out)
-    res = {"ts": int(time.time()), "n_archive": len(rows), "n_connus": len(known), "n_inconnus": len(out), "par_titre": dict(by_t.most_common()),
+    res = {"ts": int(time.time()), "n_archive": len(rows), "n_connus": len(known), "n_variantes": n_var, "n_inconnus": len(out), "alertes": warn, "par_titre": dict(by_t.most_common()),
            "par_categorie": dict(by_c.most_common()), "docs": out}
     os.makedirs(a.out, exist_ok=True)
     json.dump(res, open(os.path.join(a.out, "archives.json"), "w", encoding="utf8"), ensure_ascii=False, indent=0)
-    print(f"::notice::Archive web : {len(rows)} documents PDF de la BRVM, dont {len(out)} absents de la liste des publications")
+    print(f"::notice::Archive web : {len(rows)} documents PDF de la BRVM ; {n_var} variantes de nom de documents connus ; {len(out)} absents de la liste des publications")
     print(f"::notice::Par catégorie : {dict(by_c.most_common())}")
     print(f"::notice::Par titre : {dict(by_t.most_common(30))}")
     fin = [r for r in out if r["cat"] in ("financial_statements", "annual_report", "company_report", "activity_report", "auditor_report", "financial_results") and r["t"]]
