@@ -183,6 +183,10 @@ jobs:
           done
           # base historique BRVM (dépôt public tiers) ; miroir gardé chaque soir sur la branche raw et utilisé si le dépôt devient injoignable
           if timeout 180 git clone -q --depth 1 https://github.com/harzat/brvm-data-public.git /tmp/brvmsrc && [ -f /tmp/brvmsrc/actions.json ]; then
+            # une donnée déjà prise n'est jamais perdue : ce que la base n'a plus (titre, exercice, séance, avis) est repris du miroir
+            if [ -f /tmp/raw/brvm_src/actions.json ]; then
+              timeout 300 python3 scripts/sticky.py base /tmp/raw/brvm_src /tmp/brvmsrc || echo "::warning::Fusion avec le miroir impossible : base du jour utilisée telle quelle"
+            fi
             if [ "${{ steps.mode.outputs.mode }}" = "eod" ]; then rm -rf /tmp/raw/brvm_src && mkdir -p /tmp/raw/brvm_src && tar -C /tmp/brvmsrc --exclude=.git -cf - . | tar -x -C /tmp/raw/brvm_src; fi
           elif [ -f /tmp/raw/brvm_src/actions.json ]; then
             echo "::warning::Base BRVM externe injoignable : miroir de la branche raw utilisé (séances récentes complétées par les bulletins officiels et brvm.org)"

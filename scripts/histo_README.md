@@ -136,3 +136,10 @@ Une alerte signale un point à vérifier, pas une erreur certaine.
   hors de proportion avec le bilan de son propre document (cinq fois le total) porte seul l'erreur d'unité et ne discrédite
   pas la source qui le donne mille fois plus petit ; un découpage de postes entièrement tiré d'un même document est gardé tel
   quel ; sans total ni chiffre d'affaires, l'unité n'est retenue que si un chiffre clé coïncide avec une autre source.
+
+## instantanes/ — copie permanente des données prises à l'extérieur
+
+Base tierce (dossier `brvm_src/` : registre des titres, chiffres clés, avis, dividendes, cours), archives SikaFinance
+(`sika_hist.json`) et fiches des sociétés (`profiles.json`), copiées chaque soir depuis la branche `raw`. Rien n'en disparaît :
+ce que la source n'a plus est gardé, une valeur nouvelle ou corrigée l'emporte (`scripts/sticky.py`). Chaque version reste
+dans l'historique de cette branche.

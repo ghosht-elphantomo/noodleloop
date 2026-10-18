@@ -1078,21 +1078,21 @@ def cpt_ocr(pdf_path, pages, td, psm=6, dpi=300):
     return {k: "\f".join(v) for k, v in out.items() if v}
 
 
-def cpt_find_pages(pdf_path, n_pages, td, top=8):
+def cpt_find_pages(pdf_path, n_pages, td, top=8, dpi=100, lang="eng", thr=15):
     """Document scanné de plusieurs dizaines de pages : chaque page est lue vite (100 dpi) pour repérer celles des états
     financiers (mots des états et nombre de montants) ; renvoie les numéros des meilleures pages (au plus `top`).
-    Les pages sont lues plusieurs à la fois (un fil par lecture)."""
+    Les pages sont lues plusieurs à la fois (un fil par lecture). Seconde recherche plus fine possible (dpi, langue, seuil)."""
     import glob, subprocess
     env = {**os.environ, "OMP_THREAD_LIMIT": "1"}
 
     def one(pg):
         pre = os.path.join(td, f"f{pg}_")
         try:
-            subprocess.run(["pdftoppm", "-r", "100", "-gray", "-png", "-f", str(pg), "-l", str(pg), pdf_path, pre], capture_output=True, timeout=120)
+            subprocess.run(["pdftoppm", "-r", str(dpi), "-gray", "-png", "-f", str(pg), "-l", str(pg), pdf_path, pre], capture_output=True, timeout=120)
             imgs = glob.glob(pre + "*.png")
             if not imgs:
                 return None
-            t = subprocess.run(["tesseract", imgs[0], "-", "-l", "eng", "--psm", "6"], capture_output=True, timeout=120, env=env).stdout.decode("utf8", "replace")
+            t = subprocess.run(["tesseract", imgs[0], "-", "-l", lang, "--psm", "6"], capture_output=True, timeout=180, env=env).stdout.decode("utf8", "replace")
         except Exception:  # noqa: BLE001
             return None
         finally:
@@ -1104,7 +1104,7 @@ def cpt_find_pages(pdf_path, n_pages, td, top=8):
     with ThreadPoolExecutor(OCR_WORKERS) as ex:
         sc = [r for r in ex.map(one, range(1, n_pages + 1)) if r]
     best = sorted(sc, reverse=True)[:top]
-    return sorted(pg for s_, pg in best if s_ >= 15)
+    return sorted(pg for s_, pg in best if s_ >= thr)
 
 
 def cpt_events(out):
@@ -1133,12 +1133,18 @@ def cpt_cands(evs):
     return cand
 
 
+SCAN_V = 1  # version de la recherche des pages des états dans les longs scans (une recherche plus fine refaite une fois)
+
+
 def cpt_again(m):
-    """Document à reprendre : erreur de téléchargement, ou long scan pas encore lu par reconnaissance de caractères."""
+    """Document à reprendre : erreur de téléchargement, ou long scan pas encore lu par reconnaissance de caractères. Un long
+    scan dont aucune page des états n'a été trouvée, même par la recherche fine, n'est plus repris (il l'était à chaque passage)."""
     if str(m.get("st", "")).startswith("erreur"):
         return m.get("n_err", 0) < 3
-    if m.get("q", 99) < 40 and not m.get("ocr") and "found" not in m and 0 < (m.get("pages") or 0) <= 120:
-        return True
+    if m.get("found") == [] and not m.get("ocr") and m.get("scan_v", 0) >= SCAN_V:
+        return False
+    if m.get("q", 99) < 40 and not m.get("ocr") and "found" not in m and 0 < (m.get("pages") or 0) <= 120 and m.get("st0") != "ok":
+        return True  # (une couche texte lue et vérifiée, même avec peu de montants, n'est pas reprise)
     # couche texte garnie mais rien de vérifiable (police à codes de glyphes, mise en page cassée) : lecture par reconnaissance
     # de caractères pas encore faite
     if m.get("st0") not in (None, "ok") and not m.get("ocr") and "ocr_err" not in m and 0 < (m.get("pages") or 0) <= 120:
@@ -1583,10 +1589,18 @@ def cpt_ocr_pages(p_, pages, keep, rec, td):
     if q < 40 and len(pages) <= 120:
         if not rec.get("found"):
             rec["found"] = cpt_find_pages(p_, len(pages), td)  # long document scanné : pages des états repérées à basse résolution
+            if not rec["found"]:
+                # rien trouvé : recherche plus fine (150 dpi, français, seuil plus bas), faite une seule fois (SCAN_V) ; si elle ne
+                # trouve rien non plus, le document n'est plus repris à chaque passage
+                rec["found"] = cpt_find_pages(p_, len(pages), td, dpi=150, lang="fra", thr=10)
+                rec["scan_v"] = SCAN_V
         return rec["found"]
     # document long : pages qui parlent des états, les moins lisibles (couche texte pauvre ou cassée) d'abord
     cand_ = [i for i in keep if CPT_KW.search(pages[i])]
-    return [i + 1 for i in sorted(cand_, key=lambda i: (len(CPT_AMT.findall(pages[i])) >= 15, len(pages[i].strip())))][:10]
+    res = [i + 1 for i in sorted(cand_, key=lambda i: (len(CPT_AMT.findall(pages[i])) >= 15, len(pages[i].strip())))][:10]
+    if not res:  # (aucune page des états dans ce document : rien à lire, il n'est plus repris)
+        rec["found"], rec["scan_v"] = [], SCAN_V
+    return res
 
 
 # ---------------------------------------------------------------- consensus des analystes (Nasdaq)
@@ -2578,7 +2592,8 @@ def run_prof(out):
                 continue
             o["src"] = info
             o["d"] = TODAY.isoformat()
-            db[t] = o
+            # (une donnée déjà prise n'est jamais perdue : un champ que la page n'a plus garde sa valeur précédente)
+            db[t] = {**(db.get(t) or {}), **{k: v for k, v in o.items() if v not in (None, "", [], {})}}
             note("prof")
     save(path, db)
 

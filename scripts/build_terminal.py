@@ -461,9 +461,22 @@ def main():
     src = a.brvm_src
     acts = json.load(open(os.path.join(src, "actions.json"), encoding="utf8"))["actions"]
     fund = json.load(open(os.path.join(src, "fundamentals.json"), encoding="utf8"))
+    # fraîcheur de la base extérieure (tirée de SikaFinance et de la BRVM) : figée depuis plus de 21 jours = la source ne répond plus
+    # ou bloque ; les données déjà prises restent (miroir fusionné, scripts/sticky.py) et le récent vient des sources BRVM
+    base_ext = {}
+    try:
+        g_ = str((fund.get("_meta") or {}).get("generated_at") or (fund.get("_meta") or {}).get("updated") or "")[:10]
+        if g_:
+            age_ = (dt.date.today() - dt.date.fromisoformat(g_)).days
+            base_ext = {"maj": g_, "age_j": age_, "etat": "figée" if age_ > 21 else "à jour"}
+            if age_ > 21:
+                log(f"::warning::Base extérieure figée depuis {age_} jours (dernière mise à jour {g_}) : chiffres récents pris dans les sources BRVM seulement")
+    except Exception as e:  # noqa: BLE001
+        base_ext = {"etat": f"date illisible ({str(e)[:60]})"}
     # états financiers publiés à la BRVM (branche comptes), lus et vérifiés par les identités comptables : prioritaires sur la base
     # tierce pour les exercices qu'ils couvrent, quand leur périmètre est le même (comptes sociaux ou consolidés)
     cpt_chk = {"t": 0, "y": 0, "set": 0, "fix": 0, "fill": 0, "detail_only": [], "ex": []}
+    calc_fill = []  # (titre, poste, exercice, montant) calculés d'après les comptes publiés : comblent les exercices encore vides en dernier
     # exercices plus anciens : pages SikaFinance archivées (web.archive.org) — chiffres publiés (CA, résultat net, BNPA, dividende)
     sh_path = os.path.join(a.extra, "sika_hist.json") if a.extra else None
     hist = {}
@@ -545,8 +558,13 @@ def main():
                             pairs.append(("cout_du_risque", "_cdr"))
                     changed = False
                     weak_ = set(r.get("w") or ())
+                    calc_ = set(r.get("calc") or ())
                     for sk, ck in pairs:
                         if v.get(ck) is None:
+                            continue
+                        if ck in calc_:
+                            # (montant calculé d'après le document : ne comble un exercice vide qu'en dernier, après les archives)
+                            calc_fill.append((t, sk, ys, round(v[ck], 1)))
                             continue
                         o = ser.setdefault(sk, {})
                         old = o.get(ys)
@@ -623,6 +641,33 @@ def main():
                         added = True
                 if added and not src_y.get(y):  # (un exercice déjà signalé — autre référentiel, montants convertis — garde sa mention)
                     src_y[y] = "archive SikaFinance " + rec.get("src", "")
+    # montants calculés d'après les comptes publiés (produit net bancaire de l'ancien plan bancaire, chiffre d'affaires SYSCOHADA
+    # somme des ventes) : seulement pour les exercices restés vides
+    # (un montant calculé isolé — plus de 60 % au-dessus ou près de 40 % en dessous de ses DEUX exercices voisins — n'est pas
+    # repris : une ligne de ventes propre à la société, absente du plan comptable, manque sans doute à la somme)
+    n_calc, rej_calc = 0, []
+    cand_ = {}
+    for t, sk, ys, val in calc_fill:
+        cand_.setdefault((t, sk), {}).setdefault(ys, val)
+    for (t, sk), vals in cand_.items():
+        f = fund.get(t)
+        if not isinstance(f, dict):
+            continue
+        o = f.setdefault("series", {}).setdefault(sk, {})
+        allv = {**{k_: v_ for k_, v_ in vals.items()}, **{k_: v_ for k_, v_ in o.items() if v_ is not None}}
+        for ys, val in sorted(vals.items()):
+            if o.get(ys) is not None:
+                continue
+            nb_ = [allv.get(str(int(ys) + d_)) for d_ in (-1, 1)]
+            if all(x_ and x_ > 0 for x_ in nb_) and val > 0 and all(val / x_ > 1.6 or val / x_ < 0.62 for x_ in nb_):
+                rej_calc.append(f"{t} {ys} {sk} {val:g}")
+                continue
+            o[ys] = val
+            n_calc += 1
+            f.setdefault("src_years", {}).setdefault(ys, "calculé d'après les comptes publiés")
+    if calc_fill:
+        log(f"comptes publiés BRVM : {n_calc} exercices vides comblés par un montant calculé d'après le document ({len(calc_fill)} proposés)"
+            + (f" ; écartés (isolés face aux deux exercices voisins) : {', '.join(rej_calc)}" if rej_calc else ""))
     # société cotée dans sa forme actuelle depuis un exercice donné (fusion) : chiffres des exercices antérieurs, ceux d'entités
     # distinctes, retirés de toutes les sources (base tierce, archives) ; les dividendes versés aux actionnaires restent
     try:
@@ -1609,6 +1654,12 @@ def main():
     keep = ["ca", "resultat_net", "bnpa", "dividende", "per", "capitaux_propres", "roe", "roa", "marge_nette", "marge_exploitation",
             "croissance_ca", "croissance_resultat_net", "total_bilan", "depots_clientele", "credits_clientele", "coefficient_d_exploitation",
             "cout_du_risque", "ratio_endettement_net", "dette_nette", "tresorerie", "ebitda", "ebit"]
+    # secteur de la base tierce démenti par la liste des actions (« Banque » pour une société qui n'est pas une banque : SMB CI,
+    # société pétrolière) : celui de la liste des actions est retenu
+    act_sec = {(x.get("symbole") or x.get("ticker")): (x.get("secteur"), bool(x.get("banque"))) for x in acts}
+    for k, v in fund.items():
+        if k != "_meta" and isinstance(v, dict) and v.get("secteur") == "Banque" and k in act_sec and not act_sec[k][1] and act_sec[k][0]:
+            v["secteur"] = act_sec[k][0]
     fmeta = {k: {"nom": v.get("nom"), "secteur": v.get("secteur"), "shares": v.get("nb_titres"), "float": v.get("flottant"), "ex": v.get("exercice"),
                  "series": {s: v["series"][s] for s in keep if v.get("series", {}).get(s)}}
              for k, v in fund.items() if k != "_meta"}
@@ -1772,7 +1823,7 @@ def main():
     except Exception as e:  # noqa: BLE001
         log("flottant officiel illisible :", e)
     for name, obj in (("summary", summ), ("weekly", wm), ("breadth", breadth), ("fundamentals", fmeta), ("dividends", dmeta), ("events", emeta),
-                      ("events_recent", emeta[:80]), ("boc_check", {**boc_chk, "avis": av_chk, "base_rejets": base_rej, "d": dt.date.today().isoformat()} if BOC else {"n": 0, "avis": av_chk, "base_rejets": base_rej})):
+                      ("events_recent", emeta[:80]), ("boc_check", {**boc_chk, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "d": dt.date.today().isoformat()} if BOC else {"n": 0, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext})):
         with open(os.path.join(out, name + ".json"), "w", encoding="utf8") as fh:
             json.dump(obj, fh, separators=(",", ":"), ensure_ascii=False)
     # recherche MOTS CLES : index de tous les documents de la BRVM connus du terminal (après les avis, rapports et notations du jour)

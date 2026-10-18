@@ -28,6 +28,8 @@ jobs:
           git fetch -q --depth 1 origin data && git archive FETCH_HEAD | tar -x -C /tmp/in
           git fetch -q --depth 1 origin boc && git archive FETCH_HEAD | tar -x -C /tmp/boc
           mkdir -p /tmp/cpt && (git fetch -q --depth 1 origin comptes && git archive FETCH_HEAD comptes.json | tar -x -C /tmp/cpt) || true
+          # données prises à l'extérieur (base BRVMetrics, archives SikaFinance, fiches des sociétés) : copie permanente ci-dessous
+          mkdir -p /tmp/ext && (git fetch -q --depth 1 origin raw && git archive FETCH_HEAD brvm_src sika_hist.json profiles.json | tar -x -C /tmp/ext) || true
           test -f /tmp/in/data/summary.json && test -d /tmp/boc/boc_px
       - name: Mettre à jour et contrôler la base (branche histo)
         env:
@@ -40,6 +42,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git fetch -q --depth 1 "$URL" histo; then git reset -q --hard FETCH_HEAD; fi
           python3 scripts/histo.py --data /tmp/in/data --boc /tmp/boc/boc_px --out /tmp/histo --comptes /tmp/cpt/comptes.json
+          # copie permanente (instantanes/) : rien de ce qui a été pris n'en disparaît (scripts/sticky.py) ; chaque version datée
+          # reste dans l'historique de la branche
+          if [ -f /tmp/ext/brvm_src/actions.json ]; then
+            python3 scripts/sticky.py instantane /tmp/ext /tmp/histo/instantanes || echo "::warning::Copie permanente des données extérieures non mise à jour"
+          fi
           cp scripts/histo_README.md /tmp/histo/README.md
           printf '{"git":{"deploymentEnabled":false}}\n' > /tmp/histo/vercel.json
           git add -A

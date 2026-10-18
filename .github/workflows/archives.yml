@@ -1,0 +1,30 @@
+name: Archives BRVM (vérification)
+
+# Documents PDF du site de la BRVM gardés par l'archive web et absents de la liste des publications (scripts/archives_brvm.py).
+# Vérification seulement, lancée à la main : ne lit aucun document, n'écrit aucune branche et ne publie rien ; la liste trouvée
+# est gardée 7 jours dans les fichiers du passage (archives-brvm) et résumée dans ses annotations.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  archives:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - name: Liste des publications connues
+        run: |
+          mkdir -p /tmp/cpt
+          if git fetch -q --depth 1 origin comptes; then git archive FETCH_HEAD index.json brvm_rapports.json | tar -x -C /tmp/cpt; fi
+          python3 scripts/fetch_extra.py --out /tmp/cpt --only comptes_list
+          test -s /tmp/cpt/cpt_evs.json
+      - name: Documents gardés par l'archive web
+        run: timeout 1800 python3 scripts/archives_brvm.py --evs /tmp/cpt/cpt_evs.json --out /tmp/arch
+      - uses: actions/upload-artifact@v7
+        with:
+          name: archives-brvm
+          path: /tmp/arch/archives.json
+          retention-days: 7

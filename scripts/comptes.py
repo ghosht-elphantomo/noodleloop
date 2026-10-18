@@ -76,7 +76,7 @@ ITEMS = [
     ("ventes_marchandises", (S_CR,), r"^ventes? de marchandises$"),
     ("marge_commerciale", (S_CR,), r"^marge (?:commerciale|brute sur marchandises)$"),
     ("ventes_produits", (S_CR,), r"^ventes? de produits fabriques$"),
-    ("travaux_services", (S_CR,), r"^travaux,? services vendus$"),
+    ("travaux_services", (S_CR,), r"^travaux,? services (?:vendus|rendus)$"),
     ("produits_accessoires", (S_CR,), r"^produits accessoires$"),
     ("chiffre_affaires", (S_CR, None), r"^(?:total )?chiffre d.affaires(?: hors taxes| net| ht| consolide)?$|^revenue$|^revenus$|^produits des activites ordinaires$"),
     ("valeur_ajoutee", (S_CR,), r"^valeur ajoutee$"),
@@ -95,7 +95,7 @@ ITEMS = [
     ("quote_part_mee", (S_CR,), r"^quote.?part (?:dans |du |des )?(?:le |les )?resultats? (?:net )?(?:des |dans les )?(?:societes|entreprises|entites|participations)(?: mises en(?: equivalence)?| associees| en equivalence)?$"),
     ("resultat_avant_impot", (S_CR,), r"^resultat avant impots?(?: sur le resultat| et participation)?$|^resultat (?:net )?avant impots?$"),
     # « Résultat net » : compte de résultat ou bilan selon l'état où il figure
-    ("resultat_net", (S_CR, S_PAS, None), r"^(?:resultat net(?: de l.exercice| l.exercice| de la periode| consolide| comptable| de l.ensemble consolide| total)?|resultat de l.exercice|benefice(?: net)?(?: de l.exercice)?|benefice ou perte|resultat net \(?benefice.*|profit for the (?:year|period))$"),
+    ("resultat_net", (S_CR, S_PAS, None), r"^(?:resultat net(?: de l.exercice| l.exercice| de la periode| consolide| comptable| de l.ensemble consolide| total)?|resultat de l.exercice|benefice(?: net)?(?: de l.exercice)?|benefice ou perte|resultat net \(?benefice.*|resultat (?:net )?de l.exercice ?:(?: ?perte entre \( ?\))?|profit for the (?:year|period))$"),
     ("resultat_net_pg", (S_CR,), r"^resultat net[ ,-]+part (?:du )?groupe$|^resultat net attribuable aux (?:actionnaires|proprietaires) de la (?:societe|maison)? ?mere$|^resultat net attribuable aux (?:actionnaires|proprietaires) de la societe$"),
     # ---- flux de trésorerie (TFT révisé) / TAFIRE
     ("cafg", (S_FLX, None), r"^capacite d.autofinancement globale(?: \(?cafg\)?)?$|^cafg$|^capacite d.autofinancement$"),
@@ -1800,24 +1800,40 @@ def read_doc(texts, meta):
                     continue
                 chk_, keep_ = res_[per][y]
                 items_ = P_["perims"][per]
-                unit_, _ = unit_choice(P_, items_ if keep_ is None else {k: v for k, v in items_.items() if k in keep_}, y)
-                if unit_ != unit:
+                unit_, cands_ = unit_choice(P_, items_ if keep_ is None else {k: v for k, v in items_.items() if k in keep_}, y)
+                # (unité non trouvée par cette lecture, la ligne qui l'annonce mal reconnue, mais compatible avec celle retenue :
+                # même document, montants communs identiques ci-dessous)
+                if unit_ != unit and not (unit_ is None and unit is not None and unit in (cands_ or ())):
                     continue
+                relax = unit_ != unit
                 vals_ = {k: v[y] for k, v in items_.items() if y in v and (keep_ is None or k in keep_)}
                 common = [k for k in rec if k in vals_]
                 if not common or not any(abs(abs(vals_[k]) - abs(rec[k])) <= 0.5 for k in common):
                     continue
                 if any(n == "variation = somme des flux" and r > 0.01 for n, r in chk_):
                     vals_ = {k: v for k, v in vals_.items() if _sec_of(k) != "F"}
+                base_ = s_.rstrip("~!")
+                others_ = [P__ for s__, P__ in parsed.items() if s__.rstrip("~!") != base_ and s__.rstrip("~!") in OCR_SRC]
+                def _contested(k):
+                    # même prudence que pour la lecture retenue : un montant vérifié par une identité mais lu autrement (un
+                    # chiffre confondu, 5 pour 6) par une autre reconnaissance, sans qu'aucune ne le confirme, est contesté
+                    # (le même chiffre mal lu deux fois, total de l'actif et total du passif, vérifie l'identité à tort)
+                    x = vals_.get(k)
+                    if x is None:
+                        return False
+                    ovs = [((o_["perims"].get(per) or {}).get(k) or {}).get(y) for o_ in others_]
+                    return not any(ov is not None and abs(ov - x) <= 0.5 for ov in ovs) and \
+                        any(ov is not None and 0.5 < abs(ov - x) <= 0.01 * max(abs(x), 1.0) for ov in ovs)
+                # (complément permis par l'unité compatible : une identité dont un montant est contesté ne confirme aucun des siens)
+                bad_ = {k for n, r in chk_ if r <= 0.001 and relax and base_ in OCR_SRC and any(_contested(k_) for k_ in IDENT_KEYS.get(n, ()))
+                        for k in IDENT_KEYS.get(n, ())}
                 for k in sorted(k for n, r in chk_ if r <= 0.001 for k in IDENT_KEYS.get(n, ())):
-                    if k in rec or k not in vals_:
+                    if k in rec or k not in vals_ or k in bad_:
                         continue
                     rec[k] = abs(vals_[k]) if k in CHARGES else vals_[k]
                     ok_id.add(k)
                     mg.append(k)
                 # et montants de cette lecture lus à l'identique par une autre reconnaissance de caractères (règle « cf »)
-                base_ = s_.rstrip("~!")
-                others_ = [P__ for s__, P__ in parsed.items() if s__.rstrip("~!") != base_ and s__.rstrip("~!") in OCR_SRC]
                 for k in sorted(vals_):
                     if k in rec:
                         continue
@@ -1847,7 +1863,116 @@ def read_doc(texts, meta):
                 rec, chk, keep, ok_id, cf, unit, cands = _rec(P_, s_, allres[s_], per, y)
                 if rec:
                     _emit(per, y, rec, chk, keep, ok_id, cf, unit, cands, alt=s_.rstrip("~!"))
+    _complete(out, texts, P)
     return out
+
+
+CA_PARTS = ("ventes_marchandises", "ventes_produits", "travaux_services")
+CALC_KEYS = {"chiffre_affaires_calc": "chiffre_affaires", "b_pnb_calc": "b_pnb"}  # poste calculé -> poste publié (voir _complete)
+_CA_RX = {k: rx for k, _, rx in ITEM_RX if k in CA_PARTS}
+
+
+def _empty_lines(t_):
+    """Parties du chiffre d'affaires imprimées sans montant (cases vides : la société n'a pas ce type de ventes) : le libellé
+    termine sa ligne et n'apparaît nulle part ailleurs avec un montant."""
+    txt = t_[0]
+    if not txt:
+        return set()
+    seen, num = set(), set()
+    lines = txt.splitlines()
+    for li, ln in enumerate(lines):
+        segs = [s for s in re.split(r"\s{2,}", ln.strip()) if s]
+        for i, s in enumerate(segs):
+            lab = re.sub(r"^[a-z]{2}\s+", "", re.sub(r"^[\d\s.,()-]+(?=[a-z])", "", nrm(s)).strip(" .:-"))
+            for k, rx in _CA_RX.items():
+                if rx.match(lab):
+                    nxt = next((x for x in lines[li + 1:li + 3] if x.strip()), "")
+                    # (montants renvoyés à la ligne suivante : pas une case vide)
+                    if i == len(segs) - 1 and not re.match(r"^\s*(?:[A-Z]{1,2}\d?\s+)?[-(]?\d[\d\s.,()-]*$", nxt):
+                        seen.add(k)
+                    else:
+                        num.add(k)
+    return seen - num
+
+
+def _complete(out, texts, P):
+    """Postes calculés d'après le document lui-même, pour les exercices vérifiés seulement (rien n'est estimé) ; ils sont
+    listés dans « calc » de l'exercice :
+    - chiffre d'affaires SYSCOHADA = ventes de marchandises + ventes de produits fabriqués + travaux, services vendus
+      (+ produits accessoires), quand la ligne du total n'est pas imprimée ou pas lue mais que ses parties le sont ;
+    - banques, ancien plan comptable bancaire (comptes de résultat sans ligne « produit net bancaire ») : produit net bancaire
+      d'après le compte de résultat entier vérifié (comptes_banques.py), années lues dans l'en-tête du tableau et confirmées
+      par le résultat de l'exercice lu au bilan (même montant, même échelle) ; le résultat de l'exercice manquant ou lu à
+      zéro au bilan est alors repris du compte de résultat."""
+    if out.get("st") != "ok" or out.get("std") != "syscohada":
+        return
+    empty = None
+    for per, yrs in out["y"].items():
+        for y, d in yrs.items():
+            v = d["v"]
+            if out.get("type") == "banque" or v.get("chiffre_affaires") is not None or v.get("b_pnb") is not None \
+                    or not any(v.get(k) is not None for k in CA_PARTS):
+                continue
+            miss = [k for k in CA_PARTS if v.get(k) is None]
+            if miss:
+                if empty is None:
+                    empty = _empty_lines(texts.get(out.get("src")) or (None,))
+                if not all(k in empty for k in miss):
+                    continue
+            v["chiffre_affaires_calc"] = sum(v.get(k) or 0 for k in CA_PARTS) + (v.get("produits_accessoires") or 0)
+            d.setdefault("calc", []).append("chiffre_affaires")
+    if out.get("type") != "banque" or not any(d["v"].get("b_pnb") is None for yrs in out["y"].values() for d in yrs.values()):
+        return
+    # (produit net bancaire et chiffre d'affaires calculés gardés sous une clé à part, « …_calc » : ils ne participent à aucun
+    # contrôle entre documents ni avec la base de référence, et la consolidation ne s'en sert que pour un exercice où le
+    # montant publié manque — voir CALC_KEYS)
+    import comptes_banques as CB
+    order = [out.get("src")] + [s for s in ("txt",) + OCR_SRC if s != out.get("src")]
+    for src in order:
+        txt = (texts.get(src) or (None,))[0]
+        if not txt:
+            continue
+        try:
+            res, _ = CB.pnb(txt)
+        except Exception:  # noqa: BLE001
+            res = None
+        if not res or not all(x.get("y") for x in res.values()):
+            continue
+        # échelle des montants lus (francs, milliers, millions) d'après le résultat de l'exercice lu au bilan du même document
+        applied = False
+        for per, yrs in out["y"].items():
+            ks = set()
+            bad = False
+            for x in res.values():
+                d = yrs.get(str(x["y"]))
+                if not d or not x["rn"]:
+                    continue
+                rv = next((d["v"][k] for k in ("resultat_net", "resultat_bilan", "b_resultat_bilan") if d["v"].get(k)), None)
+                if rv is None:
+                    continue
+                k_ = next((k for k in (1.0, 1e3, 1e6, 1e-3, 1e-6) if abs(rv - x["rn"] * k) <= max(2 * k, abs(rv) * 2e-5)), None)
+                if k_ is None:
+                    bad = True  # (résultat du bilan différent de celui du compte : années ou colonnes en cause, rien n'est repris)
+                else:
+                    ks.add(k_)
+            if bad or len(ks) != 1:
+                continue
+            k_ = ks.pop()
+            applied = True
+            for x in res.values():
+                d = yrs.get(str(x["y"]))
+                if not d:
+                    continue
+                v = d["v"]
+                if v.get("b_pnb") is None:
+                    v["b_pnb_calc"] = x["pnb"] * k_
+                    d.setdefault("calc", []).append("b_pnb")
+                if x["rn"] and not v.get("resultat_net") and not v.get("resultat_bilan") and not v.get("b_resultat_bilan"):
+                    v["resultat_net"] = x["rn"] * k_
+                    d.setdefault("calc", []).append("resultat_net")
+                    d["vk"] = sorted(set(d["vk"]) | {"resultat_net"})
+        if applied:
+            return
 
 
 IDENT_KEYS = {"actif = passif": ("total_actif", "total_passif"), "résultat CR = bilan": ("resultat_net", "resultat_bilan"),
@@ -2542,6 +2667,20 @@ def consolidate(cj, mirror=None, fx=None):
                             continue
                         if set(SECS.get(k_, ())) & {S_ACT, S_PAS} and abs(v[k_]) > ta_ * 1.01:
                             del v[k_]
+                # postes calculés d'après le document (CALC_KEYS) : seulement là où le montant publié manque, après les mêmes
+                # contrôles de vraisemblance ; marqués « faibles » : ils ne remplacent jamais un montant existant
+                calc_ = []
+                for kc_, kr_ in CALC_KEYS.items():
+                    xv_ = v.pop(kc_, None)
+                    weak = [k_ for k_ in weak if k_ != kc_]
+                    if xv_ is None or v.get(kr_) is not None or xv_ <= 0:
+                        continue
+                    ta2_ = v.get("total_actif") or v.get("total_passif")
+                    if ta2_ and xv_ > ta2_ * (0.5 if kr_ == "b_pnb" else 20.0):
+                        continue
+                    v[kr_] = xv_
+                    weak.append(kr_)
+                    calc_.append(kr_)
                 weak = [k_ for k_ in weak if k_ in v]
                 best = cand[0]
                 res[y] = {"v": v, "n": max(nsrc.get(k, 1) for k in ("total_actif", "resultat_net") if k in nsrc) if any(k in nsrc for k in ("total_actif", "resultat_net")) else 1,
@@ -2550,6 +2689,8 @@ def consolidate(cj, mirror=None, fx=None):
                     res[y]["fx"] = round(best["fx"], 4)  # (états en dollars convertis au cours du jour de publication « d »)
                 if weak:
                     res[y]["w"] = sorted(weak)
+                if calc_:
+                    res[y]["calc"] = sorted(calc_)  # (postes calculés d'après le document : ne comblent qu'un exercice vide, en dernier)
             return res
         # référentiel principal : celui qui couvre le mieux les exercices récents, puis qui concorde le mieux avec la base de
         # référence, puis qui couvre le plus d'exercices (comptes SYSCOHADA à égalité) ; l'autre référentiel publié reste proposé
