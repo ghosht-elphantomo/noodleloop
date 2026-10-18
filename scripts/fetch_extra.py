@@ -1107,57 +1107,112 @@ def cpt_find_pages(pdf_path, n_pages, td, top=8):
     return sorted(pg for s_, pg in best if s_ >= 15)
 
 
-def run_comptes(out):
-    """États financiers des sociétés cotées publiés sur brvm.org (depuis 1998) : chaque document est téléchargé et lu une seule fois
-    (couche texte, sinon reconnaissance de caractères des pages des états), son texte gardé en cache (txt/). La lecture des postes
-    et le contrôle des identités comptables sont refaits à chaque passage sur tout le cache par comptes.py.
-    Dans la limite de CPT_BUDGET secondes ; états financiers d'abord (les plus récents en premier), puis rapports annuels."""
-    import hashlib, subprocess, tempfile
-    import comptes
-    budget = float(os.environ.get("CPT_BUDGET", "1500"))
-    t0 = time.time()
-    ip = os.path.join(out, "index.json")
-    idx = json.load(open(ip, encoding="utf8")) if os.path.exists(ip) else {"docs": {}}
-    docs = idx.setdefault("docs", {})
-    os.makedirs(os.path.join(out, "txt"), exist_ok=True)
+def cpt_events(out):
+    """Liste des publications des sociétés cotées (liste tierce + pages « rapports des sociétés cotées » de brvm.org relues
+    directement : rien n'échappe à la liste). None si la liste tierce est injoignable."""
     try:
         evs = harzat_json("events.json")["events"]
     except Exception as e:  # noqa: BLE001
         note("comptes", False, f"liste des publications : {e}")
-        return
+        return None
     try:
-        evs = evs + brvm_reports(out, evs)  # (pages « rapports des sociétés cotées » relues directement : rien n'échappe à la liste)
+        evs = evs + brvm_reports(out, evs)
     except Exception as e:  # noqa: BLE001
         note("comptes", False, f"pages des rapports : {e}")
-    # tout ce que les sociétés déposent à la BRVM est lu : états financiers d'abord ; puis communiqués de résultats, rapports des
-    # commissaires aux comptes et rapports annuels ; rapports de la société et d'activité ; communiqués, projets de résolutions,
-    # assemblées et notations ; enfin tout le reste (avis, calendriers…), dans l'ordre des dates les plus récentes
-    cats = {"financial_statements": 0, "financial_results": 1, "auditor_report": 1, "annual_report": 1, "company_report": 2, "activity_report": 2,
-            "communique": 3, "resolution_project": 3, "ag_meeting": 3, "rating": 3}
+    return evs
+
+
+def cpt_cands(evs):
+    """Documents PDF de brvm.org rattachés à un titre : {adresse: publication}."""
     cand = {}
     for e in evs:
         u = (e.get("document_url") or "").strip()
         if not e.get("ticker") or not u.lower().endswith(".pdf") or "brvm.org" not in u:
             continue
         cand.setdefault(u, e)
+    return cand
+
+
+def cpt_again(m):
+    """Document à reprendre : erreur de téléchargement, ou long scan pas encore lu par reconnaissance de caractères."""
+    if str(m.get("st", "")).startswith("erreur"):
+        return m.get("n_err", 0) < 3
+    if m.get("q", 99) < 40 and not m.get("ocr") and "found" not in m and 0 < (m.get("pages") or 0) <= 120:
+        return True
+    # couche texte garnie mais rien de vérifiable (police à codes de glyphes, mise en page cassée) : lecture par reconnaissance
+    # de caractères pas encore faite
+    if m.get("st0") not in (None, "ok") and not m.get("ocr") and "ocr_err" not in m and 0 < (m.get("pages") or 0) <= 120:
+        return True
+    # document court dont la couche texte n'a rien donné de vérifiable et dont une partie seulement des pages a été lue par
+    # reconnaissance de caractères (couche texte garnie mais illisible : police sans table de caractères) : toutes les pages
+    return (m.get("st0") not in (None, "ok") and 0 < (m.get("pages") or 0) <= 20 and m.get("ocr") is not None
+            and 0 < m["ocr"] < m["pages"] and not m.get("ocr_all"))
+
+
+def cpt_requeue(m):
+    """Document numérisé en attente de sa seconde lecture (400 dpi, ligne par ligne)."""
+    return bool(m.get("ocr")) and not m.get("ocr4") and m.get("st") == "lu" and m.get("n_err4", 0) < 2
+
+
+def cpt_part_of(u, n):
+    """Part (0 … n-1) d'un document quand la lecture est répartie sur n machines : d'après son empreinte, toujours la même."""
+    import hashlib
+    return int(hashlib.sha1(u.encode()).hexdigest()[:16], 16) % max(1, n)
+
+
+def cpt_left(cand, docs):
+    """Documents restant à lire ou à relire."""
+    return (sum(1 for u in cand if u not in docs or cpt_again(docs[u]))
+            + sum(1 for m in docs.values() if cpt_requeue(m)))
+
+
+def run_comptes_list(out):
+    """Liste des publications écrite une seule fois dans cpt_evs.json, pour une lecture répartie sur plusieurs machines."""
+    evs = cpt_events(out)
+    if evs is None:
+        raise RuntimeError("liste des publications injoignable")
+    save(os.path.join(out, "cpt_evs.json"), evs)
+    log(f"liste des publications : {len(evs)} ; documents PDF : {len(cpt_cands(evs))}")
+
+
+def run_comptes(out):
+    """États financiers des sociétés cotées publiés sur brvm.org (depuis 1998) : chaque document est téléchargé et lu une seule fois
+    (couche texte, sinon reconnaissance de caractères des pages des états), son texte gardé en cache (txt/). La lecture des postes
+    et le contrôle des identités comptables sont refaits à chaque passage sur tout le cache par comptes.py.
+    Dans la limite de CPT_BUDGET secondes ; états financiers d'abord (les plus récents en premier), puis rapports annuels.
+    Lecture répartie (comptes.yml) : CPT_EVS = liste des publications déjà relevée (cpt_evs.json) ; CPT_SHARDS / CPT_SHARD = cette
+    machine ne lit que sa part des documents (cpt_part_of) ; CPT_NORE = 1 : pas de seconde lecture (contrôle par relecture)."""
+    import hashlib, subprocess, tempfile
+    import comptes
+    budget = float(os.environ.get("CPT_BUDGET", "1500"))
+    n_sh = max(1, int(os.environ.get("CPT_SHARDS") or 1))
+    i_sh = int(os.environ.get("CPT_SHARD") or 0)
+
+    def mine(u):
+        return n_sh == 1 or cpt_part_of(u, n_sh) == i_sh
+    t0 = time.time()
+    ip = os.path.join(out, "index.json")
+    idx = json.load(open(ip, encoding="utf8")) if os.path.exists(ip) else {"docs": {}}
+    docs = idx.setdefault("docs", {})
+    os.makedirs(os.path.join(out, "txt"), exist_ok=True)
+    if os.environ.get("CPT_EVS"):
+        evs = json.load(open(os.environ["CPT_EVS"], encoding="utf8"))
+    else:
+        evs = cpt_events(out)
+        if evs is None:
+            return
+    # tout ce que les sociétés déposent à la BRVM est lu : états financiers d'abord ; puis communiqués de résultats, rapports des
+    # commissaires aux comptes et rapports annuels ; rapports de la société et d'activité ; communiqués, projets de résolutions,
+    # assemblées et notations ; enfin tout le reste (avis, calendriers…), dans l'ordre des dates les plus récentes
+    cats = {"financial_statements": 0, "financial_results": 1, "auditor_report": 1, "annual_report": 1, "company_report": 2, "activity_report": 2,
+            "communique": 3, "resolution_project": 3, "ag_meeting": 3, "rating": 3}
+    cand = cpt_cands(evs)
     # (à catégorie égale, les rapports annuels / d'exercice avant les rapports trimestriels, puis les plus récents d'abord)
     todo = sorted(cand.values(), key=lambda e: (cats.get(e["category"], 4),
                                                 0 if re.search(r"annuel|exercice|annual", (e.get("document_url") or "").rsplit("/", 1)[-1].lower() + " " + (e.get("title") or "").lower()) else 1,
                                                 -int(re.sub(r"\D", "", e.get("published_at") or "0")[:8] or 0)))
-    def again(m):  # document à reprendre : erreur de téléchargement, ou long scan pas encore lu par reconnaissance de caractères
-        if str(m.get("st", "")).startswith("erreur"):
-            return m.get("n_err", 0) < 3
-        if m.get("q", 99) < 40 and not m.get("ocr") and "found" not in m and 0 < (m.get("pages") or 0) <= 120:
-            return True
-        # couche texte garnie mais rien de vérifiable (police à codes de glyphes, mise en page cassée) : lecture par reconnaissance
-        # de caractères pas encore faite
-        if m.get("st0") not in (None, "ok") and not m.get("ocr") and "ocr_err" not in m and 0 < (m.get("pages") or 0) <= 120:
-            return True
-        # document court dont la couche texte n'a rien donné de vérifiable et dont une partie seulement des pages a été lue par
-        # reconnaissance de caractères (couche texte garnie mais illisible : police sans table de caractères) : toutes les pages
-        return (m.get("st0") not in (None, "ok") and 0 < (m.get("pages") or 0) <= 20 and m.get("ocr") is not None
-                and 0 < m["ocr"] < m["pages"] and not m.get("ocr_all"))
-    todo = [e for e in todo if e["document_url"] not in docs or again(docs[e["document_url"]])]
+    again = cpt_again
+    todo = [e for e in todo if (e["document_url"] not in docs or again(docs[e["document_url"]])) and mine(e["document_url"])]
     if not pdf_tools():
         note("comptes", False, "outils PDF absents")
         return
@@ -1167,7 +1222,7 @@ def run_comptes(out):
         st_ = {u: r.get("st") for u, r in json.load(open(os.path.join(out, "comptes.json"), encoding="utf8")).get("docs", {}).items()}
     except Exception:  # noqa: BLE001
         st_ = {}
-    n_re_wait = sum(1 for u, m in docs.items() if m.get("ocr") and not m.get("ocr4") and m.get("st") == "lu" and m.get("n_err4", 0) < 2 and st_.get(u) != "ok")
+    n_re_wait = 0 if os.environ.get("CPT_NORE") else sum(1 for u, m in docs.items() if cpt_requeue(m) and st_.get(u) != "ok" and mine(u))
     budget_new = budget - (min(budget / 3, 300 + 150 * n_re_wait) if n_re_wait else 0)
     for e in todo:
         if time.time() - t0 > budget_new:
@@ -1248,9 +1303,9 @@ def run_comptes(out):
     n_re = 0
 
     def re_q():
-        q_ = [u for u, m in docs.items() if m.get("ocr") and not m.get("ocr4") and m.get("st") == "lu" and m.get("n_err4", 0) < 2]
+        q_ = [u for u, m in docs.items() if cpt_requeue(m) and mine(u)]
         return sorted(q_, key=lambda u: (st_.get(u) == "ok", -int(re.sub(r"\D", "", docs[u].get("d") or "0")[:8] or 0)))
-    for u in (re_q() if time.time() - t0 < budget - 300 else []):
+    for u in (re_q() if time.time() - t0 < budget - 300 and not os.environ.get("CPT_NORE") else []):
         if time.time() - t0 > budget - 300:
             break  # (un long document lu à 400 dpi peut prendre plusieurs minutes)
         m = docs[u]
@@ -4026,7 +4081,7 @@ def main():
     steps = [("cal", lambda: run_cal(a.out, a.site)), ("avis", lambda: run_avis(a.site)), ("nasdaq", lambda: run_nasdaq(a.out, a.out)), ("fred", lambda: run_fred(a.out)), ("fomc", lambda: run_fomc(a.out)), ("cboe", lambda: run_cboe(a.out)),
              ("cnn", lambda: run_cnn(a.out)), ("crypto", lambda: run_crypto(a.out, a.out)), ("wb", lambda: run_wb(a.out)),
              ("sec", lambda: run_sec(a.out, a.out, a.sec_max_age_days)), ("analyst", lambda: run_analyst(a.out)),
-             ("probe", lambda: run_probe(a.out)), ("boc", lambda: run_boc(a.out)), ("sikah", lambda: run_sikah(a.out)), ("pdffin", lambda: run_pdffin(a.out)), ("comptes", lambda: run_comptes(a.out)), ("watch", lambda: run_watch(a.out, a.site)), ("prof", lambda: run_prof(a.out)), ("profus", lambda: run_profus(a.out)),
+             ("probe", lambda: run_probe(a.out)), ("boc", lambda: run_boc(a.out)), ("sikah", lambda: run_sikah(a.out)), ("pdffin", lambda: run_pdffin(a.out)), ("comptes", lambda: run_comptes(a.out)), ("comptes_list", lambda: run_comptes_list(a.out)), ("watch", lambda: run_watch(a.out, a.site)), ("prof", lambda: run_prof(a.out)), ("profus", lambda: run_profus(a.out)),
              ("bceao", lambda: run_bceao(a.out)), ("umoa", lambda: run_umoa(a.out)), ("obl", lambda: run_obl(a.out, a.site)), ("cmc", lambda: run_cmc(a.out, a.site)), ("eia", lambda: run_eia(a.out)), ("fut", lambda: run_fut(a.out)), ("bochist", lambda: run_bochist(a.out)), ("divhist", lambda: run_divhist(a.out)), ("ussplit", lambda: run_ussplit(a.out)), ("avisocr", lambda: run_avisocr(a.site)), ("flottant", lambda: run_flottant(a.out, a.site)), ("ratings", lambda: run_ratings(a.out, a.site)), ("sgi", lambda: run_sgi(a.out)), ("usdiv", lambda: run_usdiv(a.out)), ("ei", lambda: run_ei(a.out))]
     if a.news:
         steps.insert(0, ("news", lambda: run_news(a.news)))

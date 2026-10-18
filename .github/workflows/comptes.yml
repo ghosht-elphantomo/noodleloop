@@ -3,7 +3,12 @@ name: Comptes des sociétés cotées
 # États financiers publiés sur brvm.org depuis 1998 (bilan, compte de résultat, flux) : chaque PDF est lu une seule fois
 # (couche texte, sinon reconnaissance de caractères) et son texte gardé en cache sur la branche `comptes` ; les postes sont
 # relus à chaque passage et ne sont retenus que si les identités comptables du document se vérifient.
-# Tant qu'il reste des documents à lire, le passage suivant est lancé aussitôt (60 au plus d'affilée) ; ensuite un passage par jour.
+# Tant qu'il reste beaucoup de documents à lire, la lecture est répartie sur 6 machines (chacune sa part fixe des documents,
+# aucun document lu deux fois), puis une seule machine met tout en commun, contrôle et publie (scripts/comptes_merge.py) :
+# registre complet (aucun document perdu ni en double), quelques documents relus seuls à l'ancienne façon (textes identiques),
+# lecture des postes inchangée pour tous les documents non touchés. Un contrôle en échec : rien n'est publié et le passage
+# suivant reprend sur une seule machine. Tant qu'il reste des documents, le passage suivant est lancé aussitôt (60 au plus
+# d'affilée) ; ensuite un passage par jour.
 # N'écrit que la branche `comptes` (aucun déploiement) : ni le site ni son actualisation ne sont touchés.
 on:
   schedule:
@@ -13,6 +18,9 @@ on:
       chain:
         description: "rang dans une suite de passages (interne)"
         default: "0"
+      shards:
+        description: "nombre de machines de lecture (vide : 6 s'il reste au moins 60 documents, sinon 1)"
+        default: ""
 
 permissions:
   contents: write
@@ -23,10 +31,73 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  comptes:
+  liste:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      shards: ${{ steps.n.outputs.shards }}
+      parts: ${{ steps.n.outputs.parts }}
+      sha: ${{ steps.r.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Restaurer le registre de la branche comptes
+        id: r
+        run: |
+          mkdir -p /tmp/cpt
+          if git fetch -q --depth 1 origin comptes; then
+            git archive FETCH_HEAD index.json brvm_rapports.json | tar -x -C /tmp/cpt
+            echo "sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Liste des documents publiés
+        run: |
+          python3 scripts/fetch_extra.py --out /tmp/cpt --only comptes_list
+          test -s /tmp/cpt/cpt_evs.json
+      - name: Nombre de machines de lecture
+        id: n
+        run: |
+          left=$(python3 -c "import json;print(json.load(open('/tmp/cpt/index.json')).get('left',0))" 2>/dev/null || echo 0)
+          n="${{ inputs.shards }}"
+          if [ -z "$n" ]; then if [ "${left:-0}" -ge 60 ]; then n=6; else n=1; fi; fi
+          echo "Restant à lire au passage précédent : $left ; machines de lecture : $n"
+          echo "shards=$n" >> "$GITHUB_OUTPUT"
+          echo "parts=$(python3 -c "import json;print(json.dumps(list(range($n))))")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cpt-liste
+          path: |
+            /tmp/cpt/cpt_evs.json
+            /tmp/cpt/brvm_rapports.json
+          retention-days: 2
+
+  avant:
+    # lecture des postes du registre actuel (comptes.json « avant »), en même temps que la lecture des nouveaux documents
+    needs: liste
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v7
+      - name: Relire tout le cache actuel
+        run: |
+          mkdir -p /tmp/cpt
+          git fetch -q --depth 1 origin "${{ needs.liste.outputs.sha }}"
+          git archive FETCH_HEAD | tar -x -C /tmp/cpt
+          python3 scripts/comptes.py --dir /tmp/cpt
+          mkdir -p /tmp/avant && cp /tmp/cpt/comptes.json /tmp/avant/comptes_avant.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cpt-avant
+          path: /tmp/avant/comptes_avant.json
+          retention-days: 2
+
+  lire:
+    needs: liste
     # machines Ubuntu 24.04 gardées : lecture des PDF identique à celle de tout le cache (voir essai.yml et docs/GUIDE.md)
     runs-on: ubuntu-24.04
     timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      matrix:
+        part: ${{ fromJSON(needs.liste.outputs.parts) }}
     steps:
       - uses: actions/checkout@v7
       - name: Outils PDF et reconnaissance de caractères
@@ -36,20 +107,88 @@ jobs:
       - name: Restaurer la branche comptes
         run: |
           mkdir -p /tmp/cpt
-          if git fetch -q --depth 1 origin comptes; then git archive FETCH_HEAD | tar -x -C /tmp/cpt; fi
-      - name: Lire les documents pas encore lus
+          if [ -n "${{ needs.liste.outputs.sha }}" ]; then
+            git fetch -q --depth 1 origin "${{ needs.liste.outputs.sha }}" && git archive FETCH_HEAD | tar -x -C /tmp/cpt
+          fi
+          cp /tmp/cpt/index.json /tmp/index0.json 2>/dev/null || echo '{"docs":{}}' > /tmp/index0.json
+      - uses: actions/download-artifact@v8
+        with:
+          name: cpt-liste
+          path: /tmp/liste
+      - name: Lire les documents pas encore lus (part ${{ matrix.part }})
         continue-on-error: true
         env:
           CPT_BUDGET: "3300"
+          CPT_EVS: /tmp/liste/cpt_evs.json
+          CPT_SHARDS: ${{ needs.liste.outputs.shards }}
+          CPT_SHARD: ${{ matrix.part }}
         run: timeout 3900 python3 scripts/fetch_extra.py --out /tmp/cpt --only comptes
-      - name: Relire tout le cache (postes et contrôles)
-        run: python3 scripts/comptes.py --dir /tmp/cpt
+      - name: Garder ce que cette machine a lu
+        run: python3 scripts/comptes_merge.py pack --dir /tmp/cpt --orig /tmp/index0.json --shard ${{ matrix.part }} --shards ${{ needs.liste.outputs.shards }} --out /tmp/part
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cpt-part-${{ matrix.part }}
+          path: /tmp/part
+          if-no-files-found: error
+          retention-days: 2
+
+  publier:
+    needs: [liste, avant, lire]
+    if: ${{ always() && needs.liste.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - name: Outils PDF et reconnaissance de caractères (relecture de contrôle)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-fra >/dev/null
+          python3 -c "import PIL" 2>/dev/null || pip install -q --break-system-packages pillow || true
+      - name: Restaurer la branche comptes (la même que les machines de lecture)
+        run: |
+          mkdir -p /tmp/cpt
+          if git fetch -q --depth 1 origin comptes; then
+            test "$(git rev-parse FETCH_HEAD)" = "${{ needs.liste.outputs.sha }}" || { echo "::error::La branche comptes a changé pendant la lecture"; exit 1; }
+            git archive FETCH_HEAD | tar -x -C /tmp/cpt
+          fi
+      - uses: actions/download-artifact@v8
+        with:
+          name: cpt-liste
+          path: /tmp/liste
+      - uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: cpt-avant
+          path: /tmp/avant
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: cpt-part-*
+          path: /tmp/parts
+      - name: Lecture des postes avant (si la machine « avant » a échoué)
+        run: |
+          if [ ! -s /tmp/avant/comptes_avant.json ]; then
+            mkdir -p /tmp/avant && python3 scripts/comptes.py --dir /tmp/cpt && cp /tmp/cpt/comptes.json /tmp/avant/comptes_avant.json
+          fi
+      - name: Mettre en commun (registre complet, aucun document en double)
+        run: |
+          if [ -s /tmp/liste/brvm_rapports.json ]; then cp /tmp/liste/brvm_rapports.json /tmp/cpt/brvm_rapports.json; fi
+          python3 scripts/comptes_merge.py merge --dir /tmp/cpt --parts /tmp/parts --shards ${{ needs.liste.outputs.shards }} --evs /tmp/liste/cpt_evs.json --report /tmp/fusion.json --sample-evs /tmp/echantillon.json
+      - name: Relire tout le cache (postes et contrôles) et, en même temps, relire seuls quelques documents de ce passage
+        run: |
+          mkdir -p /tmp/vf
+          ( CPT_EVS=/tmp/echantillon.json CPT_NORE=1 CPT_BUDGET=1500 timeout 1800 python3 scripts/fetch_extra.py --out /tmp/vf --only comptes > /tmp/vf.log 2>&1 || true ) &
+          python3 scripts/comptes.py --dir /tmp/cpt
+          wait
+          tail -n 3 /tmp/vf.log || true
+      - name: Comparer les textes relus seuls à ceux des machines de lecture
+        run: python3 scripts/comptes_merge.py compare --dir /tmp/cpt --vdir /tmp/vf --report /tmp/fusion.json ${{ needs.liste.outputs.shards != '1' && '--strict' || '' }}
+      - name: Contrôler la lecture des documents non touchés
+        run: python3 scripts/comptes_merge.py check --before /tmp/avant/comptes_avant.json --after /tmp/cpt/comptes.json --report /tmp/fusion.json
       - name: Publier (branche comptes)
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           printf '{"git":{"deploymentEnabled":false}}\n' > /tmp/cpt/vercel.json
-          rm -f /tmp/cpt/report_*.json
+          rm -f /tmp/cpt/report_*.json /tmp/cpt/cpt_evs.json
           URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           export GIT_DIR=/tmp/cpt.git GIT_WORK_TREE=/tmp/cpt
           rm -rf "$GIT_DIR"; git init -q -b comptes
@@ -63,4 +202,12 @@ jobs:
           read left new <<< "$(python3 -c "import json;d=json.load(open('/tmp/cpt/index.json'));print(d.get('left',0),d.get('last_new',0))" 2>/dev/null || echo '0 0')"
           chain="${{ inputs.chain || '0' }}"
           echo "Documents lus : $new ; restant à lire : $left (passage $chain)"
-          if [ "${left:-0}" -gt 0 ] && [ "${new:-0}" -gt 0 ] && [ "$chain" -lt 60 ]; then gh workflow run comptes.yml --ref main -f chain=$((chain + 1)); fi
+          if [ "${left:-0}" -gt 0 ] && [ "${new:-0}" -gt 0 ] && [ "$chain" -lt 60 ]; then gh workflow run comptes.yml --ref main -f chain=$((chain + 1)) -f shards="${{ inputs.shards }}"; fi
+      - name: Contrôle en échec — rien n'est publié, passage suivant sur une seule machine
+        if: ${{ failure() && needs.liste.outputs.shards != '1' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          chain="${{ inputs.chain || '0' }}"
+          echo "::error::Contrôle en échec : rien n'est publié ; passage suivant sur une seule machine"
+          if [ "$chain" -lt 60 ]; then gh workflow run comptes.yml --ref main -f chain=$((chain + 1)) -f shards=1; fi
