@@ -3,6 +3,9 @@
 > Documentation complète du projet. Elle était dans README.md ; elle est ici pour que la page d'accueil du dépôt reste neutre.
 > Règle : ne jamais remettre de description du projet, de nom de site, d'adresse ni de marque dans README.md, LICENSE
 > ou la description du dépôt.
+>
+> Nouvelle session : lire d'abord [docs/PASSATION.md](PASSATION.md) (où en est le travail, ce qui reste, pièges), puis les
+> règles en tête de SAUVEGARDES.md.
 
 Terminal façon Bloomberg : ligne de commande, touches de fonction, tableaux denses, graphiques interactifs. Projet autonome (séparé du screener FOFCO BRVM).
 
