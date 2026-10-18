@@ -1,6 +1,6 @@
 {
  "version": 1,
- "maj": "2026-10-17T18:26:15Z",
+ "maj": "2026-10-18T00:04:04Z",
  "derniere_seance": "2026-10-16",
  "fichiers": {
   "cours/2013.csv": {
@@ -79,13 +79,13 @@
    "corrigees": 0
   },
   "dividendes.csv": {
-   "lignes": 746,
-   "ajoutees": 0,
-   "corrigees": 0
+   "lignes": 747,
+   "ajoutees": 1,
+   "corrigees": 17
   },
   "fractionnements.csv": {
-   "lignes": 56,
-   "ajoutees": 0,
+   "lignes": 57,
+   "ajoutees": 1,
    "corrigees": 0
   },
   "evenements.csv": {
@@ -95,13 +95,13 @@
   },
   "resultats.csv": {
    "lignes": 919,
-   "ajoutees": 2,
-   "corrigees": 2
+   "ajoutees": 0,
+   "corrigees": 20
   },
   "etats_financiers.csv": {
    "lignes": 22627,
-   "ajoutees": 36,
-   "corrigees": 3
+   "ajoutees": 0,
+   "corrigees": 0
   },
   "flottant.csv": {
    "lignes": 46,
@@ -164,10 +164,10 @@
   "2026-10-09 SNTS",
   "2026-10-15 SNTS"
  ],
- "corrections_total": 8976,
- "corrections_du_jour": 4,
+ "corrections_total": 9033,
+ "corrections_du_jour": 57,
  "controles": {
-  "precedent_different": 194,
+  "precedent_different": 193,
   "variation_hors_seuil": 22,
   "variation_incoherente": 29,
   "seance_incomplete": 13,

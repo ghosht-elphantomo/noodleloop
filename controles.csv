@@ -257,7 +257,6 @@ cours/2024.csv,SNTS,2024-05-15,variation_incoherente,variation publiée 5.97 % ;
 cours/2024.csv,SPHC,2024-08-08,precedent_different,cours précédent 2950 ≠ clôture du 2024-08-06 (3010)
 cours/2025.csv,CFAC,2025-08-14,precedent_different,cours précédent 655 ≠ clôture du 2025-08-13 (660)
 cours/2026.csv,ETIT,2026-09-17,prix_moyen_hors_fourchette,valeur/volume = 66678.76 pour une clôture à 70
-cours/2026.csv,SAFC,2026-04-24,precedent_different,cours précédent 3890 ≠ clôture du 2026-04-23 (5505)
 cours/2026.csv,TTLC,2026-08-28,precedent_different,cours précédent 3415 ≠ clôture du 2026-08-27 (3550)
 dividendes.csv,ABJC,2018,avis_different_bulletin,avis 164.956003 FCFA ; bulletin 123.72 FCFA
 dividendes.csv,BOAB,2012,avis_different_bulletin,avis 116.25 FCFA ; bulletin 465 FCFA
@@ -267,7 +266,7 @@ dividendes.csv,BOAN,2012,avis_different_bulletin,avis 122.9808 FCFA ; bulletin 2
 dividendes.csv,ECOC,2021,avis_different_bulletin,avis 420.3 FCFA ; bulletin 549 FCFA
 dividendes.csv,FTSC,2015,avis_different_bulletin,avis 261.25 FCFA ; bulletin 375 FCFA
 dividendes.csv,FTSC,2016,avis_different_bulletin,avis 561.25 FCFA ; bulletin 261.25 FCFA
-dividendes.csv,SAFC,2010,avis_different_bulletin,avis 23.04 FCFA ; bulletin 288 FCFA
+dividendes.csv,SAFC,2010,avis_different_bulletin,avis 16.2808 FCFA ; bulletin 288 FCFA
 dividendes.csv,SHEC,2012,avis_different_bulletin,avis 10.71 FCFA ; bulletin 535.5 FCFA
 dividendes.csv,SLBC,2012,avis_different_bulletin,avis 549 FCFA ; bulletin 10980 FCFA
 dividendes.csv,SLBC,2023,dates_incoherentes,détachement 2024-09-12 après paiement 2024-08-14

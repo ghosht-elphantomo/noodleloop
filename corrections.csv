@@ -8975,3 +8975,60 @@ constate_le,fichier,cle,champ,ancienne_valeur,nouvelle_valeur
 2026-10-17,resultats.csv,UNXC | 2023,resultat_net,-2054.1,-2035
 2026-10-17,resultats.csv,UNXC | 2023,total_bilan,38556.4,38585
 2026-10-17,resultats.csv,UNXC | 2024,resultat_net,-2188.3,-2188.9
+2026-10-18,dividendes.csv,BOAB | 2009 | avis |,annonce,2009-05-12,2010-05-12
+2026-10-18,dividendes.csv,BOAB | 2010 | avis |,dividende_ajuste,162.75,81.375
+2026-10-18,dividendes.csv,BOAB | 2010 | avis |,dividende_net,6510,3255
+2026-10-18,dividendes.csv,BOAB | 2010 | avis |,paiement,2011-05-02,2011-04-02
+2026-10-18,dividendes.csv,BOABF | 2010 | avis |,dividende_ajuste,106.25,53.125
+2026-10-18,dividendes.csv,BOABF | 2010 | avis |,dividende_net,4250,2125
+2026-10-18,dividendes.csv,BOABF | 2010 | avis |,paiement,2011-05-03,2011-04-03
+2026-10-18,dividendes.csv,BOAN | 2005 | avis |,annonce,2005-06-12,2006-06-12
+2026-10-18,dividendes.csv,BOAN | 2009 | avis |,annonce,2009-05-14,2010-05-14
+2026-10-18,dividendes.csv,BOAN | 2009 | avis |,dividende_ajuste,259.6154,129.8077
+2026-10-18,dividendes.csv,BOAN | 2009 | avis |,dividende_net,5400,2700
+2026-10-18,dividendes.csv,BOAN | 2009 | avis |,paiement,2010-07-09,2010-06-01
+2026-10-18,dividendes.csv,CABC | 2004 | avis |,dividende_ajuste,32.775,11.25
+2026-10-18,dividendes.csv,CABC | 2004 | avis |,dividende_net,1311,450
+2026-10-18,dividendes.csv,CABC | 2004 | avis |,paiement,2009-05-28,2005-05-31
+2026-10-18,dividendes.csv,ETIT | 2008 | avis |,dividende_ajuste,1.885,0.945
+2026-10-18,dividendes.csv,ETIT | 2008 | avis |,dividende_net,1.885,0.945
+2026-10-18,dividendes.csv,ETIT | 2008 | avis |,paiement,2009-06-22,2009-06-12
+2026-10-18,dividendes.csv,SAFC | 1998 | avis |,dividende_ajuste,40.784,28.8192
+2026-10-18,dividendes.csv,SAFC | 1998 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 1999 | avis |,dividende_ajuste,44.096,31.1596
+2026-10-18,dividendes.csv,SAFC | 1999 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2001 | avis |,dividende_ajuste,37.072,26.1962
+2026-10-18,dividendes.csv,SAFC | 2001 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2003 | avis |,dividende_ajuste,14.544,10.2772
+2026-10-18,dividendes.csv,SAFC | 2003 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2004 | avis |,dividende_ajuste,14.512,10.2546
+2026-10-18,dividendes.csv,SAFC | 2004 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2007 | avis |,dividende_ajuste,36.048,25.4726
+2026-10-18,dividendes.csv,SAFC | 2007 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2008 | avis |,dividende_ajuste,36,25.4387
+2026-10-18,dividendes.csv,SAFC | 2008 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2009 | avis |,dividende_ajuste,36,25.4387
+2026-10-18,dividendes.csv,SAFC | 2009 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,dividendes.csv,SAFC | 2010 | avis |,dividende_ajuste,23.04,16.2808
+2026-10-18,dividendes.csv,SAFC | 2010 | avis |,facteur_ajustement,62.5,88.447938
+2026-10-18,resultats.csv,CABC | 2021,dette_nette,2050,-2050
+2026-10-18,resultats.csv,CABC | 2023,tresorerie,6491,-6491.4
+2026-10-18,resultats.csv,NEIC | 2021,dette_nette,6090,-6090.2
+2026-10-18,resultats.csv,NTLC | 2021,tresorerie,8815,-8815
+2026-10-18,resultats.csv,PALC | 2022,dette_nette,49871,-20579.3
+2026-10-18,resultats.csv,PALC | 2023,dette_nette,-904,15560.8
+2026-10-18,resultats.csv,PALC | 2023,tresorerie,8233,-8232.6
+2026-10-18,resultats.csv,PRSC | 2022,dette_nette,34405,-3121.5
+2026-10-18,resultats.csv,SAFC | 2018,bnpa,8.25,5.83
+2026-10-18,resultats.csv,SAFC | 2020,bnpa,-201.98,-142.73
+2026-10-18,resultats.csv,SCRC | 2025,tresorerie,-6928,-6504.6
+2026-10-18,resultats.csv,SEMC | 2020,tresorerie,339,-339
+2026-10-18,resultats.csv,SOGC | 2021,tresorerie,796,-6585.8
+2026-10-18,resultats.csv,SOGC | 2022,dette_nette,10498,2836
+2026-10-18,resultats.csv,SPHC | 2021,dette_nette,44694,38786.3
+2026-10-18,resultats.csv,SPHC | 2022,dette_nette,41380,36142.2
+2026-10-18,resultats.csv,SPHC | 2023,tresorerie,-227560,-22756
+2026-10-18,resultats.csv,STAC | 2021,dette_nette,6896,-6896.2
+2026-10-18,resultats.csv,STBC | 2023,tresorerie,6779,7179.1
+2026-10-18,resultats.csv,TTLC | 2021,tresorerie,8877,2145
+2026-10-18,resultats.csv,TTLC | 2022,dette_nette,-836,12623
