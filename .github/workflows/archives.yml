@@ -22,9 +22,10 @@ jobs:
           python3 scripts/fetch_extra.py --out /tmp/cpt --only comptes_list
           test -s /tmp/cpt/cpt_evs.json
       - name: Documents gardés par l'archive web
-        run: timeout 1800 python3 scripts/archives_brvm.py --evs /tmp/cpt/cpt_evs.json --out /tmp/arch
+        run: timeout 1800 python3 scripts/archives_brvm.py --evs /tmp/cpt/cpt_evs.json --out /tmp/arch || echo "::warning::Vérification des archives interrompue (durée)"
       - uses: actions/upload-artifact@v7
         with:
           name: archives-brvm
           path: /tmp/arch/archives.json
           retention-days: 7
+          if-no-files-found: ignore

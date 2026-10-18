@@ -13,18 +13,34 @@ CDX = "https://web.archive.org/cdx/search/cdx"
 PREFIXES = ("brvm.org/sites/default/files/", "brvm.org/fr/documentation/", "brvm.org/fr/rapports-societe-cotes/")
 
 
-def get_json(url, tries=3):
-    for i in range(tries):
+def get_json(url):
+    """Requête à l'archive web, au rythme accepté par le site (une toutes les 5 s, pause longue s'il demande de ralentir)."""
+    import fetch_extra as FX
+    txt = FX.get_wb(url).decode("utf8", "replace").strip()
+    return json.loads(txt) if txt else []
+
+
+def cdx_rows(pre, warn):
+    """Captures PDF (code 200) d'un préfixe d'adresses, par tranches de 5 000 (clé de reprise de l'archive web)."""
+    q = {"url": pre, "matchType": "prefix", "output": "json", "fl": "original,timestamp,length,mimetype,statuscode", "collapse": "urlkey",
+         "filter": ["statuscode:200", "mimetype:application/pdf"], "limit": 5000, "showResumeKey": "true"}
+    key, n = None, 0
+    while n < 200:
+        n += 1
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; verification)"})
-            with urllib.request.urlopen(req, timeout=120) as r:
-                txt = r.read().decode("utf8", "replace").strip()
-            return json.loads(txt) if txt else []
+            res = get_json(CDX + "?" + urllib.parse.urlencode({**q, **({"resumeKey": key} if key else {})}, doseq=True))
         except Exception as e:  # noqa: BLE001
-            if i == tries - 1:
-                raise
-            time.sleep(10 * (i + 1))
-    return []
+            warn.append(f"{pre} (tranche {n}) : {str(e)[:160]}")
+            return
+        key = None
+        if res and res[-1] and len(res) >= 2 and res[-2] == [] and len(res[-1]) == 1:
+            key = res[-1][0]  # (tranche suivante)
+            res = res[:-2]
+        for r in res:
+            if r and r[0] != "original":
+                yield r
+        if not key:
+            return
 
 
 def norm(u):
@@ -55,29 +71,30 @@ def main():
     import comptes as CPT
     evs = json.load(open(a.evs, encoding="utf8"))
     known = {norm(e.get("document_url")) for e in evs if e.get("document_url")}
-    rows = {}
+    rows, warn = {}, []
     for pre in PREFIXES:
-        q = {"url": pre, "matchType": "prefix", "output": "json", "fl": "original,timestamp,length,mimetype,statuscode", "collapse": "urlkey",
-             "filter": "statuscode:200"}
-        npages = get_json(CDX + "?" + urllib.parse.urlencode({**q, "showNumPages": "true"}))
-        npages = int(npages) if isinstance(npages, (int, float, str)) and str(npages).isdigit() else 1
-        for p in range(npages):
-            res = get_json(CDX + "?" + urllib.parse.urlencode({**q, "page": p}))
-            for r in res[1:] if res and res[0] and res[0][0] == "original" else res:
-                orig, ts, ln, mt, sc = (r + [None] * 5)[:5]
-                if not orig or not (str(mt or "").endswith("pdf") or orig.lower().endswith(".pdf")):
-                    continue
-                k = norm(orig)
-                if k not in rows or ts > rows[k]["ts"]:
-                    rows[k] = {"u": orig, "ts": ts, "taille": int(ln) if str(ln or "").isdigit() else None}
-            time.sleep(1)
+        for r in cdx_rows(pre, warn):
+            orig, ts, ln, mt, sc = (list(r) + [None] * 5)[:5]
+            if not orig or not (str(mt or "").endswith("pdf") or orig.lower().endswith(".pdf")):
+                continue
+            k = norm(orig)
+            if k not in rows or ts > rows[k]["ts"]:
+                rows[k] = {"u": orig, "ts": ts, "taille": int(ln) if str(ln or "").isdigit() else None}
+    for w in warn:
+        print(f"::warning::Archive web : {w}")
+    if not rows:
+        # (vérification seulement : un passage sans réponse de l'archive web n'est pas un échec, il est signalé et rien n'est écrit)
+        print("::warning::Archive web : aucune capture obtenue (site injoignable ou réponse vide) ; vérification à relancer plus tard")
+        sys.exit(0)
     out = []
     for k, r in rows.items():
         if k in known:
             continue
         name = k.rsplit("/", 1)[-1]
         n_ = CPT.nrm(name).replace("_", " ").replace("-", " ")
-        ts_ = [t for t, rx in CPT.NAME_TOKENS.items() if re.search(rx, n_)]
+        ms_ = [(t, m_) for t, rx in CPT.NAME_TOKENS.items() for m_ in [re.search(rx, n_)] if m_]
+        # (un nom contenu dans un autre, « onatel » dans « sonatel » : le nom le plus long l'emporte)
+        ts_ = [t for t, m_ in ms_ if not any(o_ is not m_ and o_.start() <= m_.start() and m_.end() <= o_.end() and (o_.end() - o_.start()) > (m_.end() - m_.start()) for _, o_ in ms_)]
         fy = re.search(r"exercice[_ -]*(19[89]\d|20[0-3]\d)", name) or re.search(r"(?<!\d)(19[89]\d|20[0-3]\d)(?!\d)", name[8:] if re.match(r"\d{8}", name) else name)
         out.append({**r, "t": ts_[0] if len(ts_) == 1 else None, "cat": cat_of(name), "fy": int(fy.group(1)) if fy else None})
     out.sort(key=lambda r: (r["t"] or "~", r["fy"] or 0, r["u"]))
@@ -96,4 +113,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as e:  # noqa: BLE001
+        import traceback
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        print(f"::warning::Vérification des archives arrêtée : {type(e).__name__} : {str(e)[:200]} (ligne {tb.lineno}, {tb.name})")
+        sys.exit(0)
