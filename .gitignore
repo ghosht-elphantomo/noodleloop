@@ -2,3 +2,10 @@ __pycache__/
 /data/
 *.pyc
 .DS_Store
+
+# secrets locaux : jamais dans le dépôt (les clés vont dans les variables de Vercel ou les secrets de GitHub)
+.env
+.env.*
+*.pem
+*.key
+.vercel/

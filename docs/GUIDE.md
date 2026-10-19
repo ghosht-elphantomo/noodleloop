@@ -234,6 +234,16 @@ La recherche MOTS CLES contrôle chaque ligne contre le nom de son fichier (`fix
 - **Page du dépôt** : le champ « site web » du dépôt doit rester rempli avec l'adresse du dépôt lui-même — s'il est vide, Vercel y remet automatiquement l'adresse du site à chaque mise en ligne.
 - **Plan B complet** (à préparer) : kit d'installation d'un serveur qui reprendrait les automatisations et écrirait dans la copie.
 
+## Sécurité du site (état au 19/10/2026)
+
+- En-têtes (`vercel.json`) : toutes les adresses — pas d'indexation, `nosniff`, aucun référent envoyé, page jamais intégrée dans un autre site (`X-Frame-Options: DENY`), caméra, micro et position refusés, HTTPS imposé (`Strict-Transport-Security`) ; page du terminal seulement (`/`, `/index.html`, depuis le 19/10/2026) — `Content-Security-Policy: object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'` (aucun plugin, aucune balise `base` injectée, aucun formulaire envoyé ailleurs) et `Cross-Origin-Opener-Policy: same-origin` (une page ouverte depuis le terminal ne peut pas le piloter). Les documents (`/doc/…`) et les données (`/data/…`) ne reçoivent pas ces deux en-têtes (lecteur PDF des navigateurs).
+- Relais (`api/data.js`, `api/doc.js`) : adresses demandées contrôlées (liste de caractères, pas de `..`), réponses d'erreur courtes sans détail, aucun en-tête CORS (seul le site lui-même peut lire les données depuis un navigateur), clé de lecture de la copie de secours dans les variables de Vercel.
+- Aucun secret dans le dépôt (`.gitignore` : `.env`, `.env.*`, `*.pem`, `*.key`, `.vercel/`) ; clés dans les secrets de GitHub et les variables de Vercel.
+- Aucune bibliothèque tierce chargée par le site (tout le code est dans `index.html`) ; outils de construction et de test à version fixe (terser 5.36.0, Playwright 1.56.0).
+- Import du portefeuille : fichiers lus dans le navigateur seulement, 15 Mo au plus, type vérifié par le contenu (et non par l'extension).
+- Sauvegardes automatiques : copie complète chaque nuit vers le dépôt de secours, export autonome, base historique.
+- Le reste de la liste (connexion, mots de passe, sessions, RLS, webhooks, e-mail confirmé, limitation des requêtes) concerne le backend (comptes, abonnements, paiements), à faire au feu vert du propriétaire.
+
 ## Fichiers
 
 ```
