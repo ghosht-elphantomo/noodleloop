@@ -1,3 +1,1 @@
-cgi_sn_2025.pdf|https://www.dgid.sn/storage/docs/CGI-2025.pdf
-cgi_tg_2025.pdf|https://www.otr.tg/index.php/en/impots/reglementations-fiscales/code-general-des-impots/600-code-general-des-impots-livre-des-procedures-fiscales-mis-a-jour-2025/file.html
-cgi_bj_2021.pdf|https://sgg.gouv.bj/doc/loi-2021-15/download
+cgi_bf_2023.pdf|https://dgi.bf/wp-content/uploads/2023/10/CODE-GENERAL-DES-IMPOTS-2023-A-JOUR-AVEC-LA-LOI-DE-FINANCE-2023.pdf
