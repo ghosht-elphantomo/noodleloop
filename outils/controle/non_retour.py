@@ -290,6 +290,33 @@ def b16(ctx):
     return ("orange", f"{len(out)} document(s) : " + "; ".join(out[:8])) if out else ("vert", "aucun document mal rangé")
 
 
+@bug("B18", "2026-10-19", "Taux de distribution calculé sur le BNPA d'un autre exercice",
+     "Le payout des tableaux BRVM divisait le dernier dividende par le BNPA du dernier exercice, même quand le dividende était "
+     "celui d'un exercice plus ancien (Filtisac 3 516 % au lieu de 88 %, BNBC 4 451 % au lieu de 55 %) ; champ pay calculé "
+     "sur le BNPA du même exercice depuis le 19/10/2026.",
+     "pour chaque action BRVM, pay = dividende ÷ BNPA de l'exercice du dividende (série de la fiche) ; jamais le rapport à un autre exercice")
+def b18(ctx):
+    S = jl(ctx["D"], "summary.json") or {}
+    F = jl(ctx["D"], "fundamentals.json") or {}
+    L = [s for s in S.get("secs") or [] if s.get("mkt") == "BRVM" and s.get("cls") == "Equity"]
+    if L and not any("pay" in s for s in L):
+        return "orange", "champ pay absent (construction antérieure au 19/10/2026 ?)"
+    out = []
+    for s in L:
+        ex, dps, bn = s.get("dps_ex"), s.get("dps"), s.get("bnpa")
+        ser = {int(k): v for k, v in (((F.get(s["id"]) or {}).get("series") or {}).get("bnpa") or {}).items() if v is not None and str(k).isdigit()}
+        try:
+            ex = int(ex) if ex is not None else None
+        except (TypeError, ValueError):
+            ex = None
+        eps = bn if ex is None or not ser or ex >= max(ser) else ser.get(ex)
+        att = dps / eps if dps and eps and eps > 0 else None
+        got = s.get("pay")
+        if (att is None) != (got is None) or (att is not None and abs(got / att - 1) > 0.01):
+            out.append(f"{s['id']} {got} (attendu {att and round(att, 4)})")
+    return ("rouge", f"{len(out)} taux faux : " + "; ".join(out[:8])) if out else ("vert", f"{len(L)} actions, taux du même exercice")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

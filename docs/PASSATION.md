@@ -172,10 +172,19 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      (`index.json` de la branche `comptes`) garde la société de la page. Restait 1 événement mal rangé (SGB CI 2011 chez
      SMB) : `build_terminal.py` rattache désormais les événements avec `comptes.doc_company` (intitulé, puis nom du fichier).
      Contrôle B16 du matin. Pour tout outil qui lit le registre : passer par `comptes.doc_company`.
-   - Point à vérifier : Filtisac, dividende de l'exercice 2024 à 1 161,6 FCFA (plus 564,96 exceptionnel) : réel (le cours est
-     passé de 3 760 à 2 185 FCFA le jour du détachement, 26/09/2025), mais le rendement affiché (64 %) et la distribution
-     (3 516 %) le traitent comme un dividende courant ; à revoir : classer la part exceptionnelle de 1 161,6 si l'avis le dit.
+   - **Filtisac, vérifié le 19/10** : l'avis n° 230-2025 dit « dividende annuel de 1 320 FCFA » brut (IRVM 12 %, soit 1 161,6
+     net) au titre de 2024 et, à part, « dividende exceptionnel de 680,67 FCFA » brut (IRVM 17 %, soit 564,96 net) : les données
+     sont justes, rien à reclasser. Le rendement (dernier dividende annuel net ÷ cours) est vrai par définition ; d'après les comptes
+     lus, le résultat net 2024 était de 18 595 M contre 466 M en 2025. **Bug trouvé et corrigé le 19/10** : la distribution (3 516 %) divisait le
+     dividende de 2024 par le BNPA de 2025 ; elle se calcule désormais sur le BNPA du même exercice (88 %). Même erreur sur
+     12 titres (BNBC 4 451 % au lieu de 55 %, BOAN 1 063 % au lieu de 87 %, UNLC 1 768 % au lieu de rien…) ; contrôle B18.
      Sauts de cours anciens à vérifier sur les avis : SAFCA 22/02/2012 (+40 %), SOGB 01/06/2011 (+43 %).
+   - **À vérifier sur les documents (trouvé le 19/10)** : BNPA de la fiche qui ne concorde pas avec le résultat net ÷ nombre de
+     titres : ORGT 2018 (428,92 pour 12 491 M, soit 0,42 fois les titres), SCRC 2019 (BNPA positif, résultat −5 339 M),
+     UNLC 2020 (−2 866 pour −2 410 M), ABJC 2021 (0,70 fois), BOAM 2015-2018 (0,56 fois : augmentation de capital ?), ETIT
+     (comptes en dollars, BNPA en cents ?). Ces BNPA servent à la distribution et au PER de chaque exercice (DVD, FA).
+     Filtisac 2015 et 2016 : deux versements chacun (dont 23/12/2016 et 09/01/2018 : acomptes de l'exercice suivant ?), à
+     vérifier sur les avis (ils s'additionnent dans les aristocrates).
 3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
 4. Audit complet.
 5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,

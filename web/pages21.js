@@ -84,7 +84,7 @@ function divArist(DV) {
     let noCut = 0; for (let y = last; d[y] && d[y - 1] && d[y] >= d[y - 1] * 0.999; y--) noCut++;
     let up = 0; for (let y = last; d[y] && d[y - 1] && d[y] > d[y - 1] * 1.001; y--) up++;
     const cg = n => d[last] && d[last - n] ? Math.pow(d[last] / d[last - n], 1 / n) - 1 : null;
-    return { s, id: s.id, short: s.short || s.n, last, dps: d[last], fresh: last >= yNow - 2, paid, since: last - paid + 1, noCut, up, g5: cg(5), g10: cg(10), yld: s.yld, payout: s.dps && s.bnpa > 0 ? s.dps / s.bnpa : null, first: ys[0] };
+    return { s, id: s.id, short: s.short || s.n, last, dps: d[last], fresh: last >= yNow - 2, paid, since: last - paid + 1, noCut, up, g5: cg(5), g10: cg(10), yld: s.yld, payout: +s.dps_ex === last ? payR(s) : null, first: ys[0] };
   }).filter(Boolean);
 }
 async function divcAristocrates(m, alive) {

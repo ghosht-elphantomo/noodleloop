@@ -51,6 +51,8 @@ PAGES.MONITOR = async (m, alive) => {
 };
 
 /* ------------------------------------------------------------------ BRVM */
+/* taux de distribution : dividende ÷ BNPA du même exercice (champ pay calculé à la construction) ; à défaut (titres hors BRVM) dividende ÷ BNPA */
+const payR = s => s.pay !== undefined ? s.pay : (s.dps && s.bnpa > 0 ? s.dps / s.bnpa : null);
 PAGES.BRVM = async (m, alive) => {
   const tab = tabState('BRVM', 'm'); setTabs(FN_TABS.BRVM, tab, k => { ST.tab.BRVM = k; render(); });
   if (tab === 'f') return brvmFloat(m, alive);
@@ -58,7 +60,7 @@ PAGES.BRVM = async (m, alive) => {
   const all = secsWhere(s => s.mkt === 'BRVM' && s.cls === 'Equity'), sectors = [...new Set(all.map(s => s.grp))].sort();
   const idx = secsWhere(s => s.mkt === 'BRVM' && s.cls === 'Index').sort((a, b) => legacy(a) - legacy(b));
   const st = ST.brvm, rows0 = st.sector === 'ALL' ? all : all.filter(s => s.grp === st.sector);
-  const rows = sortRows(rows0.map(s => ({ ...s, d200: s.sma200 ? s.last / s.sma200 - 1 : null, payout: s.dps && s.bnpa ? s.dps / s.bnpa : null })), st.sort);
+  const rows = sortRows(rows0.map(s => ({ ...s, d200: s.sma200 ? s.last / s.sma200 - 1 : null, payout: payR(s) })), st.sort);
   const cols = [['id', 'Titre', 1], ['short', 'Société', 1], ['grp', 'Secteur', 1], ['cty', 'Pays', 1], ['last', 'Cours'], ['pct', 'Var.%'], ['r1w', '1 sem.'], ['r1m', '1 mois'], ['ytd', 'YTD'], ['r1y', '1 an'], ['r3y', '3 ans'],
     ['vol', 'Vol. 1A'], ['beta', 'Bêta'], ['mcap', 'Capi (Md)'], ['per', 'PER'], ['yld', 'Rdt %'], ['payout', 'Payout'], ['rsi', 'RSI'], ['d200', '/SMA200'], ['liq', 'Échanges 3M/j'], ['dd', 'Depuis + haut']];
   const tr = s => `<tr data-sec="${s.id}"><td class="l tk">${s.id}</td><td class="l nm">${esc(s.short || s.n)}${s.susp ? ' <span class="dn">SUSP.</span>' : ''}</td><td class="l dm">${esc(s.grp || '')}</td><td class="l dm">${s.cty || ''}</td>
@@ -73,7 +75,7 @@ PAGES.BRVM = async (m, alive) => {
       ${idx.map(s => `<tr data-sec="${s.id}"><td class="l tk">${s.id}</td><td class="l nm">${esc(s.n)}</td><td class="wh">${num(s.last, 2)}</td><td>${pc(s.pct)}</td><td>${pc(s.r1m, 1)}</td><td>${pc(s.ytd, 1)}</td><td>${pc(s.r1y, 1)}</td><td>${pc(s.r3y, 0)}</td><td>${num(s.vol * 100, 1)}</td><td class="dm">${fd(s.first)}</td><td>${sparkSVG(s.spark)}</td></tr>`).join('')}</tbody></table></div>`, { np: true, sel: 'indices sectoriels « ancien » arrêtés fin 2025' })}
     ${pn('BRVM · 48 actions', 'BRVM', `<div class="tw" style="max-height:62vh"><table class="t" id="brT"><thead><tr>${thSort(cols, st.sort)}</tr></thead><tbody>${rows.map(tr).join('')}</tbody></table></div>`,
       { np: true, sel: `capitalisation totale ${big(capTot)} XOF · tri : cliquer un en-tête`, tools: `<span class="tlab">Secteur</span>${['ALL', ...sectors].map(g => `<button class="tb alt ${st.sector === g ? 'on' : ''}" data-sector="${esc(g)}">${g === 'ALL' ? 'Tous' : esc(g)}</button>`).join('')}`,
-        lect: '<b>Rdt</b> = dernier dividende net ÷ cours. <b>Payout</b> = dividende ÷ BNPA du dernier exercice. <b>Bêta</b> = sensibilité hebdomadaire au BRVM Composite sur 2 ans. <b>Échanges 3M/j</b> = montant moyen échangé par séance sur 3 mois (liquidité). <b>/SMA200</b> = écart du cours à sa moyenne 200 séances.' })}
+        lect: '<b>Rdt</b> = dernier dividende net ÷ cours. <b>Payout</b> = dividende ÷ BNPA du même exercice. <b>Bêta</b> = sensibilité hebdomadaire au BRVM Composite sur 2 ans. <b>Échanges 3M/j</b> = montant moyen échangé par séance sur 3 mois (liquidité). <b>/SMA200</b> = écart du cours à sa moyenne 200 séances.' })}
     <div class="grid c2">
       ${pn('BRVM · largeur du marché depuis 2008', 'BRVM', cvb('brB', 380), { lect: '<b>Haut</b> : BRVM Composite (échelle log). <b>Milieu</b> : part des actions au-dessus de leur moyenne 200 séances (ambre) et 50 séances (cyan) — au-delà de 70 %, la hausse est généralisée ; sous 30 %, le marché est en repli large. <b>Bas</b> : nouveaux plus hauts 52 semaines moins nouveaux plus bas, par séance.' })}
       ${pn('BRVM · secteurs', 'BRVM', `<table class="t"><thead><tr><th class="l">Secteur</th><th>Titres</th><th>Capi (Md)</th><th>Poids</th><th>Var.%</th><th>YTD</th><th>1 an</th><th>PER méd.</th><th>Rdt méd.</th></tr></thead><tbody>

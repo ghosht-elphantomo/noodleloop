@@ -1422,11 +1422,25 @@ def main():
         # dividende de l'exercice : ses versements ordinaires réunis (acompte et solde, dividende complémentaire)
         ld_tot = (sum(x["dividende"] for x in divs if x.get("ticker") == t and x.get("dividende") and not x.get("exc") and x.get("exercice") == ld.get("exercice"))
                   if ld.get("exercice") and ld.get("dividende") else ld.get("dividende"))
+        # taux de distribution = dividende ÷ BNPA du MÊME exercice : quand le dernier dividende est plus ancien que le dernier BNPA
+        # (pas de dividende au titre du dernier exercice, ou pas encore décidé), le BNPA de son exercice est lu dans la série de la
+        # fiche ; le rapport au BNPA d'un autre exercice ne veut rien dire (Filtisac : 1 161,6 ÷ 33,04 = 3 516 % au lieu de 88 %)
+        dps_ = rnd(ld_tot, 4) if ld_tot else dfund_
+        try:
+            ex_ = int(ld.get("exercice")) if ld.get("exercice") is not None else None
+        except (TypeError, ValueError):
+            ex_ = None
+        bser_ = {}
+        for y_, v_ in ((f.get("series") or {}).get("bnpa") or {}).items():
+            if v_ is not None and str(y_).isdigit():
+                bser_[int(y_)] = v_
+        eps_ = bnpa_ if ex_ is None or not bser_ or ex_ >= max(bser_) else bser_.get(ex_)
+        pay_ = rnd(dps_ / eps_, 4) if dps_ and eps_ and eps_ > 0 else None
         meta = {"id": t, "tk": f"{t} BC", "n": act.get("nom_officiel") or act.get("nom"), "short": act.get("nom"), "cls": "Equity", "typ": "Equity",
                 "mkt": "BRVM", "grp": act.get("secteur"), "ccy": "XOF", "bench": "BRVMC", "cty": cty, "bank": bool(act.get("banque")),
                 "shares": shares, "float": flt_off if flt_off is not None else f.get("flottant"), "mcap": rnd(shares * last, 0) if shares else None, "pso": pso_,
                 "bnpa": rnd(bnpa_, 2) if bnpa_ else bnpa_, "dps": rnd(ld_tot, 4) if ld_tot else dfund_, "dps_ex": ld.get("exercice"), "dps_pay": ld.get("date_paiement"),
-                "dps_adj": ld.get("ajust"), "split": [[e_, k_] for e_, k_ in sorted(SPL.get(t, []))] or None,
+                "dps_adj": ld.get("ajust"), "pay": pay_, "split": [[e_, k_] for e_, k_ in sorted(SPL.get(t, []))] or None,
                 "per": rnd(last / bnpa_, 2) if bnpa_ and bnpa_ > 0 else None,
                 "yld": rnd(ld_tot / last, 5) if ld_tot and ld_recent else None,
                 "susp": (status.get(t) or {}).get("statut") == "suspendue", **({"vde": 1} if val_est else {})}
