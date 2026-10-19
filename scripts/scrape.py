@@ -629,10 +629,22 @@ def us_batch(out_data):
     q = {}
     for ac in ("stocks", "etf", "index"):
         part = [w for w in want if w[2] == ac]
-        for k in range(0, len(part), 25):
-            chunk = part[k:k + 25]
+        # (le service ne renvoie que 20 symboles par requête : paquets de 20 ; un symbole absent de la réponse est redemandé une
+        # fois, puis signalé dans les erreurs du relevé au lieu de garder la veille en silence)
+        for k in range(0, len(part), 20):
+            chunk = part[k:k + 20]
             by = {sym.upper(): sid for sid, sym, _ in chunk}
-            for r in _nq_rows(chunk):
+            rows_ = _nq_rows(chunk)
+            got_ = {str(r.get("symbol", "")).upper() for r in rows_}
+            miss_ = [c for c in chunk if c[1].upper() not in got_]
+            if miss_ and len(miss_) < len(chunk):
+                time.sleep(0.3)
+                rows_ = rows_ + _nq_rows(miss_)
+                got_ |= {str(r.get("symbol", "")).upper() for r in rows_}
+                left_ = [c[1] for c in miss_ if c[1].upper() not in got_]
+                if left_:
+                    fail("nasdaq_manquants", ", ".join(left_))
+            for r in rows_:
                 sid = by.get(str(r.get("symbol", "")).upper())
                 last = money(r.get("lastSalePrice") or r.get("lastsale"))
                 if not sid or not last:

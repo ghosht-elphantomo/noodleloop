@@ -208,7 +208,8 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      toujours affiché que si l'avis le donne (rien de calculé). **Pas encore affichés** : Burkina (CGI édition officielle 2023,
      art. 140 : 12,5 % sans taux réduit pour les sociétés cotées, mais Coris Bank paie 900 nets en 2026, soit 1 000 bruts à
      10 % ? une loi de finances plus récente a pu changer le taux : texte en vigueur à lire) ; Bénin (CGI, loi n° 2021-15,
-     document de 91 Mo : la sonde en extrait maintenant le texte).
+     art. 86 : 5 % pour les sociétés cotées, mais BOA Bénin paie des nets à 10 % (468 = 520 × 0,9) quand BIIC est à 5 % :
+     texte en vigueur à lire). Le texte de chaque recherche est dans `seed/retenues_dividendes.json` (« a_verifier »).
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
      Plan expliqué au propriétaire le 19/10 : (1) construire avec et sans la base (copie comprise) et lister chiffre par

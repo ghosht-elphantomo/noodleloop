@@ -249,6 +249,10 @@ def verifier(R, D, boc=None):
         out = (Mr.get("soc_diff") or []) + [f"{t} absent de seed/societes.json (nom et banque pris dans la base)" for t in Mr.get("soc_new") or []]
         R.add("Fiche des sociétés : FQT / base tierce", "orange" if out else "vert",
               (f"{len(out)} écart(s), à vérifier puis à reporter dans seed/societes.json : " + _liste(out)) if out else "noms et type (banque) identiques")
+    be = bc.get("base_ext") or {}
+    if be:
+        R.add("Base tierce : fraîcheur", "orange" if (be.get("age_j") or 0) > 21 else "vert",
+              f"dernière mise à jour {be.get('maj') or '—'} ({be.get('age_j')} jours)" + (" : figée, le récent vient des seules sources BRVM" if (be.get("age_j") or 0) > 21 else ""))
     if "nouveaux" in bc:
         nv = bc.get("nouveaux") or []
         R.add("Titres du bulletin officiel absents du terminal", "orange" if nv else "vert",

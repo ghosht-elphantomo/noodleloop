@@ -410,6 +410,45 @@ def b23(ctx):
     return ("rouge", f"{len(out)} séance(s) : " + "; ".join(out[-8:])) if out else ("vert", f"{n} séances cohérentes depuis 2015")
 
 
+@bug("B24", "2026-10-20", "Titres US restés sur le cours de la veille (paquets de 25 symboles)",
+     "Le service de cours US ne renvoie que 20 symboles par requête ; le relevé en demandait 25 : les 5 derniers de chaque paquet "
+     "(33 titres, dont COST, QCOM, ISRG, XLE) gardaient le cours de la veille sans erreur signalée. Paquets de 20 et symboles "
+     "manquants redemandés puis signalés depuis le 20/10/2026.",
+     "titres US du résumé : séries arrêtées avant la dernière séance US de l'univers (au plus 3 tolérées : titre suspendu)")
+def b24(ctx):
+    S = jl(ctx["D"], "summary.json") or {}
+    L = [x for x in S.get("secs") or [] if x.get("mkt") == "US" and x.get("cls") != "Index"]
+    last = {}
+    for x in L:
+        se = jl(ctx["D"], f"s/{x['id']}.json") or {}
+        if se.get("d") and se.get("f", "D") == "D":
+            last[x["id"]] = se["d"][-1]
+    if not last:
+        return "orange", "aucune série US quotidienne lue"
+    ref = max(last.values())
+    old = sorted(t for t, d in last.items() if d < ref)
+    if len(old) > 3:
+        return "rouge", f"{len(old)} titre(s) US arrêtés avant le {ref} : " + ", ".join(old[:12])
+    return "vert", f"{len(last)} titres US à jour au {ref}" + (f" (en retard : {', '.join(old)})" if old else "")
+
+
+@bug("B25", "2026-10-20", "Référence du contrôle du matin effacée par la sonde",
+     "Les publications de la sonde (probe.yml) et des archives (archives.yml) réécrivaient la branche probe sans le dossier "
+     "controle/ : le contrôle suivant n'avait plus de référence et passait au vert sans rien comparer. Depuis le 20/10/2026, les "
+     "dossiers controle/ et audit/ sont recopiés avant chaque publication.",
+     "probe.yml et archives.yml recopient controle/ et audit/ avant de publier")
+def b25(ctx):
+    bad = []
+    for f in ("probe.yml", "archives.yml"):
+        try:
+            t = open(os.path.join(DEPOT, ".github", "workflows", f), encoding="utf8").read()
+        except OSError:
+            continue
+        if "for d in controle audit" not in t:
+            bad.append(f)
+    return ("rouge", "dossier controle/ non recopié par " + ", ".join(bad)) if bad else ("vert", "recopié")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

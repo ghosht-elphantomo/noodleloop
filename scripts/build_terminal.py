@@ -501,7 +501,7 @@ def main():
             age_ = (dt.date.today() - dt.date.fromisoformat(g_)).days
             base_ext = {"maj": g_, "age_j": age_, "etat": "figée" if age_ > 21 else "à jour"}
             if age_ > 21:
-                log(f"::warning::Base extérieure figée depuis {age_} jours (dernière mise à jour {g_}) : chiffres récents pris dans les sources BRVM seulement")
+                print(f"::warning::Base extérieure figée depuis {age_} jours (dernière mise à jour {g_}) : chiffres récents pris dans les sources BRVM seulement", flush=True)
     except Exception as e:  # noqa: BLE001
         base_ext = {"etat": f"date illisible ({str(e)[:60]})"}
     # états financiers publiés à la BRVM (branche comptes), lus et vérifiés par les identités comptables : prioritaires sur la base

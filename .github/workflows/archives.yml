@@ -32,5 +32,7 @@ jobs:
           [ -s /tmp/arch/archives.json ] || exit 0
           mkdir -p /tmp/pub && cp /tmp/arch/archives.json /tmp/pub/
           printf '{"git":{"deploymentEnabled":false}}\n' > /tmp/pub/vercel.json
+          # dossiers gardés d'une publication à l'autre : rapports du contrôle du matin (référence du contrôle suivant) et de l'audit
+          if git fetch -q --depth 1 origin probe 2>/dev/null; then for d in controle audit; do git archive FETCH_HEAD $d 2>/dev/null | tar -x -C /tmp/pub 2>/dev/null || true; done; fi
           cd /tmp/pub && git init -q -b probe && git config user.name fqt-bot && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A && git commit -qm "Archives BRVM $(date -u +%H:%M)" && git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" probe || echo "::warning::Liste non publiée"
