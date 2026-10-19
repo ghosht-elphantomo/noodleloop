@@ -1,4 +1,3 @@
-cgi_bf_dgi.pdf|https://dgi.bf/wp-content/uploads/2023/10/LOI-PORTANT-CODE-GENERAL-DES-IMPOTS-FINAL.pdf
-cgi_bf_2024.pdf|https://extranet.who.int/fctcapps/sites/default/files/2026-02/Burkina%20Faso_Annex%207_2025_General%20Tax%20Code_2024_FR.pdf
-cgi_ne_ereg.pdf|https://niger.eregulations.org/media/code%20g%C3%A9n%C3%A9rale%20des%20imp%C3%B4ts.pdf
-cgi_ne_mde.pdf|https://mde.ne/uploads/businessDocuments/p04.pdf
+cgi_sn_2025.pdf|https://www.dgid.sn/storage/docs/CGI-2025.pdf
+cgi_tg_2025.pdf|https://www.otr.tg/index.php/en/impots/reglementations-fiscales/code-general-des-impots/600-code-general-des-impots-livre-des-procedures-fiscales-mis-a-jour-2025/file.html
+cgi_bj_2021.pdf|https://sgg.gouv.bj/doc/loi-2021-15/download
