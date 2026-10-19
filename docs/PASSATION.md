@@ -177,6 +177,71 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
 5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
    nettoyage de l'historique (ancien pseudonyme, pages brutes des sources) ; puis kit serveur.
 
+## Migration deux dépôts : pourquoi et comment
+
+Complément à la passation (texte du propriétaire, 19/10/2026). À lire avant le point 5 du « Reste à faire ». Ne rien
+lancer maintenant : la migration se fait seulement quand tout est propre, testé et audité, avec l'accord du propriétaire à
+chaque étape.
+
+**1. Aujourd'hui.** Tout est dans un seul dépôt public :
+- le code du site et les scripts de lecture des documents ;
+- les modèles de calcul (QLAB, ratios) et les sources consultées ;
+- les automatisations et les données (branches data, raw, comptes, dividendes, boc, histo) ;
+- tout l'historique, où restent l'ancien pseudonyme du propriétaire et des pages brutes des sources.
+
+N'importe qui peut tout voir, tout copier et remonter du site au dépôt.
+
+**2. Pourquoi ça ne peut pas rester comme ça.**
+- L'accès au terminal sera vendu par abonnement (tarifs fixés le 19/10). Avec un dépôt public, n'importe qui récupère
+  gratuitement le terminal entier, données comprises : l'abonnement ne vaut alors plus rien. Les CGU interdiront la copie,
+  mais rien ne l'empêche techniquement.
+- Les copieurs ne doivent voir ni les modèles de calcul, ni les sources, ni les automatisations. Aucune source ne doit
+  être identifiable, ni par un visiteur ni par une IA, et on ne doit pas pouvoir remonter facilement du site au dépôt.
+- Rien sur la personne du propriétaire, même dans un dépôt privé.
+- Données de la BRVM : si une licence doit être négociée, mieux vaut que nos données ne soient pas en libre accès.
+
+**3. Pourquoi pas tout en privé : le coût des automatisations.**
+- Dépôt public : les automatisations GitHub (machines standard) sont gratuites et illimitées.
+- Dépôt privé : le compte gratuit n'a que 2 000 minutes par mois (3 000 avec Pro), puis 0,006 $ la minute.
+- Mesure du 19/10 : environ 2 000 minutes par jour (Métronome ~1 000, Terminal ~800 sur 149 passages, comptes ~130),
+  soit ~60 000 minutes par mois, donc au moins ~350 $ par mois en privé.
+- D'où le partage :
+  - tout ce qui a de la valeur passe en privé ;
+  - un dépôt public au nom neutre ne garde que le « moteur » des automatisations. Il tourne gratuitement et va chercher le
+    code privé avec une clé secrète en lecture seule.
+
+**4. Plan validé le 17/10** (une étape à la fois, point de restauration avant chacune).
+- a) Déjà fait :
+  - copie de secours chaque nuit vers un dépôt privé hors GitHub (`copie.yml`) ;
+  - le site lit cette copie si GitHub ne répond plus (`api/data.js`, `GITLAB_READ_TOKEN`).
+- b) Le dépôt actuel passe en privé : code, docs, historique, données. Nouveau dépôt public au nom neutre, sans historique,
+  qui ne contient que les fichiers d'automatisation. Chaque passage :
+  - récupère le code privé avec une clé en lecture seule, rangée dans les secrets GitHub ;
+  - fait le travail ;
+  - publie le résultat dans le dépôt privé.
+- c) Kit de déménagement vers un serveur (Oracle gratuit ou 5 à 20 € par mois), au cas où GitHub bloquerait un jour.
+- d) Plus tard, avec le backend Supabase : données réservées aux utilisateurs connectés.
+- e) Nettoyage de l'historique du dépôt privé (ancien pseudonyme, pages brutes des sources). C'est une réécriture
+  irréversible : seulement avec l'accord explicite du propriétaire.
+
+**5. Pièges à prévoir avant de migrer.**
+- Journaux visibles : dans un dépôt public, tout le monde voit les journaux des passages.
+  - Les noms d'étapes doivent être neutres (aujourd'hui ils citent des sources : « FRED, CBOE, CNN… », « PDF de brvm.org »).
+  - Rien d'affiché dans les journaux : ni adresse, ni donnée, ni secret.
+  - Aucun fichier de passage public (artifacts, caches).
+  - Aucune automatisation lancée par une demande de modification (pull request) venue d'un inconnu.
+- Lecture des données par le site : aujourd'hui, `api/data.js` lit les données en clair sur GitHub (raw.githubusercontent
+  et jsdelivr). Une fois le dépôt privé, jsdelivr ne marchera plus et GitHub demandera une clé de lecture dans les réglages
+  Vercel (c'est le propriétaire qui la met). Préparer la bascule pour que le site ne s'arrête jamais.
+- Vercel : il est relié au dépôt actuel. Vérifier que les déploiements continuent une fois le dépôt en privé.
+- Conditions de GitHub : les automatisations d'un dépôt public doivent servir le projet de ce dépôt. Un dépôt public qui
+  ne sert qu'à faire tourner un service privé et payant peut être vu comme un détournement des minutes gratuites, avec un
+  risque de blocage. À vérifier avant de migrer et à expliquer simplement au propriétaire, avec les autres solutions (payer
+  les minutes, serveur). C'est aussi pour ça que le kit serveur existe.
+- Ce qui a déjà été public a pu être copié : la migration protège la suite, pas le passé.
+- Tester chaque automatisation dans la nouvelle organisation avant d'arrêter l'ancienne. Jamais deux automatisations qui
+  publient la même chose en même temps.
+
 ## Tâches programmées
 
 - « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
