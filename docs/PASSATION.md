@@ -165,16 +165,17 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      construction) avant de les afficher ; taux de chaque pays à vérifier sur un texte officiel.
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
-   - **Problème trouvé le 19/10 (à corriger avant l'audit)** : des documents rangés sous une autre société dans la liste des
-     publications (registre de la branche `comptes`, MOTS CLES, CN) — au moins : Erium ← rapport BOA Sénégal T1 2017 ;
-     ETI ← états financiers 2017 d'Ecobank CI ; Sonatel ← résultats S1 2017 et rapport T3 2022 d'Onatel ; CFAO ← états
-     financiers 2018-2023 de Tractafric ; BOA Burkina ← états financiers 2021 de BOA CI ; BOA Niger ← rapport T1 2019 de
-     BOA Sénégal ; Bernabé ← comptes 2006 de CFAO ; ETI ← plusieurs documents d'Ecobank CI. Vérifié : aucun de ces
-     montants ne figure dans les chiffres affichés (FA, fondamentaux) ; mais ils sont classés sous la mauvaise société.
-     Correction proposée : contrôle du nom de la société dans l'intitulé et le nom du fichier avant de rattacher un
-     document (`cpt_events`), liste des exceptions vérifiées à la main, puis relecture des seuls documents concernés.
-   - Point à vérifier : Filtisac, dividende de l'exercice 2024 à 1 161,6 FCFA (plus 564,96 exceptionnel) pour un cours de
-     1 805 : rendement affiché 64 % et distribution 3 516 % (avis à relire).
+   - **Documents déposés sous la page d'une autre société (vu le 19/10, corrigé le 19/10)** : la Bourse range parfois un
+     document sous une autre société (rapport de BOA Sénégal chez Erium, comptes de Tractafric chez CFAO, résultats d'Onatel
+     chez Sonatel…). Vérification faite : la recherche MOTS CLES (`build_search.fix_by_file`) et la lecture des comptes
+     (`comptes.other_company`, montants rattachés à la bonne société) les traitaient déjà ; seul le registre interne
+     (`index.json` de la branche `comptes`) garde la société de la page. Restait 1 événement mal rangé (SGB CI 2011 chez
+     SMB) : `build_terminal.py` rattache désormais les événements avec `comptes.doc_company` (intitulé, puis nom du fichier).
+     Contrôle B16 du matin. Pour tout outil qui lit le registre : passer par `comptes.doc_company`.
+   - Point à vérifier : Filtisac, dividende de l'exercice 2024 à 1 161,6 FCFA (plus 564,96 exceptionnel) : réel (le cours est
+     passé de 3 760 à 2 185 FCFA le jour du détachement, 26/09/2025), mais le rendement affiché (64 %) et la distribution
+     (3 516 %) le traitent comme un dividende courant ; à revoir : classer la part exceptionnelle de 1 161,6 si l'avis le dit.
+     Sauts de cours anciens à vérifier sur les avis : SAFCA 22/02/2012 (+40 %), SOGB 01/06/2011 (+43 %).
 3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
 4. Audit complet.
 5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,

@@ -2036,6 +2036,19 @@ def other_company(t, name):
         return None
     hits = [t2 for t2, rx in NAME_TOKENS.items() if t2 != t and re.search(rx, n_)]
     return hits[0] if len(hits) == 1 else ("?" if hits else None)
+def doc_company(t, title, fname):
+    """Société d'un document de la liste des publications : l'intitulé fait foi, puis le nom du fichier si l'intitulé ne nomme
+    aucune société cotée (document déposé sous la page d'une autre société ; « BOA NG » dans l'intitulé l'emporte sur un fichier
+    mal nommé « boa_bn »). Renvoie t si rien ne désigne clairement une autre société."""
+    o = other_company(t, title or "")
+    if o is None:
+        n_ = nrm(title or "").replace("_", " ").replace("-", " ")
+        if any(re.search(rx, n_) for rx in NAME_TOKENS.values()):
+            return t
+        o = other_company(t, fname or "")
+    return o if o and o != "?" else t
+
+
 def _doc_rank(r, y):
     """Préférence entre documents pour un exercice : comptes de l'exercice lui-même (plutôt que la colonne N-1 du suivant),
     définitifs (certifiés, approuvés) plutôt que provisoires, puis le plus récent (un document qui « annule et remplace »)."""

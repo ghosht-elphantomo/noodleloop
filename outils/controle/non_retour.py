@@ -276,33 +276,18 @@ def b15(ctx):
     return deja("Fraîcheur des données")(ctx)
 
 
-# documents rangés sous une autre société dans la liste des publications : noms propres à chaque société
-NOMS = {"SIVC": ["AIR LIQUIDE", "ERIUM"], "ECOC": ["ECOBANK CI", "ECOBANK COTE"], "SNTS": ["SONATEL"], "ONTBF": ["ONATEL"],
-        "CFAC": ["CFAO"], "PRSC": ["TRACTAFRIC"], "BOAS": ["BOA SENEGAL", "BOA SN"], "BOAC": ["BOA COTE", "BOA CI"],
-        "BOAN": ["BOA NIGER", "BOA NG"], "BOAB": ["BOA BENIN", "BOA BN"], "BOAM": ["BOA MALI", "BOA ML"],
-        "BOABF": ["BOA BURKINA", "BOA BF"], "SIBC": ["SIB CI", "SOCIETE IVOIRIENNE DE BANQUE"], "SMBC": ["SMB CI", "MULTINATIONALE DE BITUMES"]}
-# groupes : un document d'un groupe peut citer sa filiale (non signalé)
-GROUPES = {("ETIT", "ECOC")}
-
-
-@bug("B16", "2026-10-19", "Document rangé sous une autre société (liste des publications)",
-     "Des documents d'une société étaient classés sous une autre (rapport de BOA Sénégal chez Erium, comptes de Tractafric chez "
-     "CFAO…) ; aucun de leurs montants n'est affiché. Correction de la liste des publications en cours.",
-     "aucun document de events.json dont l'intitulé ou le fichier nomme une autre société sans nommer la sienne")
+@bug("B16", "2026-10-19", "Document rangé sous une autre société",
+     "La Bourse dépose parfois un document sous la page d'une autre société (rapport de BOA Sénégal chez Erium, comptes de "
+     "Tractafric chez CFAO, rapport de la SGB CI chez SMB…). L'intitulé, puis le nom du fichier, désignent la bonne société "
+     "(comptes.doc_company) : recherche MOTS CLES, lecture des comptes et, depuis le 19/10/2026, événements.",
+     "aucun événement de events.json rattaché à une autre société que celle que nomment son intitulé ou son fichier")
 def b16(ctx):
+    sys.path.insert(0, os.path.join(DEPOT, "scripts"))
+    from comptes import doc_company, NAME_TOKENS
     E = jl(ctx["D"], "events.json") or []
-    N = lambda s: re.sub(r"[^A-Z0-9]+", " ", __import__("unicodedata").normalize("NFD", s or "").encode("ascii", "ignore").decode().upper())
-    out = []
-    for x in E:
-        t, ti = x.get("t"), N((x.get("ti") or "") + " " + (x.get("u") or "").split("/")[-1].replace("_", " ").replace("-", " "))
-        own = NOMS.get(t)
-        for o, keys in NOMS.items():
-            if o == t or (t, o) in GROUPES:
-                continue
-            if any(f" {k} " in f" {ti} " for k in keys) and not (own and any(f" {k} " in f" {ti} " for k in own)):
-                out.append(f"{t} ← {o} ({x.get('d')})")
-                break
-    return ("orange", f"{len(out)} documents : " + "; ".join(out[:8])) if out else ("vert", "aucun document mal rangé")
+    out = [f"{x['t']} → {doc_company(x['t'], x.get('ti') or '', (x.get('u') or '').rsplit('/', 1)[-1])} ({x.get('d')})" for x in E
+           if x.get("t") in NAME_TOKENS and doc_company(x["t"], x.get("ti") or "", (x.get("u") or "").rsplit("/", 1)[-1]) != x["t"]]
+    return ("orange", f"{len(out)} document(s) : " + "; ".join(out[:8])) if out else ("vert", "aucun document mal rangé")
 
 
 def verifier(R, ctx):

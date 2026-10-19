@@ -1746,6 +1746,20 @@ def main():
             best_ev[k_] = x
     keep_ = {id(x) for x in best_ev.values()}
     emeta = [x for x in emeta if id(x) in keep_]
+    # document déposé sous la page d'une autre société (liste de la Bourse) : l'intitulé, puis le nom du fichier, désignent la
+    # bonne société (comptes.doc_company, comme la recherche MOTS CLES et la lecture des comptes) ; rien n'est retiré
+    try:
+        import comptes as _CPT
+        n_mv, ids_brvm = 0, {s_["id"] for s_ in secs if s_.get("mkt") == "BRVM"}
+        for x in emeta:
+            if x.get("t") in _CPT.NAME_TOKENS:
+                t2 = _CPT.doc_company(x["t"], x.get("ti") or "", (x.get("u") or "").rsplit("/", 1)[-1])
+                if t2 != x["t"] and t2 in ids_brvm:
+                    x["t"] = t2
+                    n_mv += 1
+        log(f"événements rattachés à la société nommée dans l'intitulé ou le fichier : {n_mv}")
+    except Exception as e:  # noqa: BLE001
+        log("rattachement des événements : non fait", e)
 
     # Calculs dérivés (macro, sentiment, liquidité, comptes, consensus, valorisation BRVM, UEMOA) ----
     # flux de trésorerie : uniquement ceux lus et vérifiés dans les états financiers publiés (pdf_cf). L'ancien fichier de départ
