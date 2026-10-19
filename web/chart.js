@@ -210,7 +210,7 @@ function sparkSVG(v, w = 72, h = 16) { const a = v.filter(x => x != null && isFi
 function heatBg(v, scale) { if (v == null || !isFinite(v)) return 'transparent'; const a = Math.min(1, Math.abs(v) / scale); return v >= 0 ? `rgba(52,210,110,${(a * .75).toFixed(3)})` : `rgba(255,75,66,${(a * .75).toFixed(3)})`; }
 function tip(e, html) { const t = document.getElementById('tip'); t.innerHTML = html; t.hidden = false; const r = t.getBoundingClientRect(); t.style.left = Math.min(window.innerWidth - r.width - 8, e.clientX + 14) + 'px'; t.style.top = Math.max(4, e.clientY - r.height - 10) + 'px'; }
 function untip() { const t = document.getElementById('tip'); if (t) t.hidden = true; }
-function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
 /* Nuage étiqueté : points {x, y, id, label, color, r, hi, trail:[[x,y]...]} ; survol = info-bulle, clic = ouvre le titre. */
 function scatterL(host, o) {

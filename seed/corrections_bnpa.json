@@ -1,0 +1,106 @@
+{
+ "v": 1,
+ "note": "Données par action d'un exercice corrigées après vérification sur le document officiel (champ « bnpa » par défaut, ou « dividende » de la fiche) : la fiche donnait une valeur d'un autre référentiel, d'un autre signe ou d'une autre base d'actions que le reste de la série. Appliqué par build_terminal.py seulement si la fiche donne encore la valeur « avant » ; contrôle « BNPA / résultat net ÷ titres » du matin.",
+ "rows": [
+  {
+   "t": "ORGT",
+   "ex": 2018,
+   "bnpa": 179.95,
+   "avant": 428.92,
+   "doc": "ORAGROUP TOGO : États financiers consolidés, exercice 2019 (IFRS, comparatif 2018) ; États financiers exercice 2018 (SYSCOHADA)",
+   "pourquoi": "résultat net 2018 retraité IFRS 12 491 M FCFA (celui de la série) ÷ 69 415 031 titres (capital 69 415 031 milliers, nominal 1 000) ; 428,92 venait du résultat SYSCOHADA d'origine (29 773 M) (même convention que les autres exercices d'ORGT dans la fiche : résultat net total ÷ titres)"
+  },
+  {
+   "t": "ABJC",
+   "ex": 2021,
+   "bnpa": 61.4,
+   "avant": 87.37,
+   "doc": "SERVAIR ABIDJAN CI : États financiers exercice 2022 IFRS (comparatif 2021 : résultat net 670 M, résultat net par action 61)",
+   "pourquoi": "résultat net 2021 IFRS 670 M FCFA (celui de la série) ÷ 10 912 000 titres = 61,40, comme le résultat par action publié (61) ; 87,37 venait du résultat SYSCOHADA (953 M)"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2020,
+   "bnpa": -262.38,
+   "avant": -2866,
+   "doc": "UNILEVER CI : États financiers exercice 2021 (comparatif 2020 : résultat net -2 409 525 247 FCFA ; capital 24 336 010 000)",
+   "pourquoi": "résultat net 2020 -2 409,5 M ÷ 9 183 400 titres (capital ÷ nominal 2 650) ; -2 866 ne correspond à aucun montant publié"
+  },
+  {
+   "t": "SCRC",
+   "ex": 2019,
+   "bnpa": -272.43,
+   "avant": 272.43,
+   "doc": "résultat net 2019 de la série (-5 339 M) ; états financiers 2019 publiés en image, non lus : perte confirmée par le rapport du 3e trimestre 2020",
+   "pourquoi": "signe : la société était en perte en 2019 ; même montant, signe négatif"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2015,
+   "bnpa": 307.33,
+   "avant": 461.0,
+   "doc": "BOA MALI : avis de la BRVM, droit d'attribution (27/08/2024) et admission des actions nouvelles (22/10 et 12/11/2024)",
+   "pourquoi": "attribution gratuite d'actions du 28/08/2024 (1 action nouvelle pour 2 anciennes, ×1,5 ; avis BRVM « Droit d'attribution », actions nouvelles admises en octobre et novembre 2024) non reportée sur les données par action de 2015 à 2018 de la fiche, alors que les dividendes le sont : ÷ 1,5 (même base que les dividendes affichés)"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2015,
+   "champ": "dividende",
+   "bnpa": 193.33,
+   "avant": 290.0,
+   "doc": "même attribution du 28/08/2024",
+   "pourquoi": "dividende de la fiche sur l'ancienne base ; ÷ 1,5 comme les dividendes des avis affichés"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2016,
+   "bnpa": 406.0,
+   "avant": 609.0,
+   "doc": "BOA MALI : avis de la BRVM, droit d'attribution (27/08/2024) et admission des actions nouvelles (22/10 et 12/11/2024)",
+   "pourquoi": "attribution gratuite d'actions du 28/08/2024 (1 action nouvelle pour 2 anciennes, ×1,5 ; avis BRVM « Droit d'attribution », actions nouvelles admises en octobre et novembre 2024) non reportée sur les données par action de 2015 à 2018 de la fiche, alors que les dividendes le sont : ÷ 1,5 (même base que les dividendes affichés)"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2016,
+   "champ": "dividende",
+   "bnpa": 248.0,
+   "avant": 372.0,
+   "doc": "même attribution du 28/08/2024",
+   "pourquoi": "dividende de la fiche sur l'ancienne base ; ÷ 1,5 comme les dividendes des avis affichés"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2017,
+   "bnpa": 183.92,
+   "avant": 275.88,
+   "doc": "BOA MALI : avis de la BRVM, droit d'attribution (27/08/2024) et admission des actions nouvelles (22/10 et 12/11/2024)",
+   "pourquoi": "attribution gratuite d'actions du 28/08/2024 (1 action nouvelle pour 2 anciennes, ×1,5 ; avis BRVM « Droit d'attribution », actions nouvelles admises en octobre et novembre 2024) non reportée sur les données par action de 2015 à 2018 de la fiche, alors que les dividendes le sont : ÷ 1,5 (même base que les dividendes affichés)"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2017,
+   "champ": "dividende",
+   "bnpa": 193.33,
+   "avant": 290.0,
+   "doc": "même attribution du 28/08/2024",
+   "pourquoi": "dividende de la fiche sur l'ancienne base ; ÷ 1,5 comme les dividendes des avis affichés"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2018,
+   "bnpa": 273.33,
+   "avant": 410.0,
+   "doc": "BOA MALI : avis de la BRVM, droit d'attribution (27/08/2024) et admission des actions nouvelles (22/10 et 12/11/2024)",
+   "pourquoi": "attribution gratuite d'actions du 28/08/2024 (1 action nouvelle pour 2 anciennes, ×1,5 ; avis BRVM « Droit d'attribution », actions nouvelles admises en octobre et novembre 2024) non reportée sur les données par action de 2015 à 2018 de la fiche, alors que les dividendes le sont : ÷ 1,5 (même base que les dividendes affichés)"
+  },
+  {
+   "t": "BOAM",
+   "ex": 2018,
+   "champ": "dividende",
+   "bnpa": 180.67,
+   "avant": 271.0,
+   "doc": "même attribution du 28/08/2024",
+   "pourquoi": "dividende de la fiche sur l'ancienne base ; ÷ 1,5 comme les dividendes des avis affichés"
+  }
+ ]
+}

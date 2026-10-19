@@ -21,6 +21,28 @@ TOL_PX = 0.001    # cours : 0,1 %
 TOL_BNPA = 0.02   # BNPA : 2 %
 
 
+# écarts déjà expliqués par un document officiel (vérifiés) : rappelés dans le détail, sans faire passer le contrôle à l'orange.
+# Clé : (titre, « titres » ou « flottant »). Retirer une ligne dès que les sources concordent à nouveau.
+EXPLIQUES = {
+    ("SAFC", "titres"): "augmentation de capital avec droits, actions nouvelles admises à la cote le 25/07/2026 (avis BRVM) : "
+                        "11 869 750 titres ; l'avis du flottant (chiffres au 31/12/2025) et la fiche sont antérieurs",
+    ("SAFC", "flottant"): "même augmentation de capital : l'avis du flottant (au 31/12/2025) et la fiche sont antérieurs",
+    ("ETIT", "bnpa"): "BNPA officiel part du groupe (états financiers IFRS : 10,00 FCFA en 2025, 4,56 en 2019), résultat net de la "
+                      "série total, intérêts minoritaires compris",
+}
+
+
+def _expl(out, kind, D_):
+    """sépare les écarts expliqués (rappelés) des écarts à vérifier"""
+    a, e = [], []
+    for x in out:
+        (e if (x.split(" ", 1)[0], kind) in EXPLIQUES else a).append(x)
+    ts = list(dict.fromkeys(x.split(" ", 1)[0] for x in e))  # (un titre une seule fois, avec le nombre d'exercices)
+    note = ("" if not e else " ; déjà expliqués : " + "; ".join(
+        f"{t} ({EXPLIQUES[(t, kind)]}{'' if sum(x.startswith(t + ' ') for x in e) < 2 else ', ' + str(sum(x.startswith(t + ' ') for x in e)) + ' exercices'})" for t in ts))
+    return a, note
+
+
 def _jl(D, f):
     try:
         with open(os.path.join(D, f), encoding="utf8") as fh:
@@ -79,8 +101,9 @@ def verifier(R, D, boc=None):
             vv = {k: x for k, x in v.items() if x}
             if len(vv) >= 2 and max(vv.values()) / min(vv.values()) - 1 > TOL_SH:
                 out.append(f"{t} " + ", ".join(f"{k} {_f(x)}" for k, x in vv.items()))
+        out, note = _expl(out, "titres", D)
         R.add("Fiche / BRVM : nombre de titres", "orange" if out else "vert",
-              (f"{len(out)} écart(s) à vérifier sur les documents : " + _liste(out)) if out else f"{len(by)} actions, fiche, brvm.org et avis concordent")
+              ((f"{len(out)} écart(s) à vérifier sur les documents : " + _liste(out)) if out else f"{len(by)} actions, fiche, brvm.org et avis concordent") + note)
         out, out2 = [], []
         for t in sorted(by):
             m = M.get(t) or {}
@@ -89,10 +112,12 @@ def verifier(R, D, boc=None):
                 out.append(f"{t} fiche {_f(a)} %, brvm.org {_f(b)} %")
             if b is not None and c is not None and abs(b - c) > TOL_FLT:
                 out2.append(f"{t} brvm.org {_f(b)} %, avis {_f(c)} %")
+        out, note = _expl(out, "flottant", D)
+        out2, note2 = _expl(out2, "flottant", D)
         R.add("Fiche / BRVM : flottant (fiche / brvm.org)", "orange" if out else "vert",
-              (f"{len(out)} écart(s) : " + _liste(out)) if out else "concordent")
+              ((f"{len(out)} écart(s) : " + _liste(out)) if out else "concordent") + note)
         R.add("Fiche / BRVM : flottant (brvm.org / avis officiel du flottant)", "orange" if out2 else "vert",
-              (f"{len(out2)} écart(s), à vérifier sur l'avis (le flottant affiché est celui de brvm.org) : " + _liste(out2, 12)) if out2 else "concordent")
+              ((f"{len(out2)} écart(s), à vérifier sur l'avis (le flottant affiché est celui de brvm.org) : " + _liste(out2, 12)) if out2 else "concordent") + note2)
     if not SC.get("rows"):
         R.add("Fiche / BRVM : secteur", "orange", "secteurs officiels pas encore lus (lecture chaque soir sur brvm.org)")
     else:
@@ -159,8 +184,9 @@ def verifier(R, D, boc=None):
                 out.append(f"{t} {y} BNPA {_f(v)} pour un résultat de {_f(rn, 0)} M (signe)")
             elif v and not (0.8 < rn * 1e6 / v / sh < 1.25):
                 out.append(f"{t} {y} BNPA {_f(v)}, résultat ÷ titres {_f(rn * 1e6 / sh)}")
+    out, note = _expl(out, "bnpa", D)
     R.add("BNPA / résultat net ÷ titres", "orange" if out else "vert",
-          (f"{len(out)} exercice(s) à vérifier sur les documents : " + _liste(out, 12)) if out else "concordants (exercices depuis 2015)")
+          ((f"{len(out)} exercice(s) à vérifier sur les documents : " + _liste(out, 12)) if out else "concordants (exercices depuis 2015)") + note)
 
     # 6. dividendes : brut × (1 − impôt) = net
     DV = _jl(D, "dividends.json") or []

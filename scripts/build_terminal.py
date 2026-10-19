@@ -972,6 +972,27 @@ def main():
                 divs.append({"ticker": sym, "dividende": r["div"], "date_paiement": r["div_d"], "exercice": pd_.year - 1, "source": "BOC"})
                 have_pay[sym].append(pd_)
                 boc_chk["div_added"] += 1
+    # BNPA d'un exercice corrigé après vérification sur le document (seed/corrections_bnpa.json) : appliqué seulement si la
+    # fiche donne encore la valeur fautive notée (« avant ») ; une valeur déjà différente est laissée et signalée
+    try:
+        cb_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "corrections_bnpa.json"), encoding="utf8"))
+        done_, skip_ = [], []
+        for c_ in cb_.get("rows") or []:
+            sb_ = ((fund.get(c_["t"]) or {}).get("series") or {}).get(c_.get("champ") or "bnpa")
+            y_ = str(c_["ex"])
+            if sb_ is None or y_ not in sb_:
+                continue
+            if sb_[y_] is not None and abs(sb_[y_] - c_["avant"]) <= max(.02, abs(c_["avant"]) * .001):
+                sb_[y_] = c_["bnpa"]
+                done_.append(f'{c_["t"]} {y_}' + (f' ({c_["champ"]})' if c_.get("champ") else ""))
+            elif sb_[y_] is not None and abs(sb_[y_] - c_["bnpa"]) > .02:
+                skip_.append(f'{c_["t"]} {y_} ({sb_[y_]:g})')
+        if done_:
+            log("données par action corrigées d'après les documents :", ", ".join(done_))
+        if skip_:
+            log("BNPA à revoir (la fiche a changé depuis la correction) :", ", ".join(skip_))
+    except Exception as e:  # noqa: BLE001
+        log("corrections de BNPA illisibles :", e)
     # Fractionnements (avis BRVM) : cours, dividendes et données par action ramenés sur la base des actions actuelles.
     # Un fractionnement n'est appliqué qu'une fois effectif (date d'effet atteinte par les cours) et seulement s'il manque dans la source.
     SPL = collections.defaultdict(list)

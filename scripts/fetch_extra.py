@@ -3724,8 +3724,9 @@ def run_flottant(raw, site_data):
         return
     r = cand[0]
     path = os.path.join(raw, "flottant.json")
+    tpath = os.path.join(raw, "flottant_ocr.txt")  # texte lu dans l'avis, gardé pour vérifier une valeur sur le document
     prev = json.load(open(path, encoding="utf8")) if os.path.exists(path) else {}
-    if prev.get("u") == r["u"] and prev.get("rows"):
+    if prev.get("u") == r["u"] and prev.get("rows") and os.path.exists(tpath):
         note("flottant")
         return  # déjà lu
     summ = os.path.join(site_data, "summary.json")
@@ -3744,6 +3745,11 @@ def run_flottant(raw, site_data):
         for f in sorted(glob.glob(os.path.join(td, "pg*.png"))):
             txt += subprocess.run(["tesseract", f, "-", "-l", "eng", "--psm", "6"], capture_output=True, timeout=180).stdout.decode("utf8", "replace") + "\n"
     rows = flottant_parse(txt, tickers, names)
+    try:
+        with open(tpath, "w", encoding="utf8") as fh:
+            fh.write(f"{r['u']}\n{r['d']}\n\n{txt}")
+    except OSError:
+        pass
     asof = re.search(r"au (\d{1,2}(?:er)? \w+ \d{4})", txt, re.I)
     save(path, {"u": r["u"], "d": r["d"], "ti": r.get("ti"), "asof": asof.group(1) if asof else None, "rows": rows, "n_univers": len(tickers), "ts": int(time.time())})
     note("flottant", ok=bool(rows), err=None if rows else "aucune ligne lisible")

@@ -210,6 +210,16 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      pages et documents de brvm.org) ; la fiche (Sika) ne sert que pour ce qu'on n'a pas pu reconstituer depuis la BRVM (scan
      illisible, document manquant) ; tout écart entre les deux est signalé par le contrôle du matin avec les valeurs côte à
      côte, et vérifié sur le document. Raison : une mauvaise lecture ne passerait pas inaperçue devant les investisseurs.
+     **Étape 1 faite le 19/10** (mesure, `outils/secours/mesure.py`, rapport `docs/SECOURS_MESURE.md`) — ce qui ne vient que
+     de la base tierce : (a) **cours** : 23 831 séances d'avant le premier bulletin officiel lu (décembre 2013, de 2006 à 2013)
+     et 274 séances sans aucun bulletin lu depuis (226 en 2014) ; (b) **fondamentaux** : exercices non couverts par nos
+     comptes vérifiés : 30 résultats nets, 55 chiffres d'affaires, 77 capitaux propres, 30 totaux de bilan (surtout 2021-2025
+     de BBGC, BOAC, BOAN, CBIBF, LNBB, SIVC… : documents publiés mais pas encore lus ou pas vérifiés ; 4 280 documents « non
+     vérifié ») ; BNPA et PER suivent le résultat net ; (c) **dividendes** : tous les 328 versements de la base sont retrouvés
+     dans nos avis, calendriers ou bulletins ; (d) **événements** : la liste d'avant 2016 (2 241) ne vient que de la base et de
+     l'archive web ; (e) **fiche** : secteur, titres et flottant viennent de brvm.org ; nom, pays et « banque » encore de la base
+     (stables, à recopier). Suite : relire les 274 bulletins manquants, lire et vérifier les comptes manquants, retrouver les
+     bulletins 2006-2013 dans l'archive web.
      **Fait le 19/10** : contrôle automatique de ces écarts (`outils/controle/coherence.py`, données
      `miroir.json` et `secteurs.json`, secteurs officiels lus chaque soir sur brvm.org). Nombre de titres et flottant affichés :
      page « Capitalisations » de brvm.org (la fiche seulement si elle manque) ; secteur affiché : celui de la BRVM depuis le
@@ -243,10 +253,13 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      l'exceptionnel, 564,96, au lieu du dividende annuel ; acompte et solde non additionnés pour Filtisac 2015-2016 et Servair
      2018) ; FA additionne désormais les versements ordinaires ; contrôle B19.
      Sauts de cours anciens à vérifier sur les avis : SAFCA 22/02/2012 (+40 %), SOGB 01/06/2011 (+43 %).
-   - **À vérifier sur les documents (trouvé le 19/10)** : BNPA de la fiche qui ne concorde pas avec le résultat net ÷ nombre de
-     titres : ORGT 2018 (428,92 pour 12 491 M, soit 0,42 fois les titres), SCRC 2019 (BNPA positif, résultat −5 339 M),
-     UNLC 2020 (−2 866 pour −2 410 M), ABJC 2021 (0,70 fois), BOAM 2015-2018 (0,56 fois : augmentation de capital ?), ETIT
-     (comptes en dollars, BNPA en cents ?). Ces BNPA servent à la distribution et au PER de chaque exercice (DVD, FA).
+   - **BNPA vérifiés sur les documents et corrigés le 19/10** (`seed/corrections_bnpa.json`) : ORGT 2018 (179,95 au lieu de
+     428,92 : référentiel SYSCOHADA mêlé au résultat IFRS), ABJC 2021 (61,40 ; BNPA publié 61), UNLC 2020 (-262,38 au lieu de
+     -2 866), SCRC 2019 (signe), BOAM 2015-2018 (BNPA et dividendes de la fiche ÷ 1,5 : attribution gratuite d'août 2024 non
+     reportée ; distribution 2017 : 105 % au lieu de 70 %). ETIT : juste (BNPA officiel part du groupe, résultat de la série
+     total). **Nouvel écart** : ORGT a 69 986 131 titres dans ses états financiers 2024 et 2025 et dans l'avis du flottant, mais
+     la page « Capitalisations » de brvm.org (affichée, source principale) donne encore 69 415 031 : capitalisation affichée
+     0,8 % trop basse ; à trancher par le propriétaire. SAFC : écart expliqué (augmentation de capital de juillet 2026, page juste).
      Filtisac 2016 : deux versements, justes (avis n° 006-2018 : « dividendes complémentaires exercice 2016 », 09/01/2018).
      Filtisac 2015 : le second versement (375, 23/12/2016) ne vient que d'un bulletin de la cote, sans avis retrouvé : à vérifier
      (il s'additionne au dividende 2015 dans les aristocrates). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
