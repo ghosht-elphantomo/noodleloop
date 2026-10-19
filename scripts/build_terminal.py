@@ -853,13 +853,16 @@ def main():
                         x["usd_c"], x["fx"] = o["usd_c"], o.get("fx")
                     if o.get("kind") == "exceptionnel":
                         x["exc"] = 1
+                    if o.get("brut") and o.get("irvm") is not None:  # (brut et taux de l'impôt écrits dans l'avis ou le calendrier)
+                        x["brut_avis"], x["irvm_avis"] = o["brut"], o["irvm"]
                     if o.get("px") and o.get("px_d"):
                         x["px_raw"], x["px_d"] = o["px"], o["px_d"]
                 else:
                     nx = {"ticker": o["t"], "dividende": o["net"], "exercice": o.get("ex"), "date_annonce": o.get("pub"),
                           "date_detachement": o.get("det"), "date_paiement": o.get("pay"), "source": "BRVM", "avis": 1,
                           **({"weak": 1} if o.get("src") in ("bulletin", "revue trimestrielle") else {}),
-                          **({"usd_c": o["usd_c"], "fx": o.get("fx")} if o.get("fx") or o.get("boc_fcfa") else {}), **({"exc": 1} if o.get("kind") == "exceptionnel" else {}), **({"px_raw": o["px"], "px_d": o["px_d"]} if o.get("px") and o.get("px_d") else {})}
+                          **({"usd_c": o["usd_c"], "fx": o.get("fx")} if o.get("fx") or o.get("boc_fcfa") else {}), **({"exc": 1} if o.get("kind") == "exceptionnel" else {}), **({"px_raw": o["px"], "px_d": o["px_d"]} if o.get("px") and o.get("px_d") else {}),
+                          **({"brut_avis": o["brut"], "irvm_avis": o["irvm"]} if o.get("brut") and o.get("irvm") is not None else {})}
                     divs.append(nx)
                     byt[o["t"]].append(nx)
                     used.add(id(nx))
@@ -1677,9 +1680,15 @@ def main():
     fmeta = {k: {"nom": v.get("nom"), "secteur": v.get("secteur"), "shares": v.get("nb_titres"), "float": v.get("flottant"), "ex": v.get("exercice"),
                  "series": {s: v["series"][s] for s in keep if v.get("series", {}).get(s)}}
              for k, v in fund.items() if k != "_meta"}
+    def brut_(x):  # dividende brut et taux de l'impôt de l'avis, cohérents avec le net publié (sinon rien)
+        b_, r_, n_ = x.get("brut_avis"), x.get("irvm_avis"), x.get("dividende")
+        if not b_ or r_ is None or not n_ or not 0 <= r_ < 50:
+            return {}
+        b_ = b_ / (x.get("ajust") or 1.0)
+        return {"brut": round(b_, 4), "irvm": r_} if abs(b_ * (1 - r_ / 100) - n_) <= max(.6, n_ * .002) else {}
     dmeta = [{"t": x.get("ticker"), "ex": x.get("exercice"), "dps": x.get("dividende"), "ann": x.get("date_annonce"), "det": x.get("date_detachement"),
               "pay": x.get("date_paiement"), "src": x.get("source"), **({"dps0": x["dividende_publie"], "adj": x["ajust"]} if x.get("ajust") else {}),
-              **({"cal": 1} if x.get("cal") else {}), **({"usd": x["usd_c"], **({"fx": x["fx"]} if x.get("fx") else {"fxb": 1})} if x.get("usd_c") else {}), **({"exc": 1} if x.get("exc") else {})} for x in divs if x.get("ticker")]
+              **({"cal": 1} if x.get("cal") else {}), **({"usd": x["usd_c"], **({"fx": x["fx"]} if x.get("fx") else {"fxb": 1})} if x.get("usd_c") else {}), **({"exc": 1} if x.get("exc") else {}), **brut_(x)} for x in divs if x.get("ticker")]
     # dates incohérentes entre elles : une annonce postérieure au détachement ou au paiement (date de mise en ligne d'un ancien avis)
     # et un paiement antérieur au détachement (date mal lue) sont retirés plutôt qu'affichés faux
     for x in dmeta:

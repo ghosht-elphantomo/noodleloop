@@ -58,6 +58,27 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 
+## État au 19/10/2026, 20 h 29
+
+- **Publié depuis 19 h 15** (chaque fois après le parcours complet du site : 418 pages et onglets, iPhone 100 pages, QLAB 48 × 3,
+  aucune erreur) :
+  - `83df9265` : PORTF lit aussi les photos, captures d'écran et PDF scannés (Tesseract.js 7.0.0 et pdf.js 6.3.289 « legacy »,
+    gratuits, hébergés sur le site dans `public/lib/ocr/`, rien n'est envoyé ailleurs).
+  - `07929702` : contrôles « bugs corrigés : ne doivent jamais revenir » (`outils/controle/non_retour.py`, liste dans
+    `outils/controle/BUGS_CORRIGES.md`) ; règle : chaque bug corrigé reçoit son contrôle.
+  - `64e9ffb5`, `f7bed61a`, `b84ce361`, `665fd079` : textes du propriétaire sur la migration deux dépôts (section ci-dessous).
+  - `eebe3c4f` : événements d'un document déposé sous une autre société rattachés à la bonne (contrôle B16).
+  - `49ef8052` : taux de distribution sur le BNPA du même exercice (contrôle B18 ; voir « Reste à faire »).
+  - Dernier commit du soir : DIVC, brut et retenue de l'avis ; FA, dividende de chaque exercice = versements ordinaires
+    additionnés (contrôle B19). Essai complet avant publication : construction locale entière avec l'ancien et le nouveau code
+    sur les mêmes données, seuls les champs voulus changent (`pay` sur 48 titres, `brut` et `irvm` sur 43 versements, FA de
+    Filtisac et Servair).
+- **Vérifié** : DES en ligne (48 sur 48) ; `qlabp/` absent des données ; événement SGB CI 2011 rattaché à SGBC en production ;
+  déploiements de production réussis. Contrôle du 19/10 (17:50 UTC) : orange seulement à cause de B10 (lecture des comptes en
+  échec le 19/10 à 04:43 UTC, déjà corrigée) ; repasse au vert quand ce passage sort de la fenêtre de 24 h.
+- **Fluidité et vitesse** (point 3) : aucune précision écrite sur ce qui est attendu ; à demander au propriétaire avant de
+  commencer.
+
 ## État au 19/10/2026, 19 h 15
 
 - **Publié le 19/10/2026 (demandes du propriétaire)**, chaque fois après le parcours complet du site (avant / après) :
@@ -158,11 +179,13 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
    - Fait le 19/10 : BRVM (Saison des résultats ; Publications attendues et retards ; Exposition pays) ; DIVC (Aristocrates du
      dividende ; Dividende net et encaissements des positions de PORTF) ; fonction BANK (comparaison du dernier exercice,
      historique sur 10 ans) ; plus aucun émoji sur iPhone.
-   - Fait le 19/10 : PORT, import de relevés et sauvegarde (photos non lues, voir ci-dessus) ; DES, présentations des 48
-     sociétés réécrites et vérifiées (à vérifier dans DES après le passage du soir du 19/10).
-   - Reste pour DIVC : dividende brut et retenue à la source par pays — le net est publié partout ; le brut et l'impôt
-     n'existent que sur la branche `dividendes` (avis lus), à faire passer dans `dividends.json` (changement de la
-     construction) avant de les afficher ; taux de chaque pays à vérifier sur un texte officiel.
+   - Fait le 19/10 : PORT, import de relevés et sauvegarde (photos et PDF scannés lus depuis `83df9265`) ; DES, présentations des 48
+     sociétés réécrites et vérifiées (en ligne, 48 sur 48, vérifié le 19/10).
+   - DIVC, dividende brut et retenue : **fait le 19/10 pour ce que disent les avis** (brut et taux IRVM des personnes physiques
+     passés dans `dividends.json` quand l'avis ou le calendrier les écrit et qu'ils redonnent le net ; colonnes « Brut / titre »
+     et « Retenue » de l'onglet « Dividende net et encaissements », « — » sinon). Aujourd'hui seules les sociétés ivoiriennes
+     (exercices 2024-2025, 43 versements) les ont : les avis des autres pays ne donnent que le net. Reste : taux de chaque pays,
+     à vérifier sur un texte officiel (code des impôts de chaque État, taux en vigueur à chaque date) avant tout calcul du brut.
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
    - **Documents déposés sous la page d'une autre société (vu le 19/10, corrigé le 19/10)** : la Bourse range parfois un
@@ -178,13 +201,17 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      lus, le résultat net 2024 était de 18 595 M contre 466 M en 2025. **Bug trouvé et corrigé le 19/10** : la distribution (3 516 %) divisait le
      dividende de 2024 par le BNPA de 2025 ; elle se calcule désormais sur le BNPA du même exercice (88 %). Même erreur sur
      12 titres (BNBC 4 451 % au lieu de 55 %, BOAN 1 063 % au lieu de 87 %, UNLC 1 768 % au lieu de rien…) ; contrôle B18.
+     **Second bug trouvé et corrigé le 19/10** : FA gardait un seul versement par exercice (Filtisac 2024 affichait
+     l'exceptionnel, 564,96, au lieu du dividende annuel ; acompte et solde non additionnés pour Filtisac 2015-2016 et Servair
+     2018) ; FA additionne désormais les versements ordinaires ; contrôle B19.
      Sauts de cours anciens à vérifier sur les avis : SAFCA 22/02/2012 (+40 %), SOGB 01/06/2011 (+43 %).
    - **À vérifier sur les documents (trouvé le 19/10)** : BNPA de la fiche qui ne concorde pas avec le résultat net ÷ nombre de
      titres : ORGT 2018 (428,92 pour 12 491 M, soit 0,42 fois les titres), SCRC 2019 (BNPA positif, résultat −5 339 M),
      UNLC 2020 (−2 866 pour −2 410 M), ABJC 2021 (0,70 fois), BOAM 2015-2018 (0,56 fois : augmentation de capital ?), ETIT
      (comptes en dollars, BNPA en cents ?). Ces BNPA servent à la distribution et au PER de chaque exercice (DVD, FA).
-     Filtisac 2015 et 2016 : deux versements chacun (dont 23/12/2016 et 09/01/2018 : acomptes de l'exercice suivant ?), à
-     vérifier sur les avis (ils s'additionnent dans les aristocrates).
+     Filtisac 2016 : deux versements, justes (avis n° 006-2018 : « dividendes complémentaires exercice 2016 », 09/01/2018).
+     Filtisac 2015 : le second versement (375, 23/12/2016) ne vient que d'un bulletin de la cote, sans avis retrouvé : à vérifier
+     (il s'additionne au dividende 2015 dans les aristocrates). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
 3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
 4. Audit complet.
 5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,

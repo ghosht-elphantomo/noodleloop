@@ -317,6 +317,33 @@ def b18(ctx):
     return ("rouge", f"{len(out)} taux faux : " + "; ".join(out[:8])) if out else ("vert", f"{len(L)} actions, taux du même exercice")
 
 
+@bug("B19", "2026-10-19", "Dividende d'un exercice remplacé par un seul de ses versements (FA)",
+     "Dans FA, le dividende par action d'un exercice gardait le dernier versement lu : Filtisac 2024 affichait l'exceptionnel "
+     "(564,96) au lieu du dividende annuel (1 161,6) ; acompte et solde n'étaient pas additionnés. Corrigé le 19/10/2026.",
+     "pour chaque action BRVM, dividende de FA = somme des versements ordinaires de l'exercice (dividends.json, exceptionnels à part)")
+def b19(ctx):
+    import collections
+    S = jl(ctx["D"], "summary.json") or {}
+    D = jl(ctx["D"], "dividends.json") or []
+    tot = collections.defaultdict(float)
+    for x in D:
+        if x.get("t") and x.get("ex") and x.get("dps") and not x.get("exc"):
+            tot[(x["t"], int(x["ex"]))] += x["dps"]
+    out, n = [], 0
+    for s in S.get("secs") or []:
+        if s.get("mkt") != "BRVM" or s.get("cls") != "Equity":
+            continue
+        f = jl(ctx["D"], f"fa/{s['id']}.json")
+        Y = (f or {}).get("Y") or {}
+        for y, v in zip(Y.get("y") or [], Y.get("dps") or []):
+            a = tot.get((s["id"], int(y)))
+            if a and v is not None:
+                n += 1
+                if abs(v / a - 1) > 0.005:
+                    out.append(f"{s['id']} {y} : {v:g} (versements {a:g})")
+    return ("rouge", f"{len(out)} exercices faux : " + "; ".join(out[:8])) if out else ("vert", f"{n} exercices concordants")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

@@ -1494,10 +1494,12 @@ def fundamentals(extra, out, files, secs_by, fund, fcf_path, dmeta, analyst, log
         jsave(os.path.join(out, "fa", t + ".json"), rnd_tree({"id": t, "mkt": "US", **r}))
         idx.append({"id": t, "mkt": "US", "grp": s.get("grp"), **{k: r.get(k) for k in keep}, **({"mcap": r["mcap_usd"]} if r.get("mcap_usd") else {}), **stability(r)})
     # BRVM
+    # dividende de chaque exercice : ses versements ordinaires additionnés (acompte et solde, dividende complémentaire), sans
+    # l'exceptionnel (avant le 19/10/2026, le dernier versement lu remplaçait les autres : Filtisac 2024 affichait l'exceptionnel)
     dps = collections.defaultdict(dict)
     for x in dmeta:
-        if x.get("t") and x.get("ex") and x.get("dps"):
-            dps[x["t"]][int(x["ex"])] = x["dps"]
+        if x.get("t") and x.get("ex") and x.get("dps") and not x.get("exc"):
+            dps[x["t"]][int(x["ex"])] = dps[x["t"]].get(int(x["ex"]), 0) + x["dps"]
     for sid, s in secs_by.items():
         if s.get("mkt") != "BRVM" or s.get("cls") != "Equity":
             continue
@@ -1643,8 +1645,8 @@ def anomalies(out, files, secs_by, log):
         exd = {}
         for x in by_dv.get(sid, []):
             k = (x.get("det") or x.get("pay") or "")[:10]
-            if k:
-                exd[int(k.replace("-", ""))] = x["dps"]
+            if k:  # (deux versements détachés le même jour, annuel et exceptionnel : leur somme)
+                exd[int(k.replace("-", ""))] = exd.get(int(k.replace("-", "")), 0) + x["dps"]
         r = [c[i] / c[i - 1] - 1 if c[i - 1] else 0 for i in range(1, n)]
         # 1. variations de cours hors norme (10 dernières séances), seuil BRVM de ±7,5 %
         for i in range(max(61, n - 10), n):
