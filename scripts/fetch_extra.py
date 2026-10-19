@@ -3691,7 +3691,9 @@ def run_secteurs(raw):
             p_.feed(get(f"https://www.brvm.org/fr/cours-actions/{code}", tries=2, timeout=40).decode("utf8", "replace"))
             n_ = 0
             for r in p_.rows:
-                if r and re.fullmatch(r"[A-Z]{3,6}", (r[0] or "").strip()):
+                # (tableau des cours seulement, au moins 7 colonnes comme dans la lecture du relevé : les petits tableaux
+                # « plus fortes hausses / baisses » affichés sur chaque page ne comptent pas)
+                if len(r) >= 7 and re.fullmatch(r"[A-Z]{3,6}", (r[0] or "").strip()):
                     t_ = r[0].strip()
                     got[t_] = lab
                     seen[t_] += 1
