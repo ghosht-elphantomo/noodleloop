@@ -677,3 +677,11 @@ table.t.eqt td{line-height:24px}
 #imT .imst{white-space:normal;max-width:340px;font-size:12px;margin-top:2px}
 #imT select{max-width:240px}
 @media (max-width:700px){#imT .imsrc,#imT .imst{max-width:150px}#imT select{max-width:150px}#imT input.ofld{width:62px!important}#imT th{white-space:normal}}
+/* animations douces (réglage, désactivé par défaut ; coupées si l'appareil demande de réduire les animations) */
+@keyframes fqtIn{from{opacity:0}to{opacity:1}}
+@keyframes fqtDraw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+html.anim #main>*{animation:fqtIn .22s ease-out both}
+html.anim #main canvas{animation:fqtDraw .6s cubic-bezier(.2,.7,.2,1) both}
+html.anim .tb,html.anim .fk,html.anim #ptabs button{transition:background-color .15s,color .15s,border-color .15s}
+@media (prefers-reduced-motion:reduce){html.anim *{animation:none!important;transition:none!important}}
+@media print{html.anim *{animation:none!important}}

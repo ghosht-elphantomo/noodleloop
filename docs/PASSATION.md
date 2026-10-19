@@ -82,7 +82,7 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - **Vérifié** : DES en ligne (48 sur 48) ; `qlabp/` absent des données ; événement SGB CI 2011 rattaché à SGBC en production ;
   déploiements de production réussis. Contrôle du 19/10 (17:50 UTC) : orange seulement à cause de B10 (lecture des comptes en
   échec le 19/10 à 04:43 UTC, déjà corrigée) ; repasse au vert quand ce passage sort de la fenêtre de 24 h.
-- **Fluidité et vitesse** (point 3), précisé par le propriétaire le 19/10 : **les deux** — ouverture plus rapide (écrans et
+- **Fluidité et vitesse** (point 3, fait le soir même), précisé par le propriétaire le 19/10 : **les deux** — ouverture plus rapide (écrans et
   données déjà ouverts gardés en mémoire, préchargement) et animations douces (transitions entre écrans, graphiques qui se
   dessinent, chiffres qui défilent), chacune avec son réglage, désactivées par défaut, sans rien changer aux chiffres.
 
@@ -239,8 +239,9 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      Filtisac 2016 : deux versements, justes (avis n° 006-2018 : « dividendes complémentaires exercice 2016 », 09/01/2018).
      Filtisac 2015 : le second versement (375, 23/12/2016) ne vient que d'un bulletin de la cote, sans avis retrouvé : à vérifier
      (il s'additionne au dividende 2015 dans les aristocrates). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
-3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage). Précisé le 19/10 : vitesse (mémoire des
-   écrans et données, préchargement) et animations douces, chacune avec son réglage, désactivées par défaut.
+3. **Fluidité et vitesse — fait le 19/10** : réglages « Ouverture rapide » (préchargement des écrans suivants) et « Animations
+   douces » (fondu, graphiques qui se dessinent, chiffres qui défilent), désactivés par défaut (menu 98 « Réglages ») ; voir le
+   guide. À voir avec le propriétaire : les activer par défaut ou non, une fois essayés.
 4. **Audit complet — premier passage fait le 19/10** (code, automatisations et données, lecture seule, par un agent séparé
    qui n'avait pas fait le travail ; rapport détaillé avec fichier et ligne repris ci-dessous). Points sains : aucun secret,
    aucun e-mail ni lien GitHub dans la page, données presque toujours échappées, aucune automatisation lancée par une demande

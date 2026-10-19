@@ -141,7 +141,7 @@ const cls = v => v > 0 ? 'up' : v < 0 ? 'dn' : 'fl';
 const deent = s => { if (s == null) return ''; s = String(s); if (!/&[#a-z0-9]+;/i.test(s)) return s; const t = document.createElement('textarea'); t.innerHTML = s; return t.value; };
 
 /* ---------- données ---------- */
-async function getJSON(path) { if (!Q.json[path]) Q.json[path] = fetch(Q.base + path, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(path + ' ' + r.status); return r.json(); }); return Q.json[path]; }
+async function getJSON(path) { pfRec(path); if (!Q.json[path]) Q.json[path] = fetch(Q.base + path, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(path + ' ' + r.status); return r.json(); }); return Q.json[path]; }
 async function series(id) {
   if (!Q.ser[id]) Q.ser[id] = getJSON('s/' + id.replace('.', '_') + '.json').then(b => {
     const n = b.d.length; const s = { id, f: b.f, x: b.d, d: b.d.map(i2s), c: b.c, o: b.o || b.c, h: b.h || b.c, l: b.l || b.c, v: b.v || new Array(n).fill(0), val: b.val || null, div: b.div || new Array(n).fill(0) };
@@ -305,9 +305,52 @@ function setActs(acts) { PG.acts = acts || []; renderRbar(); }
 function setTitle(t) { PG.title = t; renderRbar(); }
 function tabState(fn, def) { if (ST.tab[fn] == null) ST.tab[fn] = def; return ST.tab[fn]; }
 /* 96) Actions, 97) Sortie, 98) Réglages : la barre rouge Bloomberg */
+/* ---------------------------------------------------------------- fluidité et vitesse (réglages, désactivés par défaut)
+   Ouverture rapide : chaque fonction retient les fichiers qu'elle lit (modèle par titre, {t}) ; après chaque écran, pendant que
+   l'appareil est libre, et au survol d'un lien de fonction, les fichiers des écrans suivants sont lus à l'avance (mêmes
+   fichiers, mêmes chiffres : seul le temps d'ouverture change). Animations douces : apparition des écrans, graphiques qui se
+   dessinent, chiffres qui défilent jusqu'à leur valeur exacte (texte d'origine remis à la fin) ; coupées si l'appareil demande
+   de réduire les animations. */
+function reduceMotion() { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
+const PF = (() => { let m = {}; try { m = JSON.parse(localStorage.getItem('fqt_pf') || '{}') || {}; } catch (e) { } return { map: m, busy: false, t: null, cur: null }; })();
+const PF_SKIP = /^(live|quotes|news|summary|session|version)\.json$/;
+function pfRec(path) {
+  if (PF.busy || !PF.cur || PF_SKIP.test(path)) return;
+  const s = ST.sec || '', s_ = s.replace('.', '_'); let p = path;
+  if (s && path.includes('/' + s_ + '.')) p = path.replace('/' + s_ + '.', '/{t_}.'); else if (s && path.includes('/' + s + '.')) p = path.replace('/' + s + '.', '/{t}.');
+  const L = PF.map[PF.cur] = PF.map[PF.cur] || []; if (L.includes(p)) return; L.push(p); if (L.length > 12) L.shift();
+  clearTimeout(PF.t); PF.t = setTimeout(() => { try { localStorage.setItem('fqt_pf', JSON.stringify(PF.map)); } catch (e) { } }, 1500);
+}
+function pfLoad(fn, sid) {
+  if (!PREF.fast || !fn) return 0; const L = PF.map[fn] || []; let n = 0; const s = sid || ST.sec || '';
+  for (const p of L) {
+    if (p.includes('{t') && !s) continue; const path = p.replace('{t_}', s.replace('.', '_')).replace('{t}', s);
+    if (Q.json[path]) continue; n++;
+    PF.busy = true; try { getJSON(path).catch(() => { delete Q.json[path]; }); } finally { PF.busy = false; } // (échec : relu normalement à l'ouverture)
+  }
+  return n;
+}
+function pfIdle() {
+  if (!PREF.fast) return; try { if (navigator.connection && navigator.connection.saveData) return; } catch (e) { }
+  const run = () => { let n = 0; for (const f of (REL[ST.fn] || []).slice(0, 5)) { if (n >= 10) break; n += pfLoad(f, ST.sec); } };
+  if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 2500 }); else setTimeout(run, 800);
+}
+function countUp(m, seq) {
+  if (!document.documentElement.classList.contains('anim')) return;
+  const RX = /^([+\u2212-]?)(\d{1,3}(?:[ \u00a0\u202f]\d{3})*|\d+)(?:,(\d+))?(\s?%)?$/;
+  const els = [...m.querySelectorAll('.kv2 b')].filter(b => !b.children.length && RX.test(b.textContent.trim())).slice(0, 40); if (!els.length) return;
+  const items = els.map(b => { const t0 = b.textContent, x = t0.trim().match(RX), sep = (x[2].match(/[ \u00a0\u202f]/) || [' '])[0], dec = x[3] ? x[3].length : 0;
+    return { b, t0, sign: x[1], sep, dec, pct: x[4] || '', v: parseFloat(x[2].replace(/[ \u00a0\u202f]/g, '') + (x[3] ? '.' + x[3] : '')) }; });
+  const fmt = (it, v) => { const [a, d] = v.toFixed(it.dec).split('.'); return it.sign + a.replace(/\B(?=(\d{3})+(?!\d))/g, it.sep) + (d ? ',' + d : '') + it.pct; };
+  const t0 = performance.now(), D = 550;
+  const step = now => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+    for (const it of items) { if (!it.b.isConnected) continue; it.b.textContent = k < 1 ? fmt(it, it.v * e) : it.t0; }
+    if (k < 1 && seq === renderSeq) requestAnimationFrame(step); else for (const it of items) if (it.b.isConnected) it.b.textContent = it.t0; };
+  requestAnimationFrame(step);
+}
 const PREF = (() => { try { return JSON.parse(localStorage.getItem('fqt_pref') || '{}'); } catch (e) { return {}; } })();
 function savePref() { try { localStorage.setItem('fqt_pref', JSON.stringify(PREF)); } catch (e) { } }
-function applyPref() { document.documentElement.style.zoom = PREF.zoom && PREF.zoom !== 1 ? PREF.zoom : ''; document.body.classList.toggle('nonews', !!PREF.nonews); if (PREF.nonews) document.documentElement.style.setProperty('--nwh', '0px'); else if (typeof renderNews === 'function') renderNews(); }
+function applyPref() { document.documentElement.classList.toggle('anim', !!PREF.anim && !reduceMotion()); document.documentElement.style.zoom = PREF.zoom && PREF.zoom !== 1 ? PREF.zoom : ''; document.body.classList.toggle('nonews', !!PREF.nonews); if (PREF.nonews) document.documentElement.style.setProperty('--nwh', '0px'); else if (typeof renderNews === 'function') renderNews(); }
 function stdActs() {
   return [{ n: 96, l: 'Actions', menu: () => [
     { l: 'Ouvrir dans un nouvel onglet', run: () => wtNew(ST.fn, ST.sec) }, { l: 'Copier le lien de cet écran', run: () => { navigator.clipboard && navigator.clipboard.writeText(location.href).then(() => toast('Lien copié.'), () => toast(location.href)); } },
@@ -315,6 +358,8 @@ function stdActs() {
   { n: 97, l: 'Sortie', menu: () => [{ l: 'Tableau principal → Excel (CSV)', run: exportCSV }, { l: 'Graphique principal → image PNG', run: exportPNG }, { l: 'Écran → PDF / impression', run: () => window.print() }] },
   { n: 98, l: 'Réglages', menu: () => [{ l: `Taille du texte : normale${!PREF.zoom || PREF.zoom === 1 ? ' ✓' : ''}`, run: () => { PREF.zoom = 1; savePref(); applyPref(); } }, { l: `Taille du texte : grande${PREF.zoom === 1.12 ? ' ✓' : ''}`, run: () => { PREF.zoom = 1.12; savePref(); applyPref(); } },
     { l: `Taille du texte : très grande${PREF.zoom === 1.25 ? ' ✓' : ''}`, run: () => { PREF.zoom = 1.25; savePref(); applyPref(); } }, { l: PREF.nonews ? 'Afficher le panneau des actualités' : 'Masquer le panneau des actualités', run: () => { PREF.nonews = !PREF.nonews; savePref(); applyPref(); } },
+    { l: `Ouverture rapide (préchargement des écrans suivants) : ${PREF.fast ? 'activée ✓' : 'désactivée'}`, run: () => { PREF.fast = !PREF.fast; savePref(); applyPref(); toast(PREF.fast ? 'Ouverture rapide activée : les données des écrans suivants sont préparées à l’avance.' : 'Ouverture rapide désactivée.'); if (PREF.fast) pfIdle(); } },
+    { l: `Animations douces : ${PREF.anim ? 'activées ✓' : 'désactivées'}`, run: () => { PREF.anim = !PREF.anim; savePref(); applyPref(); toast(PREF.anim ? (reduceMotion() ? 'Animations activées, mais votre appareil demande de réduire les animations : elles restent coupées.' : 'Animations douces activées.') : 'Animations désactivées.'); } },
     { l: document.body.classList.contains('maxi') ? 'Réduire la fenêtre' : 'Agrandir la fenêtre (plein écran)', run: () => toggleMaxi() },
     { l: 'Fermer tous les onglets sauf celui-ci', run: () => { WT.list = [WT.list[WT.cur]]; WT.cur = 0; wtSave(); renderWtabs(); } }] }];
 }
@@ -475,13 +520,13 @@ function badUrl(u) { try { const s = String(u == null ? '' : u).trim(); if (!s) 
 (() => { const wo = window.open; window.open = function (u, ...a) { return badUrl(u) ? null : wo.call(window, u, ...a); };
   document.addEventListener('click', e => { const a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (a && badUrl(a.getAttribute('href'))) { e.preventDefault(); e.stopImmediatePropagation(); } }, true); })();
 async function render() {
-  const seq = ++renderSeq; untip(); PG.acts = []; PG.title = null; $('ptabs').hidden = true; $('ptabs').innerHTML = '';
+  const seq = ++renderSeq; PF.cur = ST.fn; untip(); PG.acts = []; PG.title = null; $('ptabs').hidden = true; $('ptabs').innerHTML = '';
   renderKeys(); renderTbar(); renderSech(); renderRbar(); renderStatus(); feedState(); clocksTick();
   const m = $('main'); m.innerHTML = '<div class="empty">Chargement…</div>';
   const why = SECFN.has(ST.fn) && ST.fn !== 'MENU' ? avail(ST.fn, sec(ST.sec)) : null;
   if (why) { m.innerHTML = `<div class="pn"><div class="pt">${esc(ykey(sec(ST.sec)))} · ${FN[ST.fn][0]}<span class="code">${ST.fn}</span></div><div class="pb"><div class="empty">Non disponible pour ce titre : ${esc(why)}.<br><br><button class="tb" data-fn="MENU">Voir les fonctions disponibles</button></div></div></div>`; return; }
   if (!PAGES[ST.fn]) { m.innerHTML = '<div class="empty">Fonction en préparation.</div>'; return; }
-  try { await PAGES[ST.fn](m, () => seq === renderSeq); }
+  try { await PAGES[ST.fn](m, () => seq === renderSeq); if (seq === renderSeq) { countUp(m, seq); pfIdle(); } }
   catch (e) { console.error(e); if (seq === renderSeq) m.innerHTML = `<div class="empty">Impossible d'afficher cette fonction : ${esc(e.message)}</div>`; }
 }
 /* rangée de touches comme la barre du terminal : GO, F1-F4 (gris), touches vertes du clavier Bloomberg, puis les fonctions de marché */
@@ -567,6 +612,10 @@ async function boot() {
   try { Q.live = await getJSON('live.json'); } catch (e) { } try { Q.quotes = await getJSON('quotes.json'); applyQuotes(); } catch (e) { }
   for (const t of WT.list) { const a = FN_ALIAS[t.fn] || FN_SHORT[t.fn]; if (a) t.fn = a[0]; } if (WT.cur >= WT.list.length) WT.cur = 0; const t0 = WT.list[WT.cur]; if (t0 && FN[t0.fn]) { ST.fn = t0.fn; if (Q.by[t0.sec]) ST.sec = t0.sec; }
   initAppUpdate(); fromHash(); initCmd(); clocks(); applyPref();
+  // ouverture rapide : au survol (ou au toucher) d'un lien de fonction ou d'une ligne de titre, ses fichiers sont lus à l'avance
+  let pfHov = null; const pfHover = e => { if (!PREF.fast || !e.target.closest) return; const f = e.target.closest('[data-fn],[data-sec][data-to]'); if (!f) return;
+    clearTimeout(pfHov); pfHov = setTimeout(() => { const x = f.dataset.fn || f.dataset.to, al = FN_ALIAS[x] || FN_SHORT[x], fn = al ? al[0] : x; if (fn && own(FN, fn)) pfLoad(fn, f.dataset.s || f.dataset.sec || ST.sec); }, e.type === 'touchstart' ? 0 : 120); };
+  document.addEventListener('mouseover', pfHover, { passive: true }); document.addEventListener('touchstart', pfHover, { passive: true });
   document.addEventListener('click', e => { const f = e.target.closest('[data-fn]'); if (f && !f.closest('#ddm')) { const a = FN_ALIAS[f.dataset.fn] || FN_SHORT[f.dataset.fn]; if (f.dataset.t) ST.tab[a ? a[0] : f.dataset.fn] = f.dataset.t; go(a && f.dataset.t ? a[0] : f.dataset.fn, f.dataset.s); return; }
     const s = e.target.closest('[data-sec]'); if (s && !e.target.closest('a')) { const id = s.dataset.sec; go(s.dataset.to || (SECFN.has(ST.fn) && ST.fn !== 'MENU' && !avail(ST.fn, sec(id)) ? ST.fn : 'MENU'), id); } });
   window.addEventListener('hashchange', () => { const a = ST.fn + ST.sec; const old = fromHash(); if (old || ST.fn + ST.sec !== a) go(ST.fn, ST.sec); });
