@@ -1,0 +1,345 @@
+{
+ "_": "Documents des sociétés cotées retrouvés dans l'archive web du site de la BRVM (vérification archives.yml du 18/10/2026) et absents de la liste des publications : lus comme les autres, téléchargés depuis l'archive.",
+ "docs": [
+  {
+   "ticker": "BOAB",
+   "document_url": "https://www.brvm.org/sites/default/files/etats_financiers_boa_benin_au_31_decembre_2019.pdf",
+   "wb": "20241214034920",
+   "category": "financial_statements",
+   "title": "BOA Bénin : États financiers exercice 2019",
+   "fiscal_year": 2019,
+   "published_at": "2024-12-14",
+   "wb_u": "https://www.brvm.org/sites/default/files/etats_financiers_boa_benin_au_31_decembre_2019.pdf"
+  },
+  {
+   "ticker": "BOAM",
+   "document_url": "https://www.brvm.org/sites/default/files/20211014_-_rapport_dexamen_limite_des_commissaires_aux_comptes_-_1er_semestre_2021_-boa_mali_0.pdf",
+   "wb": "20241105052828",
+   "category": "financial_statements",
+   "title": "BOA Mali : Rapport des commissaires aux comptes (1er semestre) exercice 2021",
+   "fiscal_year": 2021,
+   "published_at": "2021-10-14",
+   "wb_u": "https://www.brvm.org/sites/default/files/20211014_-_rapport_dexamen_limite_des_commissaires_aux_comptes_-_1er_semestre_2021_-boa_mali_0.pdf"
+  },
+  {
+   "ticker": "CBIBF",
+   "document_url": "https://www.brvm.org/sites/default/files/etats_financiers_exercice_2017_-coris_bank_international.pdf",
+   "wb": "20180417010247",
+   "category": "financial_statements",
+   "title": "Coris Bank International BF : États financiers exercice 2017",
+   "fiscal_year": 2017,
+   "published_at": "2018-04-17",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/etats_financiers_exercice_2017_-coris_bank_international.pdf"
+  },
+  {
+   "ticker": "CBIBF",
+   "document_url": "https://www.brvm.org/sites/default/files/20210420_-_etats_financiers_2020_-_coris_bank_international_bf.pdf",
+   "wb": "20260418004423",
+   "category": "financial_statements",
+   "title": "Coris Bank International BF : États financiers exercice 2020",
+   "fiscal_year": 2020,
+   "published_at": "2021-04-20",
+   "wb_u": "https://www.brvm.org/sites/default/files/20210420_-_etats_financiers_2020_-_coris_bank_international_bf.pdf"
+  },
+  {
+   "ticker": "CBIBF",
+   "document_url": "https://www.brvm.org/sites/default/files/20220324_-_rapports_des_commissaires_aux_comptes_et_etats_financiers_exercice_2021_-_coris_bank_international_bf.pdf",
+   "wb": "20220325094335",
+   "category": "financial_statements",
+   "title": "Coris Bank International BF : Rapport des commissaires aux comptes exercice 2021",
+   "fiscal_year": 2021,
+   "published_at": "2022-03-24",
+   "wb_u": "https://www.brvm.org/sites/default/files/20220324_-_rapports_des_commissaires_aux_comptes_et_etats_financiers_exercice_2021_-_coris_bank_international_bf.pdf"
+  },
+  {
+   "ticker": "CBIBF",
+   "document_url": "https://www.brvm.org/sites/default/files/20220427_-_etats_financiers_exercice_2021_-_coris_bank_international.pdf",
+   "wb": "20220429151115",
+   "category": "financial_statements",
+   "title": "Coris Bank International BF : États financiers exercice 2021",
+   "fiscal_year": 2021,
+   "published_at": "2022-04-27",
+   "wb_u": "https://www.brvm.org/sites/default/files/20220427_-_etats_financiers_exercice_2021_-_coris_bank_international.pdf"
+  },
+  {
+   "ticker": "CBIBF",
+   "document_url": "https://www.brvm.org/sites/default/files/20240820_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_-_1er_semestre_2024_-_coris_bank_international_bf.pdf",
+   "wb": "20251115172936",
+   "category": "financial_statements",
+   "title": "Coris Bank International BF : Rapport des commissaires aux comptes (1er semestre) exercice 2024",
+   "fiscal_year": 2024,
+   "published_at": "2024-08-20",
+   "wb_u": "https://www.brvm.org/sites/default/files/20240820_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_-_1er_semestre_2024_-_coris_bank_international_bf.pdf"
+  },
+  {
+   "ticker": "ETIT",
+   "document_url": "https://www.brvm.org/sites/default/files/20190329_-_etats_financiers_2018_-_ecobank_tg_1_0.pdf",
+   "wb": "20250324163500",
+   "category": "financial_statements",
+   "title": "Ecobank Transnational Togo : États financiers exercice 2018",
+   "fiscal_year": 2018,
+   "published_at": "2019-03-29",
+   "wb_u": "https://www.brvm.org/sites/default/files/20190329_-_etats_financiers_2018_-_ecobank_tg_1_0.pdf"
+  },
+  {
+   "ticker": "ETIT",
+   "document_url": "https://www.brvm.org/sites/default/files/20190329_-_etats_financiers_2018_-_ecobank_tg_2_0.pdf",
+   "wb": "20250324152133",
+   "category": "financial_statements",
+   "title": "Ecobank Transnational Togo : États financiers exercice 2018",
+   "fiscal_year": 2018,
+   "published_at": "2019-03-29",
+   "wb_u": "https://www.brvm.org/sites/default/files/20190329_-_etats_financiers_2018_-_ecobank_tg_2_0.pdf"
+  },
+  {
+   "ticker": "ETIT",
+   "document_url": "https://www.brvm.org/sites/default/files/20230330_-_etats_financiers_exercice_2022_-_eti_tg.pdf",
+   "wb": "20250209121615",
+   "category": "financial_statements",
+   "title": "Ecobank Transnational Togo : États financiers exercice 2022",
+   "fiscal_year": 2022,
+   "published_at": "2023-03-30",
+   "wb_u": "https://www.brvm.org/sites/default/files/20230330_-_etats_financiers_exercice_2022_-_eti_tg.pdf"
+  },
+  {
+   "ticker": "ETIT",
+   "document_url": "https://www.brvm.org/sites/default/files/20230330_-_etats_financiers_exercice_2022_-_eti_tg_0.pdf",
+   "wb": "20250209115020",
+   "category": "financial_statements",
+   "title": "Ecobank Transnational Togo : États financiers exercice 2022",
+   "fiscal_year": 2022,
+   "published_at": "2023-03-30",
+   "wb_u": "https://www.brvm.org/sites/default/files/20230330_-_etats_financiers_exercice_2022_-_eti_tg_0.pdf"
+  },
+  {
+   "ticker": "ORGT",
+   "document_url": "https://www.brvm.org/sites/default/files/20210805-rapport_des_commissaires_aux_comptes_syscohada_-_etats_financiers_individuels_exercice_2020_-_oragroup_tg_0.pdf",
+   "wb": "20241211231503",
+   "category": "financial_statements",
+   "title": "Oragroup Togo : Rapport des commissaires aux comptes exercice 2020",
+   "fiscal_year": 2020,
+   "published_at": "2021-08-05",
+   "wb_u": "https://www.brvm.org/sites/default/files/20210805-rapport_des_commissaires_aux_comptes_syscohada_-_etats_financiers_individuels_exercice_2020_-_oragroup_tg_0.pdf"
+  },
+  {
+   "ticker": "PALC",
+   "document_url": "https://www.brvm.org/sites/default/files/20240708_-_rapport_annuel_-_palm_ci.pdf",
+   "wb": "20251110232226",
+   "category": "annual_report",
+   "title": "PalmCI : Rapport annuel",
+   "fiscal_year": null,
+   "published_at": "2024-07-08",
+   "wb_u": "https://www.brvm.org/sites/default/files/20240708_-_rapport_annuel_-_palm_ci.pdf"
+  },
+  {
+   "ticker": "PALC",
+   "document_url": "https://www.brvm.org/sites/default/files/20240708_-_rapport_annuel_-_palm_ci_0.pdf",
+   "wb": "20251110233544",
+   "category": "annual_report",
+   "title": "PalmCI : Rapport annuel",
+   "fiscal_year": null,
+   "published_at": "2024-07-08",
+   "wb_u": "https://www.brvm.org/sites/default/files/20240708_-_rapport_annuel_-_palm_ci_0.pdf"
+  },
+  {
+   "ticker": "SCRC",
+   "document_url": "https://www.brvm.org/sites/default/files/20201022_-_etats_financiers_certifies_et_approuves_-_exercice_2019_-_sucrivoire_ci.pdf",
+   "wb": "20250811054638",
+   "category": "financial_statements",
+   "title": "Sucrivoire : États financiers exercice 2019",
+   "fiscal_year": 2019,
+   "published_at": "2020-10-22",
+   "wb_u": "https://www.brvm.org/sites/default/files/20201022_-_etats_financiers_certifies_et_approuves_-_exercice_2019_-_sucrivoire_ci.pdf"
+  },
+  {
+   "ticker": "SCRC",
+   "document_url": "https://www.brvm.org/sites/default/files/20201022_-_etats_financiers_certifies_et_approuves_-_exercice_2019_-_sucrivoire_ci_0.pdf",
+   "wb": "20250811044246",
+   "category": "financial_statements",
+   "title": "Sucrivoire : États financiers exercice 2019",
+   "fiscal_year": 2019,
+   "published_at": "2020-10-22",
+   "wb_u": "https://www.brvm.org/sites/default/files/20201022_-_etats_financiers_certifies_et_approuves_-_exercice_2019_-_sucrivoire_ci_0.pdf"
+  },
+  {
+   "ticker": "SCRC",
+   "document_url": "https://www.brvm.org/sites/default/files/20250509_-_etats_financiers_-_normes_ifrs_-_exercice_2024_-_sucrivoire_ci.pdf",
+   "wb": "20250717190608",
+   "category": "financial_statements",
+   "title": "Sucrivoire : États financiers exercice 2024",
+   "fiscal_year": 2024,
+   "published_at": "2025-05-09",
+   "wb_u": "https://www.brvm.org/sites/default/files/20250509_-_etats_financiers_-_normes_ifrs_-_exercice_2024_-_sucrivoire_ci.pdf"
+  },
+  {
+   "ticker": "SHEC",
+   "document_url": "https://www.brvm.org/sites/default/files/20170418_-_etats_financiers_provisoires_exercice_2016_-_vivo_energy_ci.pdf",
+   "wb": "20180127131656",
+   "category": "financial_statements",
+   "title": "Vivo Energy CI : États financiers exercice 2016",
+   "fiscal_year": 2016,
+   "published_at": "2017-04-18",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20170418_-_etats_financiers_provisoires_exercice_2016_-_vivo_energy_ci.pdf"
+  },
+  {
+   "ticker": "SIBC",
+   "document_url": "https://www.brvm.org/sites/default/files/20221018_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_du_1er_semestre_2022_-_sib_ci.pdf",
+   "wb": "20251110223701",
+   "category": "financial_statements",
+   "title": "SIB CI : Rapport des commissaires aux comptes (1er semestre) exercice 2022",
+   "fiscal_year": 2022,
+   "published_at": "2022-10-18",
+   "wb_u": "https://www.brvm.org/sites/default/files/20221018_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_du_1er_semestre_2022_-_sib_ci.pdf"
+  },
+  {
+   "ticker": "SIBC",
+   "document_url": "https://www.brvm.org/sites/default/files/20250909_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_-_1er_semestre_2025_-_sib_ci_0.pdf",
+   "wb": "20251215144150",
+   "category": "financial_statements",
+   "title": "SIB CI : Rapport des commissaires aux comptes (1er semestre) exercice 2025",
+   "fiscal_year": 2025,
+   "published_at": "2025-09-09",
+   "wb_u": "https://www.brvm.org/sites/default/files/20250909_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_-_1er_semestre_2025_-_sib_ci_0.pdf"
+  },
+  {
+   "ticker": "SIVC",
+   "document_url": "https://www.brvm.org/sites/default/files/20230426_-_etats_financiers_et_rapport_des_commissaires_aux_comptes_-_air_liquide_ci.pdf",
+   "wb": "20241114102422",
+   "category": "financial_statements",
+   "title": "Erium : Rapport des commissaires aux comptes",
+   "fiscal_year": null,
+   "published_at": "2023-04-26",
+   "wb_u": "https://www.brvm.org/sites/default/files/20230426_-_etats_financiers_et_rapport_des_commissaires_aux_comptes_-_air_liquide_ci.pdf"
+  },
+  {
+   "ticker": "SIVC",
+   "document_url": "https://www.brvm.org/sites/default/files/20230426_-_etats_financiers_et_rapport_des_commissaires_aux_comptes_-_air_liquide_ci_0.pdf",
+   "wb": "20241114110001",
+   "category": "financial_statements",
+   "title": "Erium : Rapport des commissaires aux comptes",
+   "fiscal_year": null,
+   "published_at": "2023-04-26",
+   "wb_u": "https://www.brvm.org/sites/default/files/20230426_-_etats_financiers_et_rapport_des_commissaires_aux_comptes_-_air_liquide_ci_0.pdf"
+  },
+  {
+   "ticker": "SMBC",
+   "document_url": "https://www.brvm.org/sites/default/files/20230428_-_etats_financiers_exercice_2022_-_smb_ci_0.pdf",
+   "wb": "20261011072201",
+   "category": "financial_statements",
+   "title": "SMB CI : États financiers exercice 2022",
+   "fiscal_year": 2022,
+   "published_at": "2023-04-28",
+   "wb_u": "https://www.brvm.org/sites/default/files/20230428_-_etats_financiers_exercice_2022_-_smb_ci_0.pdf"
+  },
+  {
+   "ticker": "STBC",
+   "document_url": "https://www.brvm.org/sites/default/files/sitab_etats_financiers_c41_nb_mise_en_page_1_0.pdf",
+   "wb": "20260710204716",
+   "category": "financial_statements",
+   "title": "Sitab : États financiers",
+   "fiscal_year": null,
+   "published_at": "2026-07-10",
+   "wb_u": "https://www.brvm.org/sites/default/files/sitab_etats_financiers_c41_nb_mise_en_page_1_0.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20110713_-_efa_-_unilever_ci_-_exercice_2010.pdf",
+   "wb": "20190728125922",
+   "category": "financial_statements",
+   "title": "Unilever CI : États financiers approuvés exercice 2010",
+   "fiscal_year": 2010,
+   "published_at": "2011-07-13",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20110713_-_efa_-_unilever_ci_-_exercice_2010.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20120523_-_efp_-_unilever_ci_-_exercice_2011.pdf",
+   "wb": "20190728134439",
+   "category": "financial_statements",
+   "title": "Unilever CI : États financiers provisoires exercice 2011",
+   "fiscal_year": 2011,
+   "published_at": "2012-05-23",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20120523_-_efp_-_unilever_ci_-_exercice_2011.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20120719_-_efa_-_unilever_ci_-_exercice_2011.pdf",
+   "wb": "20190728132154",
+   "category": "financial_statements",
+   "title": "Unilever CI : États financiers approuvés exercice 2011",
+   "fiscal_year": 2011,
+   "published_at": "2012-07-19",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20120719_-_efa_-_unilever_ci_-_exercice_2011.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20130610_-_efp_-_unilever_ci_-_exercice_2012.pdf",
+   "wb": "20190728134206",
+   "category": "financial_statements",
+   "title": "Unilever CI : États financiers provisoires exercice 2012",
+   "fiscal_year": 2012,
+   "published_at": "2013-06-10",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20130610_-_efp_-_unilever_ci_-_exercice_2012.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20130820_-_ra_-_unilever_ci_-_exercice_2012.pdf",
+   "wb": "20190728132029",
+   "category": "annual_report",
+   "title": "Unilever CI : Rapport annuel exercice 2012",
+   "fiscal_year": 2012,
+   "published_at": "2013-08-20",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20130820_-_ra_-_unilever_ci_-_exercice_2012.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20130821_-_efa_-_unilever_ci_-_exercice_2012.pdf",
+   "wb": "20190728134328",
+   "category": "financial_statements",
+   "title": "Unilever CI : États financiers approuvés exercice 2012",
+   "fiscal_year": 2012,
+   "published_at": "2013-08-21",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20130821_-_efa_-_unilever_ci_-_exercice_2012.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20140603_-_efp_-_unilever_ci_-_exercice_2013.pdf",
+   "wb": "20190728132842",
+   "category": "financial_statements",
+   "title": "Unilever CI : États financiers provisoires exercice 2013",
+   "fiscal_year": 2013,
+   "published_at": "2014-06-03",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20140603_-_efp_-_unilever_ci_-_exercice_2013.pdf"
+  },
+  {
+   "ticker": "UNLC",
+   "document_url": "https://www.brvm.org/sites/default/files/20140820_-_ra_-_unilever_ci_-_exercice_2013.pdf",
+   "wb": "20190728125928",
+   "category": "annual_report",
+   "title": "Unilever CI : Rapport annuel exercice 2013",
+   "fiscal_year": 2013,
+   "published_at": "2014-08-20",
+   "wb_u": "http://www.brvm.org:80/sites/default/files/20140820_-_ra_-_unilever_ci_-_exercice_2013.pdf"
+  },
+  {
+   "ticker": "UNXC",
+   "document_url": "https://www.brvm.org/sites/default/files/rapport_annuel_2018_uniwax_ci_0.pdf",
+   "wb": "20250811054018",
+   "category": "annual_report",
+   "title": "Uniwax CI : Rapport annuel exercice 2018",
+   "fiscal_year": 2018,
+   "published_at": "2025-08-11",
+   "wb_u": "https://www.brvm.org/sites/default/files/rapport_annuel_2018_uniwax_ci_0.pdf"
+  },
+  {
+   "ticker": "BOAS",
+   "document_url": "https://www.brvm.org/sites/default/files/boasn_etats_financiers_2017_partie_1_0.pdf",
+   "wb": "20241214031640",
+   "category": "financial_statements",
+   "title": "BOA Sénégal : États financiers exercice 2017",
+   "fiscal_year": 2017,
+   "published_at": "2024-12-14",
+   "wb_u": "https://www.brvm.org/sites/default/files/boasn_etats_financiers_2017_partie_1_0.pdf"
+  }
+ ]
+}

@@ -66,29 +66,34 @@ function accountsTable(F, nY = 10, opts = {}) {
 }
 function faSrcNote(F) {
   return F.mkt === 'US' ? `Comptes publiés (${F.annual_only ? 'rapports annuels' : 'rapports annuels et trimestriels'}), devise ${F.ccy || 'USD'}. FCF = flux d’exploitation − acquisitions d’immobilisations corporelles. Dette financière hors obligations locatives.`
-    : `Montants tirés des états financiers publiés par la société quand leurs totaux se vérifient (détail poste par poste et ratios dans les onglets) ; <sup class="am">a</sup> = exercice reconstitué à partir des chiffres clés (CA, résultat net, BNPA, dividende) ; <sup class="am">r</sup> = comptes publiés dans l’autre norme (SYSCOHADA avant le passage aux IFRS, ou l’inverse).${F.Y && F.Y.src && F.Y.src.some(x => /^converti/.test(x || '')) ? ' <sup class="am">$</sup> = comptes publiés en dollars US seulement, convertis en FCFA au cours du jour de leur publication (cours au survol de l’année).' : ''} FCF = flux d’exploitation − acquisitions d’immobilisations.${F.bank ? ' Banque : pas de FCF ni de valeur d’entreprise (le passif est l’outil de production).' : ''}`;
+    : `Millions de FCFA. <sup class="am">a</sup> = exercice présenté d’après ses chiffres clés publiés ; <sup class="am">r</sup> = comptes publiés dans l’autre norme (SYSCOHADA ou IFRS).${F.Y && F.Y.src && F.Y.src.some(x => /^converti/.test(x || '')) ? ' <sup class="am">$</sup> = comptes publiés en dollars US, convertis en FCFA (cours au survol de l’année).' : ''} FCF = flux d’exploitation − acquisitions d’immobilisations.${F.bank ? ' Banque : pas de FCF ni de valeur d’entreprise.' : ''}`;
 }
 
 /* Comptes publiés détaillés (BRVM) : postes des états financiers et ratios, sur tous les exercices lus.
    Années continues : un exercice sans comptes lisibles reste visible (n.d.). Montants en millions de FCFA. */
 function cptYears(F, all) { const ys = F.C.y; if (!ys.length) return []; const hi = ys[ys.length - 1], lo = all ? ys[0] : Math.max(ys[0], hi - 9); const o = []; for (let y = lo; y <= hi; y++) o.push(y); return o; }
+/* exercices et lignes sans aucun chiffre : masqués (« 10 derniers » = les 10 derniers exercices qui ont des chiffres) */
+function cptKeep(rows, years, ix, all) { const V = r => Array.isArray(r[2]) ? r[2] : r[3], ok = (r, y) => { const i = ix(y); return i >= 0 && V(r)[i] != null && isFinite(V(r)[i]); };
+  let cols = years.filter(y => rows.some(r => ok(r, y))); if (!all) cols = cols.slice(-10); return { cols, rows: rows.filter(r => cols.some(y => ok(r, y))) }; }
 function cptTable(F, sk, all) {
   const S = (F.C.s || []).find(x => x[0] === sk || x[0] === 'b' + sk); if (!S) return '<div class="empty">Poste non disponible dans les comptes lus.</div>';
-  const cols = cptYears(F, all), ix = y => F.C.y.indexOf(y);
+  const ix = y => F.C.y.indexOf(y), K = cptKeep(S[2], F.C.y, ix, all), cols = K.cols;
+  if (!cols.length) return '<div class="empty">Aucun chiffre publié pour cet état.</div>';
   const fxT = y => { const q = F.C.fx && F.C.fx[y]; return q ? `Comptes publiés en dollars US, convertis au cours de 1 USD = ${num(q[0], 2)} FCFA du ${q[1] ? fds(q[1]) : '—'} (date de publication)` : ''; };
   const head = `<tr><th class="l">M FCFA</th>${cols.map(y => `<th${fxT(y) ? ` title="${esc(fxT(y))}"` : ''}>FY ${y}${fxT(y) ? '<sup class="am">$</sup>' : ''}</th>`).join('')}</tr>`;
   const strong = new Set(['chiffre_affaires', 'b_pnb', 'valeur_ajoutee', 'ebe', 'resultat_exploitation', 'b_rbe', 'rao', 'resultat_net', 'actif_immobilise', 'actif_circulant', 'total_actif', 'capitaux_propres', 'passif_circulant', 'total_passif', 'cafg', 'flux_operationnels']);
-  const body = S[2].map(([k, lab, vals]) => `<tr><td class="l ${strong.has(k) ? 'yl' : 'am'}">${esc(lab)}</td>${cols.map(y => { const i = ix(y), v = i >= 0 ? vals[i] : null;
-    return v == null ? `<td>${NDc(i < 0 ? 'comptes de cet exercice non disponibles' : 'poste non présenté ou non lisible dans les comptes de cet exercice')}</td>` : `<td class="${strong.has(k) ? 'yl' : 'wh'}">${num(v, Math.abs(v) < 100 ? 1 : 0)}</td>`; }).join('')}</tr>`).join('');
+  const body = K.rows.map(([k, lab, vals, cx]) => `<tr><td class="l ${strong.has(k) ? 'yl' : 'am'}">${esc(lab)}</td>${cols.map(y => { const i = ix(y), v = i >= 0 ? vals[i] : null;
+    return v == null ? `<td>${NDc('poste non publié pour cet exercice')}</td>` : `<td class="${strong.has(k) ? 'yl' : 'wh'}${cx && cx.includes(i) ? ' cx' : ''}"${cx && cx.includes(i) ? ' title="Total recalculé à partir des postes publiés de l’exercice"' : ''}>${num(v, Math.abs(v) < 100 ? 1 : 0)}</td>`; }).join('')}</tr>`).join('');
   return `<div class="tw"><table class="t acc"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
 }
 function ratioFmt(f, v) { if (v == null || !isFinite(v)) return null; return f === 'p' ? num(v * 100, 1) + ' %' : f === 'x' ? num(v, 2) + ' x' : f === 'j' ? num(v, 0) + ' j' : f === 'm' ? num(v, 0) : f === 'e' ? num(v, Math.abs(v) < 100 ? 2 : 0) : num(v, 2); }
 function ratioTable(F, all) {
   const R = F.R; if (!R || !R.g || !R.g.length) return '<div class="empty">Ratios non calculables (comptes insuffisants).</div>';
-  const cols = cptYears({ C: { y: R.y } }, all), ix = y => R.y.indexOf(y); let n = 0;
+  const ix = y => R.y.indexOf(y), allRows = R.g.flatMap(([g, rows]) => rows), cols = cptKeep(allRows, R.y, ix, all).cols; let n = 0;
+  const live = r => cols.some(y => { const i = ix(y), v = i >= 0 ? r[3][i] : null; return v != null && isFinite(v); });
   const kf = new Set(R.k || []), head = `<tr><th class="l">Ratio</th>${cols.map(y => `<th>FY ${y}${kf.has(y) ? '<sup>a</sup>' : ''}</th>`).join('')}</tr>`;
-  const body = R.g.map(([g, rows]) => `<tr class="sec"><td class="l" colspan="${cols.length + 1}">${esc(g)}</td></tr>` + rows.map(([k, lab, f, vals]) => { n++;
-    return `<tr><td class="l am">${esc(lab)}${f === 'm' ? ' <span class="dm">(M FCFA)</span>' : ''}</td>${cols.map(y => { const i = ix(y), t = i >= 0 ? ratioFmt(f, vals[i]) : null; return `<td class="${t == null ? '' : (f === 'p' && vals[i] < 0) || (f === 'm' && vals[i] < 0) ? 'dn' : 'wh'}">${t == null ? '<span class="dm">—</span>' : t}</td>`; }).join('')}</tr>`; }).join('')).join('');
+  const body = R.g.map(([g, rows0]) => { const rows = rows0.filter(live); return rows.length ? `<tr class="sec"><td class="l" colspan="${cols.length + 1}">${esc(g)}</td></tr>` + rows.map(([k, lab, f, vals]) => { n++;
+    return `<tr><td class="l am">${esc(lab)}${f === 'm' ? ' <span class="dm">(M FCFA)</span>' : ''}</td>${cols.map(y => { const i = ix(y), t = i >= 0 ? ratioFmt(f, vals[i]) : null; return `<td class="${t == null ? '' : (f === 'p' && vals[i] < 0) || (f === 'm' && vals[i] < 0) ? 'dn' : 'wh'}">${t == null ? '<span class="dm">—</span>' : t}</td>`; }).join('')}</tr>`; }).join('') : ''; }).join('');
   return { html: `<div class="tw"><table class="t acc"><thead>${head}</thead><tbody>${body}</tbody></table></div>`, n };
 }
 
@@ -106,8 +111,8 @@ PAGES.FA = async (m, alive) => {
     const F0 = F, useAlt = !!(st.alt && F.C2 && tab !== 'r'), Fv = useAlt ? Object.assign({}, F, { C: F.C2 }) : F;
     const all = !!st.all, y0 = Fv.C.y[0], per = Fv.C.per === 'conso' ? 'consolidés' : 'sociaux', std = Fv.C.std === 'ifrs' ? 'IFRS' : 'SYSCOHADA';
     const tools = `<div class="tools" style="border:1px solid var(--line2)"><span class="tlab">Exercices</span><button class="tb ${all ? '' : 'on'}" data-all="0">10 derniers</button><button class="tb ${all ? 'on' : ''}" data-all="1">Tout l’historique (depuis ${y0})</button>${F0.C2 && tab !== 'r' ? `<span class="tlab" style="margin-left:14px">Comptes</span><button class="tb ${useAlt ? '' : 'on'}" data-alt="0">${refL(F0.C)}</button><button class="tb ${useAlt ? 'on' : ''}" data-alt="1">${refL(F0.C2)}</button>` : ''}</div>`;
-    const lect = `Comptes ${per} (${std}) publiés par la société, en millions de FCFA. Un exercice n’est repris que si ses totaux se vérifient dans le document (total actif = total passif, résultat du compte de résultat = résultat du bilan, soldes intermédiaires) ; n.d. = non disponible. Chaque exercice vient de ses propres comptes de préférence (sinon de la colonne « exercice précédent » des comptes suivants).${Fv.C.fx ? ' <sup class="am">$</sup> = comptes publiés en dollars US seulement, convertis en FCFA au cours du jour de leur publication (cours et date au survol de l’année) ; les autres exercices sont en FCFA tels que publiés par la société.' : ''}`;
-    if (tab === 'r') { const T = ratioTable(F, all); m.innerHTML = tools + pn(`${esc(s.tk)} · ${T.n || ''} ratios calculés sur les comptes publiés`, 'FA', T.html || T, { np: true, lect: 'Ratios calculés uniquement à partir des postes publiés (aucune estimation) ; « — » = un poste nécessaire manque ; <sup>a</sup> = exercice dont les comptes détaillés ne sont pas (encore) lus : ratios calculés sur ses chiffres clés publiés. Moyennes = (début + fin d’exercice) / 2. BNPA et dividende tels que publiés ; PER et rendement au dernier cours de chaque exercice. ' + lect }); }
+    const lect = `Comptes ${per} (${std}), en millions de FCFA.${Fv.C.fx ? ' <sup class="am">$</sup> = comptes publiés en dollars US, convertis en FCFA (cours et date au survol de l’année).' : ''}`;
+    if (tab === 'r') { const T = ratioTable(F, all); m.innerHTML = tools + pn(`${esc(s.tk)} · ${T.n || ''} ratios calculés sur les comptes publiés`, 'FA', T.html || T, { np: true, lect: '<sup>a</sup> = ratios de l’exercice calculés sur ses chiffres clés publiés. Moyennes = (début + fin d’exercice) / 2 ; PER et rendement au dernier cours de chaque exercice. ' + lect }); }
     else { const lab = { is: 'Compte de résultat', bs: 'Bilan', cf: 'Flux de trésorerie' }[tab]; m.innerHTML = tools + pn(`${esc(s.tk)} · ${lab} · comptes publiés`, 'FA', cptTable(Fv, tab, all), { np: true, lect }); }
     m.querySelectorAll('[data-all]').forEach(b => b.onclick = () => { st.all = b.dataset.all === '1'; render(); });
     m.querySelectorAll('[data-alt]').forEach(b => b.onclick = () => { st.alt = b.dataset.alt === '1'; render(); });

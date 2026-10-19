@@ -280,7 +280,7 @@ def build(out, brvm_src, search_src=None, boc_dir=None, log=print, comptes=None)
     if search_src:
         ci = (jload(os.path.join(search_src, "comptes_index.json"), {}) or {}).get("docs") or {}
         for u, m in ci.items():  # (date seulement si le nom du fichier la porte : sinon c'est le jour où la liste a été relevée)
-            add(u, m.get("ti"), m.get("t"), m.get("fy"), date_of(url_date(u)), CAT.get(m.get("cat")))
+            add(u, m.get("ti"), m.get("t"), m.get("fy"), date_of(url_date(u)), CAT.get(m.get("cat")), m.get("wb"))
         br = (jload(os.path.join(search_src, "brvm_rapports.json"), {}) or {}).get("docs") or {}
         for u, m in br.items():
             add(u, m.get("ti"), m.get("t"), 0, date_of(url_date(u)))

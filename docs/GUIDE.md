@@ -11,6 +11,8 @@ Terminal façon Bloomberg : ligne de commande, touches de fonction, tableaux den
 
 Tapez un ticker ou une fonction puis Entrée : `SNTS GP`, `SNTS QLAB`, `QQQ BTST`, `MACRO`, `EVTS`. Cliquer sur n'importe quel titre ouvre ses écrans. La fonction **HELP** liste toutes les fonctions, leurs onglets et les raccourcis.
 
+**Barre de commande** (`web/core.js` : `parseCmd`, `resolveSec`, `SEC_ALIAS`) : la fonction est cherchée d'abord (dernier mot ou groupe de mots), puis le reste est lu comme un titre — ticker, nom de la société ou nom usuel (`NSIA FA`, `Sogb CN`, `Orange CI FA`, `SGBCI GP`). Un nom qui désigne plusieurs sociétés (`TOTAL FA`) affiche la liste des candidats, chacune avec la fonction (Entrée prend la première). Un texte libre qui n'est ni un titre ni une fonction n'ouvre plus la recherche par mots clés : un message renvoie vers MOTS CLES, où l'on cherche directement (ou `MOTS CLES <texte>` dans la barre).
+
 ## Règles de travail (obligatoires)
 
 Avant toute modification : point de restauration dans `SAUVEGARDES.md`. Après toute modification : test complet de TOUT le site et des données (erreurs, données manquantes, doublons, chiffres inchangés quand ils doivent l'être), en signalant tout problème trouvé, même sans lien avec la modification. On ne publie que si tout est bon, sinon retour au point de restauration. Détail : voir le haut de `SAUVEGARDES.md`.
@@ -28,7 +30,7 @@ Avant toute modification : point de restauration dans `SAUVEGARDES.md`. Après t
 | DIVC | Calendrier dividendes — BRVM : prochains détachements, classement par rendement, historique |
 | EVTS | Événements des sociétés — Avis officiels depuis 2000 : AG, dividendes, états financiers ; en option : suivi des sociétés BRVM, agenda des sociétés (BRVM et résultats US) |
 | NOT | Notations financières — Notes de crédit (Bloomfield, WARA, GCR) : sociétés cotées, emprunts obligataires et fonds de titrisation, historique |
-| MOTS CLES | Recherche par mots clés — Tous les documents de la BRVM depuis 1998 (états financiers, rapports, avis de la BRVM et du DC/BR, bulletins de la cote, dividendes, notations), obligations, titres, fonctions et actualités |
+| MOTS CLES | Recherche par mots clés — Tous les documents de la BRVM depuis 1998 (états financiers, rapports, avis de la BRVM et du DC/BR, bulletins de la cote, dividendes, notations), obligations, titres, fonctions et actualités ; onglet Historique de recherche (recherches des 90 derniers jours, gardées dans le navigateur de l'utilisateur seulement, jamais envoyées) |
 | SGI | Intervenants du marché — SGI, sociétés de gestion d’OPCVM et de patrimoine, conservateurs, agences de notation, garants : adresses et contacts |
 | UEMOA BONDS | Obligations UEMOA — Obligations cotées à la BRVM : coupon, échéance, cours, rendement, duration, sensibilité |
 | GC | Courbes souveraines — Courbes des taux zéro-coupon des 8 États de l’UEMOA, écarts, coupons à l’émission |
@@ -168,7 +170,12 @@ Tout est automatique (GitHub Actions) ; aucune intervention manuelle n'est néce
 - *Produit net bancaire de l'ancien plan comptable bancaire* (avant 2018 : comptes de résultat en deux tableaux, charges puis produits, sans ligne « produit net bancaire ») : produits d'exploitation bancaire − charges d'exploitation bancaire (intérêts, crédit-bail, commissions, opérations financières, divers), seulement si tout le compte de résultat se vérifie colonne par colonne (somme des postes = total de chaque tableau, total des charges = total des produits, total d'exploitation bancaire imprimé = somme de ses postes), années lues dans l'en-tête du tableau et confirmées par le résultat de l'exercice lu au bilan (même montant, même échelle). Les chiffres que les banques communiquent ajoutent parfois leurs produits généraux d'exploitation (écart de 0 à 4 %).
 - *Chiffre d'affaires SYSCOHADA* = ventes de marchandises + ventes de produits fabriqués + travaux, services vendus (+ produits accessoires), quand la ligne du total manque ; une partie imprimée sans montant (case vide) compte pour zéro.
 - *Résultat de l'exercice* d'une banque manquant ou lu à zéro au bilan : repris du compte de résultat vérifié (BOA Côte d'Ivoire 2011 : perte de 487 millions, et non 0).
-Ces montants calculés ne participent à aucun contrôle entre documents ; ils ne comblent qu'un exercice resté vide, en dernier (après la base tierce et les archives), et ne remplacent jamais un montant existant (`calc` dans `comptes.json` consolidé ; mention « calculé d'après les comptes publiés » dans `src_years`).
+- *Sous-totaux SYSCOHADA absents du document* (`subtotals`, depuis le 19/10/2026) : un sous-total n'est calculé que si un autre montant publié du même exercice le confirme à 0,5 % près — résultat des activités ordinaires = résultat d'exploitation + résultat financier, résultat financier ou d'exploitation par différence (confirmés par résultat net = RAO + HAO − impôts − participation) ; excédent brut d'exploitation = valeur ajoutée − charges de personnel et l'inverse (confirmés par EBE − dotations ≈ résultat d'exploitation) ; capitaux propres = ressources stables − dettes financières (confirmés par le total du passif). Essai du 19/10/2026 : 116 montants ajoutés, aucun montant existant changé ni retiré.
+Ces montants calculés ne participent à aucun contrôle entre documents ; ils ne comblent qu'un exercice resté vide, en dernier (après la base tierce et les archives), et ne remplacent jamais un montant existant (`calc` dans `comptes.json` consolidé ; mention « calculé d'après les comptes publiés » dans `src_years`). Dans FA (onglets des comptes détaillés), ces cases sont en italique avec l'infobulle « Total recalculé à partir des postes publiés de l'exercice » (`cx` dans les lignes de `fa/<titre>.json`) ; un poste ou un exercice entièrement vide n'est pas affiché.
+
+**Unité d'un document sans ligne d'unité** (`comptes.py`, `consolidate`, depuis le 19/10/2026) : seulement pour un exercice vérifié qu'aucune autre lecture ne couvre (aucun document d'unité connue pour cette année, quel que soit le périmètre) : unité unique des autres exercices du même document et du même périmètre, avec un chiffre clé (total du bilan, chiffre d'affaires, produit net bancaire) ; sinon unité des exercices voisins (±3 ans) quand une seule échelle est à moins d'un demi-ordre de grandeur et la suivante au moins 1,5 ordre plus loin. Essai du 19/10/2026 : 8 exercices ajoutés (Servair Abidjan 2004-2011 en SYSCOHADA, SOGB 2005), aucun montant existant changé ni retiré.
+
+**Documents retrouvés dans l'archive web** (`seed/archives_comptes.json`, `cpt_archived` dans `fetch_extra.py`) : documents de la BRVM qui ne sont plus sur son site mais gardés par l'archive web (liste de `archives.yml`), ajoutés à la lecture des comptes avec leur horodatage (`wb`, `wb_u`) ; téléchargés depuis la copie de l'archive (`get_wb`, au rythme de l'archive) ; dans MOTS CLES, le lien passe par le relais des anciens documents (`/doc/a/…`). 34 documents au 19/10/2026 : Unilever CI 2010-2013, Coris Bank 2017, 2020, 2021 et 1er semestre 2024, Air Liquide CI / Erium (26/04/2023), rapport annuel de Palm CI (08/07/2024), SITAB, Sucrivoire 2019 et 2024, Vivo Energy CI 2016, ETI 2018 et 2022, Oragroup 2020, BOA Bénin 2019, BOA Sénégal 2017, BOA Mali 1er semestre 2021, SIB 1ers semestres 2022 et 2025, SMB CI 2022, rapport annuel d'Uniwax 2018. Un document de cette liste déjà présent dans la liste des publications n'est pas ajouté une seconde fois ; un même fichier déposé deux fois (suffixe « _0 ») n'apparaît qu'une fois dans MOTS CLES.
 
 **Données prises à l'extérieur : une donnée prise n'est jamais perdue** (`scripts/sticky.py`, décision du 18/10/2026) — la base tierce (BRVMetrics, elle-même tirée de SikaFinance et de la BRVM), les archives SikaFinance (`sika_hist.json`) et les fiches des sociétés (`profiles.json`) servent de copie pour les chiffres que la BRVM ne donne pas ; la BRVM reste la source principale. À chaque passage du Terminal, le miroir de la base tierce (branche `raw`, `brvm_src/`) est fusionné dans la nouvelle copie : un titre, un exercice, une séance, un avis ou un champ que la source n'a plus est repris (une valeur nouvelle ou corrigée l'emporte ; un fichier dont le format change est gardé à côté, « .ancien », sans mélange). Un champ qu'une fiche société n'a plus garde sa valeur précédente. Chaque soir, la base historique (branche `histo`, dossier `instantanes/`) en garde une copie permanente (même fusion), dont chaque version reste dans l'historique de la branche et dans la copie de secours. Base tierce injoignable : miroir utilisé (déjà en place) ; base figée depuis plus de 21 jours : signalée (`boc_check.json`, « base_ext ») et le récent vient des sources BRVM (comptes lus, avis, bulletins de la cote, cours en séance). Liste des publications des sociétés (lecture des comptes, `cpt_events`) : liste tierce, sinon son miroir (branche `raw`), sinon les seules pages « rapports des sociétés cotées » de brvm.org (pages des 48 sociétés gardées dans `brvm_rapports.json`) ; le registre des documents déjà lus n'est jamais réduit.
 
@@ -231,7 +238,9 @@ scripts/archives_brvm.py   vérification : documents de la BRVM gardés par l'ar
 scripts/dividendes.py      avis et calendriers de dividendes
 scripts/qlab.py, qlab_core.py, qlab_backtest.py   moteur de valorisation QLAB (versions, événements, validation)
 scripts/qlab_prev.py, periodiques.py               moteur de prévisions QLAB 3 et lecture des publications intermédiaires
-docs/                      cahiers des charges et méthodes de QLAB
+docs/                      cahiers des charges et méthodes de QLAB ; PASSATION.md (état du travail entre deux sessions)
+seed/archives_comptes.json documents de la BRVM retrouvés dans l'archive web, ajoutés à la lecture des comptes
+outils/essais/             test complet du site en local et comparaisons de deux constructions (voir « En local »)
 SAUVEGARDES.md             points de restauration (retour arrière possible à chaque étape)
 ```
 
@@ -244,5 +253,21 @@ git fetch origin data && git archive origin/data | tar -x -C /tmp/qsite
 cp index.html /tmp/qsite/ && python3 -m http.server -d /tmp/qsite 8000   # http://localhost:8000
 # (en local, les données ne passent pas par le relais : adresses d'origine et noms de fichiers réels)
 ```
+
+**Test complet du site** (`outils/essais/`, à lancer avant et après chaque modification ; Playwright avec Chromium et terser requis) :
+
+```bash
+git fetch origin +refs/heads/data:refs/remotes/origin/data && mkdir -p /tmp/d && git archive origin/data | tar -x -C /tmp/d
+bash outils/essais/test_site.sh /tmp/d/data /tmp/essai_apres 8841      # ~15 min : toutes les fonctions et tous les onglets,
+                                                                     # iPhone 13, QLAB 48 × 6, mots interdits
+python3 outils/essais/comparer_parcours.py /tmp/essai_avant/parcours.json /tmp/essai_apres/parcours.json
+python3 outils/essais/cmp_fund.py <construction A> <construction B>  # fondamentaux de deux constructions (dossiers contenant data/)
+python3 outils/essais/fa_ab.py <construction A> <construction B>     # fichiers FA alignés par année : ajoutés / changés / retirés
+```
+
+`test_site.sh` construit la page (`build.py`), applique aux données la réécriture du relais (`rw.js`, comme `api/data.js`),
+sert le site en local puis lance `crawl_txt.py` (texte, infobulles, liens, erreurs JavaScript de chaque fonction et onglet),
+`mobilecheck.py` (iPhone 13 : débordement horizontal, textes suspects), `qlab3all.py` (QLAB, 48 actions × 6 vues) et
+`mots_interdits.py` (NaN, undefined, null, noms de sources, liens interdits).
 
 Outil d'analyse personnel, pas un conseil en investissement. Les données de marché restent la propriété de leurs émetteurs.

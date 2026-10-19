@@ -2056,6 +2056,39 @@ CA_LIKE = {"chiffre_affaires", "ventes_marchandises", "ventes_produits", "travau
            "valeur_ajoutee", "achats_marchandises", "achats_matieres", "b_interets_produits", "b_interets_charges", "b_pnb"}
 
 
+def subtotals(v):
+    """Soldes intermédiaires SYSCOHADA manquants, calculés exactement à partir des postes publiés du même exercice, chacun
+    seulement s'il est confirmé par un autre total publié (à 0,5 % près) : [(poste, montant)]. Montants en millions de FCFA."""
+    g = lambda k: v.get(k)  # noqa: E731
+    near = lambda a, b: a is not None and b is not None and abs(a - b) <= max(0.5, abs(b) * 0.005)  # noqa: E731
+    out = []
+    imp = abs(g("impots_resultat") or 0) + abs(g("participation") or 0)
+    rn_ok = lambda rao: g("rhao") is not None and g("impots_resultat") is not None and g("resultat_net") is not None and \
+        near(rao + g("rhao") - imp, g("resultat_net"))  # noqa: E731
+    re_, rf_, rao_ = g("resultat_exploitation"), g("resultat_financier"), g("rao")
+    if rao_ is None and re_ is not None and rf_ is not None and rn_ok(re_ + rf_):
+        out.append(("rao", re_ + rf_))
+    if rf_ is None and rao_ is not None and re_ is not None and rn_ok(rao_):
+        out.append(("resultat_financier", rao_ - re_))
+    if re_ is None and rao_ is not None and rf_ is not None and rn_ok(rao_):
+        out.append(("resultat_exploitation", rao_ - rf_))
+    # EBE et valeur ajoutée : confirmés par le résultat d'exploitation (EBE − dotations nettes = RE) quand il est publié
+    va_, pe_, ebe_, dot_ = g("valeur_ajoutee"), g("charges_personnel"), g("ebe"), g("dotations")
+    if ebe_ is None and va_ is not None and pe_ is not None and dot_ is not None and re_ is not None and near(va_ - abs(pe_) - abs(dot_), re_):
+        out.append(("ebe", va_ - abs(pe_)))
+    if va_ is None and ebe_ is not None and pe_ is not None and dot_ is not None and re_ is not None and near(ebe_ - abs(dot_), re_):
+        out.append(("valeur_ajoutee", ebe_ + abs(pe_)))
+    # capitaux propres : ressources stables − dettes financières, confirmés par le total du passif
+    rs_, df_, cp_ = g("ressources_stables"), g("dettes_financieres"), g("capitaux_propres")
+    tp_, pc_, trp_ = g("total_passif") or g("total_actif"), g("passif_circulant"), g("tresorerie_passif")
+    def cp_ok(c):
+        return tp_ is not None and pc_ is not None and trp_ is not None and df_ is not None and \
+            near(c + df_ + pc_ + trp_ + (g("ecart_conversion_passif") or 0), tp_)
+    if cp_ is None and rs_ is not None and df_ is not None and cp_ok(rs_ - df_):
+        out.append(("capitaux_propres", rs_ - df_))
+    return out
+
+
 def consolidate(cj, mirror=None, fx=None):
     """comptes.json (documents lus) -> {titre: {"y": {exercice: {"v": {poste: millions de FCFA}, "n", "d", "own"}}, "per", "std",
     "agree" (part des montants communs égaux à ceux de la base de référence), "ncmp" (nombre de montants comparés)}}.
@@ -2188,6 +2221,47 @@ def consolidate(cj, mirror=None, fx=None):
             o_ = sorted(dist, key=dist.get)
             if dist[o_[0]] <= 1.0 and dist[o_[1]] - dist[o_[0]] >= 2.0:
                 x["u"] = o_[0]
+    # unité encore inconnue : (1) celle des autres exercices du même document (une seule unité par document) ; (2) sinon la taille
+    # de la société les exercices voisins (moins de 4 ans d'écart), quand une seule unité la redonne à moins d'un facteur 3 et que
+    # les autres s'en écartent d'au moins 30 fois plus (les unités possibles diffèrent d'un facteur 1 000)
+    u_doc = {}
+    for x in recs:
+        if x["u"]:
+            u_doc.setdefault((x["doc"], x["per"]), set()).add(x["u"])
+    near = {}
+    for x in recs:
+        if x["u"]:
+            for k in ("total_actif", "chiffre_affaires", "b_pnb"):
+                if x["v"].get(k) and x["v"][k] > 0:
+                    near.setdefault((x["t"], k), []).append((x["y"], math.log10(x["v"][k] * x["u"] * (x["fx"] or 1.0) / 1e6)))
+    for t_, ser_ in (mirror or {}).items():
+        for k, mk in (("total_actif", "total_bilan"), ("chiffre_affaires", "ca"), ("b_pnb", "ca")):
+            for y_, mv in (ser_.get(mk) or {}).items():
+                if mv and mv > 0 and str(y_).isdigit():
+                    near.setdefault((t_, k), []).append((int(y_), math.log10(mv)))
+    have_ty = {(x["t"], x["y"]) for x in recs if x["u"]}
+    for x in recs:
+        if x["u"] or (x["t"], x["y"]) in have_ty:
+            continue  # (seulement pour un exercice qui n'a encore aucun compte d'unité connue, quel que soit le référentiel)
+        sib = u_doc.get((x["doc"], x["per"]))
+        key_ = any(x["v"].get(k) for k in ("total_actif", "total_passif", "chiffre_affaires", "b_pnb"))  # (un chiffre clé, recoupable ensuite)
+        if key_ and sib and len(sib) == 1 and (not x["uc"] or next(iter(sib)) in x["uc"]):
+            x["u"], x["u_how"] = next(iter(sib)), "document"
+            continue
+        dist = {}
+        for cand in (x["uc"] or [1.0, 1e3, 1e6]):
+            ds = []
+            for k in ("total_actif", "chiffre_affaires", "b_pnb"):
+                v = x["v"].get(k)
+                refs = [lv for yy, lv in near.get((x["t"], k), []) if 0 < abs(yy - x["y"]) <= 3]
+                if v and v > 0 and refs:
+                    ds.append(abs(math.log10(v * cand * (x["fx"] or 1.0) / 1e6) - statistics.median(refs)))
+            if ds:
+                dist[cand] = max(ds)
+        if len(dist) >= 2:
+            o_ = sorted(dist, key=dist.get)
+            if dist[o_[0]] <= 0.5 and dist[o_[1]] - dist[o_[0]] >= 1.5:
+                x["u"], x["u_how"] = o_[0], "voisins"
     recs = [x for x in recs if x["u"]]
     for x in recs:
         x["m"] = {k: round(v * x["u"] * (x["fx"] or 1.0) / 1e6, 3) for k, v in x["v"].items()}
@@ -2681,6 +2755,15 @@ def consolidate(cj, mirror=None, fx=None):
                     v[kr_] = xv_
                     weak.append(kr_)
                     calc_.append(kr_)
+                # soldes SYSCOHADA manquants, recalculés à l'identique de leurs composantes publiées (définitions du plan
+                # comptable : RAO = RE + RF ; EBE = VA − personnel ; capitaux propres = ressources stables − dettes financières),
+                # seulement quand un autre total publié du même exercice les confirme ; jamais à la place d'un montant publié
+                if gk_[1] == "syscohada" and not any(k_.startswith("b_") for k_ in v):
+                    for kk_, f_ in subtotals(v):
+                        if v.get(kk_) is None and f_ is not None:
+                            v[kk_] = round(f_, 3)
+                            weak.append(kk_)
+                            calc_.append(kk_)
                 weak = [k_ for k_ in weak if k_ in v]
                 best = cand[0]
                 res[y] = {"v": v, "n": max(nsrc.get(k, 1) for k in ("total_actif", "resultat_net") if k in nsrc) if any(k in nsrc for k in ("total_actif", "resultat_net")) else 1,

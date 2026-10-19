@@ -237,7 +237,41 @@ function kwHighlight(ti, P) {
   return esc(ti).replace(/[A-Za-zÀ-ÿ0-9]+/g, w => { const n = kwN(w); for (const x of words) if (n === x || (x.length >= 3 && n.startsWith(x))) return `<mark>${w}</mark>`; return w; });
 }
 
+/* historique des recherches (90 derniers jours) : gardé sur cet appareil seulement, jamais envoyé */
+const KWH_K = 'fqt_kw_hist_v1', KWH_DAYS = 90;
+function kwHistLoad() { try { const a = JSON.parse(localStorage.getItem(KWH_K) || '[]'); const lim = Date.now() - KWH_DAYS * 864e5; return Array.isArray(a) ? a.filter(x => x && x.q && x.t >= lim) : []; } catch (e) { return []; } }
+function kwHistSave(a) { try { localStorage.setItem(KWH_K, JSON.stringify(a.slice(0, 1000))); } catch (e) { } }
+function kwHistAdd(q, n) {
+  q = String(q || '').replace(/\s+/g, ' ').trim(); if (q.length < 2) return; const a = kwHistLoad(), now = Date.now(), key = q.toLowerCase();
+  /* (la même recherche relancée dans les 10 minutes met à jour la ligne au lieu d'en ajouter une) */
+  const i = a.findIndex(x => x.q.toLowerCase() === key && now - x.t < 6e5); if (i >= 0) a.splice(i, 1);
+  a.unshift({ q, t: now, n: n == null ? null : n }); kwHistSave(a);
+}
+function kwHistPage(m) {
+  setTitle('Keyword Search History');
+  const draw = () => {
+    const a = kwHistLoad(), f = (($('kwhF') || {}).value || '').trim().toLowerCase(), L = f ? a.filter(x => x.q.toLowerCase().includes(f)) : a;
+    const day = t => new Date(t).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    let last = '', rows = '';
+    for (const x of L) { const d = day(x.t); if (d !== last) { rows += `<tr class="sub"><td class="l am" colspan="4">${esc(d.charAt(0).toUpperCase() + d.slice(1))}</td></tr>`; last = d; }
+      rows += `<tr><td class="l">${new Date(x.t).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</td><td class="l"><a href="#" data-kwhq="${esc(x.q)}">${esc(x.q)}</a></td><td>${x.n == null ? '—' : num(x.n, 0)}</td><td><button class="tb alt" data-kwhx="${x.t}" title="Retirer cette recherche de l’historique">×</button></td></tr>`; }
+    $('kwhR').innerHTML = L.length ? `<table class="t"><thead><tr><th class="l">Heure</th><th class="l">Recherche</th><th>Résultats</th><th></th></tr></thead><tbody>${rows}</tbody></table>`
+      : `<div class="empty">${a.length ? 'Aucune recherche ne contient ce texte.' : 'Aucune recherche ces 90 derniers jours.'}</div>`;
+    $('kwhN').textContent = num(a.length, 0) + (a.length > 1 ? ' recherches' : ' recherche');
+  };
+  m.innerHTML = pn('Historique de recherche · 90 derniers jours', 'MOTS CLES', `<div class="kw"><div class="kwbar"><input id="kwhF" type="search" autocomplete="off" spellcheck="false" placeholder="Filtrer l’historique"><span id="kwhN" class="dm"></span><button class="tb alt" id="kwhC">Effacer l’historique</button></div><div id="kwhR"></div></div>`,
+    { np: true, lect: 'Recherches faites dans MOTS CLES sur cet appareil ces 90 derniers jours (gardées dans ce navigateur seulement). Cliquer une recherche la relance.' });
+  $('kwhF').oninput = draw;
+  $('kwhC').onclick = () => { if (confirm('Effacer tout l’historique de recherche de cet appareil ?')) { kwHistSave([]); draw(); } };
+  m.onclick = ev => {
+    const q = ev.target.closest('[data-kwhq]'); if (q) { ev.preventDefault(); kwGo(q.dataset.kwhq); return; }
+    const x = ev.target.closest('[data-kwhx]'); if (x) { kwHistSave(kwHistLoad().filter(y => String(y.t) !== x.dataset.kwhx)); draw(); }
+  };
+  draw();
+}
 PAGES['MOTS CLES'] = async (m, alive) => {
+  const tab = tabState('MOTS CLES', 'r'); setTabs(FN_TABS['MOTS CLES'], tab, k => { ST.tab['MOTS CLES'] = k; render(); });
+  if (tab === 'h') return kwHistPage(m);
   setTitle('Keyword Search');
   const st = ST.kw = ST.kw || { q: '', k: '', n: 60 };
   m.innerHTML = pn('Recherche par mots clés', 'MOTS CLES', `<div class="kw"><div class="kwbar"><input id="kwQ" type="search" autocomplete="off" spellcheck="false" placeholder="ex. : états financiers sonatel 2017 · rapport d'activité servair 2008 · obligation tpci · avis dcbr dividende · bulletin 15 octobre 2026" value="${esc(st.q)}"><span class="kwn" id="kwN"></span></div>
@@ -297,19 +331,20 @@ PAGES['MOTS CLES'] = async (m, alive) => {
   };
   const kwRow = (e, i, P) => `<tr data-kwi="${i}"><td class="l">${kwDate(e.d)}</td><td class="l"><span class="kwk" style="--c:${(KW_KIND[e.k] || ['', 'var(--dim)'])[1]}">${esc((KW_KIND[e.k] || [e.k])[0])}</span>${e.f.includes('D') ? ' <span class="dm" title="Dépositaire central / Banque de règlement">DC/BR</span>' : ''}${e.f.includes('A') ? ' <span class="dm" title="Document ancien">archive</span>' : ''}</td>
     <td class="l tk"${e.t && Q.by[e.t] ? ` data-sec="${e.t}" data-to="DES"` : ''}>${e.t || '—'}</td><td class="l kwti"><a href="${esc(e.u && e.u.startsWith('bond:') ? '#UEMOA BONDS' : kwUrl(e.u))}" target="_blank" rel="noopener" data-kwo="${i}">${P ? kwHighlight(e.ti, P) : esc(e.ti)}</a></td><td>${e.y || '—'}</td></tr>`;
-  inp.oninput = () => { st.n = 60; clearTimeout(timer); timer = setTimeout(draw, 90); };
+  let htimer = null; const rec = () => { clearTimeout(htimer); if (st.q && st.q.trim()) kwHistAdd(st.q, res && res.R ? res.R.length : null); };
+  inp.oninput = () => { st.n = 60; clearTimeout(timer); timer = setTimeout(draw, 90); clearTimeout(htimer); htimer = setTimeout(rec, 2500); };
   /* Entrée lance la recherche (aucun document ne s'ouvre seul : on clique sur l'intitulé) */
   inp.onkeydown = ev => {
-    if (ev.key === 'Enter') { ev.preventDefault(); clearTimeout(timer); draw(); try { if (matchMedia('(pointer: coarse)').matches) inp.blur(); } catch (e) { } }
+    if (ev.key === 'Enter') { ev.preventDefault(); clearTimeout(timer); draw(); rec(); try { if (matchMedia('(pointer: coarse)').matches) inp.blur(); } catch (e) { } }
     else if (ev.key === 'Escape') { inp.value = ''; draw(); }
   };
   m.onclick = ev => {
-    const a = ev.target.closest('[data-kwo]'); if (a) { const e = db.E[+a.dataset.kwo]; if (e && e.u && e.u.startsWith('bond:')) { ev.preventDefault(); open(e); } return; }
+    const a = ev.target.closest('[data-kwo]'); if (a) { rec(); const e = db.E[+a.dataset.kwo]; if (e && e.u && e.u.startsWith('bond:')) { ev.preventDefault(); open(e); } return; }
     const k = ev.target.closest('[data-kwk]'); if (k) { st.k = k.dataset.kwk; st.n = 60; draw(); return; }
-    const qx = ev.target.closest('[data-kwq]'); if (qx) { inp.value = qx.dataset.kwq; st.k = ''; draw(); inp.focus(); return; }
+    const qx = ev.target.closest('[data-kwq]'); if (qx) { inp.value = qx.dataset.kwq; st.k = ''; draw(); rec(); inp.focus(); return; }
     const x = ev.target.closest('[data-kwx]'); if (x && res) { const P = res.P, drop = new Set(x.dataset.kwx === 'co' ? P.used.co : x.dataset.kwx === 'kind' ? P.used.kind.flatMap(p => p.split(' ')) : P.used.year);
       inp.value = kwToks(inp.value).filter(w => !drop.has(w)).join(' '); st.k = ''; draw(); inp.focus(); return; }
     const sf = ev.target.closest('[data-kwfn]'); if (sf) { go(sf.dataset.kwfn, sf.dataset.kwsec); }
   };
-  draw();
+  draw(); if (st.rec) { st.rec = false; rec(); }
 };

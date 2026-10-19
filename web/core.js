@@ -156,33 +156,49 @@ function applyQuoteToSeries(s) {
 }
 
 /* ---------- ligne de commande ---------- */
-function searchSecs(qs) {
+function scoredSecs(qs) {
   const q = qs.trim().toUpperCase(); if (!q) return [];
   const out = []; for (const s of Q.sum.secs) { const id = s.id.toUpperCase(), tk = s.tk.toUpperCase(), n = (s.n || '').toUpperCase(), sh = (s.short || '').toUpperCase();
     const sc = id === q ? 0 : tk.startsWith(q) ? 1 : id.startsWith(q) ? 2 : n.startsWith(q) || sh.startsWith(q) ? 3 : n.includes(q) || sh.includes(q) ? 4 : 9; if (sc < 9) out.push([sc, s]); }
-  return out.sort((a, b) => a[0] - b[0] || (b[1].liq || 0) - (a[1].liq || 0)).map(x => x[1]);
+  return out.sort((a, b) => a[0] - b[0] || (b[1].liq || 0) - (a[1].liq || 0));
+}
+function searchSecs(qs) { return scoredSecs(qs).map(x => x[1]); }
+/* noms usuels des sociétés BRVM absents de leur nom officiel (anciens noms, sigles) */
+const SEC_ALIAS = { SGBCI: 'SGBC', 'SOCIETE GENERALE': 'SGBC', BICICI: 'BICC', SODECI: 'SDCC', AGL: 'SDSC', BOLLORE: 'SDSC', 'AIR LIQUIDE': 'SIVC', AIRLIQUIDE: 'SIVC', SIEM: 'SEMC', CORIS: 'CBIBF', LNB: 'LNBB', 'ECOBANK TRANSNATIONAL': 'ETIT' };
+/* titre désigné par un ticker ou un nom (« NSIA », « Orange CI », « SOGB ») ; { amb: [...] } si plusieurs titres répondent également */
+function resolveSec(qs) {
+  const q = String(qs || '').trim().toUpperCase(); if (!q) return null;
+  const ex = exactSec(q) || (SEC_ALIAS[q] && Q.by[SEC_ALIAS[q]]); if (ex) return ex;
+  const sc = scoredSecs(q); if (!sc.length) return null;
+  if (sc.length === 1 || sc[0][0] < sc[1][0]) return sc[0][1];
+  return { amb: sc.filter(x => x[0] === sc[0][0]).slice(0, 6).map(x => x[1]) };
 }
 function parseCmd(txt) {
   const toks = txt.trim().toUpperCase().replace(/<GO>|\bGO\b|EQUITY|INDEX|CURNCY|COMDTY/g, ' ').split(/\s+/).filter(Boolean);
   for (let i = 0; i + 1 < toks.length; i++) if (FN[toks[i] + ' ' + toks[i + 1]]) toks.splice(i, 2, toks[i] + ' ' + toks[i + 1]);  // codes à deux mots (STOCK BONDS)
-  let fn = null, s = null; for (const t0 of toks) { const t = !fn && (FN_ALIAS[t0] || FN_SHORT[t0]) ? fnAlias(t0) : t0; if (!fn && FN[t] && has(t)) { fn = t; continue; } if (t === 'AIDE') { fn = 'HELP'; continue; } if (!s) { const m = Q.by[t] || searchSecs(t)[0]; if (m) s = m.id; } }
-  if (!s && toks.length > 1 && !fn) { const m = searchSecs(toks.join(' '))[0]; if (m) s = m.id; }
-  return { fn, s };
+  /* la fonction d'abord (où qu'elle soit), puis le titre désigné par le reste : ticker ou nom de la société */
+  let fn = null; const rest = [];
+  for (const t0 of toks) { const t = !fn && (FN_ALIAS[t0] || FN_SHORT[t0]) ? fnAlias(t0) : t0; if (!fn && FN[t] && has(t)) { fn = t; continue; } if (!fn && t === 'AIDE') { fn = 'HELP'; continue; } rest.push(t0); }
+  const q = rest.join(' '); let s = null, amb = null;
+  if (q) { let r = resolveSec(q); if (!r || r.amb) { for (const t of rest) { const r2 = resolveSec(t); if (r2 && !r2.amb) { r = r2; break; } } } if (r && r.amb) amb = r.amb; else if (r) s = r.id; }
+  return { fn, s, q, amb };
 }
 /* « 2 <GO> » : active l'élément numéroté 2 de l'écran (onglet, bouton d'action, section, ligne de menu) */
 function numCmd(t) { const el = document.querySelector(`[data-n="${t}"]`); if (el) { el.click(); return true; } return false; }
 function runCmd(txt) {
   const t = txt.trim(); if (/^\d{1,3}$/.test(t)) { if (numCmd(t)) return; if (ST.fn === 'MENU') { const it = menuItems(sec(ST.sec))[+t - 1]; if (it) { go(it, ST.sec); return; } } toast('Aucun élément numéroté ' + t + ' sur cet écran.'); return; }
-  const mk = t.match(KW_CMD); if (mk) { kwGo(mk[1] == null || !mk[1].trim() ? null : mk[1].trim()); return; }
-  const { fn, s } = parseCmd(txt), tc = kwClean(t);
-  /* texte libre (« états financiers sonatel 2017 », « avis dcbr ») : recherche par mots clés */
-  if (!fn && tc && (!s || (tc.split(/\s+/).length > 1 && !searchSecs(tc).length))) { kwGo(tc); return; }
+  const mk = t.match(KW_CMD); if (mk) { kwGo(mk[1] == null || !mk[1].trim() ? null : mk[1].trim()); return; }  // (recherche demandée explicitement : « MOTS CLES … »)
+  const { fn, s, q, amb } = parseCmd(txt);
+  /* la barre n'envoie jamais d'elle-même vers la recherche dans les documents : un texte non reconnu est signalé */
+  if (amb && !s) { toast(`« ${kwClean(q)} » : plusieurs titres — ${amb.map(x => x.id + ' (' + (x.short || x.n) + ')').join(', ')}. Précisez le ticker.`); return; }
+  if (!fn && !s) { toast(`« ${kwClean(t)} » : aucun titre ni fonction reconnu. Pour chercher dans les documents, ouvrez MOTS CLES.`); return; }
+  if (fn && !s && q && FN[fn][1] === 'sec') { toast(`Titre « ${kwClean(q)} » introuvable.`); return; }
   if (fn && FN[fn][1] === 'mkt') { go(fn, s); return; }
   go(fn || 'MENU', s || ST.sec);
 }
 const KW_CMD = /^(?:mots?[\s-]*cl[eé]s?|motscl[eé]s?|recherche|kw|docs)(?:\s+([\s\S]*))?$/i;
 const kwClean = t => String(t || '').replace(/<GO>|\b(?:GO|EQUITY|INDEX|CURNCY|COMDTY)\b/gi, ' ').replace(/\s+/g, ' ').trim();
-function kwGo(q) { const k = ST.kw = ST.kw || { q: '', k: '', n: 60, sel: 0 }; if (q != null) Object.assign(k, { q, k: '', n: 60, sel: 0 }); go('MOTS CLES'); }
+function kwGo(q) { const k = ST.kw = ST.kw || { q: '', k: '', n: 60, sel: 0 }; if (q != null) Object.assign(k, { q, k: '', n: 60, sel: 0, rec: true }); ST.tab['MOTS CLES'] = 'r'; go('MOTS CLES'); }
 function menuItems(s) { return SEC_TABS.filter(has); }
 function exactSec(t) { const u = (t || '').toUpperCase(); return Q.by[u] || Q.sum.secs.find(s => s.tk.toUpperCase().split(' ')[0] === u) || null; }
 /* Saisie façon Bloomberg : « SNTS » propose les titres ; « SNTS » + espace (ou Tab) liste les fonctions du titre avec leur définition. */
@@ -190,15 +206,24 @@ function initCmd() {
   const inp = $('cmd'), ac = $('ac'); let sel = 0, items = [];
   const row = (it, i) => it.k === 'h' ? `<p class="ach">${esc(it.a)}</p>` : `<div class="${i === sel ? 'on' : ''}${it.off ? ' off' : ''}" data-i="${i}" title="${esc(it.tt || '')}"><b>${esc(it.a)}</b><span>${it.b}</span><span>${esc(it.c)}</span></div>`;
   const show = () => {
-    const v = inp.value, toks = v.trim().split(/\s+/).filter(Boolean), sp = /\s$/.test(v); const S = toks.length ? exactSec(toks[0]) : null;
-    if (S && (toks.length > 1 || sp)) {
-      const part = (toks.length > 1 ? toks.slice(1).join(' ') : '').toUpperCase();
+    const v = inp.value, toks = v.trim().split(/\s+/).filter(Boolean), sp = /\s$/.test(v);
+    /* titre désigné par les premiers mots (ticker ou nom : « NSIA », « Orange CI ») ; les mots suivants filtrent ses fonctions */
+    let S = null, nS = 0; for (let k = toks.length; k >= 1 && !S; k--) { const r = k === 1 ? (exactSec(toks[0]) || resolveSec(toks[0])) : resolveSec(toks.slice(0, k).join(' ')); if (r && !r.amb && (k < toks.length || sp || k > 1 || exactSec(toks[0]))) { S = r; nS = k; } }
+    if (S && (toks.length > nS || sp || nS > 1)) {
+      const part = toks.slice(nS).join(' ').toUpperCase();
       const codes = SEC_TABS.filter(has).filter(c => !part || c.startsWith(part) || FN[c][0].toUpperCase().includes(part) || FN[c][4].toUpperCase().includes(part));
       items = [{ k: 'h', a: `${ykey(S)} · ${S.n}` }];
       for (const [g, cs] of MENU_GROUPS) { const gc = cs.filter(c => codes.includes(c)); if (!gc.length) continue; if (!part) items.push({ k: 'h', a: g });
         for (const c of gc) { const why = avail(c, S); items.push({ k: 'sfn', id: c, sec: S.id, a: c, b: `${esc(FN[c][4])} <i>— ${esc(FN[c][3])}</i>`, c: why ? 'n.d.' : FN[c][0], off: !!why, tt: why ? 'Non disponible : ' + why : FN[c][3] }); } }
-      if (part && items.length === 1) { const q = v.trim(); items.push({ k: 'kw', id: q, a: 'MOTS CLES', b: `Rechercher « ${esc(q)} » dans tous les documents du marché`, c: 'recherche', tt: FN['MOTS CLES'][3] }); }
+      if (part && items.length === 1) items.push({ k: 'h', a: `Aucune fonction « ${part} » pour ${S.id}` });
     } else {
+      /* « TOTAL FA » : plusieurs titres répondent au nom — chacun proposé avec la fonction tapée */
+      const lastT = toks.length > 1 ? toks[toks.length - 1].toUpperCase() : '', al = lastT && (FN_ALIAS[lastT] || FN_SHORT[lastT]);
+      const lastFn = lastT && FN[lastT] && has(lastT) ? lastT : al && has(al[0]) ? al[0] : null;
+      const pre = lastFn ? resolveSec(toks.slice(0, -1).join(' ')) : null;
+      if (pre && pre.amb) { items = [{ k: 'h', a: 'Plusieurs titres répondent à ce nom' }].concat(pre.amb.map(x => { const why = avail(lastFn, x); return { k: 'sfn', id: lastFn, sec: x.id, a: x.id, b: `${esc(x.n)} <i>— ${esc(FN[lastFn][4])}</i>`, c: why ? 'n.d.' : FN[lastFn][0], off: !!why, tt: why ? 'Non disponible : ' + why : FN[lastFn][3] }; })); }
+      else if (lastFn && !pre && FN[lastFn][1] === 'sec') { items = [{ k: 'h', a: `Titre « ${toks.slice(0, -1).join(' ')} » introuvable` }]; }
+      else {
       const last = toks[toks.length - 1] || '', L = last.toUpperCase();
       const LL = v.trim().toUpperCase(), multi = /\s/.test(LL);
       const fns = Object.keys(FN).filter(k => has(k) && k !== 'MENU' && L && (multi ? k.startsWith(LL) : k.startsWith(L) || FN[k][0].toUpperCase().startsWith(L) || FN[k][4].toUpperCase().startsWith(L)))
@@ -211,11 +236,11 @@ function initCmd() {
       const F = fns.slice(0, 8), T = ss.slice(0, 10), secFirst = ss.length && (ss[0].id.toUpperCase() === L || ssm.length > 0);
       const blk = (lab, arr) => arr.length ? [{ k: 'h', a: lab }].concat(arr) : [];
       items = secFirst ? blk('TITRES', T).concat(blk('FONCTIONS', F)) : blk('FONCTIONS', F).concat(blk('TITRES', T));
-      /* recherche par mots clés : en tête pour un texte libre de plusieurs mots, sinon en dernier choix */
-      const kv = v.trim(), mq = kv.match(KW_CMD), q = mq ? (mq[1] || '').trim() : kv;
-      if (q.length >= 2) { const K = [{ k: 'kw', id: q, a: 'MOTS CLES', b: `Rechercher « ${esc(q)} » dans tous les documents du marché`, c: 'recherche', tt: FN['MOTS CLES'][3] }];
-        const first = (mq && q) || (toks.length > 1 && !F.length && !searchSecs(kwClean(kv)).length) || (!F.length && !T.length);
-        items = first ? blk('RECHERCHE', K).concat(items) : items.concat(blk('RECHERCHE', K)); }
+      /* recherche dans les documents : seulement quand elle est demandée (« MOTS CLES … ») ; jamais proposée d'office */
+      const kv = v.trim(), mq = kv.match(KW_CMD), q = mq ? (mq[1] || '').trim() : '';
+      if (mq && q.length >= 2) items = blk('RECHERCHE', [{ k: 'kw', id: q, a: 'MOTS CLES', b: `Rechercher « ${esc(q)} » dans tous les documents du marché`, c: 'recherche', tt: FN['MOTS CLES'][3] }]).concat(items);
+      else if (!items.length && kv.length >= 2) items = [{ k: 'h', a: 'Aucun titre ni fonction — pour chercher dans les documents, ouvrez MOTS CLES' }];
+      }
     }
     sel = Math.max(0, items.findIndex(it => it.k !== 'h' && !it.off)); ac.hidden = !items.length;
     ac.innerHTML = (items.length ? '<p class="ahd"><i>&lt;FLÈCHE HAUT&gt; pour masquer</i><span>Autocomplétion</span></p>' : '') + items.map(row).join('') + (items.length && items.some(it => it.k === 'sec') ? '<p class="hint">Entrée : menu du titre · espace ou Tab : ses fonctions avec leur définition</p>' : items.some(it => it.k === 'sfn') ? '<p class="hint">↑ ↓ puis Entrée · ou tapez le code (ex. FA) · grisé = non disponible pour ce titre</p>' : '');
@@ -234,7 +259,7 @@ function initCmd() {
   ac.addEventListener('mousedown', e => { const d = e.target.closest('[data-i]'); if (d) { e.preventDefault(); pick(+d.dataset.i); } });
   $('cmdForm').addEventListener('submit', e => { e.preventDefault(); const v = inp.value.trim();
     if (!ac.hidden && items.length && !/^\d{1,3}$/.test(v)) { const w = v.toUpperCase().split(/\s+/); for (let i = 0; i + 1 < w.length; i++) if (FN[w[i] + ' ' + w[i + 1]]) w.splice(i, 2, w[i] + ' ' + w[i + 1]); const typedFn = w.length === 1 && FN[w[0]] && has(w[0]);
-      const it = items[sel]; const typedSecFn = w.length === 2 && exactSec(w[0]) && ((FN[w[1]] && has(w[1])) || /^(?:EQUITY|INDEX|CURNCY|COMDTY|GO|<GO>)$/.test(w[1]));
+      const it = items[sel]; const typedSecFn = w.length >= 2 && (FN[w[w.length - 1]] && has(w[w.length - 1]) || /^(?:EQUITY|INDEX|CURNCY|COMDTY|GO|<GO>)$/.test(w[w.length - 1])) && (() => { const r = resolveSec(w.slice(0, -1).join(' ')); return r && !r.amb; })();
       if (!typedSecFn && it && (!typedFn || it.a === w[0])) { pick(sel); return; } }
     ac.hidden = true; inp.value = ''; inp.blur(); runCmd(v); });
   inp.addEventListener('blur', () => setTimeout(() => { ac.hidden = true; }, 150));
@@ -405,6 +430,7 @@ const FN_TABS = {
   MAP: [['BRVM', 'BRVM'], ['NDX', 'Nasdaq-100'], ['ETF', 'ETF US'], ['EU', 'Europe'], ['UK', 'Royaume-Uni'], ['ASIA', 'Asie'], ['AFR', 'Afrique'], ['ME', 'Moyen-Orient'], ['US', 'Marché US']],
   INDX: [['i', 'Indices mondiaux'], ['f', 'Contrats à terme sur indices']],
   'UEMOA/DATA': [['bc', 'Taux, inflation, crédit'], ['tp', 'Titres publics'], ['wb', 'Indicateurs annuels'], ['ecst', 'Statistiques mondiales']],
+  'MOTS CLES': [['r', 'Recherche'], ['h', 'Historique de recherche']],
   NOT: [['c', 'Sociétés cotées'], ['b', 'Obligations et émetteurs'], ['h', 'Historique']],
   SGI: [['sgi', 'SGI'], ['sgo', 'Gestion d’OPCVM'], ['sgp', 'Gestion de patrimoine'], ['cons', 'Conservateurs'], ['agn', 'Agences de notation'], ['gar', 'Garants']],
   EVTS: [['avis', 'Avis BRVM'], ['b', 'Suivi des sociétés BRVM'], ['a', 'Agenda des sociétés']],

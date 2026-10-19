@@ -1355,10 +1355,13 @@ def brvm_company(sid, s, fd_, fcf, dps_hist, b, tax):
                 rows = []
                 seen = set()
                 for k, lab in CPT_ROWS[sk]:
-                    vals = [((cc_["y"].get(y) or cc_["y"].get(str(y)) or {}).get("v") or {}).get(k) for y in Ys_]
+                    yv_ = [(cc_["y"].get(y) or cc_["y"].get(str(y)) or {}) for y in Ys_]
+                    vals = [(x.get("v") or {}).get(k) for x in yv_]
                     if any(v is not None for v in vals) and lab not in seen:
                         seen.add(lab)
-                        rows.append([k, lab, vals])
+                        # (indices des exercices où le poste est un total recalculé de ses composantes publiées)
+                        cx = [i for i, x in enumerate(yv_) if vals[i] is not None and k in (x.get("calc") or ())]
+                        rows.append([k, lab, vals] + ([cx] if cx else []))
                 if rows:
                     secs.append([sk, title, rows])
             return secs

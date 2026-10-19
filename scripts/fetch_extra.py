@@ -1123,12 +1123,24 @@ def cpt_events(out):
             note("comptes", False, f"pages des rapports : {e2}")
             return None
         log(f"liste tierce injoignable : {len(evs)} publications prises directement sur brvm.org")
-        return evs or None
+        return (evs + cpt_archived(evs)) if evs else None
     try:
         evs = evs + brvm_reports(out, evs)
     except Exception as e:  # noqa: BLE001
         note("comptes", False, f"pages des rapports : {e}")
-    return evs
+    return evs + cpt_archived(evs)
+
+
+def cpt_archived(evs):
+    """Documents des sociétés cotées retrouvés dans l'archive web du site de la BRVM et absents de la liste (seed/archives_comptes.json,
+    établi par la vérification archives.yml) : lus comme les autres, téléchargés depuis l'archive (champ « wb »)."""
+    p_ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "seed", "archives_comptes.json")
+    try:
+        L = json.load(open(p_, encoding="utf8")).get("docs") or []
+    except Exception:  # noqa: BLE001
+        return []
+    have = {(e.get("document_url") or "").strip().lower() for e in evs}
+    return [{**x, "source": "BRVM", "origin": "archive"} for x in L if x.get("document_url") and x["document_url"].lower() not in have]
 
 
 def cpt_cands(evs):
@@ -1246,8 +1258,12 @@ def run_comptes(out):
         h = hashlib.sha1(u.encode()).hexdigest()[:16]
         rec = {"t": e["ticker"], "fy": e.get("fiscal_year"), "ti": (e.get("title") or "")[:200], "d": (e.get("published_at") or "")[:10],
                "cat": e["category"], "h": h, "ts": int(time.time())}
+        if e.get("wb"):
+            rec["wb"] = e["wb"]  # (document retrouvé dans l'archive web : téléchargé depuis elle)
+            if e.get("wb_u") and e["wb_u"] != u:
+                rec["wb_u"] = e["wb_u"]
         try:
-            b = get(u, tries=2, timeout=120)
+            b = get_wb(f"http://web.archive.org/web/{e['wb']}id_/{e.get('wb_u') or u}") if e.get("wb") else get(u, tries=2, timeout=120)
         except Exception as ex:  # noqa: BLE001
             rec.update(st=f"erreur {str(ex)[:80]}", n_err=(docs.get(u) or {}).get("n_err", 0) + 1)
             docs[u] = rec
@@ -1325,7 +1341,7 @@ def run_comptes(out):
             break  # (un long document lu à 400 dpi peut prendre plusieurs minutes)
         m = docs[u]
         try:
-            b = get(u, tries=2, timeout=120)
+            b = get_wb(f"http://web.archive.org/web/{m['wb']}id_/{m.get('wb_u') or u}") if m.get("wb") else get(u, tries=2, timeout=120)
             with tempfile.TemporaryDirectory() as td:
                 p_ = os.path.join(td, "a.pdf")
                 open(p_, "wb").write(b)
