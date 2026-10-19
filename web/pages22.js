@@ -236,11 +236,13 @@ function impBackup(P) {
   const d = new Date().toISOString().slice(0, 10), o = { format: 'FQT-portefeuille', v: 1, date: new Date().toISOString(), base: P.base, pos: P.pos };
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(o, null, 1)], { type: 'application/json' })); a.download = `portefeuille-fqt-${d}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
+/* quantité ou prix lisible : nombre fini et positif (« 1e999 », « Infinity » ou un texte sont refusés) */
+const impFin = v => Number.isFinite(+v) && +v > 0 && +v < 1e15;
 async function impRestore(f) {
   if (!f) return; const I = { name: f.name || 'sauvegarde', rows: [], mode: 'rempl', msg: '', bk: true };
-  try { const o = JSON.parse(await f.text()); if (!o || o.format !== 'FQT-portefeuille' || !Array.isArray(o.pos)) throw new Error('ce fichier n’est pas une sauvegarde du portefeuille FQT');
+  try { if (f.size > 15e6) throw new Error('fichier trop volumineux (15 Mo au plus)'); const o = JSON.parse(await f.text()); if (!o || o.format !== 'FQT-portefeuille' || !Array.isArray(o.pos)) throw new Error('ce fichier n’est pas une sauvegarde du portefeuille FQT');
     I.base = ['XOF', 'EUR', 'USD'].includes(o.base) ? o.base : null; I.date = o.date;
-    I.rows = o.pos.filter(p => p && typeof p.id === 'string').map(p => ({ src: `${p.id} · ${p.q}${p.c != null ? ' · ' + p.c : ''}`, s: Q.by[p.id] ? p.id : '', how: Q.by[p.id] ? 'sauvegarde' : '', amb: [], q: +p.q > 0 ? +p.q : null, c: +p.c > 0 ? +p.c : null, sp: Array.isArray(p.sp) ? p.sp : undefined, on: !!(Q.by[p.id] && +p.q > 0) }));
+    I.rows = o.pos.filter(p => p && typeof p.id === 'string').map(p => ({ src: `${p.id} · ${p.q}${p.c != null ? ' · ' + p.c : ''}`, s: own(Q.by, p.id) ? p.id : '', how: own(Q.by, p.id) ? 'sauvegarde' : '', amb: [], q: impFin(p.q) ? +p.q : null, c: impFin(p.c) ? +p.c : null, sp: Array.isArray(p.sp) ? p.sp : undefined, on: !!(own(Q.by, p.id) && impFin(p.q)) }));
   } catch (e) { I.msg = 'Restauration impossible : ' + esc(e.message || String(e)) + '.'; }
   ST.portImp = I; ST.tab.PORT = 'p'; go('PORTF');
 }

@@ -72,10 +72,12 @@ def load(name, default=None, folder=None):
 
 def dump(obj, *paths):
     s = json.dumps(obj, separators=(",", ":"), ensure_ascii=False)
-    for p in paths:
+    for p in paths:  # (fichier temporaire puis remplacement : jamais de fichier à moitié écrit si le passage est coupé)
         os.makedirs(os.path.dirname(p), exist_ok=True)
-        with open(p, "w", encoding="utf8") as f:
+        tmp = f"{p}.tmp{os.getpid()}"
+        with open(tmp, "w", encoding="utf8") as f:
             f.write(s)
+        os.replace(tmp, p)
 
 
 # ------------------------------------------------------------------ Yahoo

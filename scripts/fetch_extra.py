@@ -193,9 +193,12 @@ def get_wb(url):
 
 
 def save(path, obj):
+    # fichier temporaire puis remplacement : un passage coupé par sa limite de temps ne laisse jamais un fichier à moitié écrit
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf8") as f:
+    tmp = f"{path}.tmp{os.getpid()}"
+    with open(tmp, "w", encoding="utf8") as f:
         json.dump(obj, f, separators=(",", ":"), ensure_ascii=False)
+    os.replace(tmp, path)
 
 
 def i2d(i):

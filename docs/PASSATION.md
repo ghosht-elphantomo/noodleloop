@@ -79,8 +79,9 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - **Vérifié** : DES en ligne (48 sur 48) ; `qlabp/` absent des données ; événement SGB CI 2011 rattaché à SGBC en production ;
   déploiements de production réussis. Contrôle du 19/10 (17:50 UTC) : orange seulement à cause de B10 (lecture des comptes en
   échec le 19/10 à 04:43 UTC, déjà corrigée) ; repasse au vert quand ce passage sort de la fenêtre de 24 h.
-- **Fluidité et vitesse** (point 3) : aucune précision écrite sur ce qui est attendu ; à demander au propriétaire avant de
-  commencer.
+- **Fluidité et vitesse** (point 3), précisé par le propriétaire le 19/10 : **les deux** — ouverture plus rapide (écrans et
+  données déjà ouverts gardés en mémoire, préchargement) et animations douces (transitions entre écrans, graphiques qui se
+  dessinent, chiffres qui défilent), chacune avec son réglage, désactivées par défaut, sans rien changer aux chiffres.
 
 ## État au 19/10/2026, 19 h 15
 
@@ -191,6 +192,16 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      à vérifier sur un texte officiel (code des impôts de chaque État, taux en vigueur à chaque date) avant tout calcul du brut.
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
+     Plan expliqué au propriétaire le 19/10 : (1) construire avec et sans la base (copie comprise) et lister chiffre par
+     chiffre ce qui manque ; (2) BPA = résultat net des comptes lus ÷ nombre de titres des bulletins, comparé au BPA publié ;
+     (3) dividendes des avis et calendriers, combler les années sans avis ; (4) PER = cours ÷ notre BPA, comparé au PER des
+     bulletins ; (5) fiches ; (6) cours d'avant décembre 2013 : anciens bulletins des archives web, lus et contrôlés séance par
+     séance ; (7) nos lectures deviennent la référence, la base ne fait plus que voter ; essai final sans elle : site identique.
+     **Décision du propriétaire (19/10)** pour le secteur, le nombre de titres et le flottant : on continue de les lire sur la
+     fiche (Sika), en miroir avec la BRVM (bulletins officiels, documents de brvm.org) ; tout écart est signalé par le contrôle
+     du matin avec les deux valeurs, rien ne bascule tout seul ; le jour où la fiche disparaît, on passe sur la BRVM
+     directement. Raison : une mauvaise lecture (chez eux ou dans notre lecture d'un PDF) ne passerait pas inaperçue devant
+     les investisseurs. Le contrôle automatique de ces écarts fait partie de l'étape 1.
    - **Documents déposés sous la page d'une autre société (vu le 19/10, corrigé le 19/10)** : la Bourse range parfois un
      document sous une autre société (rapport de BOA Sénégal chez Erium, comptes de Tractafric chez CFAO, résultats d'Onatel
      chez Sonatel…). Vérification faite : la recherche MOTS CLES (`build_search.fix_by_file`) et la lecture des comptes
@@ -215,23 +226,25 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      Filtisac 2016 : deux versements, justes (avis n° 006-2018 : « dividendes complémentaires exercice 2016 », 09/01/2018).
      Filtisac 2015 : le second versement (375, 23/12/2016) ne vient que d'un bulletin de la cote, sans avis retrouvé : à vérifier
      (il s'additionne au dividende 2015 dans les aristocrates). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
-3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
+3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage). Précisé le 19/10 : vitesse (mémoire des
+   écrans et données, préchargement) et animations douces, chacune avec son réglage, désactivées par défaut.
 4. **Audit complet — premier passage fait le 19/10** (code, automatisations et données, lecture seule, par un agent séparé
    qui n'avait pas fait le travail ; rapport détaillé avec fichier et ligne repris ci-dessous). Points sains : aucun secret,
    aucun e-mail ni lien GitHub dans la page, données presque toujours échappées, aucune automatisation lancée par une demande
    de modification. **Corrigé le 19/10** (sans risque, testé) : adresses `/doc/` limitées aux PDF (B20) ; liens
    « javascript: » refusés (B21) ; adresse « #% » ou « #constructor » qui bloquait le démarrage (B22) ; heure QQQ absente ;
-   taux de distribution (B18) ; dividende par exercice de FA (B19). **Reste, sans risque, à faire** :
-   - `build_terminal.py` : un seul `try` couvre tous les fractionnements (l. ~941), les dividendes officiels et les comptes
-     publiés : un élément mal formé fait sauter les suivants sans alerte → un `try` par élément, un `::warning::`, un compteur ;
-   - `fetch_extra.py` (l. ~195) et `scrape.py` (l. ~73) écrivent en place sous limite de temps : fichier temporaire puis
-     `os.replace` ;
-   - `api/doc.js` : erreur passagère gardée 24 h en cache, `k=constructor` accepté, hôte final non vérifié après redirection,
-     type renvoyé tel quel ; `api/data.js` : mode secours seul (`via=2`) ouvert à tous, paramètre ajouté qui contourne le cache ;
+   taux de distribution (B18) ; dividende par exercice de FA (B19). **Corrigé ensuite le 19/10** : `build_terminal.py`, une
+   protection par élément (fractionnements, dividendes officiels, comptes publiés : un élément mal formé est écarté et signalé
+   par un avertissement du passage, les autres continuent ; une société en erreur est remise comme avant) ; écritures sûres
+   (fichier temporaire puis remplacement) dans `fetch_extra.py` et `scrape.py` ; `api/doc.js` (erreur passagère jamais gardée en
+   cache, `k` contrôlé, réponse venue de l'archive seulement, lecture arrêtée au-delà de la limite, type fixé par le serveur) ;
+   PORTF, restauration limitée à 15 Mo et quantités finies. **Reste, sans risque** :
+   - `api/data.js` : mode secours seul (`via=2`) ouvert à tous, paramètre ajouté qui contourne le cache ;
    - valeurs saisies au lancement manuel d'une automatisation insérées telles quelles dans les commandes (`lien.yml`,
-     `comptes.yml`, `dividendes.yml`, `metronome.yml`) → passer par `env` ;
-   - étape « branche site » de `terminal.yml` inutile (branche plus déployée) ; PORTF : restauration sans limite de taille,
-     quantité « 1e999 » acceptée ; `esc()` n'échappe pas l'apostrophe ; code mort publié (`window.claude`) ;
+     `comptes.yml`, `dividendes.yml`, `metronome.yml`) → passer par `env` (seuls les propriétaires du dépôt peuvent lancer ;
+     ne pas toucher au Métronome sans essai en parallèle) ;
+   - étape « branche site » de `terminal.yml` inutile (branche plus déployée) ; `esc()` n'échappe pas l'apostrophe (aucun
+     attribut entre apostrophes aujourd'hui) ; code mort publié (`window.claude`, à vérifier avant de le retirer) ;
    - versions non fixées : pillow, cloudflared (« latest », sans empreinte), base tierce.
    **Pour la migration (point 5), décision du propriétaire** : le relais sert tous les fichiers de `data/`, y compris des noms
    de fournisseurs (summary, fg, calendar, quotes, news, ei_oil, umoa_curves, bceao, live) → liste blanche et champs de source

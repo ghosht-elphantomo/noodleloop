@@ -9,7 +9,7 @@ Sources
 
 Usage: build_terminal.py --brvm-src DIR --out DIR [--session brvm.json] [--cache DIR]
 """
-import argparse, collections, csv, datetime as dt, io, json, math, os, re, sys, time, urllib.request
+import argparse, collections, copy, csv, datetime as dt, io, json, math, os, re, sys, time, urllib.request
 
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 YN = "https://raw.githubusercontent.com/yennanliu/finance_data/main/data/prices/{}.csv"
@@ -520,99 +520,111 @@ def main():
                     ("ebit", "resultat_exploitation"), ("ebitda", "ebe"), ("depots_clientele", "b_dettes_clientele"),
                     ("credits_clientele", "b_creances_clientele"))
             DERIVED = ("roe", "roa", "marge_nette", "marge_exploitation", "croissance_ca", "croissance_resultat_net")
+            cpt_bad = []
             for t, cc in CONS.items():
-                f = fund.get(t)
-                if not f or not isinstance(f, dict):
-                    continue
-                f["cpt"] = cc
-                cpt_chk["t"] += 1
-                # même périmètre et mêmes normes que la base : la plupart des montants communs concordent, et le résultat net aussi
-                # (des écarts isolés sont des erreurs ou des chiffres provisoires de la base, corrigés par les comptes publiés) ;
-                # sinon l'autre référentiel publié par la société, s'il est celui de la base, sert aux chiffres clés
-                def same_basis(g_):
-                    return g_["ncmp"] < 3 or (g_["agree"] >= .5 and (g_.get("n_rn", 0) < 2 or (g_.get("agree_rn") or 0) >= .5))
-                usd_t = t in CPT.USD_REPORTERS  # (base convertie à d'autres cours : les comptes publiés, convertis au jour de publication, la remplacent)
-                src_g = cc if same_basis(cc) else (cc["alt"] if cc.get("alt") and cc["alt"].get("ncmp", 0) >= 3 and same_basis(cc["alt"]) else None)
-                if src_g is None:
-                    cpt_chk["detail_only"].append(f'{t} ({cc["per"]}, {cc["agree"]:.0%} de {cc["ncmp"]})')
-                    continue
-                if src_g is not cc:
-                    cpt_chk.setdefault("alt_used", []).append(f'{t} ({src_g["per"]} {src_g["std"]})')
-                ser = f.setdefault("series", {})
-                bank = bank_t.get(t) or any("b_pnb" in r["v"] for r in src_g["y"].values())
-                for y, r in src_g["y"].items():
-                    v, ys = r["v"], str(y)
-                    cpt_chk["y"] += 1
-                    pairs = [("ca", "b_pnb" if bank else "chiffre_affaires")] + list(MAPC)
-                    if v.get("resultat_net") is None and v.get("resultat_bilan") is not None:
-                        v = dict(v, resultat_net=v["resultat_bilan"])  # (résultat de l'exercice au bilan : même montant publié)
-                    # coût du risque (charge comptée positivement) : signe lu d'après le compte de résultat
-                    # (résultat brut d'exploitation ± coût du risque = résultat d'exploitation)
-                    if bank and v.get("b_cout_risque") is not None and v.get("b_rbe") is not None and v.get("resultat_exploitation") is not None:
-                        cr_, rbe_, re_ = v["b_cout_risque"], v["b_rbe"], v["resultat_exploitation"]
-                        if abs(rbe_ + cr_ - re_) <= max(1.0, abs(re_) * .002):
-                            v = dict(v, _cdr=-cr_)
-                        elif abs(rbe_ - cr_ - re_) <= max(1.0, abs(re_) * .002):
-                            v = dict(v, _cdr=cr_)
-                        if "_cdr" in v:
-                            pairs.append(("cout_du_risque", "_cdr"))
-                    changed = False
-                    weak_ = set(r.get("w") or ())
-                    calc_ = set(r.get("calc") or ())
-                    for sk, ck in pairs:
-                        if v.get(ck) is None:
-                            continue
-                        if ck in calc_:
-                            # (montant calculé d'après le document : ne comble un exercice vide qu'en dernier, après les archives)
-                            calc_fill.append((t, sk, ys, round(v[ck], 1)))
-                            continue
-                        o = ser.setdefault(sk, {})
-                        old = o.get(ys)
-                        new = round(v[ck], 1)
-                        if old is not None and abs(old - new) <= 0.6:
-                            continue  # même montant (arrondi au million près)
-                        if old is not None and ck in weak_ and not usd_t:
-                            continue  # montant d'un seul document, sans identité vérifiée : ne remplace pas un montant existant
-                        if old is None:
-                            cpt_chk["fill"] += 1
-                        elif abs(old - new) > max(1.0, abs(old) * .005):
-                            cpt_chk["fix"] += 1
-                            changed = True
-                            if len(cpt_chk["ex"]) < 25:
-                                cpt_chk["ex"].append(f"{t} {y} {sk} {old:g} -> {new:g}")
-                        o[ys] = new
-                        cpt_chk["set"] += 1
-                    if usd_t and r.get("fx"):
-                        dd_ = str(r.get("d") or "")
-                        f.setdefault("src_years", {})[ys] = (f"converti : comptes publiés en dollars US, 1 USD = {r['fx']:.2f} FCFA".replace(".", ",")
-                                                             + (f" au {dd_[8:10]}/{dd_[5:7]}/{dd_[:4]} (date de publication)" if dd_ else ""))
-                        changed = True
-                    if changed:  # ratios de la base tierce calculés sur les montants corrigés : retirés (recalculés plus loin)
-                        for dk in DERIVED:
-                            (ser.get(dk) or {}).pop(ys, None)
-                # exercices plus anciens publiés dans l'autre norme (comptes SYSCOHADA d'avant le passage aux IFRS, même périmètre) :
-                # ajoutés seulement là où rien n'existe, et signalés comme tels (sup « r » dans le FA)
-                alt_g = cc.get("alt") if src_g is cc else cc
-                if alt_g and alt_g.get("y") and alt_g.get("per") == src_g.get("per") and alt_g.get("std") != src_g.get("std"):
-                    src_y = f.setdefault("src_years", {})
-                    for y, r in alt_g["y"].items():
-                        ys = str(y)
-                        if ys in {str(y_) for y_ in src_g["y"]}:
-                            continue
-                        v = r["v"]
+                f_bak = copy.deepcopy(fund.get(t))
+                try:
+                    f = fund.get(t)
+                    if not f or not isinstance(f, dict):
+                        continue
+                    f["cpt"] = cc
+                    cpt_chk["t"] += 1
+                    # même périmètre et mêmes normes que la base : la plupart des montants communs concordent, et le résultat net aussi
+                    # (des écarts isolés sont des erreurs ou des chiffres provisoires de la base, corrigés par les comptes publiés) ;
+                    # sinon l'autre référentiel publié par la société, s'il est celui de la base, sert aux chiffres clés
+                    def same_basis(g_):
+                        return g_["ncmp"] < 3 or (g_["agree"] >= .5 and (g_.get("n_rn", 0) < 2 or (g_.get("agree_rn") or 0) >= .5))
+                    usd_t = t in CPT.USD_REPORTERS  # (base convertie à d'autres cours : les comptes publiés, convertis au jour de publication, la remplacent)
+                    src_g = cc if same_basis(cc) else (cc["alt"] if cc.get("alt") and cc["alt"].get("ncmp", 0) >= 3 and same_basis(cc["alt"]) else None)
+                    if src_g is None:
+                        cpt_chk["detail_only"].append(f'{t} ({cc["per"]}, {cc["agree"]:.0%} de {cc["ncmp"]})')
+                        continue
+                    if src_g is not cc:
+                        cpt_chk.setdefault("alt_used", []).append(f'{t} ({src_g["per"]} {src_g["std"]})')
+                    ser = f.setdefault("series", {})
+                    bank = bank_t.get(t) or any("b_pnb" in r["v"] for r in src_g["y"].values())
+                    for y, r in src_g["y"].items():
+                        v, ys = r["v"], str(y)
+                        cpt_chk["y"] += 1
+                        pairs = [("ca", "b_pnb" if bank else "chiffre_affaires")] + list(MAPC)
                         if v.get("resultat_net") is None and v.get("resultat_bilan") is not None:
-                            v = dict(v, resultat_net=v["resultat_bilan"])
-                        added = False
-                        for sk, ck in [("ca", "b_pnb" if bank else "chiffre_affaires")] + list(MAPC):
+                            v = dict(v, resultat_net=v["resultat_bilan"])  # (résultat de l'exercice au bilan : même montant publié)
+                        # coût du risque (charge comptée positivement) : signe lu d'après le compte de résultat
+                        # (résultat brut d'exploitation ± coût du risque = résultat d'exploitation)
+                        if bank and v.get("b_cout_risque") is not None and v.get("b_rbe") is not None and v.get("resultat_exploitation") is not None:
+                            cr_, rbe_, re_ = v["b_cout_risque"], v["b_rbe"], v["resultat_exploitation"]
+                            if abs(rbe_ + cr_ - re_) <= max(1.0, abs(re_) * .002):
+                                v = dict(v, _cdr=-cr_)
+                            elif abs(rbe_ - cr_ - re_) <= max(1.0, abs(re_) * .002):
+                                v = dict(v, _cdr=cr_)
+                            if "_cdr" in v:
+                                pairs.append(("cout_du_risque", "_cdr"))
+                        changed = False
+                        weak_ = set(r.get("w") or ())
+                        calc_ = set(r.get("calc") or ())
+                        for sk, ck in pairs:
                             if v.get(ck) is None:
                                 continue
+                            if ck in calc_:
+                                # (montant calculé d'après le document : ne comble un exercice vide qu'en dernier, après les archives)
+                                calc_fill.append((t, sk, ys, round(v[ck], 1)))
+                                continue
                             o = ser.setdefault(sk, {})
-                            if o.get(ys) is None:  # (comme pour le référentiel principal : un montant d'un seul document ne remplace rien, il complète)
-                                o[ys] = round(v[ck], 1)
-                                added = True
+                            old = o.get(ys)
+                            new = round(v[ck], 1)
+                            if old is not None and abs(old - new) <= 0.6:
+                                continue  # même montant (arrondi au million près)
+                            if old is not None and ck in weak_ and not usd_t:
+                                continue  # montant d'un seul document, sans identité vérifiée : ne remplace pas un montant existant
+                            if old is None:
                                 cpt_chk["fill"] += 1
-                        if added and not src_y.get(ys):
-                            src_y[ys] = "référentiel " + ("IFRS" if alt_g.get("std") == "ifrs" else "SYSCOHADA") + " (la société publie aujourd'hui en " + ("IFRS" if src_g.get("std") == "ifrs" else "SYSCOHADA") + ")"
+                            elif abs(old - new) > max(1.0, abs(old) * .005):
+                                cpt_chk["fix"] += 1
+                                changed = True
+                                if len(cpt_chk["ex"]) < 25:
+                                    cpt_chk["ex"].append(f"{t} {y} {sk} {old:g} -> {new:g}")
+                            o[ys] = new
+                            cpt_chk["set"] += 1
+                        if usd_t and r.get("fx"):
+                            dd_ = str(r.get("d") or "")
+                            f.setdefault("src_years", {})[ys] = (f"converti : comptes publiés en dollars US, 1 USD = {r['fx']:.2f} FCFA".replace(".", ",")
+                                                                 + (f" au {dd_[8:10]}/{dd_[5:7]}/{dd_[:4]} (date de publication)" if dd_ else ""))
+                            changed = True
+                        if changed:  # ratios de la base tierce calculés sur les montants corrigés : retirés (recalculés plus loin)
+                            for dk in DERIVED:
+                                (ser.get(dk) or {}).pop(ys, None)
+                    # exercices plus anciens publiés dans l'autre norme (comptes SYSCOHADA d'avant le passage aux IFRS, même périmètre) :
+                    # ajoutés seulement là où rien n'existe, et signalés comme tels (sup « r » dans le FA)
+                    alt_g = cc.get("alt") if src_g is cc else cc
+                    if alt_g and alt_g.get("y") and alt_g.get("per") == src_g.get("per") and alt_g.get("std") != src_g.get("std"):
+                        src_y = f.setdefault("src_years", {})
+                        for y, r in alt_g["y"].items():
+                            ys = str(y)
+                            if ys in {str(y_) for y_ in src_g["y"]}:
+                                continue
+                            v = r["v"]
+                            if v.get("resultat_net") is None and v.get("resultat_bilan") is not None:
+                                v = dict(v, resultat_net=v["resultat_bilan"])
+                            added = False
+                            for sk, ck in [("ca", "b_pnb" if bank else "chiffre_affaires")] + list(MAPC):
+                                if v.get(ck) is None:
+                                    continue
+                                o = ser.setdefault(sk, {})
+                                if o.get(ys) is None:  # (comme pour le référentiel principal : un montant d'un seul document ne remplace rien, il complète)
+                                    o[ys] = round(v[ck], 1)
+                                    added = True
+                                    cpt_chk["fill"] += 1
+                            if added and not src_y.get(ys):
+                                src_y[ys] = "référentiel " + ("IFRS" if alt_g.get("std") == "ifrs" else "SYSCOHADA") + " (la société publie aujourd'hui en " + ("IFRS" if src_g.get("std") == "ifrs" else "SYSCOHADA") + ")"
+                except Exception as e:  # noqa: BLE001  (une société en erreur est remise comme avant, les autres continuent)
+                    if isinstance(f_bak, dict) and isinstance(fund.get(t), dict):
+                        fund[t].clear()
+                        fund[t].update(f_bak)
+                    calc_fill[:] = [c_ for c_ in calc_fill if c_[0] != t]
+                    cpt_bad.append(t)
+                    log("comptes publiés écartés pour", t, ":", e)
+            if cpt_bad:
+                print(f"::warning::Construction : comptes publiés écartés pour {len(cpt_bad)} société(s) (voir le journal)")
             log("comptes publiés BRVM :", {k: v for k, v in cpt_chk.items() if k not in ("ex", "detail_only", "alt_used")},
                 ("; périmètre différent de la base, détail seulement : " + ", ".join(cpt_chk["detail_only"])) if cpt_chk["detail_only"] else "",
                 ("; chiffres clés pris dans l'autre référentiel publié : " + ", ".join(cpt_chk["alt_used"])) if cpt_chk.get("alt_used") else "")
@@ -621,6 +633,7 @@ def main():
         except Exception as e:  # noqa: BLE001
             import traceback
             log("comptes publiés BRVM illisibles :", e, traceback.format_exc()[-400:])
+            print("::warning::Construction : comptes publiés illisibles (voir le journal)")
     # exercices plus anciens : archives SikaFinance, ajoutées seulement là où la source actuelle n'a rien
     if hist:
         kmap = {"ca": "ca", "rn": "resultat_net", "bnpa": "bnpa", "div": "dividende"}  # (chiffres publiés seulement, pas de ratio)
@@ -800,77 +813,88 @@ def main():
             # à sa date de paiement : la valeur la plus souvent imprimée dans les bulletins des 60 jours suivants) ; à défaut, cents de
             # dollar convertis au cours du jour de l'avis (figé). Marqué « $ » dans les deux cas
             for o in OFF:
-                if not o.get("net") and o.get("usd_c"):
-                    pd_ = o.get("pay") or o.get("det")
-                    seen_ = collections.Counter()
-                    if pd_ and BOC.get(o["t"]):
-                        p0 = di(pd_)
-                        for kb, rb in BOC[o["t"]].items():
-                            if p0 - 30 <= kb <= di((dt.date.fromisoformat(pd_[:10]) + dt.timedelta(days=60)).isoformat()) and rb.get("div") and rb.get("div_d") \
-                                    and dd_(str(rb["div_d"]), pd_) <= 10:
-                                seen_[float(rb["div"])] += 1
-                    if seen_:
-                        o["net"], o["boc_fcfa"] = seen_.most_common(1)[0][0], 1
-                        off_chk["usd_bulletin"] = off_chk.get("usd_bulletin", 0) + 1
-                        continue
-                    r_ = fx_(o.get("pub") or o.get("det") or o.get("pay") or "") if fx_ else None
-                    if r_:
-                        o["net"], o["fx"] = round(o["usd_c"] / 100 * r_, 4), r_
-                        off_chk["usd"] = off_chk.get("usd", 0) + 1
-                    else:  # (cours indisponible : le montant de la base, en cents de dollar lu comme des FCFA, n'est pas affiché)
-                        for x in byt[o["t"]]:
-                            if (o.get("det") and dd_(x.get("date_detachement"), o["det"]) <= 10) or (o.get("pay") and dd_(x.get("date_paiement"), o["pay"]) <= 10):
-                                x["dividende"] = None
-                        off_chk["usd_sans_cours"] = off_chk.get("usd_sans_cours", 0) + 1
+                try:
+                    if not o.get("net") and o.get("usd_c"):
+                        pd_ = o.get("pay") or o.get("det")
+                        seen_ = collections.Counter()
+                        if pd_ and BOC.get(o["t"]):
+                            p0 = di(pd_)
+                            for kb, rb in BOC[o["t"]].items():
+                                if p0 - 30 <= kb <= di((dt.date.fromisoformat(pd_[:10]) + dt.timedelta(days=60)).isoformat()) and rb.get("div") and rb.get("div_d") \
+                                        and dd_(str(rb["div_d"]), pd_) <= 10:
+                                    seen_[float(rb["div"])] += 1
+                        if seen_:
+                            o["net"], o["boc_fcfa"] = seen_.most_common(1)[0][0], 1
+                            off_chk["usd_bulletin"] = off_chk.get("usd_bulletin", 0) + 1
+                            continue
+                        r_ = fx_(o.get("pub") or o.get("det") or o.get("pay") or "") if fx_ else None
+                        if r_:
+                            o["net"], o["fx"] = round(o["usd_c"] / 100 * r_, 4), r_
+                            off_chk["usd"] = off_chk.get("usd", 0) + 1
+                        else:  # (cours indisponible : le montant de la base, en cents de dollar lu comme des FCFA, n'est pas affiché)
+                            for x in byt[o["t"]]:
+                                if (o.get("det") and dd_(x.get("date_detachement"), o["det"]) <= 10) or (o.get("pay") and dd_(x.get("date_paiement"), o["pay"]) <= 10):
+                                    x["dividende"] = None
+                            off_chk["usd_sans_cours"] = off_chk.get("usd_sans_cours", 0) + 1
+                except Exception as e:  # noqa: BLE001
+                    off_chk["bad"] = off_chk.get("bad", 0) + 1
+                    log("versement officiel écarté :", o.get("t"), o.get("ex"), e)
             for o in sorted(OFF, key=lambda o: (o["t"], o.get("det") or o.get("pay") or "", o.get("kind") == "exceptionnel")):
-                if o["t"] not in listed or not o.get("net") or o["net"] <= 0 or not (o.get("det") or o.get("pay") or o.get("ex")):
-                    continue  # (un versement sans date mais d'exercice connu — revues trimestrielles 1999-2001 — est gardé, hors rendement total)
-                cands = [x for x in byt[o["t"]] if id(x) not in used and x.get("dividende") and (
-                    (o.get("det") and dd_(x.get("date_detachement"), o["det"]) <= 10) or (o.get("pay") and dd_(x.get("date_paiement"), o["pay"]) <= 10)
-                    or (o.get("ex") and x.get("exercice") == o["ex"] and abs(x["dividende"] / o["net"] - 1) <= .005))]
-                if cands:
-                    x = min(cands, key=lambda c_: abs(c_["dividende"] / o["net"] - 1))  # (deux versements le même jour : chacun le sien)
-                    used.add(id(x))
-                    if abs(x["dividende"] / o["net"] - 1) > .0005:
-                        if len(off_chk["ex"]) < 30:
-                            off_chk["ex"].append(f'{o["t"]} {o.get("pay") or o.get("det")} : {x["dividende"]:g} -> {o["net"]:g}')
-                        x["dividende_base"], x["dividende"] = x["dividende"], o["net"]
-                        off_chk["amt"] += 1
+                try:
+                    if o["t"] not in listed or not o.get("net") or o["net"] <= 0 or not (o.get("det") or o.get("pay") or o.get("ex")):
+                        continue  # (un versement sans date mais d'exercice connu — revues trimestrielles 1999-2001 — est gardé, hors rendement total)
+                    cands = [x for x in byt[o["t"]] if id(x) not in used and x.get("dividende") and (
+                        (o.get("det") and dd_(x.get("date_detachement"), o["det"]) <= 10) or (o.get("pay") and dd_(x.get("date_paiement"), o["pay"]) <= 10)
+                        or (o.get("ex") and x.get("exercice") == o["ex"] and abs(x["dividende"] / o["net"] - 1) <= .005))]
+                    if cands:
+                        x = min(cands, key=lambda c_: abs(c_["dividende"] / o["net"] - 1))  # (deux versements le même jour : chacun le sien)
+                        used.add(id(x))
+                        if abs(x["dividende"] / o["net"] - 1) > .0005:
+                            if len(off_chk["ex"]) < 30:
+                                off_chk["ex"].append(f'{o["t"]} {o.get("pay") or o.get("det")} : {x["dividende"]:g} -> {o["net"]:g}')
+                            x["dividende_base"], x["dividende"] = x["dividende"], o["net"]
+                            off_chk["amt"] += 1
+                        else:
+                            off_chk["same"] += 1
+                        if (o.get("det") and x.get("date_detachement") != o["det"]) or (o.get("pay") and x.get("date_paiement") != o["pay"]):
+                            off_chk["dates"] += 1
+                        x["date_detachement"] = o.get("det") or x.get("date_detachement")
+                        if o.get("pub") and (not x.get("date_annonce") or x["date_annonce"] > (o.get("det") or o.get("pay") or "9")):
+                            x["date_annonce"] = o["pub"]  # (annonce de la base postérieure au détachement : date de l'avis)
+                        x["date_paiement"] = o.get("pay") or x.get("date_paiement")
+                        if o.get("ex") and not x.get("exercice"):
+                            x["exercice"] = o["ex"]
+                        x["source"], x["avis"] = "BRVM", 1
+                        if o.get("src") in ("bulletin", "revue trimestrielle"):
+                            x["weak"] = 1  # (montant lu dans un ancien bulletin ou une revue : contrôlé plus loin sur le cours du jour)
+                        if o.get("fx") or o.get("boc_fcfa"):
+                            x["usd_c"], x["fx"] = o["usd_c"], o.get("fx")
+                        if o.get("kind") == "exceptionnel":
+                            x["exc"] = 1
+                        if o.get("brut") and o.get("irvm") is not None:  # (brut et taux de l'impôt écrits dans l'avis ou le calendrier)
+                            x["brut_avis"], x["irvm_avis"] = o["brut"], o["irvm"]
+                        if o.get("px") and o.get("px_d"):
+                            x["px_raw"], x["px_d"] = o["px"], o["px_d"]
                     else:
-                        off_chk["same"] += 1
-                    if (o.get("det") and x.get("date_detachement") != o["det"]) or (o.get("pay") and x.get("date_paiement") != o["pay"]):
-                        off_chk["dates"] += 1
-                    x["date_detachement"] = o.get("det") or x.get("date_detachement")
-                    if o.get("pub") and (not x.get("date_annonce") or x["date_annonce"] > (o.get("det") or o.get("pay") or "9")):
-                        x["date_annonce"] = o["pub"]  # (annonce de la base postérieure au détachement : date de l'avis)
-                    x["date_paiement"] = o.get("pay") or x.get("date_paiement")
-                    if o.get("ex") and not x.get("exercice"):
-                        x["exercice"] = o["ex"]
-                    x["source"], x["avis"] = "BRVM", 1
-                    if o.get("src") in ("bulletin", "revue trimestrielle"):
-                        x["weak"] = 1  # (montant lu dans un ancien bulletin ou une revue : contrôlé plus loin sur le cours du jour)
-                    if o.get("fx") or o.get("boc_fcfa"):
-                        x["usd_c"], x["fx"] = o["usd_c"], o.get("fx")
-                    if o.get("kind") == "exceptionnel":
-                        x["exc"] = 1
-                    if o.get("brut") and o.get("irvm") is not None:  # (brut et taux de l'impôt écrits dans l'avis ou le calendrier)
-                        x["brut_avis"], x["irvm_avis"] = o["brut"], o["irvm"]
-                    if o.get("px") and o.get("px_d"):
-                        x["px_raw"], x["px_d"] = o["px"], o["px_d"]
-                else:
-                    nx = {"ticker": o["t"], "dividende": o["net"], "exercice": o.get("ex"), "date_annonce": o.get("pub"),
-                          "date_detachement": o.get("det"), "date_paiement": o.get("pay"), "source": "BRVM", "avis": 1,
-                          **({"weak": 1} if o.get("src") in ("bulletin", "revue trimestrielle") else {}),
-                          **({"usd_c": o["usd_c"], "fx": o.get("fx")} if o.get("fx") or o.get("boc_fcfa") else {}), **({"exc": 1} if o.get("kind") == "exceptionnel" else {}), **({"px_raw": o["px"], "px_d": o["px_d"]} if o.get("px") and o.get("px_d") else {}),
-                          **({"brut_avis": o["brut"], "irvm_avis": o["irvm"]} if o.get("brut") and o.get("irvm") is not None else {})}
-                    divs.append(nx)
-                    byt[o["t"]].append(nx)
-                    used.add(id(nx))
-                    off_chk["added"] += 1
+                        nx = {"ticker": o["t"], "dividende": o["net"], "exercice": o.get("ex"), "date_annonce": o.get("pub"),
+                              "date_detachement": o.get("det"), "date_paiement": o.get("pay"), "source": "BRVM", "avis": 1,
+                              **({"weak": 1} if o.get("src") in ("bulletin", "revue trimestrielle") else {}),
+                              **({"usd_c": o["usd_c"], "fx": o.get("fx")} if o.get("fx") or o.get("boc_fcfa") else {}), **({"exc": 1} if o.get("kind") == "exceptionnel" else {}), **({"px_raw": o["px"], "px_d": o["px_d"]} if o.get("px") and o.get("px_d") else {}),
+                              **({"brut_avis": o["brut"], "irvm_avis": o["irvm"]} if o.get("brut") and o.get("irvm") is not None else {})}
+                        divs.append(nx)
+                        byt[o["t"]].append(nx)
+                        used.add(id(nx))
+                        off_chk["added"] += 1
+                except Exception as e:  # noqa: BLE001  (un versement mal formé est écarté, les suivants restent lus)
+                    off_chk["bad"] = off_chk.get("bad", 0) + 1
+                    log("versement officiel écarté :", o.get("t"), o.get("ex"), e)
+            if off_chk.get("bad"):
+                print(f"::warning::Construction : {off_chk['bad']} versement(s) officiel(s) écarté(s) (voir le journal)")
             log("dividendes des documents officiels BRVM :", {k: v for k, v in off_chk.items() if k != "ex"},
                 ("; montants corrigés : " + "; ".join(off_chk["ex"])) if off_chk["ex"] else "")
         except Exception as e:  # noqa: BLE001
             log("dividendes officiels illisibles :", e)
+            print("::warning::Construction : dividendes officiels illisibles (voir le journal)")
     boc_chk = {"n": 0, "diff": 0, "added": 0, "div_added": 0, "by": {}}
     # jours de séance attestés par un bulletin officiel (et nombre de titres dont le cours a varié ce jour-là) ; valeurs des indices
     # lues dans les bulletins récents (relevé du soir, branche raw)
@@ -939,15 +963,25 @@ def main():
     # Un fractionnement n'est appliqué qu'une fois effectif (date d'effet atteinte par les cours) et seulement s'il manque dans la source.
     SPL = collections.defaultdict(list)
     try:
-        for x in json.load(open(os.path.join(src, "events.json"), encoding="utf8"))["events"]:
+        EVS_ = json.load(open(os.path.join(src, "events.json"), encoding="utf8"))["events"]
+    except Exception as e:  # noqa: BLE001
+        EVS_ = []
+        log("fractionnements illisibles :", e)
+        print("::warning::Construction : liste des opérations sur titres illisible (voir le journal)")
+    spl_bad = 0
+    for x in EVS_:  # (un avis mal formé est écarté et compté ; les suivants restent lus)
+        try:
             dd_ = x.get("details") or {}
             if x.get("category") in ("stock_split", "reverse_split") and x.get("ticker") and x.get("event_at") and dd_.get("ratio_new") and dd_.get("ratio_old"):
                 k_ = float(dd_["ratio_new"]) / float(dd_["ratio_old"])
                 e_ = di(x["event_at"][:10])
                 if k_ > 0 and abs(k_ - 1) > 1e-9 and all(abs(e_ - e0) > 20 for e0, _ in SPL[x["ticker"]]):
                     SPL[x["ticker"]].append((e_, k_))
-    except Exception as e:  # noqa: BLE001
-        log("fractionnements illisibles :", e)
+        except Exception as e:  # noqa: BLE001
+            spl_bad += 1
+            log("fractionnement écarté :", x.get("ticker"), x.get("event_at"), e)
+    if spl_bad:
+        print(f"::warning::Construction : {spl_bad} avis de fractionnement mal formé(s) écarté(s) (voir le journal)")
     for r in AV:  # fractionnements publiés sur brvm.org (date et parité) absents de la base d'avis
       try:
         if r.get("k") == "frac" and r.get("t") and r.get("e") and r.get("ratio") and r["ratio"][0] and r["ratio"][1]:
