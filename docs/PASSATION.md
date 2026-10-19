@@ -55,6 +55,26 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 
+## État au 19/10/2026, 18 h 30
+
+- **Publié le 19/10/2026 (demandes du propriétaire)**, chaque fois après le parcours complet du site (avant / après) :
+  - `0ed87f89` (17 h 50) : QLAB 3 « Prévisions » retiré (onglet, code, cahier des charges ; `qlabp/` quitte les données publiées
+    au premier passage du Terminal, copie gardée sur `raw`) ; MAP : taille des cases selon la variation du jour par défaut
+    (ou égale, ou capitalisation), zoom 1× à 3× et déplacement, bouton Agrandir, carte sur toute la largeur ; plus aucun
+    symbole affiché en émoji sur iPhone (◀ ▶ 🔧 ⚙ 🔔 remplacés par des icônes dessinées, `ICO` dans `web/core.js`).
+  - `0866f0b2` (17 h 54) : contrôles automatiques — `controle.yml` (chaque matin 06:10 UTC, rapport vert / orange / rouge sur
+    la branche `probe`, dossier `controle/`) et garde des données avant chaque publication (`scripts/garde.py`).
+  - Release « nouvelles fonctions, 1re partie » (voir le commit suivant `0866f0b2`) : BRVM (Saison des résultats,
+    Publications attendues et retards, Exposition pays), DIVC (Aristocrates du dividende, Dividende net et encaissements),
+    nouvelle fonction BANK ; méthodes dans le guide.
+  - Vérifié : déploiement de production `0866f0b2` réussi (15:54 UTC), branche site au même code. Le 19/10 de 15 h 30 à
+    16 h 10 UTC environ, incident GitHub Actions (passages en attente) : rien à faire, les passages repartent seuls.
+- **Lecture des 34 documents de l'archive web** (passage des comptes du 19/10, 16 h 53, publié à 17 h 34) : 34 documents lus
+  (21 vérifiés, 6 non vérifiés, 7 illisibles) ; les 6 031 documents déjà lus sont identiques, octet pour octet, avant / après
+  (aucun montant changé, aucun retiré). Les exercices ajoutés arrivent dans les données au passage du soir (22:35 UTC).
+- Premier contrôle quotidien lancé à la main le 19/10 (en attente à cause de l'incident GitHub) : lire son rapport sur `probe`
+  (`controle/rapport.md`) ; attendu : orange tant que `qlabp/` est encore publié, puis vert.
+
 ## État au 19/10/2026, 17 h 20
 
 - **Lecture des documents de la BRVM terminée** : 6 033 documents au registre (branche comptes), 1 599 avec au moins un exercice
@@ -112,10 +132,10 @@ Suite possible, toujours sans chiffre invérifiable :
 
 Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer à son signal dans la nouvelle session :
 
-0. Vérifier le passage des comptes lancé le 19/10 à 16 h 53 (34 documents de l'archive lus ? exercices ajoutés ? aucun montant
-   existant changé ? aucun e-mail d'échec ?) et le passage automatique de la nuit (4 h 17 UTC). La publication du 19/10 est déjà
-   vérifiée en production. Une tâche programmée unique fait aussi ce contrôle mardi 20/10 à 9 h (lecture seule).
-1. **Contrôles automatiques** : un seul script de vérification (données + parcours du site) lancé avant et après chaque
+0. Vérifier le passage automatique des comptes de la nuit (4 h 17 UTC) et le premier rapport de `controle.yml` (branche `probe`,
+   `controle/rapport.md`). Le passage du 19/10 à 16 h 53 est vérifié (voir l'état ci-dessus). Une tâche programmée unique fait
+   aussi un contrôle mardi 20/10 à 9 h (lecture seule).
+1. **Fait le 19/10** — **Contrôles automatiques** : un seul script de vérification (données + parcours du site) lancé avant et après chaque
    modification et chaque nuit par une automatisation qui écrit un rapport vert / orange / rouge sans faire échouer le passage
    (pas d'e-mails d'erreur) : fichiers présents, non vides, frais, nombre de lignes comparé au passage précédent, doublons, valeurs
    aberrantes, cohérence entre fichiers ; site : toutes les fonctions et onglets, QLAB 48 × 3, aucune erreur JavaScript, aucun
@@ -123,14 +143,14 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
    auto-protection (un fichier vide ou anormalement court n'est pas publié, la dernière bonne version est gardée). Partir de
    `outils/essais/`.
 2. **Nouvelles fonctions** :
-   - BRVM, nouveaux onglets : Saison des résultats ; Publications attendues et retards ; Exposition pays.
-   - DIVC, nouveaux onglets : Aristocrates du dividende ; Dividende net et calendrier d'encaissement (retenue à la source de
-     chaque pays, taux à vérifier).
-   - Nouvelle fonction BANK : tableau de bord des banques (PNB, coefficient d'exploitation, coût du risque, rentabilité, solidité
-     du bilan sur 10 ans, toutes les banques côte à côte).
+   - Fait le 19/10 : BRVM (Saison des résultats ; Publications attendues et retards ; Exposition pays) ; DIVC (Aristocrates du
+     dividende ; Dividende net et encaissements des positions de PORTF) ; fonction BANK (comparaison du dernier exercice,
+     historique sur 10 ans) ; plus aucun émoji sur iPhone.
+   - Reste pour DIVC : dividende brut et retenue à la source par pays — le net est publié partout ; le brut et l'impôt
+     n'existent que sur la branche `dividendes` (avis lus), à faire passer dans `dividends.json` (changement de la
+     construction) avant de les afficher ; taux de chaque pays à vérifier sur un texte officiel.
    - PORT : import de relevés (Excel, CSV, PDF, photos) lus dans le navigateur, jamais envoyés ni gardés, écran de contrôle
      avant validation, export et import d'une sauvegarde du portefeuille.
-   - Plus aucun émoji sur iPhone (boutons Précédent / Suivant et symboles de l'interface).
    - Descriptions des 48 sociétés (fonction DES) réécrites avec nos propres mots : mêmes faits que la fiche actuelle, jamais mot
      pour mot, chaque fait vérifié sur un document officiel, un fait invérifiable est retiré.
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,

@@ -11,8 +11,8 @@ const FN = {
   'MOTS CLES': ['Recherche par mots clés', 'mkt', 'Recherche', 'Tous les documents du marché depuis 1998 (états financiers, rapports, avis officiels, bulletins de la cote, dividendes, notations), obligations, titres, fonctions et actualités', 'Keyword Search'],
   BRIEF: ['Synthèse du jour', 'mkt', 'Marchés', 'BRVM, portefeuille, alertes, marchés mondiaux, changes, matières, taux, agenda du jour et actualités sur une page', 'Daily Briefing'],
   MONITOR: ['Moniteur de marchés', 'mkt', 'Marchés', 'Tous les titres suivis, signal SMA 200 de QQQ, séance BRVM, carte des capitalisations', 'Market Monitor'],
-  BRVM: ['BRVM', 'mkt', 'Marchés', '48 actions, indices, largeur du marché, secteurs ; en option : flottant officiel, valorisation du marché (PER)', 'BRVM Overview'],
-  MAP: ['Carte de chaleur', 'mkt', 'Marchés', 'BRVM, États-Unis, Europe, Royaume-Uni, Asie, Afrique : surface = capitalisation, couleur = variation ; en option : marché US (Nasdaq-100, ETF, facteurs, crypto)', 'Intraday Market Map'],
+  BRVM: ['BRVM', 'mkt', 'Marchés', '48 actions, indices, largeur du marché, secteurs ; en option : flottant officiel, valorisation du marché (PER), saison des résultats, publications attendues et retards, exposition par pays', 'BRVM Overview'],
+  MAP: ['Carte de chaleur', 'mkt', 'Marchés', 'BRVM, États-Unis, Europe, Royaume-Uni, Asie, Afrique : surface = variation du jour (ou égale, ou capitalisation), couleur = variation, zoom et déplacement ; en option : marché US (Nasdaq-100, ETF, facteurs, crypto)', 'Intraday Market Map'],
   NEWS: ['Actualités', 'mkt', 'Actualités', 'Fil d’actualités relié aux titres : BRVM, UEMOA, marchés mondiaux, banques centrales', 'Top News'],
   FG: ['Fear & Greed', 'mkt', 'Sentiment', 'Indice peur/avidité : États-Unis (CNN, toutes les 15 minutes) et BRVM (calculé par FQT)', 'Fear & Greed Index'],
   'NEWS ECO': ['Calendrier éco', 'mkt', 'Macro', 'Calendrier économique mondial : publications, prévision du consensus, réel, précédent, importance', 'Economic Calendars'],
@@ -30,7 +30,8 @@ const FN = {
   LIQ: ['Liquidité BRVM', 'mkt', 'Marchés', 'Montants échangés, jours cotés, Amihud, délai pour constituer une position', 'Market Liquidity'],
   'CORP RESULT': ['Résultats des sociétés', 'mkt', 'Fondamentaux', 'Calendrier des résultats US (date, consensus, dernière surprise), résultats publiés (surprise, réaction du cours) ; en option : objectifs de cours des analystes', 'Earnings Analysis'],
   ALRT: ['Alertes', 'mkt', 'Fondamentaux', 'Marges, FCF, dette, révisions, seuils de valorisation, résultats à venir', 'Alert Monitor'],
-  DIVC: ['Calendrier dividendes', 'mkt', 'Fondamentaux', 'BRVM : prochains détachements, classement par rendement, historique', 'Dividend Calendar'],
+  DIVC: ['Calendrier dividendes', 'mkt', 'Fondamentaux', 'BRVM : prochains détachements, classement par rendement, historique ; en option : aristocrates du dividende, dividende net et encaissements de vos positions', 'Dividend Calendar'],
+  BANK: ['Banques cotées', 'mkt', 'Fondamentaux', 'Les banques cotées à la BRVM côte à côte : PNB, résultat, coefficient d’exploitation, coût du risque, rentabilité, solidité du bilan ; en option : historique sur 10 ans', 'BRVM Bank Dashboard'],
   NOT: ['Notations financières', 'mkt', 'Taux', 'Notes de crédit (Bloomfield, WARA, GCR) : sociétés cotées, emprunts obligataires et fonds de titrisation, historique', 'Credit Ratings'],
   SGI: ['Intervenants du marché', 'mkt', 'Marchés', 'SGI, sociétés de gestion d’OPCVM et de patrimoine, conservateurs, agences de notation, garants : adresses et contacts', 'Market Intermediaries'],
   EVTS: ['Événements des sociétés', 'mkt', 'Actualités', 'Avis officiels depuis 2000 : AG, dividendes, états financiers ; en option : suivi des sociétés BRVM, agenda des sociétés (BRVM et résultats US)', 'Corporate Events'],
@@ -75,7 +76,7 @@ const FN = {
   BTST: ['Backtest', 'sec', 'Risque', '8 stratégies, levier, Monte Carlo, durée des drawdowns', 'Backtesting'],
 };
 /* touches de marché : BRIEF, puis les fonctions de la BRVM et de l'UEMOA, puis les autres marchés */
-const MKT_BRVM = ['BRVM', 'MOST', 'LIQ', 'DIVC', 'EVTS', 'NOT', 'MOTS CLES', 'SGI', 'UEMOA BONDS', 'GC', 'UEMOA/DATA'];
+const MKT_BRVM = ['BRVM', 'MOST', 'LIQ', 'DIVC', 'BANK', 'EVTS', 'NOT', 'MOTS CLES', 'SGI', 'UEMOA BONDS', 'GC', 'UEMOA/DATA'];
 const MKT_KEYS = ['BRIEF'].concat(MKT_BRVM, ['PORTF', 'SCREENER', 'ALRT', 'MAP', 'INDX', 'FG', 'NEWS ECO', 'ECWB', 'RATES', 'FX', 'COMMO', 'BMAP', 'MACRO', 'CORR', 'RRG', 'CORP RESULT', 'HELP']);
 const MENU_GROUPS = [['Description', ['DES', 'CN', 'HDS', 'STOCK BONDS', 'CACS']], ['Graphiques et cours', ['GP', 'HP', 'TECH', 'TRA', 'COMP', 'HS', 'SEAS', 'HVT', 'VAP']], ['Fondamentaux', ['FA', 'GF', 'RV', 'WACC', 'DVD', 'DDM', 'MODL']],
   ['Analystes', ['ANR', 'EE', 'SURP']], ['Composition de l’indice', ['MEMB', 'MOV']], ['Quant', ['SCOR', 'LQA', 'ANOM', 'PEER']], ['Risque', ['BETA', 'QLAB', 'BTST']]];
@@ -84,7 +85,7 @@ const SEC_TABS = MENU_GROUPS.flatMap(g => g[1]);
 const REL = { GP: ['HP', 'TECH', 'TRA', 'COMP', 'BETA', 'SEAS', 'QLAB'], TECH: ['GP', 'HVT', 'VAP', 'SEAS', 'BTST'], HS: ['COMP', 'CORR', 'BETA', 'GP'], HP: ['GP', 'TRA', 'COMP'], DES: ['GP', 'FA', 'HDS', 'CN', 'DVD', 'RV'], FA: ['RV', 'WACC', 'DVD', 'EE', 'MODL', 'SCOR'], RV: ['FA', 'PEER', 'SCOR', 'MODL', 'DDM'],
   DVD: ['DDM', 'TRA', 'DIVC', 'FA'], TRA: ['GP', 'DVD', 'COMP'], SCOR: ['RV', 'FA', 'LQA', 'ANOM', 'PEER', 'SCREENER'], LQA: ['LIQ', 'SCOR', 'HP'], ANOM: ['GP', 'LQA', 'CN', 'ALRT'], PEER: ['RV', 'SCOR', 'COMP', 'SCREENER'],
   MODL: ['FA', 'RV', 'DDM', 'WACC'], HDS: ['DES', 'CN'], CN: ['DES', 'NEWS', 'EVTS'], BRVM: ['MOST', 'LIQ', 'DIVC', 'MAP', 'SCREENER', 'SGI'], MAP: ['MONITOR', 'INDX', 'BRVM'], 'UEMOA/DATA': ['GC', 'UEMOA BONDS', 'FX'], 'UEMOA BONDS': ['NOT', 'GC', 'UEMOA/DATA'], NOT: ['UEMOA BONDS', 'STOCK BONDS', 'DES'], SGI: ['BRVM', 'NOT', 'HELP'], GC: ['UEMOA BONDS', 'UEMOA/DATA'],
-  BMAP: ['COMMO', 'MACRO', 'NEWS ECO', 'NEWS'], NEWS: ['CN', 'EVTS'], INDX: ['MAP', 'MOST', 'RATES', 'COMMO'], COMMO: ['BMAP', 'INDX', 'MACRO'], MOST: ['BRVM', 'LIQ', 'MAP', 'INDX'], LIQ: ['MOST', 'BRVM', 'LQA'], DIVC: ['BRVM', 'EVTS', 'DVD'], EVTS: ['DIVC', 'NOT', 'NEWS'],
+  BMAP: ['COMMO', 'MACRO', 'NEWS ECO', 'NEWS'], NEWS: ['CN', 'EVTS'], INDX: ['MAP', 'MOST', 'RATES', 'COMMO'], COMMO: ['BMAP', 'INDX', 'MACRO'], MOST: ['BRVM', 'LIQ', 'MAP', 'INDX'], LIQ: ['MOST', 'BRVM', 'LQA'], DIVC: ['BRVM', 'EVTS', 'DVD', 'PORTF'], BANK: ['FA', 'PEER', 'BRVM', 'DIVC'], EVTS: ['DIVC', 'NOT', 'NEWS'],
   HVT: ['GP', 'BETA', 'QLAB', 'VAP'], VAP: ['GP', 'HP', 'LQA'], GF: ['FA', 'RV', 'DVD'], ANR: ['EE', 'SURP', 'RV'], 'STOCK BONDS': ['PEER', 'UEMOA BONDS', 'DES'], CACS: ['DVD', 'CN', 'EVTS'], MEMB: ['MOV', 'MAP', 'GP'], MOV: ['MEMB', 'MAP', 'MOST'],
   'NEWS ECO': ['ECWB', 'RATES', 'UEMOA/DATA', 'NEWS'], ECWB: ['NEWS ECO', 'RATES', 'MACRO'], PORTF: ['SCREENER', 'CORR', 'DIVC', 'FX'], 'CORP RESULT': ['EE', 'SURP', 'ANR', 'NEWS ECO'], BRIEF: ['MONITOR', 'PORTF', 'NEWS ECO', 'NEWS'], RATES: ['GC', 'UEMOA BONDS', 'ECWB', 'NEWS ECO'], FX: ['UEMOA/DATA', 'INDX', 'MACRO'], FG: ['MAP', 'INDX', 'BRVM'], SCREENER: ['PORTF', 'BRVM', 'ALRT'] };
 const has = c => !!(FN[c] && PAGES[c]);
@@ -438,7 +439,9 @@ let renderSeq = 0;
 /* anciens codes encore acceptés (ligne de commande, liens, onglets enregistrés) : ils ouvrent le nouvel écran, et le bon onglet */
 /* écrans à onglets qui regroupent d'anciennes fonctions (onglet 1 = vue principale) : source unique pour les onglets, l'aide et l'autocomplétion */
 const FN_TABS = {
-  BRVM: [['m', 'Marché'], ['f', 'Flottant officiel'], ['p', 'Valorisation (PER)']],
+  BRVM: [['m', 'Marché'], ['f', 'Flottant officiel'], ['p', 'Valorisation (PER)'], ['r', 'Saison des résultats'], ['a', 'Publications attendues et retards'], ['x', 'Exposition pays']],
+  DIVC: [['c', 'Calendrier'], ['a', 'Aristocrates du dividende'], ['n', 'Dividende net et encaissements']],
+  BANK: [['c', 'Comparaison'], ['h', 'Historique sur 10 ans']],
   MAP: [['BRVM', 'BRVM'], ['NDX', 'Nasdaq-100'], ['ETF', 'ETF US'], ['EU', 'Europe'], ['UK', 'Royaume-Uni'], ['ASIA', 'Asie'], ['AFR', 'Afrique'], ['ME', 'Moyen-Orient'], ['US', 'Marché US']],
   INDX: [['i', 'Indices mondiaux'], ['f', 'Contrats à terme sur indices']],
   'UEMOA/DATA': [['bc', 'Taux, inflation, crédit'], ['tp', 'Titres publics'], ['wb', 'Indicateurs annuels'], ['ecst', 'Statistiques mondiales']],

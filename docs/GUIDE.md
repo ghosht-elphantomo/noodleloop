@@ -17,17 +17,18 @@ Tapez un ticker ou une fonction puis Entrée : `SNTS GP`, `SNTS QLAB`, `QQQ BTST
 
 Avant toute modification : point de restauration dans `SAUVEGARDES.md`. Après toute modification : test complet de TOUT le site et des données (erreurs, données manquantes, doublons, chiffres inchangés quand ils doivent l'être), en signalant tout problème trouvé, même sans lien avec la modification. On ne publie que si tout est bon, sinon retour au point de restauration. Détail : voir le haut de `SAUVEGARDES.md`.
 
-## Fonctions (65)
+## Fonctions (66)
 
 ### Fonctions de marché
 
 | Code | Contenu |
 |---|---|
 | BRIEF | Synthèse du jour — BRVM, portefeuille, alertes, marchés mondiaux, changes, matières, taux, agenda du jour et actualités sur une page |
-| BRVM | BRVM — 48 actions, indices, largeur du marché, secteurs ; en option : flottant officiel, valorisation du marché (PER) |
+| BRVM | BRVM — 48 actions, indices, largeur du marché, secteurs ; en option : flottant officiel, valorisation du marché (PER), saison des résultats, publications attendues et retards, exposition par pays |
 | MOST | Plus actives — Plus fortes hausses et baisses, valeurs les plus échangées sur la séance du jour, largeur du marché |
 | LIQ | Liquidité BRVM — Montants échangés, jours cotés, Amihud, délai pour constituer une position |
-| DIVC | Calendrier dividendes — BRVM : prochains détachements, classement par rendement, historique |
+| DIVC | Calendrier dividendes — BRVM : prochains détachements, classement par rendement, historique ; en option : aristocrates du dividende, dividende net et encaissements de vos positions |
+| BANK | Banques cotées — Les banques cotées à la BRVM côte à côte : PNB, résultat, coefficient d’exploitation, coût du risque, rentabilité, solidité du bilan ; en option : historique sur 10 ans |
 | EVTS | Événements des sociétés — Avis officiels depuis 2000 : AG, dividendes, états financiers ; en option : suivi des sociétés BRVM, agenda des sociétés (BRVM et résultats US) |
 | NOT | Notations financières — Notes de crédit (Bloomfield, WARA, GCR) : sociétés cotées, emprunts obligataires et fonds de titrisation, historique |
 | MOTS CLES | Recherche par mots clés — Tous les documents de la BRVM depuis 1998 (états financiers, rapports, avis de la BRVM et du DC/BR, bulletins de la cote, dividendes, notations), obligations, titres, fonctions et actualités ; onglet Historique de recherche (recherches des 90 derniers jours, gardées dans le navigateur de l'utilisateur seulement, jamais envoyées) |
@@ -38,7 +39,7 @@ Avant toute modification : point de restauration dans `SAUVEGARDES.md`. Après t
 | PORTF | Portefeuille — Vos positions BRVM et US : valeur, plus-values, risque (volatilité, VaR, bêta, contributions), performance, dividendes à venir |
 | SCREENER | Screener — Filtrer US et BRVM par ratios : FCF, croissance, qualité, valorisation, score |
 | ALRT | Alertes — Marges, FCF, dette, révisions, seuils de valorisation, résultats à venir |
-| MAP | Carte de chaleur — BRVM, États-Unis, Europe, Royaume-Uni, Asie, Afrique : surface = capitalisation, couleur = variation ; en option : marché US (Nasdaq-100, ETF, facteurs, crypto) |
+| MAP | Carte de chaleur — BRVM, États-Unis, Europe, Royaume-Uni, Asie, Afrique : surface = variation du jour (ou égale, ou capitalisation), couleur = variation, zoom et déplacement ; en option : marché US (Nasdaq-100, ETF, facteurs, crypto) |
 | INDX | Indices mondiaux — Indices boursiers des Amériques, d’Europe, d’Afrique et d’Asie : niveau, variation, fourchette 52 semaines ; en option : contrats à terme sur indices (indication d’ouverture) |
 | FG | Fear & Greed — Indice peur/avidité : États-Unis (CNN, toutes les 15 minutes) et BRVM (calculé par FQT) |
 | NEWS ECO | Calendrier éco — Calendrier économique mondial : publications, prévision du consensus, réel, précédent, importance |
@@ -141,6 +142,14 @@ Avant toute modification : point de restauration dans `SAUVEGARDES.md`. Après t
 Méthode de la valorisation : [docs/QLAB2_VALORISATION.md](QLAB2_VALORISATION.md).
 
 L'onglet « Prévisions » (QLAB 3, prévision des résultats) a été retiré le 19/10/2026 à la demande du propriétaire : son code, ses données et son cahier des charges restent dans l'historique du dépôt (point de restauration du 19/10/2026, 17 h 30) et une copie de ses dernières prévisions dans les données brutes (`qlabp/` de la branche `raw`). La lecture des publications intermédiaires (`scripts/periodiques.py`, appelée par `comptes.py`) est gardée.
+
+## Méthodes : saison des résultats, aristocrates, banques (depuis le 19/10/2026)
+
+- **BRVM, Saison des résultats et Publications attendues et retards** (`web/pages20.js`) : échéances de la BRVM pour un exercice clos le 31 décembre — 1er et 3e trimestres le 30 avril et le 31 octobre, 1er semestre (rapport certifié) le 31 octobre, états financiers de l'exercice le 30 avril de l'année suivante. Une période est publiée dès le premier document de la société qui la nomme dans son intitulé (rapport d'activités, états financiers, rapport annuel ou du conseil, rapport des commissaires, communiqué de résultats ; fichier `events.json`). Année = la plus récente citée dans l'intitulé, jamais après la date de publication ; sans année, déduite de la date de publication et marquée d'un astérisque ; un intitulé portant l'année précédente pour une période déjà publiée, paru plus de 300 jours après l'échéance, est rattaché à la période suivante (astérisque). Le « 2e semestre » n'est pas compté comme semestre. Société cotée après l'échéance : non comptée. Sans document : « aucun document » (rien n'est supposé). Vérifié sur la presse (retards des états financiers 2025 : BOA Côte d'Ivoire 43 jours, NSIA Banque 13, CIE 20).
+- **BRVM, Exposition pays** : pays du siège (`cty`) ; capitalisation flottante = capitalisation × flottant officiel ; PER agrégé = Σ capitalisations ÷ Σ résultats des sociétés bénéficiaires (dernier BNPA × titres) ; rendement agrégé = moyenne des rendements pondérée par les capitalisations.
+- **DIVC, Aristocrates du dividende** (`web/pages21.js`) : dividende net par action des avis (`dividends.json`, ajusté des fractionnements, exceptionnels exclus, acompte et solde additionnés) ; années versées, années sans baisse, hausses de suite comptées en remontant depuis le dernier exercice ; un exercice absent interrompt la série ; aristocrate = 10 ans et plus sans baisse, régulier = 5 ans et plus ; série arrêtée = rien depuis deux exercices.
+- **DIVC, Dividende net et encaissements** : paiements déjà annoncés seulement ; montant pour les positions de PORTF (navigateur) = titres × dividende net, si le détachement est à venir.
+- **BANK** (`web/pages21.js`) : séries des fiches FA (`fa/<banque>.json`, Y, montants en millions de FCFA), les mêmes que FA ; coefficient d'exploitation et ratio de solvabilité tels que publiés par la banque ; coût du risque ÷ crédits de fin d'exercice ; un chiffre absent du dernier exercice est pris dans l'un des deux précédents avec l'année affichée (jamais pour une croissance) ; croissance du résultat après un résultat négatif : « n.s. ».
 
 ## Données et automatisations
 

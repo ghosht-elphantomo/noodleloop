@@ -671,3 +671,5 @@ table.t.eqt td{line-height:24px}
 .imap.imz{overflow:auto;cursor:grab;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .imap.imz.drag{cursor:grabbing;user-select:none}
 .imap2{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));align-items:start}
+.pbar{height:6px;background:var(--bg3);margin:3px 0 9px;border:1px solid var(--line2)}
+.pbar i{display:block;height:100%;background:var(--amber)}
