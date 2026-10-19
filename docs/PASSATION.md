@@ -280,7 +280,10 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
    lecture séparée de la publication ; actions fixées par empreinte ; CSP complète (scripts, connexions : tester l'OCR).
    **Données (à vérifier sur les documents)** : voir « À vérifier sur les documents » ci-dessus (BNPA incohérents, Filtisac
    2015) et les deux sauts de cours anciens.
-5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
+5. **Ordre décidé par le propriétaire (19/10)** : la migration se fait AVANT la construction de la base de données (backend) :
+   le code et les clés de la base naissent directement dans le dépôt privé (rien à nettoyer dans l'historique public), et le
+   relais des données n'est refait qu'une fois, sur l'architecture finale. Migration faite ENSEMBLE avec le propriétaire.
+   Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
    nettoyage de l'historique (ancien pseudonyme, pages brutes des sources) ; puis kit serveur.
 
 ## Migration deux dépôts : pourquoi et comment

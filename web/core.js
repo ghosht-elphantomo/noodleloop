@@ -349,6 +349,13 @@ function countUp(m, seq) {
   requestAnimationFrame(step);
 }
 const PREF = (() => { try { return JSON.parse(localStorage.getItem('fqt_pref') || '{}'); } catch (e) { return {}; } })();
+/* réglages remis aux valeurs de base : texte normal, actualités affichées, ouverture rapide et animations désactivées,
+   fenêtre réduite (les onglets ouverts et le portefeuille ne sont pas touchés) */
+function resetPref() {
+  for (const k of Object.keys(PREF)) delete PREF[k];
+  savePref(); applyPref(); if (document.body.classList.contains('maxi')) toggleMaxi(false); render();
+  toast('Réglages remis aux valeurs de base : texte normal, actualités affichées, ouverture rapide et animations désactivées.');
+}
 function savePref() { try { localStorage.setItem('fqt_pref', JSON.stringify(PREF)); } catch (e) { } }
 function applyPref() { document.documentElement.classList.toggle('anim', !!PREF.anim && !reduceMotion()); document.documentElement.style.zoom = PREF.zoom && PREF.zoom !== 1 ? PREF.zoom : ''; document.body.classList.toggle('nonews', !!PREF.nonews); if (PREF.nonews) document.documentElement.style.setProperty('--nwh', '0px'); else if (typeof renderNews === 'function') renderNews(); }
 function stdActs() {
@@ -358,10 +365,11 @@ function stdActs() {
   { n: 97, l: 'Sortie', menu: () => [{ l: 'Tableau principal → Excel (CSV)', run: exportCSV }, { l: 'Graphique principal → image PNG', run: exportPNG }, { l: 'Écran → PDF / impression', run: () => window.print() }] },
   { n: 98, l: 'Réglages', menu: () => [{ l: `Taille du texte : normale${!PREF.zoom || PREF.zoom === 1 ? ' ✓' : ''}`, run: () => { PREF.zoom = 1; savePref(); applyPref(); } }, { l: `Taille du texte : grande${PREF.zoom === 1.12 ? ' ✓' : ''}`, run: () => { PREF.zoom = 1.12; savePref(); applyPref(); } },
     { l: `Taille du texte : très grande${PREF.zoom === 1.25 ? ' ✓' : ''}`, run: () => { PREF.zoom = 1.25; savePref(); applyPref(); } }, { l: PREF.nonews ? 'Afficher le panneau des actualités' : 'Masquer le panneau des actualités', run: () => { PREF.nonews = !PREF.nonews; savePref(); applyPref(); } },
-    { l: `Ouverture rapide (préchargement des écrans suivants) : ${PREF.fast ? 'activée ✓' : 'désactivée'}`, run: () => { PREF.fast = !PREF.fast; savePref(); applyPref(); toast(PREF.fast ? 'Ouverture rapide activée : les données des écrans suivants sont préparées à l’avance.' : 'Ouverture rapide désactivée.'); if (PREF.fast) pfIdle(); } },
+    { l: `Ouverture rapide : ${PREF.fast ? 'activée ✓' : 'désactivée'}`, run: () => { PREF.fast = !PREF.fast; savePref(); applyPref(); toast(PREF.fast ? 'Ouverture rapide activée : les données des écrans suivants sont préparées à l’avance.' : 'Ouverture rapide désactivée.'); if (PREF.fast) pfIdle(); } },
     { l: `Animations douces : ${PREF.anim ? 'activées ✓' : 'désactivées'}`, run: () => { PREF.anim = !PREF.anim; savePref(); applyPref(); toast(PREF.anim ? (reduceMotion() ? 'Animations activées, mais votre appareil demande de réduire les animations : elles restent coupées.' : 'Animations douces activées.') : 'Animations désactivées.'); } },
     { l: document.body.classList.contains('maxi') ? 'Réduire la fenêtre' : 'Agrandir la fenêtre (plein écran)', run: () => toggleMaxi() },
-    { l: 'Fermer tous les onglets sauf celui-ci', run: () => { WT.list = [WT.list[WT.cur]]; WT.cur = 0; wtSave(); renderWtabs(); } }] }];
+    { l: 'Fermer tous les onglets sauf celui-ci', run: () => { WT.list = [WT.list[WT.cur]]; WT.cur = 0; wtSave(); renderWtabs(); } },
+    { l: 'Réinitialiser les réglages (valeurs de base)', run: resetPref }] }];
 }
 function exportPNG() { const c = $('main').querySelector('canvas'); if (!c) { toast('Aucun graphique sur cet écran.'); return; } const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = `FQT_${ST.fn}_${SECFN.has(ST.fn) ? ST.sec + '_' : ''}${new Date().toISOString().slice(0, 10)}.png`; a.click(); }
 
