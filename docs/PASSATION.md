@@ -59,8 +59,9 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - **Lecture des documents de la BRVM terminée** : 6 033 documents au registre (branche comptes), 1 599 avec au moins un exercice
   vérifié, 0 restant. Lecture répartie sur 6 machines quand il en reste au moins 60, sinon une seule (`comptes.yml`,
   `scripts/comptes_merge.py`). Depuis le 18/10 au soir, chaque passage à une seule machine échouait à la mise en commun (part
-  téléchargée sans sous-dossier) : rien n'était publié et un e-mail d'échec partait ; corrigé le 19/10 à 16 h 02 (`247319d8`).
-- **Publié le 19/10/2026 (demandes du propriétaire du jour)** :
+  téléchargée sans sous-dossier) : rien n'était publié et un e-mail d'échec partait ; corrigé le 19/10 à 16 h 02 (`247319d8`) et
+  vérifié : passage à une machine réussi et publié le 19/10 à 16 h 49 (branche comptes `7e8f9959`, 6 033 documents, 0 restant).
+- **Publié le 19/10/2026 à 16 h 42 (commit `12033902`, demandes du propriétaire du jour ; déploiement de production réussi)** :
   - Barre de commande : la fonction est reconnue d'abord, le reste est lu comme un titre (ticker, nom, nom usuel) ; « NSIA FA »,
     « Sogb CN », « Orange CI FA », « SGBCI GP » ouvrent la fonction ; un texte libre n'ouvre plus MOTS CLES (message).
   - MOTS CLES : onglet « Historique de recherche » (90 jours, navigateur seulement).
@@ -72,8 +73,12 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
     sous-totaux SYSCOHADA confirmés par un autre montant publié (116 montants) : +601 cases dans FA, +43 valeurs dans les
     fondamentaux, 0 changé, 0 retiré (construction complète avant / après). QLAB : intervalles de prévision à peine modifiés
     (quelques séries plus longues).
-  - 34 documents retrouvés dans l'archive web ajoutés à la lecture (`seed/archives_comptes.json`) : lus au passage suivant des
-    comptes (vérifier le résultat : documents lus, exercices ajoutés, aucun montant existant changé).
+  - 34 documents retrouvés dans l'archive web ajoutés à la lecture (`seed/archives_comptes.json`) : passage de lecture lancé à
+    la main le 19/10 à 16 h 53 (comptes.yml) — vérifier le résultat : documents lus (champ « wb » dans index.json de la branche
+    comptes), exercices ajoutés, aucun montant existant changé.
+  - Les montants ajoutés dans FA n'apparaissent en production qu'après la construction complète de la base (passage du Terminal
+    lancé par la publication, sinon celui du soir) : vérifier `fa/ABJC.json` (2004-2011, comptes SYSCOHADA) et `fa/SOGC.json`
+    (2005) sur la branche data.
 - **Audit du 19/10/2026** : site complet en local avec le nouveau code (421 pages et onglets, 0 erreur JavaScript ; iPhone 13,
   99 pages, 0 débordement ; QLAB 48 × 6, 0 texte suspect ; aucun nom de source ni lien interdit). Concordance avec les archives
   SikaFinance 2014-2025 : 1 711 comparaisons, 238 écarts, tous expliqués, aucune correction : PER (164 ; SikaFinance prend le
