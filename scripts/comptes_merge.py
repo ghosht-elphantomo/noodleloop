@@ -66,6 +66,8 @@ def cmd_merge(a):
     before = {u: dict(m) for u, m in docs.items()}
     errs, seen, got = [], {}, []
     parts = sorted(p for p in (os.listdir(a.parts) if os.path.isdir(a.parts) else []) if os.path.isfile(os.path.join(a.parts, p, "part.json")))
+    if not parts and os.path.isfile(os.path.join(a.parts, "part.json")):
+        parts = ["."]  # (une seule machine de lecture : sa part est téléchargée directement dans le dossier, sans sous-dossier)
     for p in parts:
         pd_ = os.path.join(a.parts, p)
         pj = load(os.path.join(pd_, "part.json"))
