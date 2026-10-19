@@ -1,0 +1,251 @@
+{
+ "_note": "Fiche des sociétés cotées gardée par FQT (copie du 19/10/2026 de la fiche de la base tierce, contrôlée chaque matin) : nom court, nom officiel, banque ou non (états financiers au format bancaire). Le terminal prend ces valeurs en premier ; la base tierce ne sert plus qu'en secours (titre absent d'ici). Un écart entre les deux est signalé par le contrôle du matin. Pays : déduit du symbole. Secteur : pages de la BRVM (raw/secteurs_brvm.json). Nombre de titres et flottant : page Capitalisations de la BRVM.",
+ "d": "2026-10-19",
+ "rows": {
+  "ABJC": {
+   "nom": "Servair Abidjan",
+   "nom_officiel": "SERVAIR ABIDJAN COTE D'IVOIRE",
+   "banque": false
+  },
+  "BBGC": {
+   "nom": "Bridge Bank Group",
+   "nom_officiel": "BRIDGE BANK GROUP COTE D'IVOIRE",
+   "banque": true
+  },
+  "BICB": {
+   "nom": "BIIC Bénin",
+   "nom_officiel": "BANQUE INTERNATIONALE POUR L’INDUSTRIE ET LE COMMERCE DU BENIN",
+   "banque": true
+  },
+  "BICC": {
+   "nom": "BICI CI",
+   "nom_officiel": "BICI COTE D'IVOIRE",
+   "banque": true
+  },
+  "BNBC": {
+   "nom": "Bernabé",
+   "nom_officiel": "BERNABE COTE D'IVOIRE",
+   "banque": false
+  },
+  "BOAB": {
+   "nom": "BOA Bénin",
+   "nom_officiel": "BANK OF AFRICA BENIN",
+   "banque": true
+  },
+  "BOABF": {
+   "nom": "BOA Burkina",
+   "nom_officiel": "BANK OF AFRICA BURKINA FASO",
+   "banque": true
+  },
+  "BOAC": {
+   "nom": "BOA Côte d'Ivoire",
+   "nom_officiel": "BANK OF AFRICA COTE D'IVOIRE",
+   "banque": true
+  },
+  "BOAM": {
+   "nom": "BOA Mali",
+   "nom_officiel": "BANK OF AFRICA MALI",
+   "banque": true
+  },
+  "BOAN": {
+   "nom": "BOA Niger",
+   "nom_officiel": "BANK OF AFRICA NIGER",
+   "banque": true
+  },
+  "BOAS": {
+   "nom": "BOA Sénégal",
+   "nom_officiel": "BANK OF AFRICA SENEGAL",
+   "banque": true
+  },
+  "CABC": {
+   "nom": "Sicable CI",
+   "nom_officiel": "SICABLE COTE D'IVOIRE",
+   "banque": false
+  },
+  "CBIBF": {
+   "nom": "Coris Bank International BF",
+   "nom_officiel": "CORIS BANK INTERNATIONAL BURKINA FASO",
+   "banque": true
+  },
+  "CFAC": {
+   "nom": "CFAO Motors CI",
+   "nom_officiel": "CFAO MOTORS COTE D'IVOIRE",
+   "banque": false
+  },
+  "CIEC": {
+   "nom": "CIE CI",
+   "nom_officiel": "CIE COTE D'IVOIRE",
+   "banque": false
+  },
+  "ECOC": {
+   "nom": "Ecobank CI",
+   "nom_officiel": "ECOBANK COTE D'IVOIRE",
+   "banque": true
+  },
+  "ETIT": {
+   "nom": "Ecobank Transnational Togo",
+   "nom_officiel": "Ecobank Transnational Incorporated TOGO",
+   "banque": true
+  },
+  "FTSC": {
+   "nom": "Filtisac CI",
+   "nom_officiel": "FILTISAC COTE D'IVOIRE",
+   "banque": false
+  },
+  "LNBB": {
+   "nom": "Loterie Nationale du Bénin",
+   "nom_officiel": "LOTERIE NATIONALE DU BENIN",
+   "banque": false
+  },
+  "NEIC": {
+   "nom": "NEI CEDA CI",
+   "nom_officiel": "NEI-CEDA COTE D'IVOIRE",
+   "banque": false
+  },
+  "NSBC": {
+   "nom": "NSIA Banque",
+   "nom_officiel": "NSIA BANQUE COTE D'IVOIRE",
+   "banque": true
+  },
+  "NTLC": {
+   "nom": "Nestlé CI",
+   "nom_officiel": "NESTLE COTE D'IVOIRE",
+   "banque": false
+  },
+  "ONTBF": {
+   "nom": "Onatel BF",
+   "nom_officiel": "ONATEL BURKINA FASO",
+   "banque": false
+  },
+  "ORAC": {
+   "nom": "Orange CI",
+   "nom_officiel": "ORANGE COTE D'IVOIRE",
+   "banque": false
+  },
+  "ORGT": {
+   "nom": "Oragroup Togo",
+   "nom_officiel": "ORAGROUP TOGO",
+   "banque": true
+  },
+  "PALC": {
+   "nom": "PalmCI",
+   "nom_officiel": "PALM COTE D'IVOIRE",
+   "banque": false
+  },
+  "PRSC": {
+   "nom": "Tractafric Motors",
+   "nom_officiel": "TRACTAFRIC MOTORS COTE D'IVOIRE",
+   "banque": false
+  },
+  "SAFC": {
+   "nom": "SAFCA CI",
+   "nom_officiel": "SAFCA COTE D'IVOIRE",
+   "banque": false
+  },
+  "SCRC": {
+   "nom": "Sucrivoire",
+   "nom_officiel": "SUCRIVOIRE COTE D'IVOIRE",
+   "banque": false
+  },
+  "SDCC": {
+   "nom": "SODE CI",
+   "nom_officiel": "SODE COTE D'IVOIRE",
+   "banque": false
+  },
+  "SDSC": {
+   "nom": "Africa Global Logistics",
+   "nom_officiel": "AFRICA GLOBAL LOGISTICS COTE D'IVOIRE",
+   "banque": false
+  },
+  "SEMC": {
+   "nom": "Eviosys Packaging Siem",
+   "nom_officiel": "EVIOSYS PACKAGING SIEM COTE D'IVOIRE",
+   "banque": false
+  },
+  "SGBC": {
+   "nom": "Société Générale CI",
+   "nom_officiel": "SOCIETE GENERALE COTE D'IVOIRE",
+   "banque": true
+  },
+  "SHEC": {
+   "nom": "Vivo Energy CI",
+   "nom_officiel": "VIVO ENERGY COTE D'IVOIRE",
+   "banque": false
+  },
+  "SIBC": {
+   "nom": "SIB CI",
+   "nom_officiel": "SOCIETE IVOIRIENNE DE BANQUE COTE D'IVOIRE",
+   "banque": true
+  },
+  "SICC": {
+   "nom": "Sicor",
+   "nom_officiel": "SICOR COTE D'IVOIRE",
+   "banque": false
+  },
+  "SIVC": {
+   "nom": "Erium",
+   "nom_officiel": "ERIUM COTE D’IVOIRE",
+   "banque": false
+  },
+  "SLBC": {
+   "nom": "Solibra CI",
+   "nom_officiel": "SOLIBRA COTE D'IVOIRE",
+   "banque": false
+  },
+  "SMBC": {
+   "nom": "SMB CI",
+   "nom_officiel": "SMB COTE D'IVOIRE",
+   "banque": false
+  },
+  "SNTS": {
+   "nom": "Sonatel",
+   "nom_officiel": "SONATEL SENEGAL",
+   "banque": false
+  },
+  "SOGC": {
+   "nom": "SOGB",
+   "nom_officiel": "SOGB COTE D'IVOIRE",
+   "banque": false
+  },
+  "SPHC": {
+   "nom": "SAPH CI",
+   "nom_officiel": "SAPH COTE D'IVOIRE",
+   "banque": false
+  },
+  "STAC": {
+   "nom": "Setao CI",
+   "nom_officiel": "SETAO COTE D'IVOIRE",
+   "banque": false
+  },
+  "STBC": {
+   "nom": "Sitab",
+   "nom_officiel": "SITAB COTE D'IVOIRE",
+   "banque": false
+  },
+  "SVOC": {
+   "nom": "Movis CI",
+   "nom_officiel": null,
+   "banque": false
+  },
+  "TTLC": {
+   "nom": "TotalEnergies CI",
+   "nom_officiel": "TOTALENERGIES MARKETING COTE D'IVOIRE",
+   "banque": false
+  },
+  "TTLS": {
+   "nom": "TotalEnergies Sénégal",
+   "nom_officiel": "TOTALENERGIES MARKETING SENEGAL",
+   "banque": false
+  },
+  "UNLC": {
+   "nom": "Unilever CI",
+   "nom_officiel": "UNILEVER COTE D'IVOIRE",
+   "banque": false
+  },
+  "UNXC": {
+   "nom": "Uniwax CI",
+   "nom_officiel": "UNIWAX COTE D'IVOIRE",
+   "banque": false
+  }
+ }
+}

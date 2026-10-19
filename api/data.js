@@ -75,6 +75,12 @@ module.exports = async (req, res) => {
   const q = String((req.query && req.query.p) || '').replace(/^\/+/, ''), p = ALIAS[q] || q;
   if (!p || p.includes('..') || !/^[A-Za-z0-9_\-./]+\.json$/.test(p)) { res.statusCode = 400; res.end('bad path'); return; }
   if (String((req.query && req.query.via) || '') === '2') {  // essai du secours seul
+    // (lecture de la copie à chaque appel : refusée avec des paramètres en plus, qui contourneraient le cache et épuiseraient la clé
+    // de lecture ; clé d'essai exigée si le propriétaire crée la variable SECOURS_KEY dans Vercel)
+    const extra = Object.keys(req.query || {}).filter(k => !['p', 'via', 'k', 'path'].includes(k));
+    if (extra.length || (process.env.SECOURS_KEY && String(req.query.k || '') !== process.env.SECOURS_KEY)) {
+      res.statusCode = 400; res.setHeader('Cache-Control', 'no-store'); res.end('bad request'); return;
+    }
     if (await fromGitLab(res, p)) return;
     res.statusCode = 503; res.setHeader('Cache-Control', 'no-store'); res.end('unavailable'); return;
   }

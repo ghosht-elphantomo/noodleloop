@@ -44,6 +44,8 @@ jobs:
               *tradingview.com*) EXTRA=(-H 'Origin: https://www.tradingview.com' -H 'Referer: https://www.tradingview.com/' -H 'Accept: application/json, text/plain, */*' --compressed);; esac
             code=$(curl -sL -m 40 -A "$BUA" "${EXTRA[@]}" -H 'Accept-Language: fr-FR,fr;q=0.9,en;q=0.8' -o "/tmp/out/urls/$name" -w '%{http_code} %{size_download}' "$url" || true)
             echo "$code $name $url" | tee -a /tmp/out/urls/_status.txt
+            # (PDF : texte extrait avant la coupe à 40 Mo, pour lire aussi les gros documents)
+            case "$name" in *.pdf) [ -f "/tmp/out/urls/$name" ] && timeout 300 pdftotext -layout "/tmp/out/urls/$name" "/tmp/out/urls/$name.txt" 2>/dev/null || true;; esac
             [ -f "/tmp/out/urls/$name" ] && head -c 40000000 "/tmp/out/urls/$name" > /tmp/x && mv /tmp/x "/tmp/out/urls/$name" || true
           done < probe_urls.txt
       - name: Collecte partielle

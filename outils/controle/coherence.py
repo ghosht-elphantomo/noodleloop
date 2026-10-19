@@ -4,11 +4,12 @@ avec les valeurs côte à côte, pour être vérifié sur le document avant de t
 
   1. fiche / BRVM : nombre de titres, flottant, secteur (miroir.json, flottant.json, secteurs.json) ;
   2. capitalisation affichée (cours × titres) / capitalisation publiée par la BRVM (session.json) ;
-  3. dernier cours de la série / clôture du bulletin officiel de la cote (même séance) ;
+  3. dernier cours de la série / clôture du bulletin officiel de la cote (même séance) ; volumes des 20 dernières séances /
+     bulletin (un volume partiel de la base tierce resté en place se voit ici) ;
   4. BNPA affiché / BNPA du bulletin officiel (cours ÷ PER) ;
   5. BNPA de chaque exercice / résultat net ÷ nombre de titres ;
   6. dividende : brut × (1 − impôt) = net ;
-  7. éléments mal formés écartés à la construction ;
+  7. éléments mal formés écartés à la construction ; fiche des sociétés FQT / base, titre nouveau au bulletin, indices douteux ;
   8. valeurs extrêmes à revoir à la main (rendement, distribution, PER).
 """
 import json
@@ -76,6 +77,16 @@ def _boc_dernier(boc):
                 if best[0] is None or k > best[0]:
                     best = (k, y[k])
     return best
+
+
+def _boc_recents(boc, n=20):
+    """n dernières séances des bulletins officiels : [(date AAAAMMJJ, {titre: ligne})]"""
+    if not boc or not os.path.isdir(boc):
+        return []
+    L = []
+    for f in sorted(x for x in os.listdir(boc) if x[:4].isdigit() and x.endswith(".json"))[-2:]:
+        L += sorted((_jl(boc, f) or {}).items())
+    return L[-n:]
 
 
 def verifier(R, D, boc=None):
@@ -170,6 +181,30 @@ def verifier(R, D, boc=None):
         R.add("BNPA et PER / bulletin officiel", "orange" if outp else "vert",
               (f"{len(outp)} écart(s) de plus de 2 % : " + _liste(outp)) if outp else f"séance du {dd} : BNPA concordants")
 
+    # 3 bis. volumes des dernières séances / bulletin officiel (montant volume × cours, insensible aux fractionnements) : un volume
+    # partiel resté en place (relevé de la base pris en cours de séance) se voit ici
+    rec = _boc_recents(boc)
+    if rec:
+        out, n = [], 0
+        for t in sorted(by):
+            x = _jl(D, f"s/{t}.json") or {}
+            ix = {d: i for i, d in enumerate(x.get("d") or [])}
+            for k, rows in rec:
+                r = rows.get(t)
+                i = ix.get(int(k))
+                if not r or i is None or len(r) < 5 or not r[4]:
+                    continue
+                bc = r[2] or (r[6] if len(r) > 6 else None)
+                v, c = (x.get("v") or [])[i], (x.get("c") or [])[i]
+                if not bc or not c:
+                    continue
+                n += 1
+                if abs((v or 0) * c / (r[4] * bc) - 1) > .01:
+                    out.append(f"{t} {k[6:8]}/{k[4:6]} : {_f(v, 0)} titres, bulletin {_f(r[4], 0)}")
+        R.add("Volumes / bulletin officiel", "rouge" if out else "vert",
+              (f"{len(out)} volume(s) différent(s) du bulletin sur les {len(rec)} dernières séances : " + _liste(out)) if out
+              else f"{n} volumes identiques au bulletin sur les {len(rec)} dernières séances")
+
     # 5. BNPA de chaque exercice / résultat net ÷ titres
     F = _jl(D, "fundamentals.json") or {}
     out = []
@@ -207,6 +242,22 @@ def verifier(R, D, boc=None):
         ec = bc.get("ecartes") or []
         R.add("Éléments écartés à la construction", "orange" if ec else "vert",
               (f"{len(ec)} élément(s) mal formé(s) écarté(s), à corriger sur le document : " + _liste(ec)) if ec else "aucun")
+
+    # 7 bis. secours BRVM : fiche des sociétés FQT / base tierce, titre nouveau au bulletin, lectures d'indices douteuses
+    Mr = _jl(D, "miroir.json") or {}
+    if "soc_diff" in Mr:
+        out = (Mr.get("soc_diff") or []) + [f"{t} absent de seed/societes.json (nom et banque pris dans la base)" for t in Mr.get("soc_new") or []]
+        R.add("Fiche des sociétés : FQT / base tierce", "orange" if out else "vert",
+              (f"{len(out)} écart(s), à vérifier puis à reporter dans seed/societes.json : " + _liste(out)) if out else "noms et type (banque) identiques")
+    if "nouveaux" in bc:
+        nv = bc.get("nouveaux") or []
+        R.add("Titres du bulletin officiel absents du terminal", "orange" if nv else "vert",
+              ("nouvelle(s) cotation(s) au bulletin, pas encore dans la fiche : " + ", ".join(nv)) if nv else "aucun")
+    dt_ = {c: v.get("doute") for c, v in (bc.get("idx") or {}).items() if isinstance(v, dict) and v.get("doute")}
+    if bc.get("idx"):
+        R.add("Indices / bulletin officiel : lectures douteuses", "orange" if dt_ else "vert",
+              ("écart de plus de 5 % (ou saut de plus de 10 %) entre la base et le bulletin, valeur de la base gardée : "
+               + _liste([f"{c} {', '.join(str(x) for x in v[-4:])}" for c, v in sorted(dt_.items())])) if dt_ else "aucune")
 
     # 8. valeurs extrêmes à revoir à la main (pas forcément fausses)
     out = []

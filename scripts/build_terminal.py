@@ -460,6 +460,28 @@ def main():
     # BRVM ------------------------------------------------------------------
     src = a.brvm_src
     acts = json.load(open(os.path.join(src, "actions.json"), encoding="utf8"))["actions"]
+    # fiche des sociétés gardée par FQT (seed/societes.json : nom court, nom officiel, banque ou non) : prise en premier, la base
+    # tierce ne sert qu'en secours (titre absent du fichier) ; les écarts entre les deux sont publiés pour le contrôle du matin
+    SOC_DIFF, SOC_NEW = [], []
+    try:
+        soc_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "societes.json"), encoding="utf8")).get("rows") or {}
+    except Exception as e:  # noqa: BLE001
+        soc_ = {}
+        log("fiche des sociétés FQT illisible :", e)
+    for act_ in acts:
+        s_ = soc_.get(act_.get("ticker")) if soc_ else None
+        if soc_ and not s_:
+            SOC_NEW.append(act_.get("ticker"))
+            continue
+        for k_ in ("nom", "nom_officiel", "banque") if s_ else ():
+            if s_.get(k_) is None:
+                continue
+            b_ = bool(act_.get(k_)) if k_ == "banque" else act_.get(k_)
+            if b_ is not None and b_ != s_[k_]:
+                SOC_DIFF.append(f"{act_.get('ticker')} {k_} : base « {b_} », FQT « {s_[k_]} »")
+            act_[k_] = s_[k_]
+    if SOC_DIFF or SOC_NEW:
+        log("fiche des sociétés : écarts avec la base", len(SOC_DIFF), "; titres absents du fichier FQT :", ", ".join(SOC_NEW) or "aucun")
     # secteur officiel de la BRVM (sept pages par secteur de brvm.org, lues chaque soir) : source principale du secteur affiché,
     # la fiche ne sert que si la BRVM ne classe pas le titre (décision du propriétaire, 19/10/2026)
     SECT_OFF = {}
@@ -791,6 +813,7 @@ def main():
         log("dividendes brvm.org ignorés :", e)
     # bulletins officiels de la cote (BRVM) : contrôle et secours des cours et des dividendes
     BOC = {}
+    boc_milliers_ = []
     if a.boc and os.path.isdir(a.boc):
         cols = ("prev", "o", "c", "var", "vol", "val", "ref", "ytd", "div", "div_d", "yld", "per")
         for fn in sorted(os.listdir(a.boc)):
@@ -798,8 +821,25 @@ def main():
                 continue
             for k, rows_ in json.load(open(os.path.join(a.boc, fn), encoding="utf8")).items():
                 for sym, v in rows_.items():
-                    BOC.setdefault(sym, {})[int(k)] = dict(zip(cols, v))
+                    rb0_ = dict(zip(cols, v))
+                    # valeur échangée imprimée en milliers (montants d'un milliard et plus, lus sans leur dernier groupe de chiffres) :
+                    # ramenée en FCFA quand elle redonne volume × cours à 2 % près (même règle que l'archive histo.py)
+                    vo_, va_, cl_ = rb0_.get("vol"), rb0_.get("val"), rb0_.get("c") or rb0_.get("ref")
+                    if vo_ and va_ and cl_ and not .7 < va_ / (vo_ * cl_) < 1.3 and .98 < va_ * 1000 / (vo_ * cl_) < 1.02:
+                        rb0_["val"], rb0_["val_k"] = va_ * 1000, 1
+                        boc_milliers_.append(f"{sym} {k}")
+                    BOC.setdefault(sym, {})[int(k)] = rb0_
+        if boc_milliers_:
+            log("bulletins : valeurs échangées lues en milliers ramenées en FCFA :", len(boc_milliers_), "; ".join(boc_milliers_[-8:]))
         log("bulletins officiels :", len(BOC), "titres,", sum(len(v) for v in BOC.values()), "lignes")
+    # titre coté au dernier bulletin mais absent de la fiche (nouvelle introduction en bourse que la base n'a pas encore) : signalé
+    BOC_NOUV = []
+    if BOC:
+        kmax_ = max(max(v) for v in BOC.values() if v)
+        tk_ = {x.get("ticker") for x in acts}
+        BOC_NOUV = sorted(sym for sym, v in BOC.items() if kmax_ in v and sym not in tk_)
+        if BOC_NOUV:
+            print(f"::warning::Construction : titre(s) du bulletin officiel absent(s) de la fiche : {', '.join(BOC_NOUV)}", flush=True)
     # versements lus dans les documents officiels de la BRVM depuis l'ouverture (avis de paiement, calendriers, avis du Dépositaire
     # central ; branche dividendes) : montant et dates de l'avis (rectificatif compris) à la place de ceux de la base, versements
     # absents ajoutés. Un versement de la base est le même s'il tombe à 10 jours près, ou s'il porte sur le même exercice et le même
@@ -915,12 +955,16 @@ def main():
     for sym_, by_ in BOC.items():
         for k_, r_ in by_.items():
             BOC_DAYS[k_] += 1 if r_.get("var") not in (None, 0, 0.0) else 0
-    BOC_IDX = {}
+    BOC_IDX, BOC_IDXV = {}, {}  # (valeur de l'indice ; montant échangé par les sociétés de l'indice, marché entier pour le BRVM Composite)
     try:
         for k_, r_ in ((json.load(open(os.path.join(a.extra, "boc.json"), encoding="utf8")) if a.extra and os.path.exists(os.path.join(a.extra, "boc.json")) else {}).get("d") or {}).items():
             for code_, v_ in (r_.get("idx") or {}).items():
                 if v_ and v_[0]:
                     BOC_IDX.setdefault(code_, {})[int(k_)] = float(v_[0])
+                if v_ and len(v_) >= 4 and v_[3] and v_[3] > 0:
+                    BOC_IDXV.setdefault(code_, {})[int(k_)] = int(v_[3])
+            if r_.get("val") and r_["val"] > 0:
+                BOC_IDXV.setdefault("BRVMC", {})[int(k_)] = int(r_["val"])
     except Exception as e:  # noqa: BLE001
         log("indices des bulletins illisibles :", e)
 
@@ -1193,9 +1237,12 @@ def main():
             for i_, r in enumerate(rows):
                 b_ = B_.get(r[0])
                 if b_ and b_.get("val") and b_.get("vol") and r[4] and 0.7 < b_["val"] / (b_["vol"] * r[4]) < 1.3:
-                    if (int(b_["vol"]), int(b_["val"])) != (r[5], r[6]):
+                    # (montant du bulletin imprimé en milliers, égal au montant à l'unité déjà en place : on garde le plus précis)
+                    keep_ = b_.get("val_k") and int(b_["vol"]) == r[5] and r[6] and abs(r[6] - b_["val"]) <= 1000
+                    if not keep_ and (int(b_["vol"]), int(b_["val"])) != (r[5], r[6]):
                         boc_chk["val_fix"] = boc_chk.get("val_fix", 0) + 1
-                    rows[i_] = tuple(r[:5]) + (int(b_["vol"]), int(b_["val"]))
+                    if not keep_:
+                        rows[i_] = tuple(r[:5]) + (int(b_["vol"]), int(b_["val"]))
                     if r[0] == rows[-1][0]:
                         val_est = False
         if len(rows) < 3:
@@ -1544,13 +1591,18 @@ def main():
         # la valeur du bulletin si elle est lue, sinon retirée (un jour manquant plutôt qu'une valeur fausse) ; valeur différente de
         # celle du bulletin corrigée ; séances du bulletin absentes de la base ajoutées
         OB_ = BOC_IDX.get(code) or {}
+        OBV_ = BOC_IDXV.get(code) or {}
+        i2d_ = lambda x: dt.date(x // 10000, x // 100 % 100, x % 100)  # noqa: E731
         broad_ = code in ("BRVMC", "BRVM30", "BRVMPR", "BRVMPA", "BRVM10")  # (au moins 12 sociétés : figé un jour où 10 titres ont bougé = relevé périmé)
-        out_, n_drop, n_fix, drop_d = [], 0, 0, []
+        out_, n_drop, n_fix, drop_d, doute_ = [], 0, 0, [], []
         for j_, r in enumerate(rows):
             d_ = r[0]
             same_ = j_ and r[4] == rows[j_ - 1][4]
             if d_ in OB_:
-                if abs(OB_[d_] - r[4]) > .0051:
+                # (écart de plus de 5 % un même jour : base ou lecture du bulletin douteuse, valeur de la base gardée et signalée)
+                if abs(OB_[d_] - r[4]) > .0051 and r[4] and abs(OB_[d_] / r[4] - 1) >= .05:
+                    doute_.append(d_)
+                elif abs(OB_[d_] - r[4]) > .0051:
                     r = (d_, OB_[d_], OB_[d_], OB_[d_], OB_[d_]) + tuple(r[5:])
                     n_fix += 1
             elif is_weekend(d_) or (same_ and no_session(d_)):
@@ -1565,16 +1617,29 @@ def main():
         last_b = out_[-1][0] if out_ else 0
         for d_ in sorted(OB_):
             if d_ > last_b and (not sess_d or d_ < sess_d):
+                if out_ and out_[-1][4] and abs(OB_[d_] / out_[-1][4] - 1) >= .1 and (i2d_(d_) - i2d_(out_[-1][0])).days <= 7:
+                    doute_.append(d_)  # (saut de plus de 10 % d'une séance à la suivante : lecture du bulletin douteuse, séance laissée manquante)
+                    continue
                 out_.append((d_, OB_[d_], OB_[d_], OB_[d_], OB_[d_], 0, 0))
                 n_fix += 1
-        if n_drop or n_fix:
-            boc_chk.setdefault("idx", {})[code] = {"retirees": n_drop, "officielles": n_fix}
+        # montants échangés : ceux du bulletin officiel quand il les imprime (tableau des indices ; total du marché des actions pour
+        # le BRVM Composite)
+        n_val = 0
+        for j_, r in enumerate(out_):
+            vb_ = OBV_.get(r[0])
+            if vb_ and (len(r) < 7 or r[6] != vb_):
+                out_[j_] = tuple(r[:5]) + ((r[5] if len(r) > 5 else 0), vb_)
+                n_val += 1
+        if n_drop or n_fix or n_val or doute_:
+            boc_chk.setdefault("idx", {})[code] = {"retirees": n_drop, "officielles": n_fix, "montants": n_val, **({"doute": doute_[-20:]} if doute_ else {})}
         if drop_d:
             boc_chk.setdefault("idx_drop", {})[code] = drop_d  # (séances retirées : la base historique les retire aussi)
         rows = out_
         if code in sess_idx and sess_d and rows and sess_d >= rows[-1][0]:
             v = sess_idx[code]["v"]
-            rows = [r for r in rows if r[0] != sess_d] + [(sess_d, v, v, v, v, 0, rows[-1][6])]
+            # (montant du jour : celui de la base ou du bulletin pour cette séance, sinon inconnu (0) ; jamais celui de la veille)
+            vl_ = rows[-1][6] if rows[-1][0] == sess_d else (OBV_.get(sess_d) or 0)
+            rows = [r for r in rows if r[0] != sess_d] + [(sess_d, v, v, v, v, 0, vl_)]
         if len(rows) < 30:
             continue
         add({"id": code, "tk": f"{code} Index", "n": e["nom"], "cls": "Index", "typ": "Index", "mkt": "BRVM", "grp": "Indice " + e.get("type", ""), "ccy": "XOF", "bench": "BRVMC"},
@@ -1931,9 +1996,16 @@ def main():
                 json.dump(FLO, fh, separators=(",", ":"), ensure_ascii=False)
     except Exception as e:  # noqa: BLE001
         log("flottant officiel illisible :", e)
+    try:  # retenue à la source sur les dividendes des sociétés cotées, par pays (taux légaux lus sur les textes officiels, DIVC)
+        rt_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "retenues_dividendes.json"), encoding="utf8"))
+        with open(os.path.join(out, "retenues.json"), "w", encoding="utf8") as fh:
+            json.dump({"d": rt_.get("d"), "rows": [{k: r.get(k) for k in ("pays", "nom", "pp", "pm", "exc_pp", "exc_pm", "texte")} for r in rt_.get("rows") or []]},
+                      fh, separators=(",", ":"), ensure_ascii=False)
+    except Exception as e:  # noqa: BLE001
+        log("retenues par pays illisibles :", e)
     try:  # fiche et BRVM côte à côte (nombre de titres, flottant, secteur, BNPA) pour le contrôle du matin
         with open(os.path.join(out, "miroir.json"), "w", encoding="utf8") as fh:
-            json.dump({"d": dt.date.today().isoformat(), "rows": MIROIR}, fh, separators=(",", ":"), ensure_ascii=False)
+            json.dump({"d": dt.date.today().isoformat(), "rows": MIROIR, "soc_diff": SOC_DIFF, "soc_new": SOC_NEW}, fh, separators=(",", ":"), ensure_ascii=False)
     except Exception as e:  # noqa: BLE001
         log("miroir illisible :", e)
     # secteur officiel de chaque action (pages par secteur de brvm.org, lues chaque soir) : secteur affiché (voir SECT_OFF) et
@@ -1947,7 +2019,7 @@ def main():
     except Exception as e:  # noqa: BLE001
         log("secteurs officiels illisibles :", e)
     for name, obj in (("summary", summ), ("weekly", wm), ("breadth", breadth), ("fundamentals", fmeta), ("dividends", dmeta), ("events", emeta),
-                      ("events_recent", emeta[:80]), ("boc_check", {**boc_chk, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "ecartes": ECARTES, "d": dt.date.today().isoformat()} if BOC else {"n": 0, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "ecartes": ECARTES})):
+                      ("events_recent", emeta[:80]), ("boc_check", {**boc_chk, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "ecartes": ECARTES, "nouveaux": BOC_NOUV, "d": dt.date.today().isoformat()} if BOC else {"n": 0, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "ecartes": ECARTES})):
         with open(os.path.join(out, name + ".json"), "w", encoding="utf8") as fh:
             json.dump(obj, fh, separators=(",", ":"), ensure_ascii=False)
     # recherche MOTS CLES : index de tous les documents de la BRVM connus du terminal (après les avis, rapports et notations du jour)

@@ -64,8 +64,9 @@ jobs:
       - name: Passage suivant si des documents restent à lire
         env:
           GH_TOKEN: ${{ github.token }}
+          CHAIN: ${{ inputs.chain || '0' }}
         run: |
           read left new <<< "$(python3 -c "import json;d=json.load(open('/tmp/div/index.json'));print(d.get('left',0),d.get('last_new',0))" 2>/dev/null || echo '0 0')"
-          chain="${{ inputs.chain || '0' }}"
+          chain="$CHAIN"; case "$chain" in ''|*[!0-9]*) chain=0;; esac
           echo "Documents lus : $new ; restant à lire : $left (passage $chain)"
           if [ "${left:-0}" -gt 0 ] && [ "${new:-0}" -gt 0 ] && [ "$chain" -lt 40 ]; then gh workflow run dividendes.yml --ref main -f chain=$((chain + 1)); fi

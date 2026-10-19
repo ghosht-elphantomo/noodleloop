@@ -27,8 +27,9 @@ jobs:
         id: open
         env:
           GH_TOKEN: ${{ github.token }}
+          MINUTES: ${{ inputs.minutes }}
         run: |
-          MIN="${{ inputs.minutes }}"; case "$MIN" in ''|*[!0-9]*) MIN=15;; esac; [ "$MIN" -lt 1 ] && MIN=1; [ "$MIN" -gt 60 ] && MIN=60
+          MIN="$MINUTES"; case "$MIN" in ''|*[!0-9]*) MIN=15;; esac; [ "$MIN" -lt 1 ] && MIN=1; [ "$MIN" -gt 60 ] && MIN=60
           T0=$(date +%s); echo "t0=$T0" >> "$GITHUB_OUTPUT"; echo "min=$MIN" >> "$GITHUB_OUTPUT"
           # copie du site (page seule, sans le relais de données ni la configuration d'hébergement) + données du moment
           mkdir -p /tmp/www && cp public/index.html public/favicon.* public/apple-touch-icon.png /tmp/www/
@@ -46,7 +47,15 @@ jobs:
           nohup python3 /tmp/srv.py > /tmp/http.log 2>&1 &
           # données rafraîchies toutes les 4 minutes pendant la durée du lien
           nohup bash -c 'while sleep 240; do rm -rf /tmp/wnext && mkdir -p /tmp/wnext && git fetch -q --depth 1 origin data && git archive FETCH_HEAD data | tar -x -C /tmp/wnext && python3 scripts/anon_data.py /tmp/wnext/data && cp -r /tmp/wnext/data/. /tmp/www/data/; done' > /dev/null 2>&1 &
-          curl -sSL -o /tmp/cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x /tmp/cf
+          # outil de tunnel : dernière version publiée, téléchargée par son numéro et contrôlée par l'empreinte que GitHub publie
+          # pour ce fichier (fichier refusé si elle ne correspond pas)
+          REL=$(gh api repos/cloudflare/cloudflared/releases/latest 2>/dev/null || true)
+          TAG=$(printf '%s' "$REL" | jq -r '.tag_name // empty' 2>/dev/null || true)
+          DIG=$(printf '%s' "$REL" | jq -r '.assets[]? | select(.name=="cloudflared-linux-amd64") | .digest // empty' 2>/dev/null | sed 's/^sha256://' || true)
+          if [ -n "$TAG" ]; then CFU="https://github.com/cloudflare/cloudflared/releases/download/$TAG/cloudflared-linux-amd64"; else CFU="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64"; fi
+          curl -sSL -o /tmp/cf "$CFU" && chmod +x /tmp/cf
+          if [ -n "$DIG" ]; then echo "$DIG  /tmp/cf" | sha256sum -c --quiet || { echo "::error::Empreinte de l'outil de tunnel différente de celle publiée : lien non ouvert"; exit 1; }; else echo "::warning::Empreinte de l'outil de tunnel indisponible (version ${TAG:-inconnue}), fichier non contrôlé"; fi
+          echo "Outil de tunnel : version ${TAG:-dernière}"
           nohup /tmp/cf tunnel --no-autoupdate --url http://127.0.0.1:8080 > /tmp/cf.log 2>&1 &
           URL=""; for i in $(seq 1 60); do URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' /tmp/cf.log | head -1); [ -n "$URL" ] && break; sleep 2; done
           [ -z "$URL" ] && { tail -30 /tmp/cf.log; echo "::error::Tunnel indisponible"; exit 1; }

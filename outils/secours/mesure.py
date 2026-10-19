@@ -223,7 +223,9 @@ def main():
     P(f"- Secteur : lu sur brvm.org pour {sum(1 for t in tick if t in sec)} titres sur {len(tick)}.")
     P(f"- Nombre de titres et flottant : page « Capitalisations » de brvm.org pour {sum(1 for t in tick if (sess.get(t) or {}).get('sh'))} titres sur {len(tick)}.")
     P(f"- Présentation (DES) : textes FQT vérifiés sur documents (`seed/des_fqt.json`) pour {len((jl('seed/des_fqt.json', {}) or {}).get('desc') or {})} titres.")
-    P("- Nom officiel, pays, banque ou non : base (stables ; à recopier une fois dans un fichier à nous).")
+    soc = (jl("seed/societes.json", {}) or {}).get("rows") or {}
+    P(f"- Nom, nom officiel, banque ou non : fichier FQT `seed/societes.json` pour {sum(1 for t in tick if t in soc)} titres sur {len(tick)} "
+      "(la base en secours, écarts signalés chaque matin) ; pays : déduit du symbole.")
     P("")
     print("\n".join(out))
 

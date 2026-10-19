@@ -199,6 +199,16 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      et « Retenue » de l'onglet « Dividende net et encaissements », « — » sinon). Aujourd'hui seules les sociétés ivoiriennes
      (exercices 2024-2025, 43 versements) les ont : les avis des autres pays ne donnent que le net. Reste : taux de chaque pays,
      à vérifier sur un texte officiel (code des impôts de chaque État, taux en vigueur à chaque date) avant tout calcul du brut.
+     **Fait le 20/10 (nuit)** : tableau « Retenue à la source sur les dividendes, par pays » dans le même onglet
+     (`seed/retenues_dividendes.json` → `data/retenues.json`), taux légaux lus sur les textes officiels : Côte d'Ivoire 12 %
+     personnes physiques / 10 % personnes morales (exceptionnel 17 % / 15 %, avis de paiement de la BRVM), Sénégal 10 % (CGI à
+     jour de janvier 2025, art. 173-2), Mali 7 % (CGI, art. 42, sociétés cotées), Niger 7 % (CGI, art. 74, sociétés cotées),
+     Togo 3 % personnes physiques / 7 % personnes morales (CGI à jour 2025, art. 79, sociétés cotées). Recoupé avec les nets
+     publiés (BOA Niger 209,25 = 225 × 0,93 ; BOA Mali 305,04 = 328 × 0,93 ; Sonatel 1 575 = 1 750 × 0,9). Le brut n'est
+     toujours affiché que si l'avis le donne (rien de calculé). **Pas encore affichés** : Burkina (CGI édition officielle 2023,
+     art. 140 : 12,5 % sans taux réduit pour les sociétés cotées, mais Coris Bank paie 900 nets en 2026, soit 1 000 bruts à
+     10 % ? une loi de finances plus récente a pu changer le taux : texte en vigueur à lire) ; Bénin (CGI, loi n° 2021-15,
+     document de 91 Mo : la sonde en extrait maintenant le texte).
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
      Plan expliqué au propriétaire le 19/10 : (1) construire avec et sans la base (copie comprise) et lister chiffre par
@@ -220,6 +230,19 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      l'archive web ; (e) **fiche** : secteur, titres et flottant viennent de brvm.org ; nom, pays et « banque » encore de la base
      (stables, à recopier). Suite : relire les 274 bulletins manquants, lire et vérifier les comptes manquants, retrouver les
      bulletins 2006-2013 dans l'archive web.
+     **Étape 2 faite le 20/10 (nuit)** : (a) **montants échangés lus en milliers** dans les bulletins (montants d'un milliard
+     et plus) : ramenés en FCFA ; avant, le montant était écarté et le volume partiel de la base restait (SONATEL 15/10/2026 :
+     3 380 titres au lieu de 37 543) ; 19 séances corrigées ; contrôles B23 et « Volumes / bulletin officiel » ; (b) **indices** :
+     le relevé du soir relit chaque bulletin manquant depuis 2018 (12 par passage, du plus récent au plus ancien) et lit aussi les
+     montants échangés (valeur transigée du marché pour le BRVM Composite, colonnes « Volume » et « Valeur » des indices) ; avant,
+     un jour absent du relevé n'était jamais rattrapé (01 et 02/10/2026 sans valeur officielle) ; le montant du jour en séance
+     n'est plus celui de la veille ; écart de plus de 5 % entre la base et le bulletin : signalé, base gardée ; (c) **fiche des
+     sociétés** à nous (`seed/societes.json` : nom, nom officiel, banque ; la base en secours, écarts signalés) ; (d) **nouvelle
+     cotation** au bulletin absente de la fiche : signalée chaque matin. Conclusion sur les cours anciens : l'archive web n'a
+     presque aucun bulletin d'avant décembre 2014 (2004 : 210 seulement) ; les cours 2006-2013 et janvier-novembre 2014 ne
+     peuvent pas être refaits depuis la BRVM : la copie de la base (branche `raw`, base historique, copie de secours) reste la
+     protection. Reste : fondamentaux non couverts (comptes scannés que la vérification refuse, ex. BOAC 2022, BOAN 2022-2023 ;
+     documents de banques typés « entreprise »), à lire et vérifier.
      **Fait le 19/10** : contrôle automatique de ces écarts (`outils/controle/coherence.py`, données
      `miroir.json` et `secteurs.json`, secteurs officiels lus chaque soir sur brvm.org). Nombre de titres et flottant affichés :
      page « Capitalisations » de brvm.org (la fiche seulement si elle manque) ; secteur affiché : celui de la BRVM depuis le
@@ -252,7 +275,6 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      **Second bug trouvé et corrigé le 19/10** : FA gardait un seul versement par exercice (Filtisac 2024 affichait
      l'exceptionnel, 564,96, au lieu du dividende annuel ; acompte et solde non additionnés pour Filtisac 2015-2016 et Servair
      2018) ; FA additionne désormais les versements ordinaires ; contrôle B19.
-     Sauts de cours anciens à vérifier sur les avis : SAFCA 22/02/2012 (+40 %), SOGB 01/06/2011 (+43 %).
    - **BNPA vérifiés sur les documents et corrigés le 19/10** (`seed/corrections_bnpa.json`) : ORGT 2018 (179,95 au lieu de
      428,92 : référentiel SYSCOHADA mêlé au résultat IFRS), ABJC 2021 (61,40 ; BNPA publié 61), UNLC 2020 (-262,38 au lieu de
      -2 866), SCRC 2019 (signe), BOAM 2015-2018 (BNPA et dividendes de la fiche ÷ 1,5 : attribution gratuite d'août 2024 non
@@ -261,8 +283,11 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      la page « Capitalisations » de brvm.org (affichée, source principale) donne encore 69 415 031 : capitalisation affichée
      0,8 % trop basse ; à trancher par le propriétaire. SAFC : écart expliqué (augmentation de capital de juillet 2026, page juste).
      Filtisac 2016 : deux versements, justes (avis n° 006-2018 : « dividendes complémentaires exercice 2016 », 09/01/2018).
-     Filtisac 2015 : le second versement (375, 23/12/2016) ne vient que d'un bulletin de la cote, sans avis retrouvé : à vérifier
-     (il s'additionne au dividende 2015 dans les aristocrates). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
+     Filtisac 2015 : le second versement (1 500 FCFA avant le fractionnement par 4, soit 375 aujourd'hui, payé le 23/12/2016) est
+     **confirmé par le bulletin officiel de la cote** (dernier dividende imprimé et sa date) ; aucun avis retrouvé, l'exercice
+     2015 est déduit de la date (vérifié le 19/10). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
+     Sauts de cours SAFCA 22/02/2012 (+40 %) et SOGB 01/06/2011 (+43 %) : **impossibles à vérifier** (aucun bulletin de ces
+     années dans l'archive web, voir Secours) ; plausibles (titres peu échangés), laissés tels quels et notés ici.
 3. **Fluidité et vitesse — fait le 19/10** : réglages « Ouverture rapide » (préchargement des écrans suivants) et « Animations
    douces » (fondu, graphiques qui se dessinent, chiffres qui défilent), désactivés par défaut (menu 98 « Réglages ») ; voir le
    guide. À voir avec le propriétaire : les activer par défaut ou non, une fois essayés.
@@ -276,14 +301,16 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
    par un avertissement du passage, les autres continuent ; une société en erreur est remise comme avant) ; écritures sûres
    (fichier temporaire puis remplacement) dans `fetch_extra.py` et `scrape.py` ; `api/doc.js` (erreur passagère jamais gardée en
    cache, `k` contrôlé, réponse venue de l'archive seulement, lecture arrêtée au-delà de la limite, type fixé par le serveur) ;
-   PORTF, restauration limitée à 15 Mo et quantités finies. **Reste, sans risque** :
-   - `api/data.js` : mode secours seul (`via=2`) ouvert à tous, paramètre ajouté qui contourne le cache ;
-   - valeurs saisies au lancement manuel d'une automatisation insérées telles quelles dans les commandes (`lien.yml`,
-     `comptes.yml`, `dividendes.yml`, `metronome.yml`) → passer par `env` (seuls les propriétaires du dépôt peuvent lancer ;
-     ne pas toucher au Métronome sans essai en parallèle) ;
-   - étape « branche site » de `terminal.yml` inutile (branche plus déployée) ; `esc()` n'échappe pas l'apostrophe (aucun
-     attribut entre apostrophes aujourd'hui) ; code mort publié (`window.claude`, à vérifier avant de le retirer) ;
-   - versions non fixées : pillow, cloudflared (« latest », sans empreinte), base tierce.
+   PORTF, restauration limitée à 15 Mo et quantités finies. **Fait le 20/10 (nuit)**, reste de la liste « sans risque » :
+   - `api/data.js` : l'essai du secours seul (`via=2`) refuse tout paramètre en plus (il aurait contourné le cache et épuisé
+     la clé de lecture de la copie) ; si le propriétaire crée la variable Vercel `SECOURS_KEY`, l'essai exige `&k=<clé>` ;
+   - valeurs saisies au lancement manuel passées par `env` et contrôlées (nombres seulement) dans `comptes.yml`,
+     `dividendes.yml`, `lien.yml` ; `terminal.yml` (choix fermé) et `metronome.yml` (déjà contrôlé) non touchés ;
+   - `lien.yml` : l'outil de tunnel est téléchargé par son numéro de version et contrôlé par l'empreinte publiée par GitHub ;
+   - `esc()` échappe l'apostrophe (fait le 19/10) ;
+   - **vérifiés et laissés** : `window.claude` sert au mode « artefact » de `build.py --artifact` (sur le site, sans effet :
+     relevé toutes les 5 minutes) ; l'étape « branche site » de `terminal.yml` garde le repère du site de chaque point de
+     `SAUVEGARDES.md` ; pillow n'est installé qu'en secours si l'image de GitHub ne l'a pas.
    **Pour la migration (point 5), décision du propriétaire** : le relais sert tous les fichiers de `data/`, y compris des noms
    de fournisseurs (summary, fg, calendar, quotes, news, ei_oil, umoa_curves, bceao, live) → liste blanche et champs de source
    retirés à la construction ; l'écran FG nomme son fournisseur et le bandeau d'actualités affiche les codes des éditeurs
@@ -291,8 +318,8 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
    qui citent des sources ; identité dans `LICENSE`, `api/data.js`, `copie.yml`, `fetch_extra.py`, `probe.yml` ; fichiers de
    passage téléchargeables (`comptes.yml`) ; cache lisible depuis une copie du dépôt ; `persist-credentials: false` et
    lecture séparée de la publication ; actions fixées par empreinte ; CSP complète (scripts, connexions : tester l'OCR).
-   **Données (à vérifier sur les documents)** : voir « À vérifier sur les documents » ci-dessus (BNPA incohérents, Filtisac
-   2015) et les deux sauts de cours anciens.
+   **Données (à vérifier sur les documents)** : voir ci-dessus (ORGT : nombre de titres) ; Filtisac 2015 confirmé, sauts de
+   cours anciens non vérifiables (notés).
 5. **Ordre décidé par le propriétaire (19/10)** : la migration se fait AVANT la construction de la base de données (backend) :
    le code et les clés de la base naissent directement dans le dépôt privé (rien à nettoyer dans l'historique public), et le
    relais des données n'est refait qu'une fois, sur l'architecture finale. Migration faite ENSEMBLE avec le propriétaire.

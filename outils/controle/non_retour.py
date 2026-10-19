@@ -388,6 +388,28 @@ def b22(ctx):
     return ("vert", "lecture de l'adresse protégée") if ok else ("rouge", "fromHash sans protection")
 
 
+@bug("B23", "2026-10-19", "Valeur échangée d'un bulletin lue en milliers",
+     "Dans les bulletins officiels, les montants échangés d'un milliard et plus étaient lus sans leur dernier groupe de chiffres "
+     "(SONATEL : 1 658 702 au lieu de 1 658 702 000) ; le contrôle les écartait et laissait en place le volume partiel de la base "
+     "tierce (3 380 titres au lieu de 37 543 le 15/10/2026). Depuis le 19/10/2026 ces montants sont ramenés en FCFA quand ils "
+     "redonnent volume × cours à 2 % près.",
+     "pour chaque action BRVM depuis 2015, montant échangé ÷ (volume × cours de clôture) entre 0,5 et 2 (un montant en milliers donne 0,001)")
+def b23(ctx):
+    S = jl(ctx["D"], "summary.json") or {}
+    out, n = [], 0
+    for s in S.get("secs") or []:
+        if s.get("mkt") != "BRVM" or s.get("cls") != "Equity":
+            continue
+        x = jl(ctx["D"], f"s/{s['id']}.json") or {}
+        for d, c, v, va in zip(x.get("d") or [], x.get("c") or [], x.get("v") or [], x.get("val") or []):
+            if d < 20150101 or not (c and v and va):
+                continue
+            n += 1
+            if not .5 < va / (v * c) < 2:
+                out.append(f"{s['id']} {d} : {va:,} pour {v:,} titres à {c:g}".replace(",", " "))
+    return ("rouge", f"{len(out)} séance(s) : " + "; ".join(out[-8:])) if out else ("vert", f"{n} séances cohérentes depuis 2015")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

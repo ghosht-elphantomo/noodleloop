@@ -1711,7 +1711,8 @@ NUMTOK = re.compile(r"-?\d{1,3}(?:[  \xa0.]\d{3})+(?:,\d+)?|-?\d+(?:,\d+)?")
 def boc_parse(txt):
     out = {}
     pats = {"per": r"PER moyen du march", "rdt": r"Taux de rendement moyen du march", "rent": r"Taux de rentabilit[ée] moyen du march",
-            "prime": r"Prime de risque du march", "cap": r"Capitalisation boursi[èe]re \(FCFA\)\s*\(Actions"}
+            "prime": r"Prime de risque du march", "cap": r"Capitalisation boursi[èe]re \(FCFA\)\s*\(Actions",
+            "vol": r"^\s*Volume [ée]chang[ée](?:\s*\(Actions[^)]*\))?(?=\s{2,})", "val": r"^\s*Valeur transig[ée]e \(FCFA\)(?:\s*\(Actions[^)]*\))?(?=\s{2,})"}
     lines = txt.splitlines()
     for k, pat in pats.items():
         for i, ln in enumerate(lines):
@@ -1730,6 +1731,10 @@ def boc_parse(txt):
     for k, lo, hi in (("per", 2, 80), ("rdt", 0.1, 30), ("rent", 0.1, 40), ("prime", -20, 30)):
         if k in out and not (lo <= out[k] <= hi):
             out.pop(k)
+    # volume et valeur échangés sur le marché des actions (actions et droits) : gardés ensemble, s'ils donnent un cours moyen plausible
+    if not (out.get("vol") and out.get("val") and out["vol"] > 0 and 1 <= out["val"] / out["vol"] <= 1e6):
+        out.pop("vol", None)
+        out.pop("val", None)
     idx = boc_indices(txt)
     if idx:
         out["idx"] = idx
@@ -1762,13 +1767,18 @@ def boc_indices(txt):
         if code.startswith("BRVM-") and not new_sect:
             continue
         for ln in lines:
-            m = re.match(r"^\s*" + pat + r"\s*(?:\(\*+\))?\s{2,}(\d{1,3})\s{2,}(\d{1,3}(?: \d{3})?[,.]\d{2})\s{2,}(-?\d+[,.]\d+)\s*%", ln, re.I)
+            m = re.match(r"^\s*" + pat + r"\s*(?:\(\*+\))?\s{2,}(\d{1,3})\s{2,}(\d{1,3}(?: \d{3})?[,.]\d{2})\s{2,}(-?\d+[,.]\d+)\s*%"
+                         r"(?:\s{2,}-?\d+[,.]\d+\s*%\s{2,}(\d{1,3}(?: \d{3})*)\s{2,}(\d{1,3}(?: \d{3})*)(?![\d,.]))?", ln, re.I)
             if m:
                 v, var = frnum(m.group(2)), frnum(m.group(3))
                 if code in out and abs(out[code][0] - v) > 1e-9:
                     out.pop(code)  # (en-tête et tableau différents : rien n'est retenu pour cet indice)
                     break
                 out[code] = [v, var]
+                # volume et valeur échangés par les sociétés de l'indice (colonnes « Volume » et « Valeur » du tableau)
+                vo_, va_ = frnum(m.group(4) or ""), frnum(m.group(5) or "")
+                if vo_ and va_ and vo_ > 0 and 1 <= va_ / vo_ <= 1e6:
+                    out[code] += [vo_, va_]
                 break
     return {k: v for k, v in out.items() if v[0] and 1 <= v[0] <= 100000}
 
@@ -1938,19 +1948,34 @@ def run_boc(out):
             except Exception:  # noqa: BLE001
                 continue
         return k, None, None
-    # derniers jours ouvrés ; puis, 12 au plus par passage, les bulletins des 120 derniers jours lus avant la lecture des indices
+    # derniers jours ouvrés ; puis, 12 au plus par passage, en remontant jusqu'en 2018 (mise en page lue par boc_parse), chaque
+    # séance pas encore lue ou lue avant la lecture des indices et des montants échangés : valeurs officielles de tous les jours,
+    # pour contrôler la base tierce et la remplacer si elle disparaît. Un jour ouvré sans bulletin lisible (férié) est retenté trois
+    # fois puis laissé (miss_d).
     latest_txt = None
-    old_idx = [d for d in (TODAY - dt.timedelta(days=b) for b in range(8, 121))
-               if d.weekday() < 5 and "idx" not in (db["d"].get(d.strftime("%Y%m%d")) or {"idx": 1})][:12]
-    for d in [TODAY - dt.timedelta(days=back) for back in range(0, 8)] + old_idx:
-        if d.weekday() >= 5 or "idx" in (db["d"].get(d.strftime("%Y%m%d")) or {}):
-            continue
-        k, rec, txt = try_day(d)
-        if rec:
-            rec.setdefault("idx", {})  # (indices illisibles dans ce bulletin : pas relu à chaque passage)
-            db["d"][k] = rec
-            latest_txt = latest_txt or txt
-            note("boc")
+    miss_d = dict(db.get("miss_d") or {})
+
+    def need(k, recent_=False):
+        r = db["d"].get(k)
+        if r is None:
+            return recent_ or miss_d.get(k, 0) < 3
+        return "idx" not in r or "val" not in r
+    first_ = dt.date(2018, 1, 2)
+    recent = [d for d in (TODAY - dt.timedelta(days=back) for back in range(0, 8)) if d.weekday() < 5 and need(d.strftime("%Y%m%d"), True)]
+    old_idx = [d for d in (TODAY - dt.timedelta(days=b) for b in range(8, (TODAY - first_).days + 1))
+               if d.weekday() < 5 and need(d.strftime("%Y%m%d"))][:12]
+    with ThreadPoolExecutor(3) as ex:
+        for d, (k, rec, txt) in zip(recent + old_idx, ex.map(try_day, recent + old_idx)):
+            if rec:
+                rec.setdefault("idx", {})  # (indices illisibles dans ce bulletin : pas relu à chaque passage)
+                rec.setdefault("val", None)  # (montant échangé illisible : idem)
+                db["d"][k] = rec
+                miss_d.pop(k, None)
+                latest_txt = latest_txt or txt
+                note("boc")
+            elif d in old_idx and k not in db["d"]:
+                miss_d[k] = miss_d.get(k, 0) + 1
+    db["miss_d"] = dict(sorted(miss_d.items()))
     # rattrapage : un bulletin par mois (premiers jours ouvrés) depuis 2012, 30 mois par passage
     have_m = {k[:6] for k in db["d"]}
     todo = []

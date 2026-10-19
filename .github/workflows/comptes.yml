@@ -56,9 +56,12 @@ jobs:
           test -s /tmp/cpt/cpt_evs.json
       - name: Nombre de machines de lecture
         id: n
+        env:
+          SHARDS: ${{ inputs.shards }}
         run: |
           left=$(python3 -c "import json;print(json.load(open('/tmp/cpt/index.json')).get('left',0))" 2>/dev/null || echo 0)
-          n="${{ inputs.shards }}"
+          # (valeur saisie au lancement manuel : nombre de 1 à 20, sinon automatique)
+          n="$SHARDS"; case "$n" in *[!0-9]*) n="";; esac; [ -n "$n" ] && { [ "$n" -lt 1 ] || [ "$n" -gt 20 ]; } && n=""
           if [ -z "$n" ]; then if [ "${left:-0}" -ge 60 ]; then n=6; else n=1; fi; fi
           echo "Restant à lire au passage précédent : $left ; machines de lecture : $n"
           echo "shards=$n" >> "$GITHUB_OUTPUT"
@@ -200,16 +203,20 @@ jobs:
       - name: Passage suivant si des documents restent à lire
         env:
           GH_TOKEN: ${{ github.token }}
+          CHAIN: ${{ inputs.chain || '0' }}
+          SHARDS: ${{ inputs.shards }}
         run: |
           read left new <<< "$(python3 -c "import json;d=json.load(open('/tmp/cpt/index.json'));print(d.get('left',0),d.get('last_new',0))" 2>/dev/null || echo '0 0')"
-          chain="${{ inputs.chain || '0' }}"
+          chain="$CHAIN"; case "$chain" in ''|*[!0-9]*) chain=0;; esac
+          sh="$SHARDS"; case "$sh" in *[!0-9]*) sh="";; esac
           echo "Documents lus : $new ; restant à lire : $left (passage $chain)"
-          if [ "${left:-0}" -gt 0 ] && [ "${new:-0}" -gt 0 ] && [ "$chain" -lt 60 ]; then gh workflow run comptes.yml --ref main -f chain=$((chain + 1)) -f shards="${{ inputs.shards }}"; fi
+          if [ "${left:-0}" -gt 0 ] && [ "${new:-0}" -gt 0 ] && [ "$chain" -lt 60 ]; then gh workflow run comptes.yml --ref main -f chain=$((chain + 1)) -f shards="$sh"; fi
       - name: Contrôle en échec — rien n'est publié, passage suivant sur une seule machine
         if: ${{ failure() && needs.liste.outputs.shards != '1' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          CHAIN: ${{ inputs.chain || '0' }}
         run: |
-          chain="${{ inputs.chain || '0' }}"
+          chain="$CHAIN"; case "$chain" in ''|*[!0-9]*) chain=0;; esac
           echo "::error::Contrôle en échec : rien n'est publié ; passage suivant sur une seule machine"
           if [ "$chain" -lt 60 ]; then gh workflow run comptes.yml --ref main -f chain=$((chain + 1)) -f shards=1; fi
