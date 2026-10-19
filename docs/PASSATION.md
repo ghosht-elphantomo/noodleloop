@@ -58,7 +58,7 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 
-## État au 19/10/2026, 20 h 47
+## État au 19/10/2026, 22 h 38
 
 - **Publié depuis 19 h 15** (chaque fois après le parcours complet du site : 418 pages et onglets, iPhone 100 pages, QLAB 48 × 3,
   aucune erreur) :
@@ -77,8 +77,14 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
     démarrage protégé ; contrôles B20 à B22) ; vérifié dans un vrai navigateur (lien piégé bloqué, exports et sauvegarde
     toujours téléchargés) et avec les outils de Vercel (configuration valide, PDF relayés, pages HTML refusées).
   - `81e56253` : suite de l'audit (protection par élément, écritures sûres, relais des documents anciens, restauration PORTF).
-  - Dernier commit : contrôles de cohérence demandés par le propriétaire (fiche / BRVM, bulletin officiel, BNPA, dividendes,
-    valeurs extrêmes) ; premiers écarts dans « Reste à faire », Secours BRVM.
+  - `c849ac10` : contrôles de cohérence demandés par le propriétaire (fiche / BRVM, bulletin officiel, BNPA, dividendes,
+    éléments écartés, valeurs extrêmes) ; secteur affiché = celui de la BRVM ; premiers écarts dans « Reste à faire »,
+    Secours BRVM. `93ba3d76` : lecture des secteurs corrigée (le premier passage avait été refusé à raison par la garde).
+  - `5dd02c0d` : fluidité et vitesse (réglages « Ouverture rapide » et « Animations douces », désactivés par défaut).
+- **Vérifié en production (19/10, soir)** : contrôle du matin lancé à la main à 20:11 UTC avec les nouveaux contrôles :
+  séance du 19/10, 48 cours et 48 BNPA identiques au bulletin officiel, 48 capitalisations concordantes, 43 dividendes
+  brut / net cohérents, aucun élément écarté ; orange pour les écarts listés dans « Reste à faire » (titres, flottant, BNPA,
+  valeurs extrêmes) et B10. Secteurs officiels lus à 20:24 UTC : 48 titres, tous identiques à la fiche.
 - **Vérifié** : DES en ligne (48 sur 48) ; `qlabp/` absent des données ; événement SGB CI 2011 rattaché à SGBC en production ;
   déploiements de production réussis. Contrôle du 19/10 (17:50 UTC) : orange seulement à cause de B10 (lecture des comptes en
   échec le 19/10 à 04:43 UTC, déjà corrigée) ; repasse au vert quand ce passage sort de la fenêtre de 24 h.
@@ -210,9 +216,14 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      19/10 (la fiche si la BRVM ne classe pas le titre). **Premiers écarts trouvés (à trancher par le propriétaire, documents à l'appui)** :
      - SAFC : 11 869 750 titres sur brvm.org (affiché, sert à la capitalisation) contre 8 119 750 dans la fiche et dans l'avis
        du flottant ; ORGT : 69 986 131 dans l'avis contre 69 415 031 ailleurs ;
-     - flottant : la « capitalisation flottante » de brvm.org (affichée) diffère de l'avis officiel du flottant pour 17
-       sociétés et de la fiche pour 14 (BOA Bénin : 22,61 % sur brvm.org, 44,69 % dans la fiche, 45,89 % dans l'avis) ; deux
-       mesures différentes, ou une erreur d'un côté : choisir laquelle afficher, et sous quel nom ;
+     - flottant : la « capitalisation flottante » de brvm.org (affichée) diffère de l'avis officiel du flottant (n° 303, signé
+       le 12/10/2026, chiffres au 31/12/2025) pour 17 sociétés et de la fiche pour 14 (BOA Bénin : 22,61 % sur brvm.org,
+       44,69 % dans la fiche, 45,89 % dans l'avis). Sur 48 : 23 où les trois concordent, 7 où l'avis et la fiche concordent
+       contre la page (dont Sicable 1,86 % sur la page contre 18,6 %), 8 où la page et la fiche concordent contre l'avis
+       (probablement mal lu dans le scan : SMB 51,76 %), 3 où la page et l'avis concordent, 7 sans accord. **Décision du
+       propriétaire (19/10)** : la donnée BRVM la plus récemment datée l'emporte, la fiche (Sika) sert de miroir. La page
+       « Capitalisations » est datée de chaque séance : elle reste affichée ; l'avis et la fiche servent de miroir et le
+       contrôle du matin liste chaque écart. Cas à regarder en priorité : Sicable (facteur 10 ?) ;
      - valeurs extrêmes à revoir : PER de BNBC (549), BOAN (229), SDSC (199), UNLC (646) ; distribution de SDSC (638 %) et
        SIVC (796 %) ; rendement de Filtisac (64 %, réel).
    - **Documents déposés sous la page d'une autre société (vu le 19/10, corrigé le 19/10)** : la Bourse range parfois un
