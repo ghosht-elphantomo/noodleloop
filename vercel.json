@@ -16,16 +16,16 @@
       "destination": "/api/data?p=:path*"
     },
     {
-      "source": "/doc/b/:path*",
-      "destination": "https://www.brvm.org/sites/default/files/:path*"
+      "source": "/doc/b/:path(.*\\.[pP][dD][fF])",
+      "destination": "https://www.brvm.org/sites/default/files/:path"
     },
     {
-      "source": "/doc/f/:path*",
-      "destination": "https://bfin.brvm.org/boc/BOC_JOUR/:path*"
+      "source": "/doc/f/:path(.*\\.[pP][dD][fF])",
+      "destination": "https://bfin.brvm.org/boc/BOC_JOUR/:path"
     },
     {
-      "source": "/doc/r/:path*",
-      "destination": "https://www.richbourse.com/:path*"
+      "source": "/doc/r/common/actualite/afficher-fichier/:path*",
+      "destination": "https://www.richbourse.com/common/actualite/afficher-fichier/:path*"
     },
     {
       "source": "/doc/a/:ts/:t",

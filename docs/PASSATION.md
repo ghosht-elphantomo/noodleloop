@@ -58,7 +58,7 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 
-## État au 19/10/2026, 20 h 29
+## État au 19/10/2026, 20 h 47
 
 - **Publié depuis 19 h 15** (chaque fois après le parcours complet du site : 418 pages et onglets, iPhone 100 pages, QLAB 48 × 3,
   aucune erreur) :
@@ -73,6 +73,9 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
     additionnés (contrôle B19). Essai complet avant publication : construction locale entière avec l'ancien et le nouveau code
     sur les mêmes données, seuls les champs voulus changent (`pay` sur 48 titres, `brut` et `irvm` sur 43 versements, FA de
     Filtisac et Servair).
+  - Ensuite : corrections de sécurité de l'audit (adresses `/doc/` en PDF seulement, liens « javascript: » refusés, démarrage
+    protégé ; contrôles B20 à B22) ; vérifié dans un vrai navigateur (lien piégé bloqué, exports et sauvegarde toujours
+    téléchargés) et avec les outils de Vercel (configuration valide, PDF relayés, pages HTML refusées).
 - **Vérifié** : DES en ligne (48 sur 48) ; `qlabp/` absent des données ; événement SGB CI 2011 rattaché à SGBC en production ;
   déploiements de production réussis. Contrôle du 19/10 (17:50 UTC) : orange seulement à cause de B10 (lecture des comptes en
   échec le 19/10 à 04:43 UTC, déjà corrigée) ; repasse au vert quand ce passage sort de la fenêtre de 24 h.
@@ -213,7 +216,32 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      Filtisac 2015 : le second versement (375, 23/12/2016) ne vient que d'un bulletin de la cote, sans avis retrouvé : à vérifier
      (il s'additionne au dividende 2015 dans les aristocrates). Servair 2018 : deux fractions, justes (avis n° 072 et 148-2019).
 3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
-4. Audit complet.
+4. **Audit complet — premier passage fait le 19/10** (code, automatisations et données, lecture seule, par un agent séparé
+   qui n'avait pas fait le travail ; rapport détaillé avec fichier et ligne repris ci-dessous). Points sains : aucun secret,
+   aucun e-mail ni lien GitHub dans la page, données presque toujours échappées, aucune automatisation lancée par une demande
+   de modification. **Corrigé le 19/10** (sans risque, testé) : adresses `/doc/` limitées aux PDF (B20) ; liens
+   « javascript: » refusés (B21) ; adresse « #% » ou « #constructor » qui bloquait le démarrage (B22) ; heure QQQ absente ;
+   taux de distribution (B18) ; dividende par exercice de FA (B19). **Reste, sans risque, à faire** :
+   - `build_terminal.py` : un seul `try` couvre tous les fractionnements (l. ~941), les dividendes officiels et les comptes
+     publiés : un élément mal formé fait sauter les suivants sans alerte → un `try` par élément, un `::warning::`, un compteur ;
+   - `fetch_extra.py` (l. ~195) et `scrape.py` (l. ~73) écrivent en place sous limite de temps : fichier temporaire puis
+     `os.replace` ;
+   - `api/doc.js` : erreur passagère gardée 24 h en cache, `k=constructor` accepté, hôte final non vérifié après redirection,
+     type renvoyé tel quel ; `api/data.js` : mode secours seul (`via=2`) ouvert à tous, paramètre ajouté qui contourne le cache ;
+   - valeurs saisies au lancement manuel d'une automatisation insérées telles quelles dans les commandes (`lien.yml`,
+     `comptes.yml`, `dividendes.yml`, `metronome.yml`) → passer par `env` ;
+   - étape « branche site » de `terminal.yml` inutile (branche plus déployée) ; PORTF : restauration sans limite de taille,
+     quantité « 1e999 » acceptée ; `esc()` n'échappe pas l'apostrophe ; code mort publié (`window.claude`) ;
+   - versions non fixées : pillow, cloudflared (« latest », sans empreinte), base tierce.
+   **Pour la migration (point 5), décision du propriétaire** : le relais sert tous les fichiers de `data/`, y compris des noms
+   de fournisseurs (summary, fg, calendar, quotes, news, ei_oil, umoa_curves, bceao, live) → liste blanche et champs de source
+   retirés à la construction ; l'écran FG nomme son fournisseur et le bandeau d'actualités affiche les codes des éditeurs
+   (voulu jusqu'ici, à trancher) ; le contrôle des sources ignore les mots de moins de 4 lettres ; noms d'étapes et journaux
+   qui citent des sources ; identité dans `LICENSE`, `api/data.js`, `copie.yml`, `fetch_extra.py`, `probe.yml` ; fichiers de
+   passage téléchargeables (`comptes.yml`) ; cache lisible depuis une copie du dépôt ; `persist-credentials: false` et
+   lecture séparée de la publication ; actions fixées par empreinte ; CSP complète (scripts, connexions : tester l'OCR).
+   **Données (à vérifier sur les documents)** : voir « À vérifier sur les documents » ci-dessus (BNPA incohérents, Filtisac
+   2015) et les deux sauts de cours anciens.
 5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
    nettoyage de l'historique (ancien pseudonyme, pages brutes des sources) ; puis kit serveur.
 

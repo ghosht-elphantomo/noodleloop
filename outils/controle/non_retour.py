@@ -344,6 +344,50 @@ def b19(ctx):
     return ("rouge", f"{len(out)} exercices faux : " + "; ".join(out[:8])) if out else ("vert", f"{n} exercices concordants")
 
 
+@bug("B20", "2026-10-19", "Adresses /doc/ qui servent n'importe quelle page d'un site tiers",
+     "Les adresses /doc/ du terminal relayaient des dossiers entiers de sites tiers : une page HTML de ces sites aurait tourné "
+     "comme une page du terminal (accès au portefeuille enregistré dans le navigateur). Depuis le 19/10/2026 : PDF seulement, et "
+     "pour le troisième site le seul dossier de fichiers utilisé.",
+     "dans vercel.json, chaque réécriture vers un autre site n'accepte que des .pdf ou le dossier afficher-fichier")
+def b20(ctx):
+    v = jl(DEPOT, "vercel.json")
+    if not v:
+        return "rouge", "vercel.json illisible"
+    bad = [r.get("source") for r in v.get("rewrites") or [] if str(r.get("destination", "")).startswith("http")
+           and not (r.get("source", "").endswith("[pP][dD][fF])") or "/afficher-fichier/" in r.get("source", ""))]
+    return ("rouge", "réécritures trop larges : " + ", ".join(bad)) if bad else ("vert", "PDF seulement")
+
+
+@bug("B21", "2026-10-19", "Lien « javascript: » ouvrable depuis le terminal",
+     "Un lien d'actualité venu d'un flux extérieur était ouvert tel quel : un lien « javascript: » aurait exécuté du code dans le "
+     "terminal. Depuis le 19/10/2026 la collecte ne garde que les liens http(s) et la page refuse d'ouvrir ces adresses.",
+     "aucun lien autre que http(s) ou /doc/ dans les actualités publiées ; garde badUrl présente dans la page")
+def b21(ctx):
+    out = []
+    for f in ("news.json", "news_eco.json", "events_recent.json"):
+        x = jl(ctx["D"], f)
+        items = x if isinstance(x, list) else (x or {}).get("items") or (x or {}).get("news") or []
+        for it in items if isinstance(items, list) else []:
+            u = (it or {}).get("u") if isinstance(it, dict) else None
+            if u and not re.match(r"(https?://|/doc/|/data/|#)", str(u).strip(), re.I):
+                out.append(f"{f} : {str(u)[:40]}")
+    src = open(os.path.join(DEPOT, "web", "core.js"), encoding="utf8").read()
+    if "function badUrl(" not in src or "window.open = function" not in src:
+        out.append("garde badUrl absente de web/core.js")
+    return ("rouge", "; ".join(out[:6])) if out else ("vert", "aucun lien dangereux, garde en place")
+
+
+@bug("B22", "2026-10-19", "Démarrage bloqué par une adresse « #constructor » ou « #% »",
+     "Une adresse de page finissant par « #% » ou nommant une propriété interne (« #constructor ») bloquait le démarrage du "
+     "terminal. Depuis le 19/10/2026, lecture de l'adresse protégée et fonctions ou titres reconnus par own().",
+     "fromHash protège decodeURIComponent et n'accepte que les fonctions et titres réels")
+def b22(ctx):
+    src = open(os.path.join(DEPOT, "web", "core.js"), encoding="utf8").read()
+    m = re.search(r"function fromHash\(\) \{[^\n]*", src)
+    ok = bool(m) and "try { h = decodeURIComponent" in m.group(0) and "own(FN, f)" in m.group(0) and "own(Q.by, s)" in m.group(0)
+    return ("vert", "lecture de l'adresse protégée") if ok else ("rouge", "fromHash sans protection")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

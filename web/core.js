@@ -461,12 +461,19 @@ const FN_SHORT = { BONDS: ['RATES', 'w'] };
 function fnAlias(f) { const a = FN_ALIAS[f] || FN_SHORT[f]; if (!a) return f; if (a[1]) ST.tab[a[0]] = a[1]; return a[0]; }
 function go(fn, s, o = {}) {
   fn = fnAlias(fn);
-  if (fn && FN[fn]) ST.fn = fn; if (s && Q.by[s]) ST.sec = s;
+  if (fn && own(FN, fn)) ST.fn = fn; if (s && own(Q.by, s)) ST.sec = s;
   if (!o.nohist) { const cur = [ST.fn, ST.sec]; const last = ST.hist[ST.hpos]; if (!last || last[0] !== cur[0] || (SECFN.has(cur[0]) && last[1] !== cur[1])) { ST.hist = ST.hist.slice(0, ST.hpos + 1); ST.hist.push(cur); if (ST.hist.length > 60) ST.hist.shift(); ST.hpos = ST.hist.length - 1; } }
   try { history.replaceState(null, '', '#' + ST.fn + (SECFN.has(ST.fn) ? '~' + ST.sec : '')); } catch (e) { } ddClose(); wtSync(); render(); window.scrollTo(0, 0);
 }
 function histGo(d) { const k = ST.hpos + d; if (k < 0 || k >= ST.hist.length) return; ST.hpos = k; const [f, s] = ST.hist[k]; go(f, s, { nohist: true }); }
-function fromHash() { const h = decodeURIComponent(location.hash.slice(1)); if (!h) return false; let [f, s] = h.split('~'); const f0 = f; f = fnAlias(f); if (FN[f]) ST.fn = f; if (s && Q.by[s]) ST.sec = s; return f !== f0; }
+function fromHash() { let h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) { return false; } if (!h) return false; let [f, s] = h.split('~'); const f0 = f; f = fnAlias(f); if (own(FN, f)) ST.fn = f; if (s && own(Q.by, s)) ST.sec = s; return f !== f0; }
+/* propriété propre d'un objet (« constructor », « toString »… tapés dans l'adresse ne sont ni une fonction ni un titre) */
+function own(o, k) { return !!o && typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k) && !!o[k]; }
+/* adresses : jamais de script (« javascript: ») ni de page « data: » ouverte depuis le terminal — une adresse venue d'un flux
+   d'actualités pourrait en contenir ; images et fichiers créés par la page (export, sauvegarde) restent permis */
+function badUrl(u) { try { const s = String(u == null ? '' : u).trim(); if (!s) return false; const p = new URL(s, location.href).protocol; return p === 'javascript:' || p === 'vbscript:' || (p === 'data:' && !/^data:image\//i.test(s)); } catch (e) { return true; } }
+(() => { const wo = window.open; window.open = function (u, ...a) { return badUrl(u) ? null : wo.call(window, u, ...a); };
+  document.addEventListener('click', e => { const a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (a && badUrl(a.getAttribute('href'))) { e.preventDefault(); e.stopImmediatePropagation(); } }, true); })();
 async function render() {
   const seq = ++renderSeq; untip(); PG.acts = []; PG.title = null; $('ptabs').hidden = true; $('ptabs').innerHTML = '';
   renderKeys(); renderTbar(); renderSech(); renderRbar(); renderStatus(); feedState(); clocksTick();
@@ -490,7 +497,7 @@ function renderKeys() { const f = $('fkeys');
 function renderSecbar() { renderSech(); }
 function renderStatus() {
   const L = Q.live && Q.live.qqq, ss = Q.sum.session;
-  $('status').innerHTML = `<span>Données au <b>${fd(Q.sum.asof)}</b> · ${Q.sum.secs.length} titres · séance BRVM <b>${ss ? fds(ss.asof) : '—'}</b>${L ? ` · QQQ <b>${num(L.price, 2)}</b> (${L.state === 'REGULAR' ? 'séance' : L.state === 'PRE' ? 'pré-marché' : L.state === 'POST' ? 'après-bourse' : L.state === 'CLOSED' ? 'clôturé' : L.state}, ${new Date(L.time * 1000).toISOString().slice(11, 16)} UTC)` : ''}</span>
+  $('status').innerHTML = `<span>Données au <b>${fd(Q.sum.asof)}</b> · ${Q.sum.secs.length} titres · séance BRVM <b>${ss ? fds(ss.asof) : '—'}</b>${L ? ` · QQQ <b>${num(L.price, 2)}</b> (${L.state === 'REGULAR' ? 'séance' : L.state === 'PRE' ? 'pré-marché' : L.state === 'POST' ? 'après-bourse' : L.state === 'CLOSED' ? 'clôturé' : L.state}${L.time ? `, ${new Date(L.time * 1000).toISOString().slice(11, 16)} UTC` : ''})` : ''}</span>
     <span>Outil d'analyse, pas un conseil en investissement</span>`;
 }
 let clocksTick = () => { };

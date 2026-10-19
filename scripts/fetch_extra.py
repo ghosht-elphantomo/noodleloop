@@ -2446,7 +2446,9 @@ def parse_feed(b):
                 title, src = head, src or tail
         desc = re.sub(r"<[^>]+>", " ", g.get("description") or g.get("summary") or "")
         desc = re.sub(r"\s+", " ", desc).strip()[:280]
-        items.append({"t": int(t.timestamp()), "ti": title[:300], "u": g.get("link"), "s": src[:60], "x": desc if desc and desc[:60] not in title else ""})
+        lk = (g.get("link") or "").strip()
+        items.append({"t": int(t.timestamp()), "ti": title[:300], "u": lk if re.match(r"https?://", lk, re.I) else None, "s": src[:60],
+                      "x": desc if desc and desc[:60] not in title else ""})  # (lien : http ou https seulement, jamais « javascript: »)
     return items
 
 
