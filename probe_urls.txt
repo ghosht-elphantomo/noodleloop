@@ -1,8 +1,4 @@
-cdx_bfin_boc.json|https://web.archive.org/cdx/search/cdx?url=bfin.brvm.org/boc/&matchType=prefix&output=json&fl=original,timestamp,statuscode,mimetype,length&collapse=urlkey&limit=50000
-cdx_www_boc.json|https://web.archive.org/cdx/search/cdx?url=www.brvm.org/fr/marche/boc/&matchType=prefix&output=json&fl=original,timestamp,statuscode,mimetype,length&collapse=urlkey&limit=50000
-cdx_www_files_boc.json|https://web.archive.org/cdx/search/cdx?url=www.brvm.org/sites/default/files/boc&matchType=prefix&output=json&fl=original,timestamp,statuscode,mimetype,length&collapse=urlkey&limit=50000
-cdx_www_en_boc.json|https://web.archive.org/cdx/search/cdx?url=www.brvm.org/en/marche/boc/&matchType=prefix&output=json&fl=original,timestamp,statuscode,mimetype,length&collapse=urlkey&limit=50000
-cdx_brvm_bulletin.json|https://web.archive.org/cdx/search/cdx?url=brvm.org/&matchType=domain&filter=original:.*[Bb][Oo][Cc].*&output=json&fl=original,timestamp,statuscode,mimetype,length&collapse=urlkey&limit=50000
-bfin_20140310.pdf|https://bfin.brvm.org/boc/BOC_JOUR/BOC_20140310.pdf
-bfin_list.html|https://bfin.brvm.org/boc/BOC_JOUR/
-www_boc_page.html|https://www.brvm.org/fr/bulletins-officiels-de-la-cote
+cgi_bf_dgi.pdf|https://dgi.bf/wp-content/uploads/2023/10/LOI-PORTANT-CODE-GENERAL-DES-IMPOTS-FINAL.pdf
+cgi_bf_2024.pdf|https://extranet.who.int/fctcapps/sites/default/files/2026-02/Burkina%20Faso_Annex%207_2025_General%20Tax%20Code_2024_FR.pdf
+cgi_ne_ereg.pdf|https://niger.eregulations.org/media/code%20g%C3%A9n%C3%A9rale%20des%20imp%C3%B4ts.pdf
+cgi_ne_mde.pdf|https://mde.ne/uploads/businessDocuments/p04.pdf

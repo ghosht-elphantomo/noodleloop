@@ -44,7 +44,7 @@ jobs:
               *tradingview.com*) EXTRA=(-H 'Origin: https://www.tradingview.com' -H 'Referer: https://www.tradingview.com/' -H 'Accept: application/json, text/plain, */*' --compressed);; esac
             code=$(curl -sL -m 40 -A "$BUA" "${EXTRA[@]}" -H 'Accept-Language: fr-FR,fr;q=0.9,en;q=0.8' -o "/tmp/out/urls/$name" -w '%{http_code} %{size_download}' "$url" || true)
             echo "$code $name $url" | tee -a /tmp/out/urls/_status.txt
-            [ -f "/tmp/out/urls/$name" ] && head -c 3000000 "/tmp/out/urls/$name" > /tmp/x && mv /tmp/x "/tmp/out/urls/$name" || true
+            [ -f "/tmp/out/urls/$name" ] && head -c 40000000 "/tmp/out/urls/$name" > /tmp/x && mv /tmp/x "/tmp/out/urls/$name" || true
           done < probe_urls.txt
       - name: Collecte partielle
         if: ${{ hashFiles('probe.txt') != '' }}
