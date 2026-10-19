@@ -3651,6 +3651,64 @@ def flottant_parse(txt, tickers, names=None):
     return out
 
 
+SECT_PAGES = (("194", "Consommation de base"), ("195", "Consommation discrétionnaire"), ("196", "Énergie"), ("197", "Industriels"),
+              ("198", "Services financiers"), ("199", "Services publics"), ("200", "Télécoms"))
+
+
+def run_secteurs(raw):
+    """Secteur officiel de chaque action : les sept pages « cours des actions » de brvm.org filtrées par secteur, lues chaque soir.
+    Gardé seulement si la lecture est complète et sans ambiguïté (au moins 40 titres, chacun dans un seul secteur) ; sinon la
+    lecture précédente reste. Sert de miroir au secteur de la fiche (contrôle du matin), rien n'est remplacé automatiquement."""
+    from html.parser import HTMLParser
+
+    class Rows(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.rows, self.cur, self.cell, self.inc = [], None, [], False
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "tr":
+                self.cur = []
+            elif tag in ("td", "th") and self.cur is not None:
+                self.inc, self.cell = True, []
+
+        def handle_endtag(self, tag):
+            if tag in ("td", "th") and self.cur is not None and self.inc:
+                self.cur.append(" ".join("".join(self.cell).split()))
+                self.inc = False
+            elif tag == "tr" and self.cur is not None:
+                self.rows.append(self.cur)
+                self.cur = None
+
+        def handle_data(self, data):
+            if self.inc:
+                self.cell.append(data)
+    path = os.path.join(raw, "secteurs_brvm.json")
+    try:
+        got, seen = {}, collections.Counter()
+        for code, lab in SECT_PAGES:
+            p_ = Rows()
+            p_.feed(get(f"https://www.brvm.org/fr/cours-actions/{code}", tries=2, timeout=40).decode("utf8", "replace"))
+            n_ = 0
+            for r in p_.rows:
+                if r and re.fullmatch(r"[A-Z]{3,6}", (r[0] or "").strip()):
+                    t_ = r[0].strip()
+                    got[t_] = lab
+                    seen[t_] += 1
+                    n_ += 1
+            if not n_:
+                raise ValueError(f"aucune ligne pour le secteur {lab}")
+        dbl = [t_ for t_, k_ in seen.items() if k_ > 1]
+        if len(got) < 40 or dbl:
+            raise ValueError(f"lecture incomplète ou ambiguë ({len(got)} titres, en double : {', '.join(dbl[:5])})")
+        save(path, {"d": TODAY.isoformat(), "ts": int(time.time()), "n": len(got), "rows": dict(sorted(got.items()))})
+        note("secteurs")
+        log(f"secteurs officiels : {len(got)} titres")
+    except Exception as e:  # noqa: BLE001  (lecture précédente gardée)
+        note("secteurs", ok=False, err=str(e)[:200])
+        log("secteurs officiels non lus :", e)
+
+
 def run_flottant(raw, site_data):
     """Dernier avis « Flottant des sociétés cotées » publié sur brvm.org : lu dans le PDF (reconnaissance de caractères), contrôlé ligne à ligne."""
     if not site_data:
@@ -4127,7 +4185,7 @@ def main():
              ("cnn", lambda: run_cnn(a.out)), ("crypto", lambda: run_crypto(a.out, a.out)), ("wb", lambda: run_wb(a.out)),
              ("sec", lambda: run_sec(a.out, a.out, a.sec_max_age_days)), ("analyst", lambda: run_analyst(a.out)),
              ("probe", lambda: run_probe(a.out)), ("boc", lambda: run_boc(a.out)), ("sikah", lambda: run_sikah(a.out)), ("pdffin", lambda: run_pdffin(a.out)), ("comptes", lambda: run_comptes(a.out)), ("comptes_list", lambda: run_comptes_list(a.out)), ("watch", lambda: run_watch(a.out, a.site)), ("prof", lambda: run_prof(a.out)), ("profus", lambda: run_profus(a.out)),
-             ("bceao", lambda: run_bceao(a.out)), ("umoa", lambda: run_umoa(a.out)), ("obl", lambda: run_obl(a.out, a.site)), ("cmc", lambda: run_cmc(a.out, a.site)), ("eia", lambda: run_eia(a.out)), ("fut", lambda: run_fut(a.out)), ("bochist", lambda: run_bochist(a.out)), ("divhist", lambda: run_divhist(a.out)), ("ussplit", lambda: run_ussplit(a.out)), ("avisocr", lambda: run_avisocr(a.site)), ("flottant", lambda: run_flottant(a.out, a.site)), ("ratings", lambda: run_ratings(a.out, a.site)), ("sgi", lambda: run_sgi(a.out)), ("usdiv", lambda: run_usdiv(a.out)), ("ei", lambda: run_ei(a.out))]
+             ("bceao", lambda: run_bceao(a.out)), ("umoa", lambda: run_umoa(a.out)), ("obl", lambda: run_obl(a.out, a.site)), ("cmc", lambda: run_cmc(a.out, a.site)), ("eia", lambda: run_eia(a.out)), ("fut", lambda: run_fut(a.out)), ("bochist", lambda: run_bochist(a.out)), ("divhist", lambda: run_divhist(a.out)), ("ussplit", lambda: run_ussplit(a.out)), ("avisocr", lambda: run_avisocr(a.site)), ("flottant", lambda: (run_secteurs(a.out), run_flottant(a.out, a.site))), ("ratings", lambda: run_ratings(a.out, a.site)), ("sgi", lambda: run_sgi(a.out)), ("usdiv", lambda: run_usdiv(a.out)), ("ei", lambda: run_ei(a.out))]
     if a.news:
         steps.insert(0, ("news", lambda: run_news(a.news)))
         only.add("news")

@@ -393,6 +393,7 @@ def main():
     ap.add_argument("--titre", default="Contrôle du terminal")
     ap.add_argument("--runs", help="passages GitHub des dernières 24 h (JSON), pour les bugs corrigés")
     ap.add_argument("--comptes", help="index.json de la branche comptes, pour les bugs corrigés")
+    ap.add_argument("--boc", help="dossier des bulletins officiels de l'année (boc_px), pour les contrôles de cohérence")
     a = ap.parse_args()
     maintenant = a.maintenant or time.time()
     R = Rapport()
@@ -411,6 +412,13 @@ def main():
         compare(R, inst, ref, a.meme_donnees)
     except Exception as e:  # noqa: BLE001
         R.add("Comparaison avec le contrôle précédent", "orange", f"comparaison interrompue : {e}")
+    # cohérence des chiffres : fiche / BRVM, bulletin officiel, BNPA, dividendes, valeurs extrêmes (outils/controle/coherence.py)
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import coherence
+        coherence.verifier(R, a.data, a.boc)
+    except Exception as e:  # noqa: BLE001
+        R.add("Cohérence des chiffres", "orange", f"contrôle interrompu : {type(e).__name__} {e}")
     try:
         controle_site(R, a)
     except Exception as e:  # noqa: BLE001

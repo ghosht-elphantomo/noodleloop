@@ -460,6 +460,15 @@ def main():
     # BRVM ------------------------------------------------------------------
     src = a.brvm_src
     acts = json.load(open(os.path.join(src, "actions.json"), encoding="utf8"))["actions"]
+    # secteur officiel de la BRVM (sept pages par secteur de brvm.org, lues chaque soir) : source principale du secteur affiché,
+    # la fiche ne sert que si la BRVM ne classe pas le titre (décision du propriétaire, 19/10/2026)
+    SECT_OFF = {}
+    try:
+        sp0_ = os.path.join(a.extra, "secteurs_brvm.json") if a.extra else None
+        if sp0_ and os.path.exists(sp0_):
+            SECT_OFF = json.load(open(sp0_, encoding="utf8")).get("rows") or {}
+    except Exception as e:  # noqa: BLE001
+        log("secteurs officiels illisibles :", e)
     fund = json.load(open(os.path.join(src, "fundamentals.json"), encoding="utf8"))
     # fraîcheur de la base extérieure (tirée de SikaFinance et de la BRVM) : figée depuis plus de 21 jours = la source ne répond plus
     # ou bloque ; les données déjà prises restent (miroir fusionné, scripts/sticky.py) et le récent vient des sources BRVM
@@ -476,6 +485,7 @@ def main():
     # états financiers publiés à la BRVM (branche comptes), lus et vérifiés par les identités comptables : prioritaires sur la base
     # tierce pour les exercices qu'ils couvrent, quand leur périmètre est le même (comptes sociaux ou consolidés)
     cpt_chk = {"t": 0, "y": 0, "set": 0, "fix": 0, "fill": 0, "detail_only": [], "ex": []}
+    ECARTES = []  # éléments mal formés écartés à la construction (publiés dans boc_check.json, listés par le contrôle du matin)
     calc_fill = []  # (titre, poste, exercice, montant) calculés d'après les comptes publiés : comblent les exercices encore vides en dernier
     # exercices plus anciens : pages SikaFinance archivées (web.archive.org) — chiffres publiés (CA, résultat net, BNPA, dividende)
     sh_path = os.path.join(a.extra, "sika_hist.json") if a.extra else None
@@ -622,6 +632,7 @@ def main():
                         fund[t].update(f_bak)
                     calc_fill[:] = [c_ for c_ in calc_fill if c_[0] != t]
                     cpt_bad.append(t)
+                    ECARTES.append(f"comptes publiés {t} : {type(e).__name__}")
                     log("comptes publiés écartés pour", t, ":", e)
             if cpt_bad:
                 print(f"::warning::Construction : comptes publiés écartés pour {len(cpt_bad)} société(s) (voir le journal)")
@@ -838,6 +849,7 @@ def main():
                             off_chk["usd_sans_cours"] = off_chk.get("usd_sans_cours", 0) + 1
                 except Exception as e:  # noqa: BLE001
                     off_chk["bad"] = off_chk.get("bad", 0) + 1
+                    ECARTES.append(f"versement officiel {o.get('t')} exercice {o.get('ex')} ({o.get('det') or o.get('pay') or '—'}) : {type(e).__name__}")
                     log("versement officiel écarté :", o.get("t"), o.get("ex"), e)
             for o in sorted(OFF, key=lambda o: (o["t"], o.get("det") or o.get("pay") or "", o.get("kind") == "exceptionnel")):
                 try:
@@ -887,6 +899,7 @@ def main():
                         off_chk["added"] += 1
                 except Exception as e:  # noqa: BLE001  (un versement mal formé est écarté, les suivants restent lus)
                     off_chk["bad"] = off_chk.get("bad", 0) + 1
+                    ECARTES.append(f"versement officiel {o.get('t')} exercice {o.get('ex')} ({o.get('det') or o.get('pay') or '—'}) : {type(e).__name__}")
                     log("versement officiel écarté :", o.get("t"), o.get("ex"), e)
             if off_chk.get("bad"):
                 print(f"::warning::Construction : {off_chk['bad']} versement(s) officiel(s) écarté(s) (voir le journal)")
@@ -979,6 +992,7 @@ def main():
                     SPL[x["ticker"]].append((e_, k_))
         except Exception as e:  # noqa: BLE001
             spl_bad += 1
+            ECARTES.append(f"fractionnement {x.get('ticker')} du {str(x.get('event_at'))[:10]} : {type(e).__name__}")
             log("fractionnement écarté :", x.get("ticker"), x.get("event_at"), e)
     if spl_bad:
         print(f"::warning::Construction : {spl_bad} avis de fractionnement mal formé(s) écarté(s) (voir le journal)")
@@ -992,6 +1006,7 @@ def main():
       except Exception as e:  # noqa: BLE001
         log("fractionnement brvm.org ignoré :", r.get("u"), e)
     split_log, force_write, PX_DATE = [], set(), {}
+    MIROIR = {}  # valeurs de la fiche et de la BRVM côte à côte (contrôle du matin : écarts signalés, rien de remplacé)
     SPL_DONE = set()  # opérations déduites des paliers du bulletin officiel (cours déjà ajustés par la base)
 
     def split_factor(t, date_int, upto):
@@ -1442,6 +1457,8 @@ def main():
                     break
         if bnpa_off and bnpa_ and bnpa_ > 0 and abs(math.log(bnpa_ / bnpa_off)) > math.log(1.25):
             split_log.append(f"{t} : BNPA de la fiche ({bnpa_:g}) écarté, base officielle {bnpa_off:.2f}")
+        MIROIR[t] = {"sh_fiche": f.get("nb_titres"), "sh_brvm": so_.get("sh"), "flt_fiche": f.get("flottant"), "flt_brvm": flt_off,
+                     "sect_fiche": act.get("secteur"), "bnpa_fiche": f.get("bnpa"), "bnpa_off": round(bnpa_off, 4) if bnpa_off else None}
         if so_.get("sh"):
             f["nb_titres"] = shares
         if flt_off is not None:
@@ -1474,7 +1491,7 @@ def main():
         eps_ = bnpa_ if ex_ is None or not bser_ or ex_ >= max(bser_) else bser_.get(ex_)
         pay_ = rnd(dps_ / eps_, 4) if dps_ and eps_ and eps_ > 0 else None
         meta = {"id": t, "tk": f"{t} BC", "n": act.get("nom_officiel") or act.get("nom"), "short": act.get("nom"), "cls": "Equity", "typ": "Equity",
-                "mkt": "BRVM", "grp": act.get("secteur"), "ccy": "XOF", "bench": "BRVMC", "cty": cty, "bank": bool(act.get("banque")),
+                "mkt": "BRVM", "grp": SECT_OFF.get(t) or act.get("secteur"), "ccy": "XOF", "bench": "BRVMC", "cty": cty, "bank": bool(act.get("banque")),
                 "shares": shares, "float": flt_off if flt_off is not None else f.get("flottant"), "mcap": rnd(shares * last, 0) if shares else None, "pso": pso_,
                 "bnpa": rnd(bnpa_, 2) if bnpa_ else bnpa_, "dps": rnd(ld_tot, 4) if ld_tot else dfund_, "dps_ex": ld.get("exercice"), "dps_pay": ld.get("date_paiement"),
                 "dps_adj": ld.get("ajust"), "pay": pay_, "split": [[e_, k_] for e_, k_ in sorted(SPL.get(t, []))] or None,
@@ -1893,8 +1910,23 @@ def main():
                 json.dump(FLO, fh, separators=(",", ":"), ensure_ascii=False)
     except Exception as e:  # noqa: BLE001
         log("flottant officiel illisible :", e)
+    try:  # fiche et BRVM côte à côte (nombre de titres, flottant, secteur, BNPA) pour le contrôle du matin
+        with open(os.path.join(out, "miroir.json"), "w", encoding="utf8") as fh:
+            json.dump({"d": dt.date.today().isoformat(), "rows": MIROIR}, fh, separators=(",", ":"), ensure_ascii=False)
+    except Exception as e:  # noqa: BLE001
+        log("miroir illisible :", e)
+    # secteur officiel de chaque action (pages par secteur de brvm.org, lues chaque soir) : secteur affiché (voir SECT_OFF) et
+    # publié pour le contrôle du matin, qui liste les titres où la fiche dit autre chose
+    try:
+        sp_ = os.path.join(a.extra, "secteurs_brvm.json") if a.extra else None
+        SEC_ = json.load(open(sp_, encoding="utf8")) if sp_ and os.path.exists(sp_) else None
+        if SEC_ and SEC_.get("rows"):
+            with open(os.path.join(out, "secteurs.json"), "w", encoding="utf8") as fh:
+                json.dump({"d": SEC_.get("d"), "ts": SEC_.get("ts"), "rows": SEC_["rows"]}, fh, separators=(",", ":"), ensure_ascii=False)
+    except Exception as e:  # noqa: BLE001
+        log("secteurs officiels illisibles :", e)
     for name, obj in (("summary", summ), ("weekly", wm), ("breadth", breadth), ("fundamentals", fmeta), ("dividends", dmeta), ("events", emeta),
-                      ("events_recent", emeta[:80]), ("boc_check", {**boc_chk, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "d": dt.date.today().isoformat()} if BOC else {"n": 0, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext})):
+                      ("events_recent", emeta[:80]), ("boc_check", {**boc_chk, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "ecartes": ECARTES, "d": dt.date.today().isoformat()} if BOC else {"n": 0, "avis": av_chk, "base_rejets": base_rej, "base_ext": base_ext, "ecartes": ECARTES})):
         with open(os.path.join(out, name + ".json"), "w", encoding="utf8") as fh:
             json.dump(obj, fh, separators=(",", ":"), ensure_ascii=False)
     # recherche MOTS CLES : index de tous les documents de la BRVM connus du terminal (après les avis, rapports et notations du jour)

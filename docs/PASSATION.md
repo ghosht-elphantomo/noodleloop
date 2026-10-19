@@ -69,13 +69,16 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
   - `64e9ffb5`, `f7bed61a`, `b84ce361`, `665fd079` : textes du propriétaire sur la migration deux dépôts (section ci-dessous).
   - `eebe3c4f` : événements d'un document déposé sous une autre société rattachés à la bonne (contrôle B16).
   - `49ef8052` : taux de distribution sur le BNPA du même exercice (contrôle B18 ; voir « Reste à faire »).
-  - Dernier commit du soir : DIVC, brut et retenue de l'avis ; FA, dividende de chaque exercice = versements ordinaires
-    additionnés (contrôle B19). Essai complet avant publication : construction locale entière avec l'ancien et le nouveau code
-    sur les mêmes données, seuls les champs voulus changent (`pay` sur 48 titres, `brut` et `irvm` sur 43 versements, FA de
-    Filtisac et Servair).
-  - Ensuite : corrections de sécurité de l'audit (adresses `/doc/` en PDF seulement, liens « javascript: » refusés, démarrage
-    protégé ; contrôles B20 à B22) ; vérifié dans un vrai navigateur (lien piégé bloqué, exports et sauvegarde toujours
-    téléchargés) et avec les outils de Vercel (configuration valide, PDF relayés, pages HTML refusées).
+  - `7ef202c7` : DIVC, brut et retenue de l'avis ; FA, dividende de chaque exercice = versements ordinaires additionnés
+    (contrôle B19). Essai complet avant publication : construction locale entière avec l'ancien et le nouveau code sur les
+    mêmes données, seuls les champs voulus changent (`pay` sur 48 titres, `brut` et `irvm` sur 43 versements, FA de Filtisac
+    et Servair).
+  - `6ee60cdc` : corrections de sécurité de l'audit (adresses `/doc/` en PDF seulement, liens « javascript: » refusés,
+    démarrage protégé ; contrôles B20 à B22) ; vérifié dans un vrai navigateur (lien piégé bloqué, exports et sauvegarde
+    toujours téléchargés) et avec les outils de Vercel (configuration valide, PDF relayés, pages HTML refusées).
+  - `81e56253` : suite de l'audit (protection par élément, écritures sûres, relais des documents anciens, restauration PORTF).
+  - Dernier commit : contrôles de cohérence demandés par le propriétaire (fiche / BRVM, bulletin officiel, BNPA, dividendes,
+    valeurs extrêmes) ; premiers écarts dans « Reste à faire », Secours BRVM.
 - **Vérifié** : DES en ligne (48 sur 48) ; `qlabp/` absent des données ; événement SGB CI 2011 rattaché à SGBC en production ;
   déploiements de production réussis. Contrôle du 19/10 (17:50 UTC) : orange seulement à cause de B10 (lecture des comptes en
   échec le 19/10 à 04:43 UTC, déjà corrigée) ; repasse au vert quand ce passage sort de la fenêtre de 24 h.
@@ -197,11 +200,21 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      (3) dividendes des avis et calendriers, combler les années sans avis ; (4) PER = cours ÷ notre BPA, comparé au PER des
      bulletins ; (5) fiches ; (6) cours d'avant décembre 2013 : anciens bulletins des archives web, lus et contrôlés séance par
      séance ; (7) nos lectures deviennent la référence, la base ne fait plus que voter ; essai final sans elle : site identique.
-     **Décision du propriétaire (19/10)** pour le secteur, le nombre de titres et le flottant : on continue de les lire sur la
-     fiche (Sika), en miroir avec la BRVM (bulletins officiels, documents de brvm.org) ; tout écart est signalé par le contrôle
-     du matin avec les deux valeurs, rien ne bascule tout seul ; le jour où la fiche disparaît, on passe sur la BRVM
-     directement. Raison : une mauvaise lecture (chez eux ou dans notre lecture d'un PDF) ne passerait pas inaperçue devant
-     les investisseurs. Le contrôle automatique de ces écarts fait partie de l'étape 1.
+     **Décision du propriétaire (19/10, précisée le soir)** : **la BRVM est la source principale** (bulletins officiels,
+     pages et documents de brvm.org) ; la fiche (Sika) ne sert que pour ce qu'on n'a pas pu reconstituer depuis la BRVM (scan
+     illisible, document manquant) ; tout écart entre les deux est signalé par le contrôle du matin avec les valeurs côte à
+     côte, et vérifié sur le document. Raison : une mauvaise lecture ne passerait pas inaperçue devant les investisseurs.
+     **Fait le 19/10** : contrôle automatique de ces écarts (`outils/controle/coherence.py`, données
+     `miroir.json` et `secteurs.json`, secteurs officiels lus chaque soir sur brvm.org). Nombre de titres et flottant affichés :
+     page « Capitalisations » de brvm.org (la fiche seulement si elle manque) ; secteur affiché : celui de la BRVM depuis le
+     19/10 (la fiche si la BRVM ne classe pas le titre). **Premiers écarts trouvés (à trancher par le propriétaire, documents à l'appui)** :
+     - SAFC : 11 869 750 titres sur brvm.org (affiché, sert à la capitalisation) contre 8 119 750 dans la fiche et dans l'avis
+       du flottant ; ORGT : 69 986 131 dans l'avis contre 69 415 031 ailleurs ;
+     - flottant : la « capitalisation flottante » de brvm.org (affichée) diffère de l'avis officiel du flottant pour 17
+       sociétés et de la fiche pour 14 (BOA Bénin : 22,61 % sur brvm.org, 44,69 % dans la fiche, 45,89 % dans l'avis) ; deux
+       mesures différentes, ou une erreur d'un côté : choisir laquelle afficher, et sous quel nom ;
+     - valeurs extrêmes à revoir : PER de BNBC (549), BOAN (229), SDSC (199), UNLC (646) ; distribution de SDSC (638 %) et
+       SIVC (796 %) ; rendement de Filtisac (64 %, réel).
    - **Documents déposés sous la page d'une autre société (vu le 19/10, corrigé le 19/10)** : la Bourse range parfois un
      document sous une autre société (rapport de BOA Sénégal chez Erium, comptes de Tractafric chez CFAO, résultats d'Onatel
      chez Sonatel…). Vérification faite : la recherche MOTS CLES (`build_search.fix_by_file`) et la lecture des comptes
