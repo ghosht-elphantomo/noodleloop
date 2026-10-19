@@ -300,6 +300,25 @@ solution de secours.
    publient la même chose en même temps.
 4. À la fin, vérifier le dépôt public comme le ferait un inconnu : fichiers, journaux, historique. Il ne doit rien révéler.
 
+**7. Exigences complémentaires** (propriétaire, 19/10/2026 ; à intégrer au plan de migration, à son tour, sans rien casser ;
+point de restauration avant chaque étape, tout le site testé après, accord du propriétaire avant chaque étape importante).
+
+1. *Dépôt public le plus vague possible, sans jamais casser le site.*
+   - Nom de dépôt neutre, sans description ni sujets ; README d'une ligne, neutre.
+   - Noms de fichiers, d'automatisations et d'étapes génériques (« préparation », « mise à jour », « publication »), aucun
+     commentaire.
+   - Rien qui permette à une personne ou à une IA de deviner nos sources, nos calculs, la structure de nos données ou
+     l'existence du dépôt privé.
+   - Le champ « site web » des réglages du dépôt reste géré comme indiqué dans le guide.
+   - Test final : demander à une IA d'analyser le dépôt public et le site comme le ferait un copieur, et vérifier qu'elle
+     ne peut retrouver ni sources, ni calculs, ni données.
+2. *Données : objectif, une copie du site doit s'afficher vide.*
+   - En attendant le backend : le relais refuse tout autre site que le nôtre et limite le nombre de requêtes.
+   - Avec le backend : le relais ne sert que les abonnés connectés, vérifiés côté serveur, avec des limites par compte et la
+     détection d'aspiration.
+3. *Calculs* : faire la liste des calculs qui tournent encore dans la page (navigateur) et proposer de déplacer côté serveur
+   ceux qui ont de la valeur, un par un, en vérifiant que les résultats affichés restent identiques avant et après.
+
 ## Tâches programmées
 
 - « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
