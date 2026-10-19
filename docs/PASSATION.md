@@ -1,12 +1,12 @@
 # Passation — où en est le travail, ce qui reste
 
-À lire en premier par toute nouvelle session. Mis à jour : 19/10/2026, 17 h (Paris).
+À lire en premier par toute nouvelle session. Mis à jour : 19/10/2026, 17 h 20 (Paris).
 Une session qui termine une étape importante met ce fichier à jour (état, reste à faire, pièges).
 
 ## Démarrer une session
 
 1. Ajouter ce dépôt (nom donné par le propriétaire au démarrage, accès en écriture), le cloner, puis récupérer les branches de données avec
-   `git fetch origin +refs/heads/X:refs/remotes/origin/X` (comptes, dividendes, boc, data, raw, histo, site, probe) : elles sont
+   `git fetch origin +refs/heads/X:refs/remotes/origin/X` (comptes, dividendes, boc, data, raw, histo, site, probe, export, refs, sonde) : elles sont
    réécrites à chaque passage, un simple `git fetch origin X` ne les met pas à jour.
 2. Lire : ce fichier, les règles en tête de `SAUVEGARDES.md`, `docs/GUIDE.md` ; `docs/QLAB3_PREVISIONS.md` et
    `docs/QLAB2_VALORISATION.md` avant de toucher à QLAB.
@@ -30,6 +30,7 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
   dans les fichiers ; README.md et LICENSE neutres. Sur le site : aucun nom de source, lien GitHub ou e-mail affiché ; pas de logos
   de sociétés copiés d'autres sites.
 - Aucune donnée d'utilisateur dans le dépôt ; ne jamais demander de coller une clé secrète dans la conversation.
+- Projet distinct du screener FOFCO BRVM (autre dépôt, autre site) : ne jamais mélanger les deux.
 - Ne pas pousser de travail inachevé ou non testé (le contrôle de fin de tour demande de tout valider : mettre le travail en
   cours de côté avec `git stash -u` plutôt que de le publier).
 - Le propriétaire ne veut pas d'e-mails d'échec : une automatisation ne doit échouer que pour une vraie panne ; un contrôle qui
@@ -54,7 +55,7 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 
-## État au 19/10/2026, 17 h
+## État au 19/10/2026, 17 h 20
 
 - **Lecture des documents de la BRVM terminée** : 6 033 documents au registre (branche comptes), 1 599 avec au moins un exercice
   vérifié, 0 restant. Lecture répartie sur 6 machines quand il en reste au moins 60, sinon une seule (`comptes.yml`,
@@ -73,12 +74,11 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
     sous-totaux SYSCOHADA confirmés par un autre montant publié (116 montants) : +601 cases dans FA, +43 valeurs dans les
     fondamentaux, 0 changé, 0 retiré (construction complète avant / après). QLAB : intervalles de prévision à peine modifiés
     (quelques séries plus longues).
+  - Vérifié en production à 17 h 15 : branche data du 19/10 15 h 14 UTC avec Servair Abidjan 2004-2011 (comptes SYSCOHADA,
+    fondamentaux et `fa/ABJC.json`) et SOGB 2005 ; branche site et déploiement de production au code du commit `12033902`.
   - 34 documents retrouvés dans l'archive web ajoutés à la lecture (`seed/archives_comptes.json`) : passage de lecture lancé à
-    la main le 19/10 à 16 h 53 (comptes.yml) — vérifier le résultat : documents lus (champ « wb » dans index.json de la branche
-    comptes), exercices ajoutés, aucun montant existant changé.
-  - Les montants ajoutés dans FA n'apparaissent en production qu'après la construction complète de la base (passage du Terminal
-    lancé par la publication, sinon celui du soir) : vérifier `fa/ABJC.json` (2004-2011, comptes SYSCOHADA) et `fa/SOGC.json`
-    (2005) sur la branche data.
+    la main le 19/10 à 16 h 53 (comptes.yml), encore en cours de publication à 17 h 20 — vérifier le résultat : documents lus
+    (champ « wb » dans index.json de la branche comptes), exercices ajoutés, aucun montant existant changé.
 - **Audit du 19/10/2026** : site complet en local avec le nouveau code (421 pages et onglets, 0 erreur JavaScript ; iPhone 13,
   99 pages, 0 débordement ; QLAB 48 × 6, 0 texte suspect ; aucun nom de source ni lien interdit). Concordance avec les archives
   SikaFinance 2014-2025 : 1 711 comparaisons, 238 écarts, tous expliqués, aucune correction : PER (164 ; SikaFinance prend le
@@ -112,15 +112,9 @@ Suite possible, toujours sans chiffre invérifiable :
 
 Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer à son signal dans la nouvelle session :
 
-0. Vérifier le passage des comptes du 19/10 au soir (34 documents de l'archive lus ? aucun e-mail d'échec ?) et la publication
-   du 19/10 en production (branche data, déploiement, FA de Servair Abidjan et SOGB, barre de commande, MAP). Une tâche programmée
-   unique fait ce contrôle mardi 20/10 à 9 h (lecture seule, compte rendu au propriétaire).
-
-Tâches programmées existantes (claude.ai) : « QLAB Prévisions : recalage sur tout l'historique » (7 h 55 et 19 h 55) — démarre le
-recalage de QLAB 3 dans sa propre session dès que tous les documents sont lus (champ « left » à 0 sur les branches comptes,
-dividendes et boc) et pousse sur main ; elle se désactive une fois `docs/QLAB3_RECALAGE.md` marqué « Statut : fait ». Le passage
-de 7 h 55 le 19/10 a échoué (limite d'utilisation atteinte). Elle peut travailler en même temps qu'une session de travail :
-toujours `git pull --rebase` avant de pousser et ne pas modifier les mêmes fichiers QLAB en parallèle.
+0. Vérifier le passage des comptes lancé le 19/10 à 16 h 53 (34 documents de l'archive lus ? exercices ajoutés ? aucun montant
+   existant changé ? aucun e-mail d'échec ?) et le passage automatique de la nuit (4 h 17 UTC). La publication du 19/10 est déjà
+   vérifiée en production. Une tâche programmée unique fait aussi ce contrôle mardi 20/10 à 9 h (lecture seule).
 1. **Contrôles automatiques** : un seul script de vérification (données + parcours du site) lancé avant et après chaque
    modification et chaque nuit par une automatisation qui écrit un rapport vert / orange / rouge sans faire échouer le passage
    (pas d'e-mails d'erreur) : fichiers présents, non vides, frais, nombre de lignes comparé au passage précédent, doublons, valeurs
@@ -142,14 +136,25 @@ toujours `git pull --rebase` avant de pousser et ne pas modifier les mêmes fich
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
 3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
+4. Audit complet.
+5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
+   nettoyage de l'historique (ancien pseudonyme, pages brutes des sources) ; puis kit serveur.
 
-**Comptes utilisateurs (backend, à faire quand le propriétaire le décidera)** : le propriétaire a relié le dépôt GitHub à
-Supabase (19/10/2026). Exigence : les données de chaque utilisateur le suivent d'un appareil à l'autre (quitter le Mac, se
+## Tâches programmées
+
+- « QLAB Prévisions : recalage sur tout l'historique » (claude.ai, 7 h 55 et 19 h 55) : démarre le recalage de QLAB 3 dans sa
+  propre session dès que tous les documents sont lus (champ « left » à 0 sur les branches comptes, dividendes et boc : c'est le
+  cas le 19/10 à 17 h 20, donc premier essai attendu le 19/10 à 19 h 55) et pousse sur main ; elle se désactive une fois
+  `docs/QLAB3_RECALAGE.md` marqué « Statut : fait ». Le passage de 7 h 55 le 19/10 a échoué (limite d'utilisation atteinte).
+  Elle peut travailler en même temps qu'une session de travail : toujours `git pull --rebase` avant de pousser et ne pas
+  modifier les mêmes fichiers QLAB en parallèle.
+- « Terminal FQT : contrôle de mardi 9 h » : une seule fois, le 20/10 à 9 h ; lecture seule, compte rendu au propriétaire.
+
+## Comptes utilisateurs (backend)
+
+À faire quand le propriétaire le décidera. Le propriétaire a relié le dépôt GitHub à Supabase (19/10/2026). Exigence : les données de chaque utilisateur le suivent d'un appareil à l'autre (quitter le Mac, se
 connecter sur l'iPhone et tout retrouver) — historique de recherche MOTS CLES (90 jours), portefeuille PORT, alertes, listes,
 réglages. Aujourd'hui tout est gardé dans le navigateur ; l'historique de recherche passe déjà par trois fonctions
 (`kwHistLoad`, `kwHistSave`, `kwHistAdd` dans `web/pages17.js`) à brancher sur le compte, avec la copie du navigateur en secours
 hors connexion. Aucune clé dans le dépôt ni dans la conversation : le propriétaire les met lui-même dans les réglages sécurisés
 (variables d'environnement Vercel, secrets GitHub) ; aucune donnée d'utilisateur dans le dépôt.
-4. Audit complet.
-5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
-   nettoyage de l'historique (ancien pseudonyme, pages brutes des sources) ; puis kit serveur.
