@@ -232,6 +232,9 @@ jobs:
           MODE: ${{ steps.mode.outputs.mode }}
         run: |
           mkdir -p /tmp/dpub && rm -rf /tmp/dpub/* && cp -r /tmp/site/data /tmp/dpub/data
+          # garde des données : un fichier disparu, vide, illisible ou anormalement court reprend sa dernière bonne version
+          # (publication lue au début de ce passage) ; avertissement dans le passage, jamais un échec
+          timeout 120 python3 scripts/garde.py /tmp/dpub/data "$(cat /tmp/data_sha 2>/dev/null)" || true
           printf '{"git":{"deploymentEnabled":false}}\n' > /tmp/dpub/vercel.json
           URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           export GIT_DIR=/tmp/dpub.git GIT_WORK_TREE=/tmp/dpub

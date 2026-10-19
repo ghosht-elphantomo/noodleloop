@@ -1,0 +1,80 @@
+name: Contrôle quotidien
+
+# Contrôle complet du terminal chaque matin : données publiées (fichiers présents, lisibles, frais, nombres de lignes comparés au
+# contrôle précédent, doublons, valeurs aberrantes, cohérence entre fichiers, chiffres clés) et parcours du site (toutes les
+# fonctions et tous les onglets, iPhone 13, QLAB, erreurs JavaScript, textes suspects, noms de sources, émojis, confidentialité).
+# Rapport vert / orange / rouge dans le résumé du passage, dans une annotation et sur la branche de diagnostic `probe`
+# (dossier controle/ : rapport.md, rapport.json, historique des 30 derniers contrôles).
+# Ne fait jamais échouer le passage : un contrôle orange ou rouge est un rapport, pas une panne (aucun e-mail d'échec).
+# Machine Ubuntu 24.04 : système pris en charge par Playwright (Chromium) ; aucun PDF n'est lu ici.
+on:
+  schedule:
+    - cron: "10 6 * * *"   # chaque matin, 6 h 10 UTC (après les passages de la nuit : base complète, historique, comptes, dividendes)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: controle
+  cancel-in-progress: false
+
+jobs:
+  controle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Outils du parcours (terser, Playwright, Chromium)
+        continue-on-error: true
+        run: |
+          npm install -g terser@5.36.0 > /dev/null 2>&1 || echo "::warning title=Contrôle::terser indisponible"
+          pip install --quiet --break-system-packages playwright==1.56.0 > /dev/null 2>&1 || pip install --quiet playwright==1.56.0 > /dev/null 2>&1 || true
+          python3 -m playwright install --with-deps chromium > /dev/null 2>&1 || echo "::warning title=Contrôle::Chromium indisponible : parcours du site non fait"
+
+      - name: Données publiées et contrôle précédent
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/d /tmp/prev
+          git fetch -q --depth 1 origin data && git archive FETCH_HEAD data | tar -x -C /tmp/d
+          if git fetch -q --depth 1 origin probe 2>/dev/null; then git archive FETCH_HEAD controle 2>/dev/null | tar -x -C /tmp/prev || true; fi
+
+      - name: Contrôle
+        continue-on-error: true
+        run: |
+          REF=""; [ -f /tmp/prev/controle/rapport.json ] && REF=/tmp/prev/controle/rapport.json
+          export TITRE="Contrôle du $(date -u +'%d/%m/%Y %H:%M') UTC"
+          if python3 -c "import playwright" 2>/dev/null && command -v terser > /dev/null; then
+            timeout 3000 bash outils/controle/verifier.sh /tmp/d/data /tmp/ctl $REF
+          else
+            timeout 600 bash outils/controle/verifier.sh /tmp/d/data /tmp/ctl $REF --sans-site
+          fi
+          [ -f /tmp/ctl/rapport.md ] && cat /tmp/ctl/rapport.md >> "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PY' || true
+          import json
+          r = json.load(open("/tmp/ctl/rapport.json"))
+          pb = [f"{v['nom']} : {str(v['detail'])[:160]}" for v in r["verifications"] if v["niveau"] != "vert"]
+          print(f"::notice title=Contrôle : {r['niveau'].upper()}::" + (" | ".join(pb)[:900] if pb else "tout est vert"))
+          PY
+
+      - name: Publier le rapport (branche de diagnostic probe, dossier controle/)
+        continue-on-error: true
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -f /tmp/ctl/rapport.json ] || exit 0
+          URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          for i in 1 2 3; do
+            rm -rf /tmp/pub && mkdir -p /tmp/pub && cd /tmp/pub && git init -q -b probe
+            git config user.name fqt-bot && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            if git fetch -q --depth 1 "$URL" probe 2>/dev/null; then git reset -q --hard FETCH_HEAD; fi
+            mkdir -p controle/historique
+            cp /tmp/ctl/rapport.json /tmp/ctl/rapport.md controle/
+            cp /tmp/ctl/rapport.json "controle/historique/$(date -u +%F).json"
+            ls -1 controle/historique/*.json | sort | head -n -30 | xargs -r rm -f
+            [ -f vercel.json ] || printf '{"git":{"deploymentEnabled":false}}\n' > vercel.json
+            git add -A && git commit -qm "Contrôle $(date -u +'%d/%m/%Y %H:%M') UTC" || exit 0
+            if git push -q "$URL" HEAD:probe; then echo "Rapport publié"; exit 0; fi
+            echo "La branche probe a bougé : nouvel essai ($i)"; cd /; sleep $((i * 5))
+          done
