@@ -1,4 +1,4 @@
-/* ================= FQT — PORTF : import de relevés (CSV, Excel, PDF à texte, lignes collées), sauvegarde et restauration ================= */
+/* ================= FQT — PORTF : import de relevés (CSV, Excel, PDF, photos, lignes collées), sauvegarde et restauration ================= */
 'use strict';
 /* Tout est lu dans ce navigateur : le fichier n'est envoyé nulle part et n'est pas gardé. Rien n'est enregistré avant l'écran de
    contrôle : seules les lignes validées deviennent des positions (comme une saisie à la main). */
@@ -125,14 +125,17 @@ function impSec(cells, ctx) {
   const r = txt.length ? resolveSec(txt.join(' ')) : null; if (r && !r.amb) return { s: r, how: 'nom' }; if (r && r.amb) return { amb: r.amb };
   return null;
 }
+/* colonne d'en-tête d'une case : plus grand recouvrement horizontal (cases lues sur une image : début et fin), sinon la plus proche */
+const impColOf = (hx, x) => { const sp = v => Array.isArray(v) ? v : [v, v], [a, b] = sp(x); let k = 0, best = -Infinity;
+  hx.forEach((h, n) => { const [c, d] = sp(h), ov = Math.min(b, d) - Math.max(a, c), sc = ov > 0 ? ov : -Math.abs((a + b) / 2 - (c + d) / 2); if (sc > best) { best = sc; k = n; } }); return k; };
 function impRows(table, ctx) {
   let hq = -1, hc = -1, hr = -1;
   for (let i = 0; i < Math.min(table.length, 40) && hr < 0; i++) { const H = table[i].map(impN); const q = H.findIndex(h => IMP_HQ.test(h) && !IMP_HNO.test(h)); if (q >= 0) { hr = i; hq = q; hc = H.findIndex(h => IMP_HC.test(h)); } }
   const out = []; let skipped = 0, hx = hr >= 0 && table.xs ? table.xs[hr] : null;
   table.forEach((cells0, i) => {
     if (i <= hr) return;
-    /* PDF : chaque morceau de texte est rangé dans la colonne d'en-tête la plus proche (les cases vides ne sont pas écrites) */
-    let cells = cells0; if (hx && table.xs[i]) { cells = Array(table[hr].length).fill(''); cells0.forEach((t, j) => { const x = table.xs[i][j]; let k = 0; hx.forEach((h, n) => { if (Math.abs(h - x) < Math.abs(hx[k] - x)) k = n; }); cells[k] = cells[k] ? cells[k] + ' ' + t : t; }); } const all = impN(cells.join(' ')); if (!all) return;
+    /* PDF et images : chaque morceau de texte est rangé sous sa colonne d'en-tête (les cases vides ne sont pas écrites) */
+    let cells = cells0; if (hx && table.xs[i]) { cells = Array(table[hr].length).fill(''); cells0.forEach((t, j) => { const k = impColOf(hx, table.xs[i][j]); cells[k] = cells[k] ? cells[k] + ' ' + t : t; }); } const all = impN(cells.join(' ')); if (!all) return;
     const nums = cells.map(impNum);
     if (IMP_SKIP.test(` ${all} `) || !nums.some(v => v != null)) { skipped++; return; }
     const sc = impSec(cells, ctx);
@@ -146,22 +149,86 @@ function impRows(table, ctx) {
   return { rows: out, skipped, head: hr >= 0 };
 }
 async function impCtx() { const PR = await getJSON('profiles.json').catch(() => null), isin = {}; if (PR) for (const [id, p] of Object.entries(PR)) if (p && p.isin) isin[String(p.isin).toUpperCase()] = id; return { isin, dict: impDict(isin) }; }
+/* ---------- photos et PDF scannés : Tesseract.js et pdf.js, gratuits, hébergés sur le site (lib/ocr/), chargés seulement ici ;
+   l'image est lue dans ce navigateur et n'est envoyée nulle part ---------- */
+const OCR = { w: null, prog: null, url: f => new URL('lib/ocr/' + f, location.href).href };
+function impScript(src) { return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => ko(new Error('module de lecture des images indisponible ici (connexion ou copie hors ligne)')); document.head.appendChild(s); }); }
+async function impOcrWorker() {
+  if (OCR.w) return OCR.w;
+  if (typeof WebAssembly !== 'object') throw new Error('ce navigateur ne sait pas lire les images : mettez-le à jour');
+  if (!window.Tesseract) await impScript(OCR.url('tesseract.min.js'));
+  OCR.w = await Tesseract.createWorker('fra', 1, { workerPath: OCR.url('worker.min.js'), corePath: OCR.url('core'), langPath: OCR.url('lang'), gzip: true, workerBlobURL: false,
+    logger: m => { if (OCR.prog && m && typeof m.progress === 'number') OCR.prog(m.status, m.progress); } });
+  return OCR.w;
+}
+/* une image (ou une page rendue) -> lignes de cases ; une case = mots proches sur une même ligne ; positions gardées (début, fin) */
+async function impOcrRows(src) {
+  const w = await impOcrWorker(), { data } = await w.recognize(src, {}, { blocks: true, text: false });
+  const fix = t => /\d/.test(t) && /^[\dOoIl|.,'  -]+$/.test(t) ? t.replace(/[Oo]/g, '0').replace(/[Il|]/g, '1') : t;
+  const rows = [], xs = [];
+  for (const b of data.blocks || []) for (const pa of b.paragraphs || []) for (const ln of pa.lines || []) {
+    const W = (ln.words || []).filter(x => x.text && x.text.trim() && x.confidence > 20).sort((a, c) => a.bbox.x0 - c.bbox.x0); if (!W.length) continue;
+    const cw = W.map(x => (x.bbox.x1 - x.bbox.x0) / Math.max(1, x.text.length)).sort((a, c) => a - c)[Math.floor(W.length / 2)] || 8;
+    const cells = [], sp = []; let cur = [W[0]];
+    /* nouvelle case : grand blanc, ou deux nombres qui ne peuvent pas n'en faire qu'un (« 26 500 21 350,50 » = 26 500 | 21 350,50) */
+    const isN = t => /^[-+]?\d[\d.,]*$/.test(fix(t)), grp = t => /^\d{3}([.,]\d+)?$/.test(fix(t)), dec = c => c.some(x => /[.,]\d{1,2}$/.test(fix(x.text)));
+    for (let i = 1; i < W.length; i++) { const a = W[i - 1].text, b = W[i].text; if (W[i].bbox.x0 - W[i - 1].bbox.x1 > 1.6 * cw || (isN(a) && isN(b) && (!grp(b) || dec(cur)))) { cells.push(cur); cur = []; } cur.push(W[i]); } cells.push(cur);
+    rows.push(cells.map(c => fix(c.map(x => x.text).join(' ').trim()))); xs.push(cells.map(c => [c[0].bbox.x0, c[c.length - 1].bbox.x1]));
+  }
+  rows.xs = xs; return rows;
+}
+/* image redimensionnée pour la lecture : petites captures agrandies, grandes photos réduites */
+async function impImage(f) {
+  const bmp = await createImageBitmap(f).catch(() => null); if (!bmp) throw new Error('image illisible par ce navigateur (format non pris en charge) : faites une capture d’écran ou une photo au format JPEG ou PNG');
+  const k = bmp.width < 1200 ? 2 : bmp.width > 3000 ? 3000 / bmp.width : 1, c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height); return c;
+}
+/* PDF avec pdf.js : texte des pages (polices codées comprises) ; sans texte (scan), chaque page est rendue puis lue */
+async function impPdfJs(buf, step) {
+  const lib = await import(OCR.url('pdf/pdf.min.mjs')).catch(() => { throw new Error('module de lecture des PDF indisponible ici (connexion ou copie hors ligne)'); });
+  lib.GlobalWorkerOptions.workerSrc = OCR.url('pdf/pdf.worker.min.mjs');
+  const doc = await lib.getDocument({ data: new Uint8Array(buf), wasmUrl: OCR.url('pdf/wasm/'), isEvalSupported: false, disableFontFace: true, useSystemFonts: false, enableXfa: false }).promise;
+  const n = Math.min(doc.numPages, 12), rows = [], xs = []; let chars = 0;
+  for (let p = 1; p <= n; p++) {
+    const page = await doc.getPage(p), tc = await page.getTextContent(), L = new Map();
+    for (const it of tc.items) { const t = (it.str || '').trim(); if (!t) continue; const x = it.transform[4], y = it.transform[5], k = Math.round(y / 3); (L.get(k) || L.set(k, []).get(k)).push({ t, x0: x, x1: x + (it.width || t.length * 4), y }); chars += t.length; }
+    for (const k of [...L.keys()].sort((a, b) => b - a)) { const it = L.get(k).sort((a, b) => a.x0 - b.x0), cells = []; for (const o of it) { const c = cells[cells.length - 1]; if (c && o.x0 - c.x1 < 3) { c.t += (o.x0 - c.x1 > 1 ? ' ' : '') + o.t; c.x1 = o.x1; } else cells.push({ ...o }); } rows.push(cells.map(c => c.t)); xs.push(cells.map(c => [c.x0, c.x1])); }
+  }
+  if (chars >= 40) { rows.xs = xs; return { rows, ocr: false }; }
+  const out = []; out.xs = [];
+  for (let p = 1; p <= n; p++) {
+    step(`Lecture de la page ${p} sur ${n} (document scanné)`);
+    const page = await doc.getPage(p), vp = page.getViewport({ scale: 2.2 }), c = document.createElement('canvas'); c.width = Math.ceil(vp.width); c.height = Math.ceil(vp.height);
+    await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+    const r = await impOcrRows(c); out.push(...r); out.xs.push(...r.xs);
+  }
+  return { rows: out, ocr: true };
+}
 async function impFile(f) {
   if (!f) return; if (f.size > IMP_MAX) { toast('Fichier trop volumineux (plus de 15 Mo).'); return; }
-  const nm = f.name || 'fichier', ext = (nm.split('.').pop() || '').toLowerCase(), I = { name: nm, rows: [], mode: 'maj', msg: '' };
+  const nm = f.name || 'fichier', ext = (nm.split('.').pop() || '').toLowerCase(), I = { name: nm, rows: [], mode: 'maj', msg: '' }; let shown = false;
   try {
-    if (/^image\//.test(f.type) || /^(jpe?g|png|heic|heif|webp|gif)$/.test(ext)) { I.msg = 'Les photos de relevés ne sont pas encore lues par le terminal (il faudrait un module de lecture d’images ajouté au site). En attendant : téléchargez le relevé en Excel, CSV ou PDF depuis l’espace client de votre SGI, ou copiez les lignes et collez-les (action « Importer (coller) »).'; }
+    const busy = t => { if (shown && !ST.portImp) return; shown = true; ST.portImp = { name: nm, rows: [], mode: 'maj', busy: t, msg: '' }; if (ST.fn === 'PORTF' && $('imBusy')) $('imBusy').textContent = t; else { ST.tab.PORT = 'p'; go('PORTF'); } };
+    OCR.prog = (st, p) => { const el = $('imProg'); if (el) el.textContent = `${st === 'recognizing text' ? 'Lecture du texte' : st && /load|init/i.test(st) ? 'Préparation du module de lecture' : 'Lecture'} · ${Math.round(p * 100)} %`; };
+    if (/^image\//.test(f.type) || /^(jpe?g|png|heic|heif|webp|gif|bmp)$/.test(ext)) {
+      busy('Lecture de l’image… (la première fois, le module de lecture se télécharge : quelques secondes)');
+      const ctx = await impCtx(), t = await impOcrRows(await impImage(f)), r = impRows(t, ctx);
+      Object.assign(I, r, { ocr: true }); if (!I.rows.length) I.msg = 'Aucune ligne de position reconnue sur cette image. Essayez une image plus nette, bien droite, cadrée sur le tableau des titres (une capture d’écran de l’espace client est l’idéal).';
+    }
     else {
       const buf = await f.arrayBuffer(), h = new Uint8Array(buf.slice(0, 8)); const ctx = await impCtx(); let tables = [];
       if (h[0] === 0x50 && h[1] === 0x4b) { if (typeof DecompressionStream === 'undefined') throw new Error('ce navigateur ne sait pas ouvrir les fichiers Excel : mettez-le à jour ou utilisez un fichier CSV'); tables = await impXlsx(buf); }
       else if (h[0] === 0xd0 && h[1] === 0xcf) throw new Error('ancien format Excel (.xls) : enregistrez le fichier au format .xlsx ou .csv');
-      else if (h[0] === 0x25 && h[1] === 0x50 && h[2] === 0x44 && h[3] === 0x46) { if (typeof DecompressionStream === 'undefined') throw new Error('ce navigateur ne sait pas ouvrir les PDF : mettez-le à jour ou utilisez un fichier CSV'); const t = await impPdf(buf); if (!t) throw new Error('ce PDF ne contient pas de texte lisible (document scanné ou police codée) : téléchargez le relevé en Excel ou CSV, ou collez les lignes'); tables = [t]; }
+      else if (h[0] === 0x25 && h[1] === 0x50 && h[2] === 0x44 && h[3] === 0x46) { if (typeof DecompressionStream === 'undefined') throw new Error('ce navigateur ne sait pas ouvrir les PDF : mettez-le à jour ou utilisez un fichier CSV'); let t = await impPdf(buf).catch(() => null), viaJs = false;
+        if (!t || !impRows(t, ctx).rows.some(x => x.on)) { busy('Lecture du PDF…'); const r = await impPdfJs(buf.slice(0), msg => busy(msg)); if (r.rows.length) { t = r.rows; viaJs = true; I.ocr = r.ocr; } }
+        if (!t) throw new Error('ce PDF ne contient pas de texte lisible : téléchargez le relevé en Excel ou CSV, ou collez les lignes'); tables = [t]; }
       else { let txt = new TextDecoder('utf-8', { fatal: false }).decode(buf); if (txt.includes('�')) txt = new TextDecoder('windows-1252').decode(buf); tables = [impText(txt)]; }
       let best = null; for (const t of tables) { const r = impRows(t, ctx); if (!best || r.rows.filter(x => x.on).length > best.rows.filter(x => x.on).length) best = r; }
       Object.assign(I, best || { rows: [], skipped: 0 });
       if (!I.rows.length) I.msg = 'Aucune ligne de position reconnue dans ce fichier. Vérifiez qu’il s’agit bien du relevé des titres (une ligne par titre avec sa quantité).';
     }
   } catch (e) { I.msg = 'Lecture impossible : ' + esc(e.message || String(e)) + '.'; }
+  OCR.prog = null; if (shown && !ST.portImp) return;  // annulé pendant la lecture
   ST.portImp = I; ST.tab.PORT = 'p'; go('PORTF');
 }
 function impPasted(txt) { impCtx().then(ctx => { const r = impRows(impText(txt), ctx); ST.portImp = { name: 'lignes collées', mode: 'maj', msg: r.rows.length ? '' : 'Aucune ligne de position reconnue.', ...r }; render(); }); }
@@ -183,6 +250,11 @@ function impScreen(m) {
   const I = ST.portImp, P = portLoad(), have = new Map(P.pos.map(p => [p.id, p]));
   setTitle('Portfolio Import');
   const fin = () => { ST.portImp = null; render(); };
+  if (I.busy) {  // lecture en cours (image ou PDF scanné)
+    setActs([{ n: 92, l: 'Annuler', run: fin }]);
+    m.innerHTML = pn(`Import · ${esc(I.name)}`, 'PORTF', `<div class="empty" style="text-align:left;white-space:normal"><b id="imBusy">${esc(I.busy)}</b><div id="imProg" class="dm" style="margin-top:6px">Préparation…</div><p class="dm">Le document est lu dans ce navigateur : il n’est envoyé nulle part.</p><button class="tb" id="imNo">Annuler</button></div>`, { np: true });
+    $('imNo').onclick = fin; return;
+  }
   const ok = () => I.rows.filter(r => r.on && r.s && Q.by[r.s] && r.q > 0);
   const apply = () => {
     const L = ok(); if (!L.length) { toast('Aucune ligne cochée avec un titre et une quantité.'); return; }
@@ -203,7 +275,7 @@ function impScreen(m) {
       <td><input class="ofld" data-k="q" value="${r.q != null ? r.q : ''}" style="width:90px;text-align:right" inputmode="decimal"></td><td><input class="ofld" data-k="c" value="${r.c != null ? r.c : ''}" placeholder="facultatif" style="width:100px;text-align:right" inputmode="decimal"></td></tr>`).join('')}</tbody></table></div>`;
   m.innerHTML = pn(`Import · ${esc(I.name)}${I.rows.length ? ` · ${I.rows.length} ligne${I.rows.length > 1 ? 's' : ''} de position` : ''}${I.skipped ? ` · ${I.skipped} ligne${I.skipped > 1 ? 's' : ''} ignorée${I.skipped > 1 ? 's' : ''} (en-têtes, totaux, espèces)` : ''}`, 'PORTF', body,
     { np: true, tools: `<span class="tlab">Mode</span><button class="tb ${I.mode !== 'rempl' ? 'on' : ''}" data-mode="maj">Mettre à jour le portefeuille</button><button class="tb ${I.mode === 'rempl' ? 'on' : ''}" data-mode="rempl">Remplacer tout le portefeuille</button><span class="gsp"></span><button class="tb on" id="imOk">Valider l’import (${nOk} ligne${nOk > 1 ? 's' : ''})</button><button class="tb" id="imNo">Annuler</button>`,
-      lect: `${I.bk ? `Sauvegarde du ${I.date ? fds(String(I.date).slice(0, 10)) : '—'}${I.base ? ', devise de référence ' + I.base : ''}. ` : ''}Contrôlez chaque ligne avant de valider : titre, quantité, prix de revient unitaire (facultatif, dans la devise du titre). « Mettre à jour » ajoute les nouveaux titres et remplace la quantité des titres déjà présents ; « Remplacer » efface d’abord les positions actuelles. Un titre présent sur plusieurs lignes est additionné. Le fichier a été lu dans ce navigateur : il n’est envoyé nulle part et n’est pas gardé ; rien n’est enregistré avant « Valider ».` });
+      lect: `${I.ocr ? '<b class="am">Lu sur une image : vérifiez chaque titre et chaque chiffre avant de valider (la lecture d’une photo peut confondre des caractères).</b> ' : ''}${I.bk ? `Sauvegarde du ${I.date ? fds(String(I.date).slice(0, 10)) : '—'}${I.base ? ', devise de référence ' + I.base : ''}. ` : ''}Contrôlez chaque ligne avant de valider : titre, quantité, prix de revient unitaire (facultatif, dans la devise du titre). « Mettre à jour » ajoute les nouveaux titres et remplace la quantité des titres déjà présents ; « Remplacer » efface d’abord les positions actuelles. Un titre présent sur plusieurs lignes est additionné. Le fichier a été lu dans ce navigateur : il n’est envoyé nulle part et n’est pas gardé ; rien n’est enregistré avant « Valider ».` });
   const row = el => I.rows[+el.closest('tr').dataset.i];
   m.querySelectorAll('#imT [data-k]').forEach(el => { el.onclick = e => e.stopPropagation(); el.onchange = () => { const r = row(el), k = el.dataset.k;
     if (k === 'on') r.on = el.checked; else if (k === 's') { r.s = el.value; r.how = ''; if (r.s && r.q > 0) r.on = true; } else { const v = impNum(el.value); r[k] = v != null && v > 0 ? v : null; if (k === 'q' && r.q > 0 && r.s) r.on = true; r.guess = false; }
@@ -216,7 +288,7 @@ PAGES.PORTF = async (m, alive) => {
   if (ST.portImp) { $('ptabs').hidden = true; return impScreen(m); }
   await PAGES_PORTF_BASE(m, alive); if (!alive()) return;
   const P = portLoad();
-  PG.acts = (PG.acts || []).concat([{ n: 94, l: 'Importer un relevé (Excel, CSV, PDF)', run: () => impPick('.csv,.txt,.tsv,.xlsx,.pdf,image/*,text/csv,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', impFile) },
+  PG.acts = (PG.acts || []).concat([{ n: 94, l: 'Importer un relevé (Excel, CSV, PDF, photo)', run: () => impPick('.csv,.txt,.tsv,.xlsx,.pdf,image/*,text/csv,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', impFile) },
     { n: 95, l: 'Sauvegarder le portefeuille (fichier)', run: () => impBackup(P) }, { n: 89, l: 'Restaurer une sauvegarde', run: () => impPick('.json,application/json', impRestore) }]);
   renderRbar();
   const b = $('ptXo'); if (b) b.onclick = () => impPasted($('ptX').value);
