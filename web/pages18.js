@@ -54,11 +54,11 @@ const QV_DISC = '<div class="qv-disc">QLAB est un outil d’analyse : les valeur
 PAGES.QLAB = async (m, alive) => {
   const s = sec(ST.sec);
   const okV = !!(s && s.mkt === 'BRVM' && s.cls === 'Equity');
-  const tabs = [['s', 'Statistiques'], ['v', 'Valorisation', okV ? '' : 'Réservé aux actions de la BRVM'], ['p', 'Prévisions', okV ? '' : 'Réservé aux actions de la BRVM']];
-  let tab = tabState('QLAB', 's'); if ((tab === 'v' || tab === 'p') && !okV) tab = ST.tab.QLAB = 's';
-  setTabs(tabs, tab, k => { if ((k === 'v' || k === 'p') && !okV) { toast('La valorisation et les prévisions QLAB sont réservées aux actions de la BRVM.'); return; } ST.tab.QLAB = k; render(); });
+  const tabs = [['s', 'Statistiques'], ['v', 'Valorisation', okV ? '' : 'Réservé aux actions de la BRVM']];
+  // ancien onglet « Prévisions » (retiré le 19/10/2026) gardé en mémoire par le navigateur : retour à Statistiques
+  let tab = tabState('QLAB', 's'); if (tab !== 's' && tab !== 'v') tab = ST.tab.QLAB = 's'; if (tab === 'v' && !okV) tab = ST.tab.QLAB = 's';
+  setTabs(tabs, tab, k => { if (k === 'v' && !okV) { toast('La valorisation QLAB est réservée aux actions de la BRVM.'); return; } ST.tab.QLAB = k; render(); });
   if (tab === 's') return QLAB_STATS(m, alive);
-  if (tab === 'p' && typeof qpPage === 'function') return qpPage(m, alive, s);
   return qvPage(m, alive, s);
 };
 

@@ -59,7 +59,7 @@ a{color:var(--cyan)}
 .ac .ahd{display:flex;justify-content:space-between;margin:0;padding:2px 8px;font-size:11.5px;color:#6f6f6f;border-bottom:1px solid #222}.ac .ahd i{margin-left:30%}.ac .ahd span{color:var(--link)}
 .ac .hint{margin:0;padding:4px 8px;color:var(--dim);font-size:11px;border-top:1px solid var(--line2)}
 
-/* ---------- barre d'outils (◀ ▶, titre, fonction, fonctions associées) ---------- */
+/* ---------- barre d'outils (écran précédent / suivant, titre, fonction, fonctions associées) ---------- */
 .tbar{display:flex;align-items:center;gap:4px;background:var(--tbar);padding:2px 6px;min-height:24px;white-space:nowrap;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #000}
 .tbar::-webkit-scrollbar{display:none}
 .tbar .nv{background:none;border:0;color:#ddd;font-size:13px;padding:0 4px;line-height:20px}
@@ -661,3 +661,13 @@ table.t.eqt td{line-height:24px}
 .kwt td.kwti{grid-column:1/-1;width:auto;min-width:0;white-space:normal}.kwt td:nth-child(3){text-align:right}.kwt td:nth-child(5){display:none}.kwt tr.kwon{background:#1d2b44}}
 
 .acc td.cx{font-style:italic}
+
+/* icônes SVG de l'interface (aucun émoji) */
+.ic{display:inline-block;vertical-align:-.14em;pointer-events:none;flex:none}
+.tbar .nv .ic{width:13px;height:13px;vertical-align:-2px}
+.fk.kw .ic{width:15px;height:15px}
+/* MAP : carte agrandie déplaçable, tableaux sous la carte */
+.imap .imi{position:relative}
+.imap.imz{overflow:auto;cursor:grab;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.imap.imz.drag{cursor:grabbing;user-select:none}
+.imap2{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));align-items:start}

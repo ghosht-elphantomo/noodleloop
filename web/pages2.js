@@ -53,7 +53,7 @@ PAGES.BTST = async (m, alive) => {
     <label>Frais (pb/ordre)<input id="bFe" type="number" value="${P.fee}" step="0.5" min="0"></label><label>Glissement (pb)<input id="bSl" type="number" value="${P.slip}" step="0.5" min="0"></label>
     <label>Cash rémunéré${sel('bCa', [[1, 'Oui (taux Fed)'], [0, 'Non']], P.cash)}</label><label>Seuil de ruine %<input id="bR" type="number" value="${P.ruin}" step="5" min="10" max="95"></label>
     <label>Dividendes${P.strat === 'bhd' ? sel('bDv', [[1, 'Réinvestis (stratégie)']], 1) : sel('bDv', [[0, 'Encaissés (cours seul)'], [1, hasDiv ? 'Réinvestis au détachement' : 'Réinvestis (aucun dividende connu)']], P.divr)}</label>
-    <button class="run" id="bRun">▶ LANCER LE BACKTEST</button></div>`;
+    <button class="run" id="bRun">${ICO.play} LANCER LE BACKTEST</button></div>`;
   const kpi = (l, v) => `<span>${l}</span><b>${v}</b>`;
   const ym = {}; for (let i = r.s0 + 1; i <= r.s1; i++) { const k = M.d[i].slice(0, 7); ym[k] = i; } const keys = Object.keys(ym); const mret = {}; let prevEq = r.eq[r.s0];
   for (const k of keys) { const e = r.eq[ym[k]]; mret[k] = e / prevEq - 1; prevEq = e; } const years = [...new Set(keys.map(k => k.slice(0, 4)))].reverse();
@@ -337,7 +337,7 @@ PAGES.EVTS = async (m, alive) => {
   const byY = {}; for (const e of F) { const y = (e.d || '').slice(0, 4); if (y) byY[y] = (byY[y] || 0) + 1; } const ys = Object.keys(byY).sort().slice(-20);
   m.innerHTML = `${pn('Avis officiels · ' + num(evMerge(EV).length, 0), 'EVTS', `<div class="tw" style="max-height:66vh"><table class="t"><thead><tr><th class="l">Publication</th><th class="l">Échéance</th><th class="l">Titre</th><th class="l">Catégorie</th><th class="l">Avis</th></tr></thead><tbody>
     ${F.slice(st.page * per, st.page * per + per).map(e => `<tr><td class="l">${fds(e.d)}</td><td class="l dm">${evDue(e)}</td><td class="l tk" ${e.t ? `data-sec="${e.t}" data-to="DES" style="cursor:pointer"` : ''}>${e.t || '—'}</td><td class="l am">${esc(e.c || '')}</td><td class="l" style="white-space:normal">${e.u ? `<a href="${esc(e.u)}" target="_blank" rel="noopener">${esc(e.ti || '')}</a>` : esc(e.ti || '')}</td></tr>`).join('')}</tbody></table></div>
-    <div class="pager"><button class="tb alt" id="evP" ${st.page ? '' : 'disabled'}>◀</button><span>page ${st.page + 1} / ${pages} · ${num(F.length, 0)} avis</span><button class="tb alt" id="evN" ${st.page < pages - 1 ? '' : 'disabled'}>▶</button></div>`,
+    <div class="pager"><button class="tb alt" id="evP" title="Page précédente" ${st.page ? '' : 'disabled'}>${ICO.prev}</button><span>page ${st.page + 1} / ${pages} · ${num(F.length, 0)} avis</span><button class="tb alt" id="evN" title="Page suivante" ${st.page < pages - 1 ? '' : 'disabled'}>${ICO.next}</button></div>`,
     { np: true, tools: `<span class="tlab">Catégorie</span><select id="evC"><option value="">Toutes</option>${cats.map(c => `<option ${c === st.cat ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select><span class="tlab">Titre</span><select id="evT"><option value="">Tous</option>${tks.map(t => `<option ${t === st.tk ? 'selected' : ''}>${t}</option>`).join('')}</select><span class="tlab">Recherche</span><input id="evQ" value="${esc(st.q)}" style="width:200px;text-transform:none" placeholder="assemblée, dividende…">` })}
     ${pn('Nombre d’avis par année (filtre courant)', 'EVTS', cvb('evY', 160))}`;
   $('evC').onchange = e => { st.cat = e.target.value; st.page = 0; render(); }; $('evT').onchange = e => { st.tk = e.target.value; st.page = 0; render(); };

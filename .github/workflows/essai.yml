@@ -52,7 +52,7 @@ jobs:
           sys.path.insert(0, "scripts")
           bad = []
           for m in ["build_search", "build_terminal", "comptes", "dividendes", "fetch_extra", "histo", "periodiques", "qlab",
-                    "qlab_backtest", "qlab_core", "qlab_prev", "scrape"]:
+                    "qlab_backtest", "qlab_core", "scrape"]:
               try:
                   importlib.import_module(m)
               except Exception as e:  # noqa: BLE001

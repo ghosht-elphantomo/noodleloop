@@ -8,8 +8,8 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 1. Ajouter ce dépôt (nom donné par le propriétaire au démarrage, accès en écriture), le cloner, puis récupérer les branches de données avec
    `git fetch origin +refs/heads/X:refs/remotes/origin/X` (comptes, dividendes, boc, data, raw, histo, site, probe, export, refs, sonde) : elles sont
    réécrites à chaque passage, un simple `git fetch origin X` ne les met pas à jour.
-2. Lire : ce fichier, les règles en tête de `SAUVEGARDES.md`, `docs/GUIDE.md` ; `docs/QLAB3_PREVISIONS.md` et
-   `docs/QLAB2_VALORISATION.md` avant de toucher à QLAB.
+2. Lire : ce fichier, les règles en tête de `SAUVEGARDES.md`, `docs/GUIDE.md` ; `docs/QLAB2_VALORISATION.md` avant de toucher
+   à QLAB.
 3. Répondre au propriétaire en français uniquement (jamais d'anglais, même une ligne), de façon concise ; pour une tâche : aller
    jusqu'au bout sans messages d'étape, puis un seul bilan à la fin (répondre normalement à ses questions).
 4. Installer les outils de test : `npm install -g terser@5.36.0`, `pip install playwright` (Chromium), puis faire un premier
@@ -118,7 +118,7 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
 1. **Contrôles automatiques** : un seul script de vérification (données + parcours du site) lancé avant et après chaque
    modification et chaque nuit par une automatisation qui écrit un rapport vert / orange / rouge sans faire échouer le passage
    (pas d'e-mails d'erreur) : fichiers présents, non vides, frais, nombre de lignes comparé au passage précédent, doublons, valeurs
-   aberrantes, cohérence entre fichiers ; site : toutes les fonctions et onglets, QLAB 48 × 6, aucune erreur JavaScript, aucun
+   aberrantes, cohérence entre fichiers ; site : toutes les fonctions et onglets, QLAB 48 × 3, aucune erreur JavaScript, aucun
    NaN / undefined / null, aucun nom de source, aucun émoji ; instantané des chiffres clés avant / après ; confidentialité ;
    auto-protection (un fichier vide ou anormalement court n'est pas publié, la dernière bonne version est gardée). Partir de
    `outils/essais/`.
@@ -142,12 +142,8 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
 
 ## Tâches programmées
 
-- « QLAB Prévisions : recalage sur tout l'historique » (claude.ai, 7 h 55 et 19 h 55) : démarre le recalage de QLAB 3 dans sa
-  propre session dès que tous les documents sont lus (champ « left » à 0 sur les branches comptes, dividendes et boc : c'est le
-  cas le 19/10 à 17 h 20, donc premier essai attendu le 19/10 à 19 h 55) et pousse sur main ; elle se désactive une fois
-  `docs/QLAB3_RECALAGE.md` marqué « Statut : fait ». Le passage de 7 h 55 le 19/10 a échoué (limite d'utilisation atteinte).
-  Elle peut travailler en même temps qu'une session de travail : toujours `git pull --rebase` avant de pousser et ne pas
-  modifier les mêmes fichiers QLAB en parallèle.
+- « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
+  demande du propriétaire). Ne pas la réactiver.
 - « Terminal FQT : contrôle de mardi 9 h » : une seule fois, le 20/10 à 9 h ; lecture seule, compte rendu au propriétaire.
 
 ## Comptes utilisateurs (backend)

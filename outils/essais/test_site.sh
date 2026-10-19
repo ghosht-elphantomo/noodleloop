@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage : test_site.sh <dossier data/ d'une construction> <dossier de résultats> [port] [tickers séparés par des virgules]
 # Parcours complet du site local : toutes les fonctions et tous les onglets (texte, infobulles, liens, erreurs JavaScript),
-# iPhone 13 (débordement horizontal, textes suspects), QLAB 48 actions × 6 vues. Requiert playwright (Chromium) et terser.
+# iPhone 13 (débordement horizontal, textes suspects), QLAB 48 actions × 3 vues. Requiert playwright (Chromium) et terser.
 H=$(cd "$(dirname "$0")" && pwd)
 D=$1; O=$2; P=${3:-8841}; T=${4:-SNTS,CABC,BOAC,BICC,SAFC,SGBC,PALC,NTLC,ONTBF,AAPL}
 mkdir -p "$O"; O=$(cd "$O" && pwd)

@@ -201,7 +201,7 @@ function maCheck(notify = true) {
   for (const a of A) { const s = Q.by[a.id], T = MA_T[a.k]; if (!s || !T || a.hit) continue; const v = T[1](s); if (v == null || !isFinite(v)) continue; if (T[2](v, a.v)) { a.hit = Date.now(); a.hv = v; ch = true; fired.push(a); } }
   if (ch) maSave(A);
   if (notify && fired.length && typeof Notification !== 'undefined' && Notification.permission === 'granted') for (const a of fired) { try { new Notification(`Alerte ${a.id}`, { body: `${MA_T[a.k][0]}${MA_T[a.k][3] ? ' ' + num(a.v, 2) : ''} · ${px(Q.by[a.id], Q.by[a.id].last)}` }); } catch (e) { /* notifications refusées */ } }
-  const n = A.filter(a => a.hit && !a.seen).length, b = document.getElementById('alB'); if (b) { b.hidden = !n; b.textContent = `🔔 ${n}`; b.title = `${n} alerte(s) déclenchée(s)`; }
+  const n = A.filter(a => a.hit && !a.seen).length, b = document.getElementById('alB'); if (b) { b.hidden = !n; b.innerHTML = `${ICO.bell} ${n}`; b.title = `${n} alerte(s) déclenchée(s)`; }
 }
 setInterval(() => maCheck(true), 60000); setTimeout(() => maCheck(false), 4000);
 document.addEventListener('click', e => { if (e.target && e.target.id === 'alB') { ST.tab.ALRT = 'mine'; go('ALRT'); } });

@@ -137,9 +137,10 @@ Avant toute modification : point de restauration dans `SAUVEGARDES.md`. Après t
 |---|---|---|
 | Statistiques | distribution des rendements, VaR/CVaR, cône de volatilité, autocorrélation, exposant de Hurst, momentum, analogues k-NN + DTW, probabilité bayésienne | en ligne |
 | Valorisation (actions BRVM) | **Valorisation** : valeur et fourchette de chacun des sept modèles (DCF probabiliste, simulation Monte-Carlo, actualisation des dividendes, multiples historiques, multiples des comparables, résultat résiduel, DCF inversé), sans synthèse ; **Risques et alertes** : alarmes, sensibilités, régimes économiques, liquidité, révisions et événements ; **Qualité et facteurs** : facteurs de qualité et de risque, qualité des données, comptes et ratios utilisés. Aucune projection du cours. | en ligne (moteur QLAB-V, recalcul chaque soir) |
-| Prévisions (actions BRVM) | prévision des résultats annuels (exercice en cours et quatre suivants) et des cumuls intermédiaires (1er trimestre, 1er semestre, 9 mois) : chiffre d'affaires ou PNB, résultat d'exploitation, résultat net, BPA, marges ; méthodes choisies par validation point-in-time, fourchettes mesurées sur les erreurs passées ; révisions à chaque publication, mise à jour trimestrielle, révisions exceptionnelles déclenchées par les documents publiés (seuil de 5 % du résultat net) ; historique des versions et écarts mesurés. Aucune prévision du cours. | en ligne (moteur QLAB-P, recalcul chaque soir) ; fonctions restant à développer listées dans [docs/QLAB3_PREVISIONS.md](QLAB3_PREVISIONS.md) |
 
 Méthode de la valorisation : [docs/QLAB2_VALORISATION.md](QLAB2_VALORISATION.md).
+
+L'onglet « Prévisions » (QLAB 3, prévision des résultats) a été retiré le 19/10/2026 à la demande du propriétaire : son code, ses données et son cahier des charges restent dans l'historique du dépôt (point de restauration du 19/10/2026, 17 h 30) et une copie de ses dernières prévisions dans les données brutes (`qlabp/` de la branche `raw`). La lecture des publications intermédiaires (`scripts/periodiques.py`, appelée par `comptes.py`) est gardée.
 
 ## Données et automatisations
 
@@ -208,13 +209,13 @@ La recherche MOTS CLES contrôle chaque ligne contre le nom de son fichier (`fix
 ### Secours si GitHub ne répond plus
 
 - **Copie** : `copie.yml` envoie chaque nuit tout le dépôt vers un dépôt privé hors GitHub (secret GitHub `GITLAB_TOKEN`, droits lecture et écriture du dépôt uniquement).
-- **Lecture par le site** : si GitHub ne répond plus (ou ne connaît plus le dépôt), `api/data.js` lit les données dans la copie (variable Vercel partagée `GITLAB_READ_TOKEN`, lecture seule, reliée au projet). Le site reste alors utilisable avec des données d'au plus un jour. Essai du secours seul : `/api/data?p=qlabp/index.json&via=2`.
+- **Lecture par le site** : si GitHub ne répond plus (ou ne connaît plus le dépôt), `api/data.js` lit les données dans la copie (variable Vercel partagée `GITLAB_READ_TOKEN`, lecture seule, reliée au projet). Le site reste alors utilisable avec des données d'au plus un jour. Essai du secours seul : `/api/data?p=qlab/index.json&via=2`.
 - **Clés** : les deux clés expirent le 17/10/2027. Alertes sans intervention : e-mail de GitLab quelques jours avant l'expiration, et la copie de secours échoue exprès à partir du 17/09/2027 (e-mail d'échec de GitHub).
 - **Renouveler les clés (une fois par an, avant l'expiration, environ 10 minutes)** :
   1. GitLab (compte de la copie) → la page des jetons d'accès où les clés ont été créées (Settings → Access tokens du projet de la copie, ou Preferences → Access tokens du compte) → bouton **Rotate** sur chacune des deux clés (mêmes droits, nouvelle date d'expiration) ; copier chaque nouvelle valeur au moment où elle s'affiche (elle n'est montrée qu'une fois). Ne jamais coller une clé dans une conversation ni dans un fichier du dépôt.
   2. Clé d'écriture → GitHub : dépôt qui lance les automatisations → Settings → Secrets and variables → Actions → `GITLAB_TOKEN` → Update.
   3. Clé de lecture → Vercel : projet du site → Settings → Environment Variables → `GITLAB_READ_TOKEN` → Edit → Save, puis **Redeploy** du dernier déploiement de production (une variable modifiée ne sert qu'après un redéploiement).
-  4. Vérifier : Actions → « Copie de secours » → Run workflow (doit réussir) ; puis ouvrir `/api/data?p=qlabp/index.json&via=2` sur le site (doit afficher des données).
+  4. Vérifier : Actions → « Copie de secours » → Run workflow (doit réussir) ; puis ouvrir `/api/data?p=qlab/index.json&via=2` sur le site (doit afficher des données).
   5. Reporter la nouvelle date d'expiration ici et dans le contrôle d'échéance de `copie.yml` (date du 17/09 de l'année suivante).
 - **Page du dépôt** : le champ « site web » du dépôt doit rester rempli avec l'adresse du dépôt lui-même — s'il est vide, Vercel y remet automatiquement l'adresse du site à chaque mise en ligne.
 - **Plan B complet** (à préparer) : kit d'installation d'un serveur qui reprendrait les automatisations et écrirait dans la copie.
@@ -237,7 +238,7 @@ scripts/sticky.py          données extérieures : fusion avec la copie précéd
 scripts/archives_brvm.py   vérification : documents de la BRVM gardés par l'archive web et absents de la liste
 scripts/dividendes.py      avis et calendriers de dividendes
 scripts/qlab.py, qlab_core.py, qlab_backtest.py   moteur de valorisation QLAB (versions, événements, validation)
-scripts/qlab_prev.py, periodiques.py               moteur de prévisions QLAB 3 et lecture des publications intermédiaires
+scripts/periodiques.py     lecture des publications intermédiaires (trimestres, semestres), appelée par comptes.py
 docs/                      cahiers des charges et méthodes de QLAB ; PASSATION.md (état du travail entre deux sessions)
 seed/archives_comptes.json documents de la BRVM retrouvés dans l'archive web, ajoutés à la lecture des comptes
 outils/essais/             test complet du site en local et comparaisons de deux constructions (voir « En local »)
@@ -259,7 +260,7 @@ cp index.html /tmp/qsite/ && python3 -m http.server -d /tmp/qsite 8000   # http:
 ```bash
 git fetch origin +refs/heads/data:refs/remotes/origin/data && mkdir -p /tmp/d && git archive origin/data | tar -x -C /tmp/d
 bash outils/essais/test_site.sh /tmp/d/data /tmp/essai_apres 8841      # ~15 min : toutes les fonctions et tous les onglets,
-                                                                     # iPhone 13, QLAB 48 × 6, mots interdits
+                                                                     # iPhone 13, QLAB 48 × 3, mots interdits
 python3 outils/essais/comparer_parcours.py /tmp/essai_avant/parcours.json /tmp/essai_apres/parcours.json
 python3 outils/essais/cmp_fund.py <construction A> <construction B>  # fondamentaux de deux constructions (dossiers contenant data/)
 python3 outils/essais/fa_ab.py <construction A> <construction B>     # fichiers FA alignés par année : ajoutés / changés / retirés
@@ -267,7 +268,7 @@ python3 outils/essais/fa_ab.py <construction A> <construction B>     # fichiers 
 
 `test_site.sh` construit la page (`build.py`), applique aux données la réécriture du relais (`rw.js`, comme `api/data.js`),
 sert le site en local puis lance `crawl_txt.py` (texte, infobulles, liens, erreurs JavaScript de chaque fonction et onglet),
-`mobilecheck.py` (iPhone 13 : débordement horizontal, textes suspects), `qlab3all.py` (QLAB, 48 actions × 6 vues) et
+`mobilecheck.py` (iPhone 13 : débordement horizontal, textes suspects), `qlab3all.py` (QLAB Valorisation, 48 actions × 3 vues) et
 `mots_interdits.py` (NaN, undefined, null, noms de sources, liens interdits).
 
 Outil d'analyse personnel, pas un conseil en investissement. Les données de marché restent la propriété de leurs émetteurs.

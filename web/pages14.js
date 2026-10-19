@@ -167,7 +167,7 @@ PAGES.GC = async (m, alive) => {
 };
 
 /* ------------------------------------------------------------------ SRCH : écran « Fixed Income Search » — critères numérotés avec le nombre de
-   titres retenus après chacun, tableau de résultats numéroté et trié, fiche prix ↔ rendement (YAS) du titre choisi */
+   titres retenus après chacun, tableau de résultats numéroté et trié, fiche prix / rendement (YAS) du titre choisi */
 PAGES['UEMOA BONDS'] = async (m, alive) => {
   const [B, UC] = await Promise.all([getJSON('bonds.json').catch(() => null), getJSON('umoa_curves.json').catch(() => null)]); if (!alive()) return; setTitle('Fixed Income Search');
   /* écart à la courbe souveraine du même État (taux après lissage interpolé à la vie résiduelle) : > 0 = la ligne rapporte plus que la courbe */
@@ -207,7 +207,7 @@ PAGES['UEMOA BONDS'] = async (m, alive) => {
     return pn(`${esc(b.code)} · ${esc(b.n)}`, 'YAS', `<div class="kv2"><span>Émetteur</span><b>${esc(b.iss || '')}${r.cty ? ' · ' + esc(r.cty) : ''}</b><span>Coupon</span><b>${b.cpn != null ? num(b.cpn * 100, 3) + ' %' : 'variable'}</b><span>Cotation depuis le</span><b>${esc(b.em || '—')}</b><span>Dernier coupon payé</span><b>${b.lp_d ? esc(b.lp_d) + ' · ' + num(b.lp_v, 2) : '—'}</b><span>Cours (FCFA)</span><b class="wh">${num(b.px, 0)}</b><span>Coupon couru</span><b>${num(b.cc, 2)}</b>
       <span>Nominal restant estimé</span><b class="est">${c.N ? num(c.N, 0) : '—'}${c.f === 2 ? ' · semestriel' : ''}</b><span>Échéance estimée</span><b class="est">${c.T ? fds(c.T.toISOString().slice(0, 10)) : '—'}</b><span>Vie résiduelle</span><b>${c.life ? num(c.life, 2) + ' ans' : '—'}</b>
       <span>Rendement actuariel estimé</span><b class="yl">${c.ok ? num(c.ytm * 100, 3) + ' %' : 'n.d. (' + esc(c.why || '') + ')'}</b><span>Taux de la courbe ${r.cty ? esc(r.cty) : ''} à même échéance</span><b>${r.cv != null ? num(r.cv * 100, 3) + ' %' : '—'}</b><span>Écart à la courbe</span><b>${r.spr != null ? `<span class="${cls(r.spr)}">${r.spr > 0 ? '+' : ''}${num(r.spr, 0)} pb</span>` : '—'}</b><span>Duration de Macaulay</span><b>${c.ok ? num(c.mac, 2) + ' ans' : '—'}</b><span>Sensibilité</span><b>${c.ok ? num(c.mod, 2) : '—'}</b></div>
-      ${c.ok ? `<div class="form" style="margin-top:6px"><label>Rendement visé (%)<input id="ysY" value="${num(c.ytm * 100, 2)}"></label><label>Cours correspondant<input id="ysP" disabled></label></div>` : ''}`, { lect: 'Prix ↔ rendement sur les mêmes flux estimés.' }); };
+      ${c.ok ? `<div class="form" style="margin-top:6px"><label>Rendement visé (%)<input id="ysY" value="${num(c.ytm * 100, 2)}"></label><label>Cours correspondant<input id="ysP" disabled></label></div>` : ''}`, { lect: 'Prix et rendement calculés sur les mêmes flux estimés.' }); };
   const show = code => { const r = rows.find(x => x.b.code === code); if (!r) return; st.sel = code; $('obD').innerHTML = yas(r); m.querySelectorAll('[data-ob]').forEach(tr => tr.classList.toggle('cur', tr.dataset.ob === code));
     const y = $('ysY'); if (y && r.c.ok) { const upd = () => { const v = parseFloat(y.value.replace(',', '.')) / 100; if (!isFinite(v)) return; const p = r.c.cf.reduce((s, c) => s + c.v / Math.pow(1 + v, c.t), 0) - (r.b.cc || 0); $('ysP').value = num(p, 0) + ' FCFA (' + num(p / r.c.N * 100, 2) + ' %)'; }; y.oninput = upd; upd(); } };
   m.querySelectorAll('[data-ob]').forEach(tr => tr.onclick = () => show(tr.dataset.ob)); if (sel) show(sel.b.code);

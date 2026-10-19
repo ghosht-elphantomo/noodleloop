@@ -144,7 +144,7 @@ function aggOHLC(S, per, tr) {
 }
 const dmy = d => fmtD(d); const dmyShort = d => fmtD(d).slice(0, 6) + fmtD(d).slice(8);
 function parseDMY(t) { const m = String(t || '').trim().match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{2,4})$/); if (!m) return null; let y = +m[3]; if (y < 100) y += 2000; return y * 10000 + (+m[2]) * 100 + (+m[1]); }
-/* conversion de devise (champ « Devise » du GP) : facteurs alignés sur les dates, XOF ↔ EUR à la parité fixe de 655,957 */
+/* conversion de devise (champ « Devise » du GP) : facteurs alignés sur les dates, XOF / EUR à la parité fixe de 655,957 */
 const XOF_EUR = 655.957, FX_SER = { XOF: 'USDXOF', EUR: 'EURUSD', TWD: 'USDTWD' };
 const FX_OK = s => s && ['XOF', 'USD', 'EUR', 'TWD'].includes(s.ccy) && !['Rate', 'Curncy'].includes(s.cls) && !/%/.test(s.ccy || '');  /* (une paire de devises convertie dans l'une de ses devises n'a pas de sens) */
 async function fxFactor(from, to, xs) {
@@ -223,7 +223,7 @@ PAGES.GP = async (m, alive) => {
       <span class="gico">${['bbg', 'line', 'area'].concat(s.cls !== 'Curncy' && !monthly ? ['candle'] : []).map(k => `<button class="tb ico ${g.type === k ? 'on' : ''}" data-gp="t:${k}" title="${{ bbg: 'Montagne Bloomberg', line: 'Ligne', area: 'Aire', candle: 'Bougies' }[k]}">${GP_ICO[k]}</button>`).join('')}</span>
       <button class="tb ${g.tbl ? 'on' : ''}" id="gpTb" title="Tableau des cours de la période affichée">Tableau</button>
       <span class="gsp"></span><button class="tb gdd" id="gpRel" title="Études et données liées">+ Données liées ▾</button><input id="cmpIn" class="gadd" placeholder="Ajouter des données" title="Comparer : tapez un code (ex. BRVMC, NVDA) puis Entrée">${g.cmp.map(c => `<button class="tb alt on" data-gp="x:${c}" title="Retirer">${c} ✕</button>`).join('')}
-      <button class="tb gdd" id="gpEd" title="Modifier le graphique">« Modifier ⚙</button></div>`;
+      <button class="tb gdd" id="gpEd" title="Modifier le graphique">« Modifier ${ICO.gear}</button></div>`;
   const sugg = (s.cls === 'Index' ? ['MEMB', 'MOV', 'HVT'] : s.cls === 'Equity' ? ['HVT', 'VAP', 'DVD'] : s.cls === 'Comdty' ? ['HVT', 'SEAS', 'BMAP'] : ['HVT', 'SEAS', 'CORR']).filter(c => FN[c] && (FN[c][1] === 'mkt' || !avail(c, s))).slice(0, 2);
   const sugBar = `<div class="gpsug"><span class="gl">Fonctions suggérées</span>${sugg.map(c => `<span class="gi" data-fn="${c}"><b>${c}</b>${esc(FN[c][3] || FN[c][4])}</span>`).join('')}</div>`;
   const showSide = !document.body.classList.contains('maxi') || g.tbl;

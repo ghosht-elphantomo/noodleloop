@@ -71,7 +71,7 @@ const FN = {
   ANOM: ['Anomalies', 'sec', 'Quant', 'Alertes statistiques : cours, volume, tendance, résultats, dividendes, données suspectes', 'Anomaly Monitor'],
   PEER: ['Comparateur de sociétés', 'sec', 'Quant', '2 à 10 sociétés côte à côte, nuage de points sur deux critères', 'Peer Comparison'],
   BETA: ['Bêta historique', 'sec', 'Risque', 'Bêta sur plusieurs fenêtres, volatilité, corrélation, drawdown, pairs', 'Historical Beta'],
-  QLAB: ['Laboratoire quant', 'sec', 'Risque', 'Statistiques du cours (distribution, VaR, Hurst, momentum, analogues, probabilité bayésienne) ; valorisation des actions BRVM par sept modèles, risques et alertes, qualité et facteurs ; prévisions des résultats (annuels et intermédiaires)', 'Quant Lab'],
+  QLAB: ['Laboratoire quant', 'sec', 'Risque', 'Statistiques du cours (distribution, VaR, Hurst, momentum, analogues, probabilité bayésienne) ; valorisation des actions BRVM par sept modèles, risques et alertes, qualité et facteurs', 'Quant Lab'],
   BTST: ['Backtest', 'sec', 'Risque', '8 stratégies, levier, Monte Carlo, durée des drawdowns', 'Backtesting'],
 };
 /* touches de marché : BRIEF, puis les fonctions de la BRVM et de l'UEMOA, puis les autres marchés */
@@ -111,6 +111,18 @@ function avail(code, s) {
 function ykey(s) { if (!s) return ''; return /\b(Equity|Index|INDX|Curncy|Comdty|Govt|Corp)\b/.test(s.tk) ? s.tk : s.tk + ' ' + (s.cls === 'Equity' ? 'Equity' : s.cls === 'Crypto' ? 'Curncy' : s.cls === 'Rate' ? 'Index' : s.cls); }
 
 const TRIGGER_ID = '__TRIGGER_ID__';
+/* Icônes de l'interface dessinées en SVG : jamais d'émoji (un iPhone affiche les triangles et pictogrammes Unicode en images de couleur). */
+const ICO = (() => {
+  const s = d => `<svg class="ic" viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true" focusable="false">${d}</svg>`;
+  const ln = 'fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+  return {
+    prev: s(`<path d="M10.5 2.5 5 8l5.5 5.5" ${ln}/>`),
+    next: s(`<path d="M5.5 2.5 11 8l-5.5 5.5" ${ln}/>`),
+    play: s('<path d="M4 2.2v11.6L13.6 8z" fill="currentColor"/>'),
+    gear: s('<circle cx="8" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="2.2"/>' + [0, 45, 90, 135, 180, 225, 270, 315].map(a => `<rect x="6.9" y=".6" width="2.2" height="3.6" rx=".5" fill="currentColor" transform="rotate(${a} 8 8)"/>`).join('')),
+    bell: s('<path d="M8 1.4c-2.6 0-4.1 2-4.1 4.4v2.9L2.4 11v1.1h11.2V11l-1.5-2.3V5.8c0-2.4-1.5-4.4-4.1-4.4z" fill="currentColor"/><circle cx="8" cy="13.7" r="1.5" fill="currentColor"/>')
+  };
+})();
 
 /* ---------- formats (conventions françaises) ---------- */
 const NF = {}; const nf = d => NF[d] || (NF[d] = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d }));
@@ -368,7 +380,7 @@ function obEdit() {
 }
 function renderTbar() {
   const t = $('tbar'), s = sec(ST.sec), isSec = SECFN.has(ST.fn);
-  t.innerHTML = `<button class="nv" id="hb" title="Écran précédent" ${ST.hpos > 0 ? '' : 'disabled'}>◀</button><button class="nv" id="hf" title="Écran suivant" ${ST.hpos < ST.hist.length - 1 ? '' : 'disabled'}>▶</button>
+  t.innerHTML = `<button class="nv" id="hb" title="Écran précédent" aria-label="Écran précédent" ${ST.hpos > 0 ? '' : 'disabled'}>${ICO.prev}</button><button class="nv" id="hf" title="Écran suivant" aria-label="Écran suivant" ${ST.hpos < ST.hist.length - 1 ? '' : 'disabled'}>${ICO.next}</button>
     <button class="dd" data-dd="1" id="ddSec" title="Titre actif"><span>${esc(s ? (s.short || s.n).toUpperCase() + ' ' + ykey(s).split(' ').pop() : '—')}</span></button>
     <button class="dd" data-dd="1" id="ddFn" title="Fonction"><span>${ST.fn}</span></button>
     <button class="dd rel" data-dd="1" id="ddRel" title="Fonctions associées"><span>Menu des fonctions associées</span></button>
@@ -421,7 +433,7 @@ function srcCode(x) { const s = (x.s || x.f || '').toLowerCase(); if (ANON || hi
   const M = [['sec.gov', 'SEC'], ['edgar', 'SEC'], ['reuters', 'RTRS'], ['bloomberg', 'BBG'], ['zonebourse', 'ZB'], ['boursorama', 'BOURSO'], ['les echos', 'ECHOS'], ['jeune afrique', 'JA'], ['financial afrik', 'FAFRIK'], ['financialafrik', 'FAFRIK'], ['agence ecofin', 'ECOFIN'], ['ecofin', 'ECOFIN'], ['bceao', 'BCEAO'], ['fed', 'FED'], ['cnbc', 'CNBC'], ['marketwatch', 'MW'], ['yahoo', 'YHOO'], ['nasdaq', 'NDAQ'], ['lefigaro', 'FIGARO'], ['le monde', 'MONDE'], ['abidjan', 'ABJ.NET'], ['apa', 'APA'], ['afp', 'AFP']];
   for (const [k, v] of M) if (s.includes(k)) return v; return (x.s || 'WEB').replace(/^www\./, '').split(/[ .]/)[0].toUpperCase().slice(0, 6); }
 
-/* ---------- routeur et historique (◀ ▶) ---------- */
+/* ---------- routeur et historique (écran précédent / suivant) ---------- */
 let renderSeq = 0;
 /* anciens codes encore acceptés (ligne de commande, liens, onglets enregistrés) : ils ouvrent le nouvel écran, et le bon onglet */
 /* écrans à onglets qui regroupent d'anciennes fonctions (onglet 1 = vue principale) : source unique pour les onglets, l'aide et l'autocomplétion */
@@ -437,7 +449,7 @@ const FN_TABS = {
   'CORP RESULT': [['u', 'À venir'], ['p', 'Publiés (60 jours)'], ['t', 'Objectifs des analystes']],
   FX: [['x', 'Franc CFA'], ['m', 'Changes croisés'], ['w', 'Classement des devises']],
   RATES: [['m', 'Marché monétaire US'], ['f', 'Anticipations de la Fed'], ['w', 'BONDS · taux souverains mondiaux']],
-  QLAB: [['s', 'Statistiques'], ['v', 'Valorisation (actions BRVM)'], ['p', 'Prévisions des résultats (actions BRVM)']] };
+  QLAB: [['s', 'Statistiques'], ['v', 'Valorisation (actions BRVM)']] };
 const tabLabel = (f, t) => ((FN_TABS[f] || []).find(x => x[0] === t) || [])[1];
 const FN_ALIAS = { CF: ['EVTS', 'b'], WCRS: ['FX', 'w'], FXC: ['FX', 'm'], EQS: ['SCREENER'], SCREN: ['SCREENER'], RELS: ['STOCK BONDS'], TOP: ['NEWS'], MON: ['MONITOR'], GLCO: ['COMMO'], WIRP: ['RATES', 'f'], WB: ['RATES', 'w'], BTMM: ['RATES', 'm'],
   PORT: ['PORTF'], WEI: ['INDX', 'i'], WEIF: ['INDX', 'f'], IMAP: ['MAP'], US: ['MAP', 'US'], ECO: ['NEWS ECO'], UEMOA: ['UEMOA/DATA'], ECST: ['UEMOA/DATA', 'ecst'], SRCH: ['UEMOA BONDS'], PER: ['BRVM', 'p'], EA: ['CORP RESULT'], 'MOTS CLÉ': ['MOTS CLES'] };
@@ -468,7 +480,7 @@ const BBG_GREEN = [['MONITOR', 'Moniteur de marchés (Market Monitor)', () => go
   ['QUOTE', 'Description du titre actif (DES)', () => go('DES', ST.sec)], ['NEWS', 'Actualités (Top News)', () => go('NEWS')], ['MENU', 'Menu des fonctions du titre', () => go('MENU', ST.sec)],
   ['PG BACK', 'Écran précédent', () => histGo(-1)], ['PG FWD', 'Écran suivant', () => histGo(1)]];
 function renderKeys() { const f = $('fkeys');
-  f.innerHTML = `<button class="fk kgo" data-k="GO" title="Exécuter la commande">GO</button>${BBG_KEYS.map(([k, t]) => `<button class="fk kf" data-k="${k}" title="${esc(t)}">${k}</button>`).join('')}${BBG_GREEN.map(([k, t]) => `<button class="fk${FN[k] && ST.fn === k ? ' on' : ''}" data-k="${k}" title="${esc(t)}"><b>${k}</b></button>`).join('')}<button class="fk kw" data-k="CFG" title="Réglages">🔧</button><i class="fsep"></i>`
+  f.innerHTML = `<button class="fk kgo" data-k="GO" title="Exécuter la commande">GO</button>${BBG_KEYS.map(([k, t]) => `<button class="fk kf" data-k="${k}" title="${esc(t)}">${k}</button>`).join('')}${BBG_GREEN.map(([k, t]) => `<button class="fk${FN[k] && ST.fn === k ? ' on' : ''}" data-k="${k}" title="${esc(t)}"><b>${k}</b></button>`).join('')}<button class="fk kw" data-k="CFG" title="Réglages" aria-label="Réglages">${ICO.gear}</button><i class="fsep"></i>`
     + MKT_KEYS.filter(has).map(k => `<button class="fk ${ST.fn === k ? 'on' : ''}" data-fn="${k}" title="${esc(FN[k][4] + ' — ' + FN[k][3])}"><b>${k}</b><span>${FN[k][0]}</span></button>`).join('');
   f.querySelectorAll('[data-k]').forEach(b => b.onclick = e => { const k = b.dataset.k; if (k === 'GO') { const v = $('cmd').value.trim(); if (v) { $('cmd').value = ''; runCmd(v); } else $('cmd').focus(); return; }
     if (k === 'CFG') { ddOpen(b, stdActs().find(a => a.n === 98).menu()); return; } const a = BBG_KEYS.concat(BBG_GREEN).find(x => x[0] === k); if (a) a[2](); }); }
