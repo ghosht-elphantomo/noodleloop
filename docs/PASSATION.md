@@ -69,10 +69,13 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
   - `f7eb7baf` (18 h 35) : PORTF, import de relevés (CSV, Excel .xlsx, PDF à texte, lignes collées) lus dans le navigateur,
     écran de contrôle avant validation, sauvegarde et restauration du portefeuille en fichier. Non lus : photos et PDF
     scannés (il faudrait un module de lecture d'images ajouté au site : décision du propriétaire).
-  - Commit suivant `f7eb7baf` : présentations DES des 48 sociétés réécrites (`seed/des_fqt.json`, preuves dans
+  - `ab9c9b5b` (19 h 05) : présentations DES des 48 sociétés réécrites (`seed/des_fqt.json`, preuves dans
     `seed/des_fqt_preuves.json`), en ligne après le passage du soir (22:35 UTC) ; page de relecture « Miroir DES » remise au
     propriétaire (texte actuel, notre texte, preuve de chaque fait). 14 textes vérifiés tels quels, 34 corrigés à la relecture
     indépendante, 0 à revoir ; Uniwax et BIIC raccourcis (faits non datés ou non prouvés retirés).
+  - `8017ef1d` (19 h 07, déploiement de production réussi) : sécurité sans risque — deux en-têtes sur la page du terminal
+    (Content-Security-Policy partielle, Cross-Origin-Opener-Policy), `.gitignore` des fichiers de secrets ; la liste de
+    contrôle sécurité du propriétaire (20 points) est gardée pour le backend (le reste en dépend).
   - Vérifié : déploiement de production `0866f0b2` réussi (15:54 UTC), branche site au même code. Le 19/10 de 15 h 30 à
     16 h 10 UTC environ, incident GitHub Actions (passages en attente) : rien à faire, les passages repartent seuls.
 - **Lecture des 34 documents de l'archive web** (passage des comptes du 19/10, 16 h 53, publié à 17 h 34) : 34 documents lus
