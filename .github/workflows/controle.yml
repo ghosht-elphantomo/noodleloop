@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: controle
@@ -39,12 +40,19 @@ jobs:
           mkdir -p /tmp/d /tmp/prev
           git fetch -q --depth 1 origin data && git archive FETCH_HEAD data | tar -x -C /tmp/d
           if git fetch -q --depth 1 origin probe 2>/dev/null; then git archive FETCH_HEAD controle 2>/dev/null | tar -x -C /tmp/prev || true; fi
+          # bugs corrigés : index de la branche comptes et passages des dernières 24 h (rien d'affiché dans le journal)
+          git fetch -q --depth 1 origin comptes 2>/dev/null && git show FETCH_HEAD:index.json > /tmp/prev/comptes_index.json 2>/dev/null || true
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100&created=>=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)" \
+            --jq '.workflow_runs[] | {name, conclusion, status}' 2>/dev/null | jq -s '{runs: .}' > /tmp/prev/runs.json 2>/dev/null || rm -f /tmp/prev/runs.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Contrôle
         continue-on-error: true
         run: |
           REF=""; [ -f /tmp/prev/controle/rapport.json ] && REF=/tmp/prev/controle/rapport.json
           export TITRE="Contrôle du $(date -u +'%d/%m/%Y %H:%M') UTC"
+          export RUNS=/tmp/prev/runs.json COMPTES=/tmp/prev/comptes_index.json
           if python3 -c "import playwright" 2>/dev/null && command -v terser > /dev/null; then
             timeout 3000 bash outils/controle/verifier.sh /tmp/d/data /tmp/ctl $REF
           else

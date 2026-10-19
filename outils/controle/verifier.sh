@@ -27,5 +27,8 @@ if [ "$SITE" = 1 ]; then
 fi
 [ -n "$REF" ] && ARGS+=(--ref "$REF")
 [ -n "$MEME" ] && ARGS+=("$MEME")
+# bugs corrigés : passages GitHub des dernières 24 h et index de la branche comptes, quand controle.yml les fournit
+[ -n "$RUNS" ] && [ -f "$RUNS" ] && ARGS+=(--runs "$RUNS")
+[ -n "$COMPTES" ] && [ -f "$COMPTES" ] && ARGS+=(--comptes "$COMPTES")
 python3 "$H/controle.py" "$D" "$O/rapport.json" --md "$O/rapport.md" "${ARGS[@]}" --titre "${TITRE:-Contrôle du terminal}" || true
 exit 0

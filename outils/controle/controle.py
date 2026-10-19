@@ -391,6 +391,8 @@ def main():
     ap.add_argument("--ref"); ap.add_argument("--md"); ap.add_argument("--site"); ap.add_argument("--mobile"); ap.add_argument("--qlab")
     ap.add_argument("--meme-donnees", action="store_true"); ap.add_argument("--maintenant", type=float)
     ap.add_argument("--titre", default="Contrôle du terminal")
+    ap.add_argument("--runs", help="passages GitHub des dernières 24 h (JSON), pour les bugs corrigés")
+    ap.add_argument("--comptes", help="index.json de la branche comptes, pour les bugs corrigés")
     a = ap.parse_args()
     maintenant = a.maintenant or time.time()
     R = Rapport()
@@ -413,6 +415,18 @@ def main():
         controle_site(R, a)
     except Exception as e:  # noqa: BLE001
         R.add("Contrôle du site", "orange", f"contrôle interrompu : {e}")
+    # bugs corrigés : ils ne doivent jamais revenir (outils/controle/non_retour.py)
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import non_retour
+        pages = ((charge(a.site)[0] or {}).get("pages") if a.site else None)
+        runs = charge(a.runs)[0] if a.runs else None
+        if isinstance(runs, dict):
+            runs = runs.get("workflow_runs") or runs.get("runs") or []
+        ci = charge(a.comptes)[0] if a.comptes else None
+        non_retour.verifier(R, {"D": a.data, "pages": pages, "inst": inst, "maintenant": maintenant, "runs": runs, "comptes": ci})
+    except Exception as e:  # noqa: BLE001
+        R.add("Bugs corrigés", "orange", f"contrôle interrompu : {type(e).__name__} {e}")
     res = {"niveau": R.niveau, "date": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(maintenant)), "verifications": R.v,
            "instantane": inst}
     json.dump(res, open(a.out, "w", encoding="utf8"), ensure_ascii=False, indent=1)

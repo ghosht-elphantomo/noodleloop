@@ -18,6 +18,9 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 ## Règles (obligatoires)
 
 - Point de restauration dans `SAUVEGARDES.md` AVANT toute modification (main, site, et branche comptes si la lecture est touchée).
+- Chaque bug corrigé reçoit, avec sa correction, son contrôle automatique dans `outils/controle/non_retour.py` (entrée `@bug`),
+  puis `python3 outils/controle/non_retour.py --liste` régénère `outils/controle/BUGS_CORRIGES.md` : le contrôle du matin
+  signale le bug s'il revient (règle du propriétaire, 19/10/2026).
 - Après chaque modification : tester TOUT le site et toutes les données ; signaler tout problème trouvé, même sans lien avec la
   modification ; ne publier que si tout est bon. « Tant que ça ne casse rien, on peut le faire. »
 - Données : « pas de faux chiffres, en aucun cas » (outil pour professionnels). Tout montant affiché doit être lu dans un document
