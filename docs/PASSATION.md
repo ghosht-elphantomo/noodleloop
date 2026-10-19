@@ -328,6 +328,9 @@ point de restauration avant chaque étape, tout le site testé après, accord du
      détection d'aspiration.
 3. *Calculs* : faire la liste des calculs qui tournent encore dans la page (navigateur) et proposer de déplacer côté serveur
    ceux qui ont de la valeur, un par un, en vérifiant que les résultats affichés restent identiques avant et après.
+4. *Métronome et actualisations* (précision du propriétaire, 19/10/2026) : le Métronome ne doit jamais être arrêté tant que
+   son remplaçant n'a pas lancé le Terminal à l'heure pendant plusieurs jours, vérifié en parallèle. Les actualisations toutes
+   les 15 minutes ne doivent jamais s'interrompre.
 
 ## Tâches programmées
 
