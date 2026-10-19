@@ -1594,6 +1594,16 @@ def profiles(extra, out, secs_by, log):
     P = {}
     for src in ("profiles.json", "profiles_us.json"):
         P.update({k: v for k, v in (jload(os.path.join(extra, src), {}) or {}).items() if k in secs_by})
+    # présentation des sociétés BRVM écrite par FQT (seed/des_fqt.json, depuis le 19/10/2026) : chaque fait vérifié sur un
+    # document officiel de la société (preuves dans seed/des_fqt_preuves.json) ; elle remplace le texte de la fiche tierce
+    fq = jload(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "des_fqt.json"), {}) or {}
+    n_fq = 0
+    for k, t in (fq.get("desc") or {}).items():
+        if k in secs_by and isinstance(t, str) and t.strip():
+            P.setdefault(k, {})["desc"] = t.strip()
+            n_fq += 1
+    if n_fq:
+        log("présentations FQT", n_fq)
     if P:
         jsave(os.path.join(out, "profiles.json"), P)
         log("profils", len(P))

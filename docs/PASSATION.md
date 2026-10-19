@@ -55,7 +55,7 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 
-## État au 19/10/2026, 18 h 30
+## État au 19/10/2026, 19 h 15
 
 - **Publié le 19/10/2026 (demandes du propriétaire)**, chaque fois après le parcours complet du site (avant / après) :
   - `0ed87f89` (17 h 50) : QLAB 3 « Prévisions » retiré (onglet, code, cahier des charges ; `qlabp/` quitte les données publiées
@@ -64,9 +64,15 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
     symbole affiché en émoji sur iPhone (◀ ▶ 🔧 ⚙ 🔔 remplacés par des icônes dessinées, `ICO` dans `web/core.js`).
   - `0866f0b2` (17 h 54) : contrôles automatiques — `controle.yml` (chaque matin 06:10 UTC, rapport vert / orange / rouge sur
     la branche `probe`, dossier `controle/`) et garde des données avant chaque publication (`scripts/garde.py`).
-  - Release « nouvelles fonctions, 1re partie » (voir le commit suivant `0866f0b2`) : BRVM (Saison des résultats,
-    Publications attendues et retards, Exposition pays), DIVC (Aristocrates du dividende, Dividende net et encaissements),
-    nouvelle fonction BANK ; méthodes dans le guide.
+  - `21502169` (18 h 19) : BRVM (Saison des résultats, Publications attendues et retards, Exposition pays), DIVC
+    (Aristocrates du dividende, Dividende net et encaissements), nouvelle fonction BANK ; méthodes dans le guide.
+  - `f7eb7baf` (18 h 35) : PORTF, import de relevés (CSV, Excel .xlsx, PDF à texte, lignes collées) lus dans le navigateur,
+    écran de contrôle avant validation, sauvegarde et restauration du portefeuille en fichier. Non lus : photos et PDF
+    scannés (il faudrait un module de lecture d'images ajouté au site : décision du propriétaire).
+  - Commit suivant `f7eb7baf` : présentations DES des 48 sociétés réécrites (`seed/des_fqt.json`, preuves dans
+    `seed/des_fqt_preuves.json`), en ligne après le passage du soir (22:35 UTC) ; page de relecture « Miroir DES » remise au
+    propriétaire (texte actuel, notre texte, preuve de chaque fait). 14 textes vérifiés tels quels, 34 corrigés à la relecture
+    indépendante, 0 à revoir ; Uniwax et BIIC raccourcis (faits non datés ou non prouvés retirés).
   - Vérifié : déploiement de production `0866f0b2` réussi (15:54 UTC), branche site au même code. Le 19/10 de 15 h 30 à
     16 h 10 UTC environ, incident GitHub Actions (passages en attente) : rien à faire, les passages repartent seuls.
 - **Lecture des 34 documents de l'archive web** (passage des comptes du 19/10, 16 h 53, publié à 17 h 34) : 34 documents lus
@@ -146,15 +152,23 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
    - Fait le 19/10 : BRVM (Saison des résultats ; Publications attendues et retards ; Exposition pays) ; DIVC (Aristocrates du
      dividende ; Dividende net et encaissements des positions de PORTF) ; fonction BANK (comparaison du dernier exercice,
      historique sur 10 ans) ; plus aucun émoji sur iPhone.
+   - Fait le 19/10 : PORT, import de relevés et sauvegarde (photos non lues, voir ci-dessus) ; DES, présentations des 48
+     sociétés réécrites et vérifiées (à vérifier dans DES après le passage du soir du 19/10).
    - Reste pour DIVC : dividende brut et retenue à la source par pays — le net est publié partout ; le brut et l'impôt
      n'existent que sur la branche `dividendes` (avis lus), à faire passer dans `dividends.json` (changement de la
      construction) avant de les afficher ; taux de chaque pays à vérifier sur un texte officiel.
-   - PORT : import de relevés (Excel, CSV, PDF, photos) lus dans le navigateur, jamais envoyés ni gardés, écran de contrôle
-     avant validation, export et import d'une sauvegarde du portefeuille.
-   - Descriptions des 48 sociétés (fonction DES) réécrites avec nos propres mots : mêmes faits que la fiche actuelle, jamais mot
-     pour mot, chaque fait vérifié sur un document officiel, un fait invérifiable est retiré.
    - Secours BRVM, suite : combler ce que l'essai « sans la base tierce » a montré manquant — séries BPA, dividende et PER,
      fiches des sociétés, cours d'avant décembre 2013.
+   - **Problème trouvé le 19/10 (à corriger avant l'audit)** : des documents rangés sous une autre société dans la liste des
+     publications (registre de la branche `comptes`, MOTS CLES, CN) — au moins : Erium ← rapport BOA Sénégal T1 2017 ;
+     ETI ← états financiers 2017 d'Ecobank CI ; Sonatel ← résultats S1 2017 et rapport T3 2022 d'Onatel ; CFAO ← états
+     financiers 2018-2023 de Tractafric ; BOA Burkina ← états financiers 2021 de BOA CI ; BOA Niger ← rapport T1 2019 de
+     BOA Sénégal ; Bernabé ← comptes 2006 de CFAO ; ETI ← plusieurs documents d'Ecobank CI. Vérifié : aucun de ces
+     montants ne figure dans les chiffres affichés (FA, fondamentaux) ; mais ils sont classés sous la mauvaise société.
+     Correction proposée : contrôle du nom de la société dans l'intitulé et le nom du fichier avant de rattacher un
+     document (`cpt_events`), liste des exceptions vérifiées à la main, puis relecture des seuls documents concernés.
+   - Point à vérifier : Filtisac, dividende de l'exercice 2024 à 1 161,6 FCFA (plus 564,96 exceptionnel) pour un cours de
+     1 805 : rendement affiché 64 % et distribution 3 516 % (avis à relire).
 3. **Fluidité et vitesse** (réglage désactivé par défaut ; ne touche que l'affichage).
 4. Audit complet.
 5. Seulement quand tout est propre, testé et audité : migration « deux dépôts » (privé + public neutre) avec le propriétaire,
