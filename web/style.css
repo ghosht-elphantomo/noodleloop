@@ -673,3 +673,7 @@ table.t.eqt td{line-height:24px}
 .imap2{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));align-items:start}
 .pbar{height:6px;background:var(--bg3);margin:3px 0 9px;border:1px solid var(--line2)}
 .pbar i{display:block;height:100%;background:var(--amber)}
+#imT .imsrc{max-width:340px;white-space:normal;font-size:11px;line-height:1.3;margin-top:2px}
+#imT .imst{white-space:normal;max-width:340px;font-size:12px;margin-top:2px}
+#imT select{max-width:240px}
+@media (max-width:700px){#imT .imsrc,#imT .imst{max-width:150px}#imT select{max-width:150px}#imT input.ofld{width:62px!important}#imT th{white-space:normal}}
