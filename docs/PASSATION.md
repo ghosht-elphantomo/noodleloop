@@ -242,6 +242,61 @@ N'importe qui peut tout voir, tout copier et remonter du site au dépôt.
 - Tester chaque automatisation dans la nouvelle organisation avant d'arrêter l'ancienne. Jamais deux automatisations qui
   publient la même chose en même temps.
 
+**6. Choix retenu pour le dépôt public** (complément du propriétaire, 19/10/2026 ; ne rien lancer avant le point 5 du
+« Reste à faire »).
+
+*Principe.* Le dépôt public doit être un vrai projet, mais réduit au strict minimum : il contient la page du site et les
+automatisations qui la construisent et la publient. Rien de ce qu'il contient ne doit permettre de copier le dépôt privé,
+de deviner nos sources ou de remonter jusqu'au propriétaire. Pourquoi : les règles de GitHub réservent les minutes
+gratuites aux automatisations qui servent le projet du dépôt où elles tournent ; un dépôt public presque vide qui ferait
+tourner un projet privé et payant serait risqué. Ce choix réduit le risque sans le supprimer : le kit serveur reste la
+solution de secours.
+
+*Dans le dépôt public (et rien d'autre).*
+- La page compilée du site (`index.html` et `public/` : icônes, polices, `robots.txt`, `version.json`). Elle est déjà
+  visible par tout visiteur, compactée et sans commentaires : aucune exposition en plus.
+- Le relais du site (`api/`, `vercel.json`), mais seulement s'il est neutralisé :
+  - aujourd'hui il contient des adresses de sources (réécriture des liens de documents, redirections `/doc/…`) ;
+  - dans le public, aucune adresse ni aucun nom de source : les adresses d'origine doivent venir de variables Vercel
+    secrètes (c'est le propriétaire qui les met), jamais d'un fichier ;
+  - si c'est impossible à neutraliser proprement, le relais reste dans le privé et on explique l'autre montage au
+    propriétaire.
+- Les fichiers d'automatisation (`.github/workflows`), aux noms d'étapes neutres. Chaque passage :
+  - récupère le code privé avec une clé en lecture seule, rangée dans les secrets GitHub ;
+  - fait le travail ;
+  - publie les données dans le dépôt privé ;
+  - construit et publie la page du site dans le dépôt public.
+- Un README et une LICENSE neutres.
+
+*Jamais dans le dépôt public.*
+- le code non compacté (`web/`) ;
+- les scripts (lecture des documents, calculs, QLAB, contrôles) et les modèles ;
+- les noms et adresses de sources, les données, `seed/` ;
+- `docs/`, `SAUVEGARDES.md`, `PASSATION.md`, `outils/` ;
+- l'historique actuel (le dépôt public part de zéro) ;
+- tout nom de compte, pseudonyme, e-mail, nom du dépôt privé ou du dépôt de secours.
+
+*Journaux et sécurité* (dépôt public = journaux visibles par tous).
+- Rien d'affiché dans les journaux : ni adresse, ni donnée, ni secret, ni nom de source.
+- Aucun fichier de passage public (artifacts, caches).
+- Aucune automatisation lancée par une demande de modification (pull request) d'un inconnu.
+- Clés au minimum de droits (lecture seule pour récupérer le code ; écriture seulement là où il faut publier). Le
+  propriétaire les crée et les range lui-même : ne jamais lui demander de les coller dans la conversation.
+
+*Site.*
+- Une fois privées, les données ne se lisent plus en clair sur GitHub : le relais les lira avec une clé en lecture seule
+  dans les réglages Vercel, et la copie de secours reste branchée comme aujourd'hui.
+- Préparer la bascule pour que le site ne s'arrête jamais.
+- Vérifier que Vercel continue de déployer.
+
+*Avant de commencer.*
+1. Faire d'abord un audit.
+2. Proposer au propriétaire un plan simple, étape par étape, en disant ce qu'il doit faire lui-même : créer le dépôt, les
+   clés, les variables Vercel.
+3. Tester chaque automatisation dans la nouvelle organisation avant d'arrêter l'ancienne. Jamais deux automatisations qui
+   publient la même chose en même temps.
+4. À la fin, vérifier le dépôt public comme le ferait un inconnu : fichiers, journaux, historique. Il ne doit rien révéler.
+
 ## Tâches programmées
 
 - « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
