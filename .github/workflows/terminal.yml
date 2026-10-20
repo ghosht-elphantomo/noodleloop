@@ -276,11 +276,12 @@ jobs:
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # copie complète de ce que Vercel sert depuis main (relais api/, dossier public/ avec lib/ocr) : repère de restauration
           rm -rf /tmp/web && mkdir -p /tmp/web/public /tmp/web/api
           cp vercel.json /tmp/web/vercel.json
-          cp api/data.js /tmp/web/api/data.js
+          cp -r api/. /tmp/web/api/
+          cp -r public/. /tmp/web/public/
           cp index.html /tmp/web/public/index.html
-          cp public/version.json /tmp/web/public/version.json 2>/dev/null || true
           cp deploy/robots.txt /tmp/web/public/robots.txt
           cp web/fonts/LICENSE-NotoSans.txt /tmp/web/public/LICENSE-fonts.txt
           cp web/icons/favicon.ico web/icons/favicon.svg web/icons/apple-touch-icon.png /tmp/web/public/

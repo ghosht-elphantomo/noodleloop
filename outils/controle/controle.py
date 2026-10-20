@@ -147,7 +147,8 @@ def controle_donnees(D, R, maintenant):
         except Exception:  # noqa: BLE001
             fr.append(("orange", f"{nom} : date illisible"))
     R.add("Fraîcheur des données", max((x[0] for x in fr), key=NIV.get, default="vert"),
-          "; ".join(x[1] for x in fr) if fr else f"à jour ({time.strftime('%d/%m/%Y %H:%M', jd)} UTC)")
+          "; ".join(x[1] for x in fr) if fr else "à jour (cours du " + (time.strftime('%d/%m/%Y %H:%M', time.gmtime((J.get("quotes.json") or {}).get("ts")))
+                                                    if num_ok((J.get("quotes.json") or {}).get("ts")) else "—") + " UTC)")
 
     # 3) comptages
     E = J.get("events.json") or []

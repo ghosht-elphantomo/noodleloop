@@ -286,6 +286,29 @@ def verifier(R, D, boc=None):
               ("écart de plus de 5 % (ou saut de plus de 10 %) entre la base et le bulletin, valeur de la base gardée : "
                + _liste([f"{c} {', '.join(str(x) for x in v[-4:])}" for c, v in sorted(dt_.items())])) if dt_ else "aucune")
 
+    # 7 ter. séries quotidiennes en retard sur leur marché (plus de 3 jours ouvrés après la dernière séance la plus récente du même
+    # marché) : source arrêtée sans erreur (S&P 500 et Russell 2000 en octobre 2026, change de la Fed avec dix jours de trou)
+    import datetime as _dt
+    def _bd(a_, b_):
+        a2, b2 = _dt.date(a_ // 10000, a_ // 100 % 100, a_ % 100), _dt.date(b_ // 10000, b_ // 100 % 100, b_ % 100)
+        return sum(1 for i in range(1, (b2 - a2).days + 1) if (a2 + _dt.timedelta(days=i)).weekday() < 5)
+    lastd, ref_m = {}, {}
+    for s in S.get("secs") or []:
+        if s.get("f", "D") != "D" or "(ancien)" in (s.get("n") or "") or s.get("mkt") in ("CRYPTO",):
+            continue
+        x = _jl(D, f"s/{str(s['id']).replace('.', '_')}.json") or {}
+        if x.get("f", "D") == "D" and x.get("d"):
+            lastd[s["id"]] = (s.get("mkt"), x["d"][-1])
+            ref_m[s.get("mkt")] = max(ref_m.get(s.get("mkt"), 0), x["d"][-1])
+            dd_ = x["d"][-10:]  # (trou de plus de 5 jours ouvrés dans les dix derniers points : source arrêtée puis cours du jour accolé)
+            gp_ = max((_bd(dd_[i - 1], dd_[i]) for i in range(1, len(dd_))), default=0)
+            if gp_ > 5 and s.get("mkt") != "BRVM":
+                lastd[s["id"]] = (s.get("mkt"), x["d"][-1], gp_)
+    late = sorted(f"{k} ({v[1] % 100:02d}/{v[1] // 100 % 100:02d})" for k, v in lastd.items() if _bd(v[1], ref_m[v[0]]) > 3)
+    late += sorted(f"{k} (trou de {v[2]} jours ouvrés)" for k, v in lastd.items() if len(v) > 2)
+    R.add("Séries quotidiennes en retard sur leur marché", "orange" if late else "vert",
+          (f"{len(late)} série(s) arrêtée(s) depuis plus de 3 jours ouvrés : " + _liste(late, 15)) if late else f"{len(lastd)} séries à jour")
+
     # 8. valeurs extrêmes à revoir à la main (pas forcément fausses)
     out = []
     for t, s in sorted(by.items()):

@@ -181,6 +181,8 @@ def stats_block(d, c, freq="D", h=None, l=None, v=None, val=None, ann=None):
         except ValueError:
             t1 = e_ - dt.timedelta(days=365)
         i0 = bisect.bisect_right(dd_, t1)
+    # (volatilité « 1 an » seulement si la série couvre l'année entière : un titre coté depuis quelques semaines n'en a pas)
+    full_y = freq != "D" or dd_[0] <= t1
     lr = [math.log(c[i] / c[i - 1]) for i in range(max(1, i0), n) if c[i - 1] > 0 and c[i] > 0]
     mu = sum(lr) / len(lr) if lr else 0
     sd = math.sqrt(sum((x - mu) ** 2 for x in lr) / max(1, len(lr) - 1)) if len(lr) > 2 else 0
@@ -203,7 +205,7 @@ def stats_block(d, c, freq="D", h=None, l=None, v=None, val=None, ann=None):
     peak = max(c)
     return {"last": rnd(last, 4), "prev": rnd(prev, 4), "pct": rnd(last / prev - 1 if prev else 0, 6), "dt": d[-1], "first": d[0], "nobs": n,
             "r1w": rnd(ret(wk), 5) if wk else None, "r1m": rnd(ret(mo), 5), "r3m": rnd(ret(q), 5), "r6m": rnd(ret(h6), 5), "r1y": rnd(ret(yr), 5), "r3y": rnd(ret(y3), 5),
-            "ytd": rnd(last / base - 1, 5) if base else None, "vol": rnd(sd * math.sqrt(per_year), 5), "hi52": rnd(hi, 4), "lo52": rnd(lo, 4),
+            "ytd": rnd(last / base - 1, 5) if base else None, "vol": rnd(sd * math.sqrt(per_year), 5) if full_y else None, "hi52": rnd(hi, 4), "lo52": rnd(lo, 4),
             "sma50": rnd(sma(50), 4) if freq == "D" else None, "sma200": rnd(sma(200), 4) if freq == "D" else None, "rsi": rnd(rsi, 2),
             "ath": rnd(peak, 4), "dd": rnd(last / peak - 1, 5), "spark": [rnd(x, 4) for x in c[-60:]],
             "liq": rnd(sum(val[-63:]) / len(val[-63:]), 0) if val and any(val[-63:]) else (rnd(sum(a * b for a, b in zip(v[-63:], c[-63:])) / len(v[-63:]), 0) if v and any(v[-63:]) else None),
@@ -1564,7 +1566,7 @@ def main():
                 "bnpa": rnd(bnpa_, 2) if bnpa_ else bnpa_, "dps": rnd(ld_tot, 4) if ld_tot else dfund_, "dps_ex": ld.get("exercice"), "dps_pay": ld.get("date_paiement"),
                 "dps_adj": ld.get("ajust"), "pay": pay_, "split": [[e_, k_] for e_, k_ in sorted(SPL.get(t, []))] or None,
                 "per": rnd(last / bnpa_, 2) if bnpa_ and bnpa_ > 0 else None,
-                "yld": rnd(ld_tot / last, 5) if ld_tot and ld_recent else None,
+                "yld": rnd(ld_tot / last, 6) if ld_tot and ld_recent else None,
                 "susp": (status.get(t) or {}).get("statut") == "suspendue", **({"vde": 1} if val_est else {})}
         add(meta, [r[0] for r in rows], [r[4] for r in rows], [r[1] for r in rows], [r[2] for r in rows], [r[3] for r in rows],
             [r[5] for r in rows], [r[6] for r in rows], nd=2)

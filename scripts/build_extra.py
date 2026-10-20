@@ -104,7 +104,7 @@ def ingest(extra, add, have, log):
         b = body("nasdaq", e["id"])
         if not b or e["id"] in have:
             continue
-        add({"id": e["id"], "tk": f"{e['id']} Index", "n": e["n"], "cls": "Index", "typ": "Index", "mkt": "US", "grp": "Indices US", "ccy": "pts", "bench": "SPX"},
+        add({"id": e["id"], "tk": f"{e['id']} Index", "n": e["n"], "cls": "Index", "typ": "Index", "mkt": "US", "grp": "Indices US", "ccy": "pts", "bench": "SPX" if "SPX" in have else "SPY"},  # (S&P 500 quotidien indisponible : référence SPY)
             b["d"], b["c"], b["o"], b["h"], b["l"])
     for s in sorted(info["ndx"]):
         if s in have:
