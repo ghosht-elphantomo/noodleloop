@@ -44,4 +44,4 @@ jobs:
           key: c1-${{ github.run_id }}
           restore-keys: c1-
       - name: Étape 1
-        run: bash "$M/essai.sh"
+        run: bash "$M/etape.sh" E 1

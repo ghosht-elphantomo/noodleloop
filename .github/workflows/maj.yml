@@ -69,26 +69,26 @@ jobs:
           key: c1${{ env.ESSAI == '1' && 'e' || '' }}-${{ github.run_id }}
           restore-keys: c1${{ env.ESSAI == '1' && 'e' || '' }}-
       - name: Étape 1
-        run: bash "$M/maj.sh" prep
+        run: bash "$M/etape.sh" M 1
       - name: Étape 2
-        run: bash "$M/maj.sh" e1
+        run: bash "$M/etape.sh" M 2
       - name: Étape 3
         continue-on-error: true
         env:
           SEC_UA: ${{ secrets.SEC_UA }}
-        run: bash "$M/maj.sh" e2
+        run: bash "$M/etape.sh" M 3
       - name: Étape 4
         continue-on-error: true
         env:
           SEC_UA: ${{ secrets.SEC_UA }}
-        run: bash "$M/maj.sh" e3
+        run: bash "$M/etape.sh" M 4
       - name: Calcul
-        run: bash "$M/maj.sh" calcul
+        run: bash "$M/etape.sh" M 5
       - name: Publication
-        run: bash "$M/maj.sh" pub
+        run: bash "$M/etape.sh" M 6
       - name: Fin
         if: always()
-        run: bash "$M/maj.sh" fin
+        run: bash "$M/etape.sh" M 7
       - uses: actions/cache/save@v6
         if: always()
         with:

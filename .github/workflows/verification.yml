@@ -39,4 +39,4 @@ jobs:
           path: m
           persist-credentials: false
       - name: Étape 1
-        run: mv "$GITHUB_WORKSPACE/m" /tmp/m && bash "$M/controle.sh"
+        run: mv "$GITHUB_WORKSPACE/m" /tmp/m && bash "$M/etape.sh" V 1
