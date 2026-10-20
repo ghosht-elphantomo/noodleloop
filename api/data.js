@@ -49,7 +49,9 @@ const DOC_RW = [
   [/Bulletin officiel de la cote/g, 'Bulletin de la cote'],
   [/"c":"Avis de la BRVM"/g, '"c":"Avis officiel"'],
 ];
-const NEWS_RW = [[/"s":"brvm\.org"/g, '"s":"Publication officielle"'], [/"s":"Sika ?Finance"/gi, '"s":""']];
+const NEWS_RW = [[/"s":"brvm\.org"/g, '"s":"Publication officielle"'], [/"s":"Sika ?Finance"/gi, '"s":""'],
+  // nom de source répété en fin de titre ou d'extrait (résumés Google Actualités)
+  [/("(?:ti|x)":"[^"]*?)(?:\s*[-·|–]\s*|\s+)(?:Sika ?Finance|Richbourse)"/gi, '$1"']];
 const docRw = (t, p) => (p === 'news.json' ? DOC_RW.concat(NEWS_RW) : DOC_RW).reduce((s, [rx, to]) => s.replace(rx, to), t);
 // noms publics de certains fichiers (le site demande l'alias, le relais lit le vrai fichier)
 const ALIAS = { 'oil_w.json': 'eia_wpsr.json' };

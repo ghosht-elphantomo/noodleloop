@@ -2564,6 +2564,16 @@ def run_news(path):
         seen.add(k)
         if u:
             seen_u.add(u)
+        # extrait : nom de la source répété en fin de texte (Google Actualités l'ajoute au résumé) retiré, aussi sur les
+        # dépêches déjà en base ; extrait réduit au titre = vide (20/10/2026 : « … Sika Finance » affiché dans une info-bulle)
+        xt = (x.get("x") or "").strip()
+        if xt:
+            for s_ in sorted({x.get("s") or "", "Sika Finance", "SikaFinance", "Richbourse", "brvm.org"} - {""}, key=len, reverse=True):
+                if xt.lower().endswith(s_.lower()):
+                    xt = xt[:-len(s_)].rstrip(" -·|–")
+            if xt and (xt == x["ti"] or x["ti"].startswith(xt) or xt[:60] in x["ti"]):
+                xt = ""
+        x["x"] = xt
         items.append(x)
     # rétention : les flux BRVM, UEMOA et banques centrales (et les publications officielles) gardent leurs 45 jours (350 au plus) ;
     # les autres flux au plus 120 dépêches chacun ; 1 000 dépêches au total. Avec un plafond global seul (900), les flux de marché
