@@ -557,6 +557,101 @@ def b29(ctx):
     return ("orange" if pb and not pb[0].startswith("clôture") else "rouge", "; ".join(pb)) if pb else ("vert", "clôture du jour réservée à la base du soir" + (f" ; référence mondiale {ref}" if ref else ""))
 
 
+def _ser_us(ctx):
+    """séries quotidiennes des titres US et Taïwan du résumé : {id: série}"""
+    S = jl(ctx["D"], "summary.json") or {}
+    out = {}
+    for x in S.get("secs") or []:
+        if x.get("mkt") in ("US", "TW") and x.get("f", "D") == "D":
+            se = jl(ctx["D"], f"s/{x['id']}.json")
+            if se and se.get("d"):
+                out[x["id"]] = se
+    return out
+
+
+@bug("B30", "2026-10-20", "Liquidité nette de la Fed fausse (unités FRED mélangées)",
+     "Le bilan de la Fed (WALCL) est publié en millions de dollars, le compte du Trésor (TGA) et les prises en pension (RRP) en "
+     "milliards : la liquidité nette mélangeait les deux unités. Depuis le 20/10/2026 : bilan ÷ 1 000 − TGA − RRP, en milliards, "
+     "et valeur écartée si elle sort de ]0 ; bilan[.",
+     "eco.json : dernière liquidité nette strictement positive et inférieure au bilan de la Fed exprimé en milliards")
+def b30(ctx):
+    E = jl(ctx["D"], "eco.json") or {}
+    M = {m.get("id"): m for m in E.get("meta") or []}
+    nl, wa = M.get("NETLIQ"), M.get("WALCL")
+    if not nl or not wa:
+        return "orange", "liquidité nette ou bilan de la Fed absent de eco.json"
+    b = (wa.get("last") or 0) / 1000
+    v = nl.get("last")
+    if v is None or not 0 < v < b:
+        return "rouge", f"liquidité nette {v} Md$ hors de ]0 ; {b:,.1f}[ (bilan de la Fed)".replace(",", " ")
+    return "vert", f"{v:,.1f} Md$ pour un bilan de {b:,.1f} Md$".replace(",", " ")
+
+
+@bug("B31", "2026-10-20", "Séances de week-end et dividendes en tête des séries US",
+     "Des cours datés d'un samedi ou d'un dimanche (relevé après la clôture rattaché au jour du relevé) entraient dans les séries "
+     "US et Taïwan, et les dividendes antérieurs au début d'une série étaient posés sur sa première séance. Corrigé le 20/10/2026.",
+     "séries quotidiennes US et Taïwan : aucune séance un samedi ou un dimanche, aucun dividende sur la première séance de la fenêtre d'historique")
+def b31(ctx):
+    import datetime as _dt
+    we, d0 = [], []
+    L = _ser_us(ctx)
+    # début de la fenêtre commune des séries (coupe de l'historique) : un dividende sur cette séance vient d'avant la série ; une
+    # série qui commence plus tard peut avoir un vrai détachement le jour de sa première cotation (KDP, 10/07/2018)
+    w0 = (collections.Counter(se["d"][0] for se in L.values()).most_common(1) or [(0, 0)])[0][0]
+    for sid, se in L.items():
+        for d in se["d"][-400:]:
+            if _dt.date(d // 10000, d // 100 % 100, d % 100).weekday() >= 5:
+                we.append(f"{sid} {d}")
+                break
+        dv = se.get("div") or []
+        if dv and dv[0] and abs(se["d"][0] - w0) <= 7:
+            d0.append(f"{sid} ({dv[0]:g} le {se['d'][0]})")
+    pb = ([f"{len(we)} série(s) avec une séance de week-end : " + ", ".join(we[:6])] if we else []) + \
+         ([f"{len(d0)} dividende(s) sur la première séance : " + ", ".join(d0[:6])] if d0 else [])
+    if not L:
+        return "orange", "aucune série US ou Taïwan lue"
+    return ("rouge", " ; ".join(pb)) if pb else ("vert", f"{len(L)} séries sans séance de week-end ni dividende en tête")
+
+
+@bug("B32", "2026-10-20", "Bougie du jour incohérente et variation du jour non contrôlée (US, contrats à terme)",
+     "Le cours du jour greffé sur les séries donnait des bougies impossibles (plus haut = plus bas = clôture avec une ouverture hors "
+     "fourchette) ; la variation US venait parfois d'une clôture précédente non confirmée ou d'un cours après Bourse aberrant ; "
+     "après le règlement, les contrats à terme affichaient 0,00 % avec ouverture et plus haut à 0. Corrigé le 20/10/2026.",
+     "dernière bougie de chaque série : plus bas ≤ ouverture, clôture ≤ plus haut ; cotations US et Taïwan : variation conforme à la "
+     "clôture précédente de la série (0,3 point d'écart toléré) ; aucune cotation à 0,00 % avec ouverture ou plus haut à 0")
+def b32(ctx):
+    S = jl(ctx["D"], "summary.json") or {}
+    mk = {x["id"]: x.get("mkt") for x in S.get("secs") or []}
+    bc, pc, zr, n = [], [], [], 0
+    for x in S.get("secs") or []:
+        se = jl(ctx["D"], f"s/{x['id']}.json") or {}
+        if not se.get("d") or se.get("f", "D") != "D" or not all(se.get(k) for k in ("o", "h", "l", "c")):
+            continue
+        o, h, l, c = se["o"][-1], se["h"][-1], se["l"][-1], se["c"][-1]
+        if o and h and l and c:
+            n += 1
+            if not (l <= min(o, c) + 1e-9 and max(o, c) <= h + 1e-9):
+                bc.append(f"{x['id']} {se['d'][-1]} (o {o:g} h {h:g} l {l:g} c {c:g})")
+    Q = (jl(ctx["D"], "quotes.json") or {}).get("q") or {}
+    L = _ser_us(ctx)
+    for sid, q in Q.items():
+        if not isinstance(q, dict):
+            continue
+        if q.get("pct") == 0 and (q.get("o") == 0 or q.get("h") == 0):
+            zr.append(sid)
+        se = L.get(sid)
+        if mk.get(sid) not in ("US", "TW") or not se or q.get("pct") is None or not q.get("last") or not q.get("d"):
+            continue
+        k = int(str(q["d"]).replace("-", ""))
+        prev = next((c for d, c in zip(reversed(se["d"]), reversed(se["c"])) if d < k and c), None)
+        if prev and abs(q["pct"] - (q["last"] / prev - 1)) > 0.003:
+            pc.append(f"{sid} {q['pct'] * 100:+.2f} % pour {(q['last'] / prev - 1) * 100:+.2f} %")
+    pb = ([f"{len(bc)} bougie(s) impossible(s) : " + "; ".join(bc[:5])] if bc else []) + \
+         ([f"{len(pc)} variation(s) US non conformes à la clôture précédente : " + "; ".join(pc[:5])] if pc else []) + \
+         ([f"{len(zr)} cotation(s) à 0,00 % avec ouverture ou plus haut à 0 : " + ", ".join(zr[:8])] if zr else [])
+    return ("rouge", " ; ".join(pb)) if pb else ("vert", f"{n} dernières bougies cohérentes ; variations US conformes")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R
