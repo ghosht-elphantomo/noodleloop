@@ -441,12 +441,38 @@ def b25(ctx):
     bad = []
     for f in ("probe.yml", "archives.yml"):
         try:
-            t = open(os.path.join(DEPOT, ".github", "workflows", f), encoding="utf8").read()
+            t = _auto(f)
         except OSError:
             continue
         if "for d in controle audit" not in t:
             bad.append(f)
     return ("rouge", "dossier controle/ non recopié par " + ", ".join(bad)) if bad else ("vert", "recopié")
+
+
+# automatisations : ancienne organisation (.github/workflows de ce dépôt) ou moteur public + scripts privés (migration du
+# 20/10/2026 : fichiers du moteur dans MOTEUR_DIR, logique dans automatisations/moteur/ de ce dépôt)
+NOUVEAU = {"terminal.yml": ("maj.yml", "maj.sh"), "boc.yml": ("lecture-c.yml", "bulletins.sh"), "dividendes.yml": ("lecture-b.yml", "dividendes.sh"),
+           "comptes.yml": ("lecture-a.yml", "comptes.sh"), "probe.yml": ("outil.yml", "outil.sh"), "archives.yml": ("outil.yml", "outil.sh")}
+
+
+def _moteur():
+    m = os.environ.get("MOTEUR_DIR") or ""
+    return m if m and os.path.exists(os.path.join(m, ".github", "workflows", "maj.yml")) else None
+
+
+def _auto(f):
+    """texte d'une automatisation (nom de l'ancien fichier) : nouveau moteur s'il est fourni, sinon l'ancien fichier ; OSError si absente"""
+    m = _moteur()
+    if m and f in NOUVEAU:
+        y, sh = NOUVEAU[f]
+        t = open(os.path.join(m, ".github", "workflows", y), encoding="utf8").read()
+        for x in (sh, "commun.sh"):
+            t += "\n" + open(os.path.join(DEPOT, "automatisations", "moteur", x), encoding="utf8").read()
+        return t
+    p_ = os.path.join(DEPOT, ".github", "workflows", f)
+    if not os.path.exists(p_):  # (coffre sans moteur fourni : anciennes automatisations rangées sous automatisations/origine/)
+        p_ = os.path.join(DEPOT, "automatisations", "origine", ".github", "workflows", f)
+    return open(p_, encoding="utf8").read()
 
 
 def _web(f):
@@ -501,6 +527,7 @@ def b27(ctx):
         if k not in _web(f):
             pb.append(f"base commune absente de {f}")
     S = jl(ctx["D"], "summary.json") or {}
+    Q = jl(ctx["D"], "quotes.json") or {}
     import bisect
     n = 0
     for s in [x for x in S.get("secs") or [] if x.get("mkt") == "BRVM" and x.get("cls") == "Equity"][:10]:
@@ -509,8 +536,14 @@ def b27(ctx):
         if len(d) < 300 or s.get("ytd") is None:
             continue
         i = bisect.bisect_right(d, (d[-1] // 10000 - 1) * 10000 + 1231) - 1
-        if i >= 0 and abs(c[-1] / c[i] - 1 - s["ytd"]) > .0005:
-            pb.append(f"{s['id']} YTD {c[-1] / c[i] - 1:.4f} / résumé {s['ytd']:.4f}")
+        if i < 0:
+            continue
+        # en séance, les fichiers de séries ne sont pas réécrits (build_terminal.py --live) : la page applique elle-même le cours
+        # du jour (quotes.json) à la série ; le contrôle fait pareil avant de comparer au résumé
+        q_ = (Q.get("q") or {}).get(s["id"]) or {}
+        px = q_.get("last") if isinstance(q_.get("last"), (int, float)) and q_.get("last") else c[-1]
+        if abs(px / c[i] - 1 - s["ytd"]) > .0005:
+            pb.append(f"{s['id']} YTD {px / c[i] - 1:.4f} / résumé {s['ytd']:.4f}")
         n += 1
     return ("rouge", "; ".join(pb[:6])) if pb else ("vert", f"{n} actions : YTD de la page = résumé")
 
@@ -547,9 +580,17 @@ def b28(ctx):
      "référence des capitalisations mondiales datée du soir")
 def b29(ctx):
     pb = []
-    t = open(os.path.join(DEPOT, ".github", "workflows", "terminal.yml"), encoding="utf8").read()
-    if "if: steps.mode.outputs.mode == 'eod' && github.event.schedule == '35 22 * * 1-5'" not in t or t.count("FQT_CLOSE:") < 2:
-        pb.append("clôture du jour non réservée à la base programmée dans terminal.yml")
+    t = _auto("terminal.yml")
+    if _moteur():
+        # moteur d'essai (vers_essai.py) : aucune programmation, « soir » choisi à la main pour comparer avec la base du soir
+        essai_ = 'ESSAI: "1"' in t and "  schedule:" not in t.split("\n#!/bin/bash")[0]
+        ok_ = ('[ "$MODE" = eod ] && [ "$SOIR" = 1 ]' in t and t.count("FQT_CLOSE=$SOIR") >= 2
+               and ("SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}" in t
+                    or (essai_ and "SOIR: ${{ inputs.soir || '0' }}" in t)))
+    else:
+        ok_ = "if: steps.mode.outputs.mode == 'eod' && github.event.schedule == '35 22 * * 1-5'" in t and t.count("FQT_CLOSE:") >= 2
+    if not ok_:
+        pb.append("clôture du jour non réservée à la base programmée dans la mise à jour")
     w = jl(ctx["D"], "world.json") or {}
     ref = str(w.get("ref") or "")
     if ref and not re.match(r"\d{4}-\d{2}-\d{2} (2[2-3]|0[0-1]):", ref):
@@ -665,9 +706,9 @@ def b32(ctx):
 def b33(ctx):
     import datetime as _dt
     pb = []
-    t = open(os.path.join(DEPOT, ".github", "workflows", "terminal.yml"), encoding="utf8").read()
-    if "'terminal-eod'" not in t:
-        pb.append("base programmée sans file propre dans terminal.yml")
+    t = _auto("terminal.yml")
+    if "'terminal-eod'" not in t and "'maj-soir'" not in t:
+        pb.append("base programmée sans file propre dans la mise à jour")
     x = jl(ctx["D"], "s/BRVMC.json") or {}
     d = x.get("d") or []
     try:
@@ -691,15 +732,28 @@ def b33(ctx):
      "présentes dans terminal.yml, boc.yml, dividendes.yml et comptes.yml")
 def b34(ctx):
     pb = []
-    for f, m in (("terminal.yml", "publication refusée"), ("boc.yml", "publication refusée"), ("dividendes.yml", "publication refusée"),
-                 ("comptes.yml", "publication refusée"), ("terminal.yml", "présente mais illisible")):
-        try:
-            if m not in open(os.path.join(DEPOT, ".github", "workflows", f), encoding="utf8").read():
-                pb.append(f"{f} sans « {m} »")
-        except OSError:
-            pass
-    if "elif git fetch -q --depth 1 origin site" in open(os.path.join(DEPOT, ".github", "workflows", "terminal.yml"), encoding="utf8").read():
-        pb.append("terminal.yml reprend encore la branche site")
+    if _moteur():
+        # moteur : refus à plus de 10 % de fichiers perdus (publier() de commun.sh, et raw dans maj.sh), lecture arrêtée si illisible
+        for f, ms in (("terminal.yml", ("$((N1 * 10)) -lt $((N0 * 9))", "lecture impossible")), ("boc.yml", ('"$n0"', "$((n1 * 10)) -lt $((n0 * 9))")),
+                      ("dividendes.yml", ('"$n0"', "$((n1 * 10)) -lt $((n0 * 9))")), ("comptes.yml", ("cpt_n0", "$((n1 * 10)) -lt $((n0 * 9))"))):
+            try:
+                t = _auto(f)
+            except OSError:
+                pb.append(f"{NOUVEAU[f][1]} absent")
+                continue
+            pb += [f"{NOUVEAU[f][1]} sans « {m} »" for m in ms if m not in t]
+        if "origin site" in _auto("terminal.yml"):
+            pb.append("la mise à jour reprend encore la branche site")
+    else:
+        for f, m in (("terminal.yml", "publication refusée"), ("boc.yml", "publication refusée"), ("dividendes.yml", "publication refusée"),
+                     ("comptes.yml", "publication refusée"), ("terminal.yml", "présente mais illisible")):
+            try:
+                if m not in _auto(f):
+                    pb.append(f"{f} sans « {m} »")
+            except OSError:
+                pass
+        if "elif git fetch -q --depth 1 origin site" in _auto("terminal.yml"):
+            pb.append("terminal.yml reprend encore la branche site")
     B, RB = ctx.get("branches") or {}, ctx.get("ref_branches") or {}
     for b, v in sorted(B.items()):
         r = RB.get(b) or {}
@@ -726,8 +780,10 @@ def b35(ctx):
     if an is None:
         return "vert", "non vérifié ici (seulement dans le contrôle de GitHub)"
     an = [a for a in an if isinstance(a, dict)]
-    to = sum(1 for a in an if "exit code 124" in (a.get("message") or ""))
-    rf = [a for a in an if (a.get("titre") or "").startswith(("Publication refusée", "Branche raw", "Restauration"))]
+    to = sum(1 for a in an if re.search(r"(?:exit )?code 124\b", a.get("message") or ""))
+    # (moteur : messages neutres sans titre, « publication refusée », « lecture impossible (…) »)
+    rf = [a for a in an if (a.get("titre") or "").startswith(("Publication refusée", "Branche raw", "Restauration"))
+          or (a.get("message") or "").startswith(("publication refusée", "publication 1 refusée", "lecture impossible", "préparation : contenu incomplet"))]
     src = collections.Counter((a.get("message") or "").split(" :", 1)[0] for a in an if a.get("titre") == "Source en échec")
     lent = collections.Counter((a.get("message") or "").split(" :", 1)[0] for a in an if a.get("titre") == "Étape lente")
     pb = ([f"{len(rf)} refus ou restauration en échec : " + "; ".join((a.get("message") or "")[:90] for a in rf[:3])] if rf else []) + \
