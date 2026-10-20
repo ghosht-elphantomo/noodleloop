@@ -101,6 +101,13 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
   SDCC, TTLS, ONTBF ; BNPA du bulletin gardé dans « bnpa_bul ») ; réglages de fluidité désactivés par défaut, au choix de
   l'utilisateur ; retenues Burkina et Bénin : « taux constaté sur les documents officiels » demandé, mais les avis ne donnent
   que le net (brut introuvable) : question posée au propriétaire.
+- **Demandes du propriétaire du 20/10 (matin), faites** : graphiques, échelle des prix étirée ou resserrée en la tirant (souris
+  et doigt, double-clic = automatique, `chart.js`) ; GP ne s'étire plus tout seul sur iPhone (B51) ; tableaux, ligne suivie
+  (survol ou toucher), colonne suivie et première colonne figée dans les matrices (CORR) ; info-bulle et menus à la bonne place
+  quand l'interface est agrandie (B52) ; UEMOA, donnée de plus de dix ans affichée « — » (dette de la Côte d'Ivoire de 1995,
+  B50) ; retenues du Burkina (12,5 %) et du Bénin (5 %) au taux du code des impôts, marquées « à vérifier » (les avis ne
+  donnent que le net). EVTS vérifié à jour (dernier avis de la BRVM le 15/10, dernière publication de société le 16/10).
+- **Agents** : le propriétaire décide seul de leur emploi (consommation) ; par défaut, travail sans agent.
 - **Reste de l'audit** :
   - Dates d'effet listées à plus de 5 jours du palier du bulletin (CFAC ×100 13/11 → 19/12/2017, SAFC ×25, SEMC ×40) :
     signalées chaque matin (« Historique / bulletins : dates d'effet »), à corriger sur document.
