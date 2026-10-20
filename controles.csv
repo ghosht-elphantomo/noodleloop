@@ -272,4 +272,3 @@ dividendes.csv,SLBC,2012,avis_different_bulletin,avis 549 FCFA ; bulletin 10980 
 dividendes.csv,SLBC,2023,dates_incoherentes,détachement 2024-09-12 après paiement 2024-08-14
 dividendes.csv,TTLC,2012,avis_different_bulletin,avis 72 FCFA ; bulletin 1440 FCFA
 dividendes.csv,UNXC,2012,avis_different_bulletin,avis 33.84 FCFA ; bulletin 169.2 FCFA
-resultats.csv,SCRC,2019,bnpa_signe_oppose,résultat net -5339 ; BNPA 272.43

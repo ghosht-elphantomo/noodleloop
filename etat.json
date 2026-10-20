@@ -1,7 +1,7 @@
 {
  "version": 1,
- "maj": "2026-10-18T14:05:43Z",
- "derniere_seance": "2026-10-16",
+ "maj": "2026-10-20T00:10:28Z",
+ "derniere_seance": "2026-10-19",
  "fichiers": {
   "cours/2013.csv": {
    "lignes": 36,
@@ -69,13 +69,13 @@
    "corrigees": 0
   },
   "cours/2026.csv": {
-   "lignes": 9270,
-   "ajoutees": 0,
+   "lignes": 9318,
+   "ajoutees": 48,
    "corrigees": 0
   },
   "indices.csv": {
-   "lignes": 40606,
-   "ajoutees": 0,
+   "lignes": 40646,
+   "ajoutees": 40,
    "corrigees": 0
   },
   "dividendes.csv": {
@@ -89,19 +89,19 @@
    "corrigees": 0
   },
   "evenements.csv": {
-   "lignes": 7291,
-   "ajoutees": 0,
+   "lignes": 7295,
+   "ajoutees": 4,
    "corrigees": 0
   },
   "resultats.csv": {
-   "lignes": 920,
-   "ajoutees": 1,
-   "corrigees": 121
+   "lignes": 934,
+   "ajoutees": 14,
+   "corrigees": 24
   },
   "etats_financiers.csv": {
-   "lignes": 23344,
-   "ajoutees": 717,
-   "corrigees": 196
+   "lignes": 23751,
+   "ajoutees": 407,
+   "corrigees": 110
   },
   "flottant.csv": {
    "lignes": 46,
@@ -134,7 +134,7 @@
   "2023": 10542,
   "2024": 11033,
   "2025": 11575,
-  "2026": 9274
+  "2026": 9322
  },
  "bulletins_identiques_ecartes": [
   "2020-10-29"
@@ -164,8 +164,8 @@
   "2026-10-09 SNTS",
   "2026-10-15 SNTS"
  ],
- "corrections_total": 9252,
- "corrections_du_jour": 219,
+ "corrections_total": 9387,
+ "corrections_du_jour": 135,
  "controles": {
   "precedent_different": 193,
   "variation_hors_seuil": 22,
@@ -174,7 +174,6 @@
   "cloture_absente": 1,
   "prix_moyen_hors_fourchette": 1,
   "avis_different_bulletin": 13,
-  "dates_incoherentes": 1,
-  "bnpa_signe_oppose": 1
+  "dates_incoherentes": 1
  }
 }

@@ -1369,6 +1369,7 @@ date,titre,categorie,intitule,date_effet,operation_sur_titre,document
 2012-07-05,ETIT,Communiqué société,COMMUNIQUE - ECOBANK TG - Exercice 2012 (Augmentation de capital 1),2012-07-05,0,https://www.brvm.org/sites/default/files/20120705_-_cm_-_ecobank_tg_-_exercice_2012_augmentation_de_capital_1.pdf
 2012-07-05,ETIT,Communiqué société,COMMUNIQUE - ECOBANK TG - Exercice 2012 (Augmentation de capital 2),2012-07-05,0,https://www.brvm.org/sites/default/files/20120705_-_cm_-_ecobank_tg_-_exercice_2012_augmentation_de_capital_2.pdf
 2012-07-05,SOGC,Publication société,Rapport premier trimestre - SOGB CI - Exercice 2012,2012-07-05,0,https://www.brvm.org/sites/default/files/20120705_-_rt1_-_sogb_ci_-_exercice_2012.pdf
+2012-07-11,SGBC,Rapport d'activité,Commentaires sur activités annuelles - SGB CI - Exercice 2011,2012-07-11,0,https://www.brvm.org/sites/default/files/20120711_-_caa_-_sgb_ci_-_exercice_2011.pdf
 2012-07-11,SGBC,États financiers,Etats financiers approuvés - SGB CI - Exercice 2011,2012-07-11,0,https://www.brvm.org/sites/default/files/20120711_-_efa_-_sgb_ci_-_exercice_2011.pdf
 2012-07-11,SMBC,Rapport d'activité,Commentaires sur activités annuelles - SGB CI - Exercice 2011,2012-07-11,0,https://www.brvm.org/sites/default/files/20120711_-_caa_-_sgb_ci_-_exercice_2011.pdf
 2012-07-19,ABJC,États financiers,Etats financiers approuvés - SERVAIR ABIDJAN CI - Exercice 2011,2012-07-19,0,https://www.brvm.org/sites/default/files/20120719_-_efa_-_servair_abidjan_ci_-_exercice_2011.pdf
@@ -7290,3 +7291,6 @@ date,titre,categorie,intitule,date_effet,operation_sur_titre,document
 2026-10-14,MARCHE,Avis de la BRVM,"GREEN BOND SWAMI AGRI 7,00 % 2026-2031 : Première cotation",2026-10-14,0,https://www.brvm.org/sites/default/files/20261014_-_avis_ndeg306_brvmdg_-_premiere_cotation_-_green_bond_swami_agri_700_2026-2031_swas.o1.pdf
 2026-10-15,BOAN,Notation financière,BOA NG : Notation Financière,2026-10-15,0,https://www.brvm.org/sites/default/files/20261014_-_notation_financiere_-_boa_ng.pdf
 2026-10-15,MARCHE,Avis de la BRVM,Avis : Transactions Sur Dossier,2026-10-15,0,https://www.brvm.org/sites/default/files/20261015_-_avis_ndeg307_brvmdg_-_transaction_sur_dossier.pdf
+2026-10-16,ABJC,Rapport d'activité,SERVAIR ABIDJAN CI - Rapport d'activités - 3e trimestre 2026,2026-10-16,0,https://www.brvm.org/sites/default/files/20261016_-_rapport_dactivites_-_3e_trimestre_2026_-_servair_abidjan_ci.pdf
+2026-10-16,ABJC,Rapport d'activité,SERVAIR ABIDJAN CI : Rapport d'activités - 1er semestre 2026,2026-10-16,0,https://www.brvm.org/sites/default/files/20261016_-_rapport_dactivites_-_1er_semestre_2026_-_servair_abidjan_ci.pdf
+2026-10-16,ABJC,Rapport des commissaires,SERVAIR ABIDJAN CI : Attestation des Commissaires Aux Comptes sur le rapport d'activités - 1er semestre 2026,2026-10-16,0,https://www.brvm.org/sites/default/files/20261016_-_attestation_des_commissaires_aux_comptes_sur_le_rapport_dactivites_-_1er_semestre_2026_-_servair_abidjan_ci.pdf

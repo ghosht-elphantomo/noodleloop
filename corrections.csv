@@ -9251,3 +9251,138 @@ constate_le,fichier,cle,champ,ancienne_valeur,nouvelle_valeur
 2026-10-18,resultats.csv,STBC | 2023,tresorerie,6779,7179.1
 2026-10-18,resultats.csv,TTLC | 2021,tresorerie,8877,2145
 2026-10-18,resultats.csv,TTLC | 2022,dette_nette,-836,12623
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_caisse,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_charges_generales,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_commissions_charges,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_commissions_produits,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_cout_risque,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_creances_clientele,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_dettes_clientele,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_effets_publics,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_interets_charges,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_interets_produits,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_pnb,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_rbe,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | b_titres_placement,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | capital,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | capitaux_propres,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | ecart_reevaluation,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | immo_corp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | immo_incorp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | impots_resultat,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | provisions_reglementees,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | report_nouveau,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | reserves,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | resultat_avant_impot,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | resultat_bilan,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | resultat_exploitation,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | resultat_net,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | total_actif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,BOAB | 2018 | total_passif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_caisse,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_charges_generales,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_commissions_charges,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_commissions_produits,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_creances_clientele,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_dettes_clientele,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_effets_publics,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_interets_produits,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | b_titres_placement,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | capital,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | capitaux_propres,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | ecart_reevaluation,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | immo_corp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | immo_incorp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | provisions_reglementees,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | report_nouveau,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | reserves,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | total_actif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,CBIBF | 2021 | total_passif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,ONTBF | 2017 | rao,documents_concordants,3,2
+2026-10-20,etats_financiers.csv,ONTBF | 2017 | rao,valeur,41167,41167.406
+2026-10-20,etats_financiers.csv,SCRC | 2024 | actif_circulant,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | actif_immobilise,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | cafg,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | capex_corp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | capex_incorp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | capital,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | capitaux_propres,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | charges_personnel,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | chiffre_affaires,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | clients,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | dotations,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | ebe,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | flux_financement,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | flux_investissement,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | flux_operationnels,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | frais_financiers,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | impots_resultat,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | marge_commerciale,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | passif_circulant,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | primes_reserves,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | produits_accessoires,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | rao,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | report_nouveau,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | ressources_stables,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | resultat_bilan,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | resultat_exploitation,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | resultat_financier,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | resultat_net,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | revenus_financiers,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | rhao,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | stocks,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | total_actif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | total_passif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | tresorerie_actif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | tresorerie_passif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | valeur_ajoutee,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | variation_tresorerie,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SCRC | 2024 | ventes_produits,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | autres_cp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | capital,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | charges_immobilisees,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | dettes_financieres,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | immo_corp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | immo_fin,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | immo_incorp,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | impots_resultat,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | primes_reserves,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | rao,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | resultat_bilan,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | resultat_exploitation,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | resultat_financier,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | resultat_net,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | rhao,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | stocks,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | total_actif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | total_passif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | tresorerie_actif,documents_concordants,1,2
+2026-10-20,etats_financiers.csv,SHEC | 2016 | tresorerie_passif,documents_concordants,1,2
+2026-10-20,resultats.csv,ABJC | 2021,bnpa,87.37,61.4
+2026-10-20,resultats.csv,BOAM | 2015,bnpa,461,307.33
+2026-10-20,resultats.csv,BOAM | 2015,dividende,290,193.33
+2026-10-20,resultats.csv,BOAM | 2016,bnpa,609,406
+2026-10-20,resultats.csv,BOAM | 2016,dividende,372,248
+2026-10-20,resultats.csv,BOAM | 2017,bnpa,275.88,183.92
+2026-10-20,resultats.csv,BOAM | 2017,dividende,290,193.33
+2026-10-20,resultats.csv,BOAM | 2018,bnpa,410,273.33
+2026-10-20,resultats.csv,BOAM | 2018,dividende,271,180.67
+2026-10-20,resultats.csv,ETIT | 2021,capitaux_propres,1271759.2,1302568.1
+2026-10-20,resultats.csv,ETIT | 2021,chiffre_affaires,1032255.7,1057262.5
+2026-10-20,resultats.csv,ETIT | 2021,ebit,296350.9,303530.1
+2026-10-20,resultats.csv,ETIT | 2021,resultat_net,209990.4,215077.5
+2026-10-20,resultats.csv,ETIT | 2021,total_bilan,16195474.9,16587817.1
+2026-10-20,resultats.csv,ETIT | 2022,capitaux_propres,1242010.9,1219940.7
+2026-10-20,resultats.csv,ETIT | 2022,chiffre_affaires,1140777,1120505.8
+2026-10-20,resultats.csv,ETIT | 2022,ebit,351308.2,345065.5
+2026-10-20,resultats.csv,ETIT | 2022,resultat_net,224682.2,220689.7
+2026-10-20,resultats.csv,ETIT | 2022,total_bilan,17771695.5,17455898.1
+2026-10-20,resultats.csv,ORGT | 2018,bnpa,428.92,179.95
+2026-10-20,resultats.csv,SCRC | 2019,bnpa,272.43,-272.43
+2026-10-20,resultats.csv,SHEC | 2016,chiffre_affaires,271009,271008.6
+2026-10-20,resultats.csv,SHEC | 2016,ebitda,7.1,7068.4
+2026-10-20,resultats.csv,UNLC | 2020,bnpa,-2866,-262.38

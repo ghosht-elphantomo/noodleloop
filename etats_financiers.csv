@@ -737,6 +737,7 @@ BNBC,2007,social,syscohada,actif_circulant,Actif circulant,13256.244,2
 BNBC,2007,social,syscohada,actif_immobilise,Actif immobilisé,1964.129,2
 BNBC,2007,social,syscohada,autres_cp,Autres capitaux propres,109.204,2
 BNBC,2007,social,syscohada,capital,Capital,1656,2
+BNBC,2007,social,syscohada,capitaux_propres,Capitaux propres,8022.774,2
 BNBC,2007,social,syscohada,charges_personnel,Charges de personnel,1224.644,2
 BNBC,2007,social,syscohada,chiffre_affaires,Chiffre d'affaires,18688.274,2
 BNBC,2007,social,syscohada,clients,Clients,2985.134,2
@@ -1741,36 +1742,64 @@ BOAB,2017,social,syscohada,subventions,Subventions d'investissement,0,1
 BOAB,2017,social,syscohada,total_actif,Total actif,974543.764,1
 BOAB,2017,social,syscohada,total_passif,Total passif,974543.764,1
 BOAB,2017,social,syscohada,ventes_marchandises,Ventes de marchandises,0,1
-BOAB,2018,social,syscohada,b_caisse,"Caisse, banque centrale",17320.187,1
-BOAB,2018,social,syscohada,b_charges_generales,Charges générales d'exploitation,19871.2,1
-BOAB,2018,social,syscohada,b_commissions_charges,Commissions (charges),670.39,1
-BOAB,2018,social,syscohada,b_commissions_produits,Commissions (produits),7470.864,1
-BOAB,2018,social,syscohada,b_cout_risque,Coût du risque,-3569.557,1
-BOAB,2018,social,syscohada,b_creances_clientele,Créances sur la clientèle,423894.704,1
-BOAB,2018,social,syscohada,b_creances_interbancaires,Créances interbancaires,35370.857,1
-BOAB,2018,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,579128.724,1
-BOAB,2018,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,174926.222,1
-BOAB,2018,social,syscohada,b_effets_publics,Effets publics,259430.448,1
-BOAB,2018,social,syscohada,b_interets_charges,Intérêts et charges assimilées,24361.625,1
-BOAB,2018,social,syscohada,b_interets_produits,Intérêts et produits assimilés,53114.428,1
-BOAB,2018,social,syscohada,b_pnb,Produit net bancaire,39386.955,1
-BOAB,2018,social,syscohada,b_rbe,Résultat brut d'exploitation,16858.138,1
-BOAB,2018,social,syscohada,b_titres_placement,Titres de placement,44516.219,1
-BOAB,2018,social,syscohada,capital,Capital,20280.524,1
-BOAB,2018,social,syscohada,capitaux_propres,Capitaux propres,79714.323,1
-BOAB,2018,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,1
-BOAB,2018,social,syscohada,immo_corp,Immobilisations corporelles,22217.595,1
-BOAB,2018,social,syscohada,immo_incorp,Immobilisations incorporelles,3531.749,1
-BOAB,2018,social,syscohada,impots_resultat,Impôts sur le résultat,600.096,1
-BOAB,2018,social,syscohada,provisions_reglementees,Provisions réglementées,0,1
-BOAB,2018,social,syscohada,report_nouveau,Report à nouveau,608.681,1
-BOAB,2018,social,syscohada,reserves,Réserves,45497.682,1
-BOAB,2018,social,syscohada,resultat_avant_impot,Résultat avant impôt,13324.127,1
-BOAB,2018,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),12724.031,1
-BOAB,2018,social,syscohada,resultat_exploitation,Résultat d'exploitation,13288.581,1
-BOAB,2018,social,syscohada,resultat_net,Résultat net,12724.031,1
-BOAB,2018,social,syscohada,total_actif,Total actif,861015.005,1
-BOAB,2018,social,syscohada,total_passif,Total passif,861015.005,1
+BOAB,2018,social,syscohada,b_caisse,"Caisse, banque centrale",17320.187,2
+BOAB,2018,social,syscohada,b_charges_generales,Charges générales d'exploitation,19871.2,2
+BOAB,2018,social,syscohada,b_commissions_charges,Commissions (charges),670.39,2
+BOAB,2018,social,syscohada,b_commissions_produits,Commissions (produits),7470.864,2
+BOAB,2018,social,syscohada,b_cout_risque,Coût du risque,-3569.557,2
+BOAB,2018,social,syscohada,b_creances_clientele,Créances sur la clientèle,423894.704,2
+BOAB,2018,social,syscohada,b_creances_interbancaires,Créances interbancaires,35370.857,2
+BOAB,2018,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,579128.724,2
+BOAB,2018,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,174926.222,2
+BOAB,2018,social,syscohada,b_effets_publics,Effets publics,259430.448,2
+BOAB,2018,social,syscohada,b_interets_charges,Intérêts et charges assimilées,24361.625,2
+BOAB,2018,social,syscohada,b_interets_produits,Intérêts et produits assimilés,53114.428,2
+BOAB,2018,social,syscohada,b_pnb,Produit net bancaire,39386.955,2
+BOAB,2018,social,syscohada,b_rbe,Résultat brut d'exploitation,16858.138,2
+BOAB,2018,social,syscohada,b_titres_placement,Titres de placement,44516.219,2
+BOAB,2018,social,syscohada,capital,Capital,20280.524,2
+BOAB,2018,social,syscohada,capitaux_propres,Capitaux propres,79714.323,2
+BOAB,2018,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,2
+BOAB,2018,social,syscohada,immo_corp,Immobilisations corporelles,22217.595,2
+BOAB,2018,social,syscohada,immo_incorp,Immobilisations incorporelles,3531.749,2
+BOAB,2018,social,syscohada,impots_resultat,Impôts sur le résultat,600.096,2
+BOAB,2018,social,syscohada,provisions_reglementees,Provisions réglementées,0,2
+BOAB,2018,social,syscohada,report_nouveau,Report à nouveau,608.681,2
+BOAB,2018,social,syscohada,reserves,Réserves,45497.682,2
+BOAB,2018,social,syscohada,resultat_avant_impot,Résultat avant impôt,13324.127,2
+BOAB,2018,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),12724.031,2
+BOAB,2018,social,syscohada,resultat_exploitation,Résultat d'exploitation,13288.581,2
+BOAB,2018,social,syscohada,resultat_net,Résultat net,12724.031,2
+BOAB,2018,social,syscohada,total_actif,Total actif,861015.005,2
+BOAB,2018,social,syscohada,total_passif,Total passif,861015.005,2
+BOAB,2019,social,syscohada,b_caisse,"Caisse, banque centrale",46977.139,1
+BOAB,2019,social,syscohada,b_commissions_charges,Commissions (charges),439.269,1
+BOAB,2019,social,syscohada,b_commissions_produits,Commissions (produits),7103.911,1
+BOAB,2019,social,syscohada,b_cout_risque,Coût du risque,-2820.351,1
+BOAB,2019,social,syscohada,b_creances_clientele,Créances sur la clientèle,437028.787,1
+BOAB,2019,social,syscohada,b_creances_interbancaires,Créances interbancaires,34552.646,1
+BOAB,2019,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,186028.352,1
+BOAB,2019,social,syscohada,b_effets_publics,Effets publics,285682.176,1
+BOAB,2019,social,syscohada,b_interets_charges,Intérêts et charges assimilées,23702.811,1
+BOAB,2019,social,syscohada,b_interets_produits,Intérêts et produits assimilés,54640.737,1
+BOAB,2019,social,syscohada,b_pnb,Produit net bancaire,41388.12,1
+BOAB,2019,social,syscohada,b_rbe,Résultat brut d'exploitation,18698.074,1
+BOAB,2019,social,syscohada,b_titres_placement,Titres de placement,30757.151,1
+BOAB,2019,social,syscohada,capital,Capital,20280.524,1
+BOAB,2019,social,syscohada,capitaux_propres,Capitaux propres,85833.359,1
+BOAB,2019,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,1
+BOAB,2019,social,syscohada,immo_corp,Immobilisations corporelles,26222.414,1
+BOAB,2019,social,syscohada,immo_incorp,Immobilisations incorporelles,3322.604,1
+BOAB,2019,social,syscohada,impots_resultat,Impôts sur le résultat,886.649,1
+BOAB,2019,social,syscohada,provisions_reglementees,Provisions réglementées,0,1
+BOAB,2019,social,syscohada,report_nouveau,Report à nouveau,541.237,1
+BOAB,2019,social,syscohada,reserves,Réserves,49406.287,1
+BOAB,2019,social,syscohada,resultat_avant_impot,Résultat avant impôt,15888.554,1
+BOAB,2019,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),15001.906,1
+BOAB,2019,social,syscohada,resultat_exploitation,Résultat d'exploitation,15877.723,1
+BOAB,2019,social,syscohada,resultat_net,Résultat net,15001.906,1
+BOAB,2019,social,syscohada,total_actif,Total actif,920808.411,1
+BOAB,2019,social,syscohada,total_passif,Total passif,920808.411,1
 BOAB,2020,social,syscohada,b_caisse,"Caisse, banque centrale",71381.397,1
 BOAB,2020,social,syscohada,b_charges_generales,Charges générales d'exploitation,22932.427,1
 BOAB,2020,social,syscohada,b_commissions_charges,Commissions (charges),400.589,1
@@ -3566,6 +3595,7 @@ CABC,2004,social,syscohada,marge_commerciale,Marge commerciale,346.421,1
 CABC,2004,social,syscohada,primes_reserves,Primes et réserves,2591.275,1
 CABC,2004,social,syscohada,produits_accessoires,Produits accessoires,0.18,1
 CABC,2004,social,syscohada,provisions_reglementees,Provisions réglementées,81.031,1
+CABC,2004,social,syscohada,rao,Résultat des activités ordinaires,35.745,1
 CABC,2004,social,syscohada,report_nouveau,Report à nouveau,2067.727,1
 CABC,2004,social,syscohada,reserves_indisponibles,Réserves indisponibles,148,1
 CABC,2004,social,syscohada,reserves_libres,Réserves libres,375.548,1
@@ -3606,6 +3636,7 @@ CABC,2005,social,syscohada,marge_commerciale,Marge commerciale,285.072,2
 CABC,2005,social,syscohada,primes_reserves,Primes et réserves,2507.765,2
 CABC,2005,social,syscohada,produits_accessoires,Produits accessoires,3.285,2
 CABC,2005,social,syscohada,provisions_reglementees,Provisions réglementées,127.969,2
+CABC,2005,social,syscohada,rao,Résultat des activités ordinaires,-192.563,2
 CABC,2005,social,syscohada,report_nouveau,Report à nouveau,-1984.218,2
 CABC,2005,social,syscohada,reserves_indisponibles,Réserves indisponibles,148,2
 CABC,2005,social,syscohada,reserves_libres,Réserves libres,375.548,2
@@ -3884,6 +3915,7 @@ CABC,2017,social,syscohada,immo_fin,Immobilisations financières,39.471,2
 CABC,2017,social,syscohada,impots_resultat,Impôts sur le résultat,298.159,2
 CABC,2017,social,syscohada,marge_commerciale,Marge commerciale,797.385,2
 CABC,2017,social,syscohada,primes_reserves,Primes et réserves,4094.009,2
+CABC,2017,social,syscohada,rao,Résultat des activités ordinaires,1357.681,2
 CABC,2017,social,syscohada,resultat_exploitation,Résultat d'exploitation,1353.23,2
 CABC,2017,social,syscohada,resultat_financier,Résultat financier,4.451,2
 CABC,2017,social,syscohada,resultat_net,Résultat net,980.206,2
@@ -3905,6 +3937,7 @@ CABC,2018,social,syscohada,immo_fin,Immobilisations financières,39.471,2
 CABC,2018,social,syscohada,impots_resultat,Impôts sur le résultat,160.627,2
 CABC,2018,social,syscohada,marge_commerciale,Marge commerciale,960.259,2
 CABC,2018,social,syscohada,primes_reserves,Primes et réserves,4416.444,2
+CABC,2018,social,syscohada,rao,Résultat des activités ordinaires,608.894,2
 CABC,2018,social,syscohada,resultat_exploitation,Résultat d'exploitation,607.549,2
 CABC,2018,social,syscohada,resultat_financier,Résultat financier,1.345,2
 CABC,2018,social,syscohada,resultat_net,Résultat net,762.72,2
@@ -4043,6 +4076,7 @@ CABC,2021,social,syscohada,immo_fin,Immobilisations financières,46.582,2
 CABC,2021,social,syscohada,impots_resultat,Impôts sur le résultat,696.409,2
 CABC,2021,social,syscohada,marge_commerciale,Marge commerciale,1652.152,2
 CABC,2021,social,syscohada,primes_reserves,Primes et réserves,5122.263,2
+CABC,2021,social,syscohada,rao,Résultat des activités ordinaires,736.576,2
 CABC,2021,social,syscohada,resultat_exploitation,Résultat d'exploitation,628.13,2
 CABC,2021,social,syscohada,resultat_financier,Résultat financier,108.446,2
 CABC,2021,social,syscohada,resultat_net,Résultat net,40.095,2
@@ -4184,6 +4218,7 @@ CABC,2024,social,syscohada,immo_fin,Immobilisations financières,46.582,2
 CABC,2024,social,syscohada,impots_resultat,Impôts sur le résultat,655.907,2
 CABC,2024,social,syscohada,marge_commerciale,Marge commerciale,1315.885,2
 CABC,2024,social,syscohada,primes_reserves,Primes et réserves,6074.618,2
+CABC,2024,social,syscohada,rao,Résultat des activités ordinaires,1873.235,2
 CABC,2024,social,syscohada,resultat_exploitation,Résultat d'exploitation,1784.87,2
 CABC,2024,social,syscohada,resultat_financier,Résultat financier,88.365,2
 CABC,2024,social,syscohada,resultat_net,Résultat net,1224.828,2
@@ -4202,6 +4237,7 @@ CABC,2025,social,syscohada,immo_fin,Immobilisations financières,58.558,1
 CABC,2025,social,syscohada,impots_resultat,Impôts sur le résultat,634.384,1
 CABC,2025,social,syscohada,marge_commerciale,Marge commerciale,1263.035,1
 CABC,2025,social,syscohada,primes_reserves,Primes et réserves,6541.094,1
+CABC,2025,social,syscohada,rao,Résultat des activités ordinaires,2333.055,1
 CABC,2025,social,syscohada,resultat_exploitation,Résultat d'exploitation,2264.408,1
 CABC,2025,social,syscohada,resultat_financier,Résultat financier,68.647,1
 CABC,2025,social,syscohada,resultat_net,Résultat net,1704.451,1
@@ -4211,27 +4247,129 @@ CABC,2025,social,syscohada,total_passif,Total passif,21455.051,1
 CABC,2025,social,syscohada,tresorerie_actif,Trésorerie actif,5138.76,1
 CABC,2025,social,syscohada,valeur_ajoutee,Valeur ajoutée,3472.447,1
 CABC,2025,social,syscohada,variation_tresorerie,Variation de la trésorerie,-1725.806,1
-CBIBF,2021,social,syscohada,b_caisse,"Caisse, banque centrale",47633,1
-CBIBF,2021,social,syscohada,b_charges_generales,Charges générales d'exploitation,29336,1
-CBIBF,2021,social,syscohada,b_commissions_charges,Commissions (charges),5360,1
-CBIBF,2021,social,syscohada,b_commissions_produits,Commissions (produits),23588,1
-CBIBF,2021,social,syscohada,b_creances_clientele,Créances sur la clientèle,943761,1
-CBIBF,2021,social,syscohada,b_creances_interbancaires,Créances interbancaires,85409,1
-CBIBF,2021,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,1238527,1
-CBIBF,2021,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,488235,1
-CBIBF,2021,social,syscohada,b_effets_publics,Effets publics,81000,1
-CBIBF,2021,social,syscohada,b_interets_produits,Intérêts et produits assimilés,107097,1
-CBIBF,2021,social,syscohada,b_titres_placement,Titres de placement,706179,1
-CBIBF,2021,social,syscohada,capital,Capital,32000,1
-CBIBF,2021,social,syscohada,capitaux_propres,Capitaux propres,189815,1
-CBIBF,2021,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,1
-CBIBF,2021,social,syscohada,immo_corp,Immobilisations corporelles,41950,1
-CBIBF,2021,social,syscohada,immo_incorp,Immobilisations incorporelles,395,1
-CBIBF,2021,social,syscohada,provisions_reglementees,Provisions réglementées,0,1
-CBIBF,2021,social,syscohada,report_nouveau,Report à nouveau,25198,1
-CBIBF,2021,social,syscohada,reserves,Réserves,55568,1
-CBIBF,2021,social,syscohada,total_actif,Total actif,1952977,1
-CBIBF,2021,social,syscohada,total_passif,Total passif,1952977,1
+CBIBF,2016,social,syscohada,b_caisse,"Caisse, banque centrale",11198,1
+CBIBF,2016,social,syscohada,b_capital,Capital,31250,1
+CBIBF,2016,social,syscohada,b_creances_clientele,Créances sur la clientèle,413153,1
+CBIBF,2016,social,syscohada,b_creances_interbancaires,Créances interbancaires,136975,1
+CBIBF,2016,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,419652,1
+CBIBF,2016,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,333243,1
+CBIBF,2016,social,syscohada,b_interets_produits,Intérêts et produits assimilés,33382,1
+CBIBF,2016,social,syscohada,b_titres_placement,Titres de placement,256785,1
+CBIBF,2016,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,1
+CBIBF,2016,social,syscohada,immo_corp,Immobilisations corporelles,15083,1
+CBIBF,2016,social,syscohada,immo_fin,Immobilisations financières,20448,1
+CBIBF,2016,social,syscohada,immo_incorp,Immobilisations incorporelles,560,1
+CBIBF,2016,social,syscohada,provisions_reglementees,Provisions réglementées,0,1
+CBIBF,2016,social,syscohada,report_nouveau,Report à nouveau,792,1
+CBIBF,2016,social,syscohada,reserves,Réserves,26390,1
+CBIBF,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),16380,1
+CBIBF,2016,social,syscohada,resultat_net,Résultat net,16380,1
+CBIBF,2016,social,syscohada,total_actif,Total actif,884998,1
+CBIBF,2016,social,syscohada,total_passif,Total passif,884998,1
+CBIBF,2016,social,syscohada,ventes_marchandises,Ventes de marchandises,0,1
+CBIBF,2017,social,syscohada,b_caisse,"Caisse, banque centrale",9602,1
+CBIBF,2017,social,syscohada,b_capital,Capital,32000,1
+CBIBF,2017,social,syscohada,b_creances_clientele,Créances sur la clientèle,542058,1
+CBIBF,2017,social,syscohada,b_creances_interbancaires,Créances interbancaires,208515,1
+CBIBF,2017,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,620502,1
+CBIBF,2017,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,359918,1
+CBIBF,2017,social,syscohada,b_interets_produits,Intérêts et produits assimilés,42612,1
+CBIBF,2017,social,syscohada,b_titres_placement,Titres de placement,288934,1
+CBIBF,2017,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,1
+CBIBF,2017,social,syscohada,immo_corp,Immobilisations corporelles,20218,1
+CBIBF,2017,social,syscohada,immo_fin,Immobilisations financières,15960,1
+CBIBF,2017,social,syscohada,immo_incorp,Immobilisations incorporelles,1274,1
+CBIBF,2017,social,syscohada,provisions_reglementees,Provisions réglementées,0,1
+CBIBF,2017,social,syscohada,report_nouveau,Report à nouveau,2568,1
+CBIBF,2017,social,syscohada,reserves,Réserves,31097,1
+CBIBF,2017,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),19571,1
+CBIBF,2017,social,syscohada,resultat_net,Résultat net,19571,1
+CBIBF,2017,social,syscohada,total_actif,Total actif,1132011,1
+CBIBF,2017,social,syscohada,total_passif,Total passif,1132011,1
+CBIBF,2017,social,syscohada,ventes_marchandises,Ventes de marchandises,0,1
+CBIBF,2019,social,syscohada,b_caisse,"Caisse, banque centrale",54516,1
+CBIBF,2019,social,syscohada,b_charges_generales,Charges générales d'exploitation,20303,1
+CBIBF,2019,social,syscohada,b_commissions_charges,Commissions (charges),1933,1
+CBIBF,2019,social,syscohada,b_commissions_produits,Commissions (produits),15920,1
+CBIBF,2019,social,syscohada,b_cout_risque,Coût du risque,6504,1
+CBIBF,2019,social,syscohada,b_creances_clientele,Créances sur la clientèle,672153,1
+CBIBF,2019,social,syscohada,b_creances_interbancaires,Créances interbancaires,87700,1
+CBIBF,2019,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,711715,1
+CBIBF,2019,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,328964,1
+CBIBF,2019,social,syscohada,b_effets_publics,Effets publics,32241,1
+CBIBF,2019,social,syscohada,b_interets_produits,Intérêts et produits assimilés,72495,1
+CBIBF,2019,social,syscohada,b_pnb,Produit net bancaire,59005,1
+CBIBF,2019,social,syscohada,b_rbe,Résultat brut d'exploitation,36508,1
+CBIBF,2019,social,syscohada,b_titres_placement,Titres de placement,293657,1
+CBIBF,2019,social,syscohada,capital,Capital,32000,1
+CBIBF,2019,social,syscohada,capitaux_propres,Capitaux propres,140963,1
+CBIBF,2019,social,syscohada,immo_corp,Immobilisations corporelles,29865,1
+CBIBF,2019,social,syscohada,immo_incorp,Immobilisations incorporelles,112,1
+CBIBF,2019,social,syscohada,impots_resultat,Impôts sur le résultat,3125,1
+CBIBF,2019,social,syscohada,report_nouveau,Report à nouveau,4513,1
+CBIBF,2019,social,syscohada,reserves,Réserves,46258,1
+CBIBF,2019,social,syscohada,resultat_avant_impot,Résultat avant impôt,30817,1
+CBIBF,2019,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),27692,1
+CBIBF,2019,social,syscohada,resultat_exploitation,Résultat d'exploitation,30004,1
+CBIBF,2019,social,syscohada,resultat_net,Résultat net,27692,1
+CBIBF,2019,social,syscohada,total_actif,Total actif,1211788,1
+CBIBF,2019,social,syscohada,total_passif,Total passif,1211788,1
+CBIBF,2020,social,syscohada,b_caisse,"Caisse, banque centrale",38078,2
+CBIBF,2020,social,syscohada,b_charges_generales,Charges générales d'exploitation,24309,2
+CBIBF,2020,social,syscohada,b_commissions_charges,Commissions (charges),5285,2
+CBIBF,2020,social,syscohada,b_commissions_produits,Commissions (produits),21761,2
+CBIBF,2020,social,syscohada,b_cout_risque,Coût du risque,11813,2
+CBIBF,2020,social,syscohada,b_creances_clientele,Créances sur la clientèle,859134,2
+CBIBF,2020,social,syscohada,b_creances_interbancaires,Créances interbancaires,94713,2
+CBIBF,2020,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,1015585,2
+CBIBF,2020,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,353574,2
+CBIBF,2020,social,syscohada,b_effets_publics,Effets publics,57490,2
+CBIBF,2020,social,syscohada,b_interets_produits,Intérêts et produits assimilés,87674,2
+CBIBF,2020,social,syscohada,b_pnb,Produit net bancaire,75784,2
+CBIBF,2020,social,syscohada,b_rbe,Résultat brut d'exploitation,48864,2
+CBIBF,2020,social,syscohada,b_titres_placement,Titres de placement,430318,2
+CBIBF,2020,social,syscohada,capital,Capital,32000,2
+CBIBF,2020,social,syscohada,capitaux_propres,Capitaux propres,159145,2
+CBIBF,2020,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,2
+CBIBF,2020,social,syscohada,immo_corp,Immobilisations corporelles,34549,2
+CBIBF,2020,social,syscohada,immo_incorp,Immobilisations incorporelles,550,2
+CBIBF,2020,social,syscohada,impots_resultat,Impôts sur le résultat,2913,2
+CBIBF,2020,social,syscohada,provisions_reglementees,Provisions réglementées,0,2
+CBIBF,2020,social,syscohada,report_nouveau,Report à nouveau,11860,2
+CBIBF,2020,social,syscohada,reserves,Réserves,50412,2
+CBIBF,2020,social,syscohada,resultat_avant_impot,Résultat avant impôt,37286,2
+CBIBF,2020,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),34373,2
+CBIBF,2020,social,syscohada,resultat_exploitation,Résultat d'exploitation,37051,2
+CBIBF,2020,social,syscohada,resultat_net,Résultat net,34373,2
+CBIBF,2020,social,syscohada,total_actif,Total actif,1565195,2
+CBIBF,2020,social,syscohada,total_passif,Total passif,1565195,2
+CBIBF,2021,social,syscohada,b_caisse,"Caisse, banque centrale",47633,2
+CBIBF,2021,social,syscohada,b_charges_generales,Charges générales d'exploitation,29336,2
+CBIBF,2021,social,syscohada,b_commissions_charges,Commissions (charges),5360,2
+CBIBF,2021,social,syscohada,b_commissions_produits,Commissions (produits),23588,2
+CBIBF,2021,social,syscohada,b_cout_risque,Coût du risque,11469,2
+CBIBF,2021,social,syscohada,b_creances_clientele,Créances sur la clientèle,943761,2
+CBIBF,2021,social,syscohada,b_creances_interbancaires,Créances interbancaires,85409,2
+CBIBF,2021,social,syscohada,b_dettes_clientele,Dettes envers la clientèle,1238527,2
+CBIBF,2021,social,syscohada,b_dettes_interbancaires,Dettes interbancaires,488235,2
+CBIBF,2021,social,syscohada,b_effets_publics,Effets publics,81000,2
+CBIBF,2021,social,syscohada,b_interets_produits,Intérêts et produits assimilés,107097,2
+CBIBF,2021,social,syscohada,b_pnb,Produit net bancaire,90298,2
+CBIBF,2021,social,syscohada,b_rbe,Résultat brut d'exploitation,57840,2
+CBIBF,2021,social,syscohada,b_titres_placement,Titres de placement,706179,2
+CBIBF,2021,social,syscohada,capital,Capital,32000,2
+CBIBF,2021,social,syscohada,capitaux_propres,Capitaux propres,189815,2
+CBIBF,2021,social,syscohada,ecart_reevaluation,Écarts de réévaluation,0,2
+CBIBF,2021,social,syscohada,immo_corp,Immobilisations corporelles,41950,2
+CBIBF,2021,social,syscohada,immo_incorp,Immobilisations incorporelles,395,2
+CBIBF,2021,social,syscohada,impots_resultat,Impôts sur le résultat,5003,2
+CBIBF,2021,social,syscohada,provisions_reglementees,Provisions réglementées,0,2
+CBIBF,2021,social,syscohada,report_nouveau,Report à nouveau,25198,2
+CBIBF,2021,social,syscohada,reserves,Réserves,55568,2
+CBIBF,2021,social,syscohada,resultat_avant_impot,Résultat avant impôt,51552,2
+CBIBF,2021,social,syscohada,resultat_exploitation,Résultat d'exploitation,46371,2
+CBIBF,2021,social,syscohada,total_actif,Total actif,1952977,2
+CBIBF,2021,social,syscohada,total_passif,Total passif,1952977,2
 CBIBF,2022,social,syscohada,b_caisse,"Caisse, banque centrale",57740,1
 CBIBF,2022,social,syscohada,b_charges_generales,Charges générales d'exploitation,32691,1
 CBIBF,2022,social,syscohada,b_commissions_charges,Commissions (charges),6394,1
@@ -4272,6 +4410,7 @@ CFAC,2006,social,syscohada,immo_incorp,Immobilisations incorporelles,57.259,1
 CFAC,2006,social,syscohada,impots_resultat,Impôts sur le résultat,690.563,1
 CFAC,2006,social,syscohada,primes_reserves,Primes et réserves,837.475,1
 CFAC,2006,social,syscohada,produits_accessoires,Produits accessoires,1596.057,1
+CFAC,2006,social,syscohada,rao,Résultat des activités ordinaires,2339.361,1
 CFAC,2006,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1652.171,1
 CFAC,2006,social,syscohada,resultat_exploitation,Résultat d'exploitation,2354.922,1
 CFAC,2006,social,syscohada,resultat_financier,Résultat financier,-15.561,1
@@ -4301,6 +4440,7 @@ CFAC,2007,social,syscohada,immo_incorp,Immobilisations incorporelles,40.912,1
 CFAC,2007,social,syscohada,impots_resultat,Impôts sur le résultat,852.512,1
 CFAC,2007,social,syscohada,primes_reserves,Primes et réserves,1002.956,1
 CFAC,2007,social,syscohada,produits_accessoires,Produits accessoires,2160.527,1
+CFAC,2007,social,syscohada,rao,Résultat des activités ordinaires,3252.343,1
 CFAC,2007,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2481.493,1
 CFAC,2007,social,syscohada,resultat_exploitation,Résultat d'exploitation,2865.518,1
 CFAC,2007,social,syscohada,resultat_financier,Résultat financier,386.825,1
@@ -4329,6 +4469,7 @@ CFAC,2008,social,syscohada,immo_incorp,Immobilisations incorporelles,25.262,1
 CFAC,2008,social,syscohada,impots_resultat,Impôts sur le résultat,768.822,1
 CFAC,2008,social,syscohada,primes_reserves,Primes et réserves,1252.188,1
 CFAC,2008,social,syscohada,produits_accessoires,Produits accessoires,2114.96,1
+CFAC,2008,social,syscohada,rao,Résultat des activités ordinaires,2567.895,1
 CFAC,2008,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1975.33,1
 CFAC,2008,social,syscohada,resultat_exploitation,Résultat d'exploitation,2595.003,1
 CFAC,2008,social,syscohada,resultat_financier,Résultat financier,-27.108,1
@@ -4356,6 +4497,7 @@ CFAC,2009,social,syscohada,immo_incorp,Immobilisations incorporelles,803.153,2
 CFAC,2009,social,syscohada,impots_resultat,Impôts sur le résultat,593.212,2
 CFAC,2009,social,syscohada,primes_reserves,Primes et réserves,1334.659,2
 CFAC,2009,social,syscohada,produits_accessoires,Produits accessoires,1274.306,2
+CFAC,2009,social,syscohada,rao,Résultat des activités ordinaires,3413.379,2
 CFAC,2009,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3503.827,2
 CFAC,2009,social,syscohada,resultat_exploitation,Résultat d'exploitation,1737.7,2
 CFAC,2009,social,syscohada,resultat_financier,Résultat financier,1675.679,2
@@ -4383,6 +4525,7 @@ CFAC,2010,social,syscohada,immo_incorp,Immobilisations incorporelles,805.647,2
 CFAC,2010,social,syscohada,impots_resultat,Impôts sur le résultat,434.175,2
 CFAC,2010,social,syscohada,primes_reserves,Primes et réserves,1396.621,2
 CFAC,2010,social,syscohada,produits_accessoires,Produits accessoires,795.764,2
+CFAC,2010,social,syscohada,rao,Résultat des activités ordinaires,1594.15,2
 CFAC,2010,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1220.614,2
 CFAC,2010,social,syscohada,resultat_exploitation,Résultat d'exploitation,1763.302,2
 CFAC,2010,social,syscohada,resultat_financier,Résultat financier,-169.152,2
@@ -4411,6 +4554,7 @@ CFAC,2011,social,syscohada,immo_incorp,Immobilisations incorporelles,723.602,2
 CFAC,2011,social,syscohada,impots_resultat,Impôts sur le résultat,335.764,2
 CFAC,2011,social,syscohada,primes_reserves,Primes et réserves,1396.502,2
 CFAC,2011,social,syscohada,produits_accessoires,Produits accessoires,649.968,2
+CFAC,2011,social,syscohada,rao,Résultat des activités ordinaires,690.731,2
 CFAC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),356.834,2
 CFAC,2011,social,syscohada,resultat_exploitation,Résultat d'exploitation,729.362,2
 CFAC,2011,social,syscohada,resultat_financier,Résultat financier,-38.631,2
@@ -4441,6 +4585,7 @@ CFAC,2012,social,syscohada,impots_resultat,Impôts sur le résultat,1271.822,2
 CFAC,2012,social,syscohada,primes_reserves,Primes et réserves,7730.391,2
 CFAC,2012,social,syscohada,produits_accessoires,Produits accessoires,264.076,2
 CFAC,2012,social,syscohada,provisions_reglementees,Provisions réglementées,398,2
+CFAC,2012,social,syscohada,rao,Résultat des activités ordinaires,4736.806,2
 CFAC,2012,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3592.07,2
 CFAC,2012,social,syscohada,resultat_exploitation,Résultat d'exploitation,5521.294,2
 CFAC,2012,social,syscohada,resultat_financier,Résultat financier,-784.488,2
@@ -4471,6 +4616,7 @@ CFAC,2013,social,syscohada,impots_resultat,Impôts sur le résultat,962.849,2
 CFAC,2013,social,syscohada,primes_reserves,Primes et réserves,8039.63,2
 CFAC,2013,social,syscohada,produits_accessoires,Produits accessoires,166.196,2
 CFAC,2013,social,syscohada,provisions_reglementees,Provisions réglementées,398,2
+CFAC,2013,social,syscohada,rao,Résultat des activités ordinaires,4433.34,2
 CFAC,2013,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3403.46,2
 CFAC,2013,social,syscohada,resultat_exploitation,Résultat d'exploitation,4992.333,2
 CFAC,2013,social,syscohada,resultat_financier,Résultat financier,-558.993,2
@@ -4499,6 +4645,7 @@ CFAC,2014,social,syscohada,immo_incorp,Immobilisations incorporelles,5191.726,2
 CFAC,2014,social,syscohada,impots_resultat,Impôts sur le résultat,1436.741,2
 CFAC,2014,social,syscohada,primes_reserves,Primes et réserves,8038.739,2
 CFAC,2014,social,syscohada,provisions_reglementees,Provisions réglementées,398,2
+CFAC,2014,social,syscohada,rao,Résultat des activités ordinaires,5178.491,2
 CFAC,2014,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3752.456,2
 CFAC,2014,social,syscohada,resultat_exploitation,Résultat d'exploitation,5417.992,2
 CFAC,2014,social,syscohada,resultat_financier,Résultat financier,-239.501,2
@@ -4529,6 +4676,7 @@ CFAC,2015,social,syscohada,impots_resultat,Impôts sur le résultat,1264.152,2
 CFAC,2015,social,syscohada,primes_reserves,Primes et réserves,8038.61,2
 CFAC,2015,social,syscohada,produits_accessoires,Produits accessoires,444.264,2
 CFAC,2015,social,syscohada,provisions_reglementees,Provisions réglementées,1419.367,2
+CFAC,2015,social,syscohada,rao,Résultat des activités ordinaires,5863.019,2
 CFAC,2015,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4630.509,2
 CFAC,2015,social,syscohada,resultat_exploitation,Résultat d'exploitation,6177.516,2
 CFAC,2015,social,syscohada,resultat_financier,Résultat financier,-314.497,2
@@ -4560,6 +4708,7 @@ CFAC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,1179.317,2
 CFAC,2016,social,syscohada,primes_reserves,Primes et réserves,8038.695,2
 CFAC,2016,social,syscohada,produits_accessoires,Produits accessoires,779.139,2
 CFAC,2016,social,syscohada,provisions_reglementees,Provisions réglementées,1852.288,2
+CFAC,2016,social,syscohada,rao,Résultat des activités ordinaires,5256.711,2
 CFAC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4094.266,2
 CFAC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,5794.062,2
 CFAC,2016,social,syscohada,resultat_financier,Résultat financier,-537.351,2
@@ -4581,6 +4730,7 @@ CFAC,2017,social,syscohada,cafg,Capacité d'autofinancement globale,5426.858,2
 CFAC,2017,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,2042.822,2
 CFAC,2017,social,syscohada,capex_incorp,Acquisitions d'immobilisations incorporelles,2550.204,2
 CFAC,2017,social,syscohada,capital,Capital,9068.595,2
+CFAC,2017,social,syscohada,capitaux_propres,Capitaux propres,23005.705,2
 CFAC,2017,social,syscohada,charges_personnel,Charges de personnel,5418.029,2
 CFAC,2017,social,syscohada,chiffre_affaires,Chiffre d'affaires,89981.777,2
 CFAC,2017,social,syscohada,clients,Clients,18424.011,2
@@ -4631,6 +4781,7 @@ CFAC,2018,social,syscohada,autres_dettes,autres_dettes,1746.333,2
 CFAC,2018,social,syscohada,cafg,Capacité d'autofinancement globale,6945.159,2
 CFAC,2018,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,416.601,2
 CFAC,2018,social,syscohada,capital,Capital,9068.595,2
+CFAC,2018,social,syscohada,capitaux_propres,Capitaux propres,26452.009,2
 CFAC,2018,social,syscohada,charges_personnel,Charges de personnel,5612.451,2
 CFAC,2018,social,syscohada,chiffre_affaires,Chiffre d'affaires,97870.69,2
 CFAC,2018,social,syscohada,clients,Clients,14482.595,2
@@ -4679,6 +4830,7 @@ CFAC,2019,social,syscohada,cafg,Capacité d'autofinancement globale,5957.882,2
 CFAC,2019,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,792.144,2
 CFAC,2019,social,syscohada,capex_incorp,Acquisitions d'immobilisations incorporelles,25.97,2
 CFAC,2019,social,syscohada,capital,Capital,9068.595,2
+CFAC,2019,social,syscohada,capitaux_propres,Capitaux propres,24886.741,2
 CFAC,2019,social,syscohada,charges_personnel,Charges de personnel,5580.185,2
 CFAC,2019,social,syscohada,chiffre_affaires,Chiffre d'affaires,103289.819,2
 CFAC,2019,social,syscohada,clients,Clients,14393.995,2
@@ -4725,6 +4877,7 @@ CFAC,2020,social,syscohada,actif_immobilise,Actif immobilisé,17230.139,2
 CFAC,2020,social,syscohada,autres_dettes,autres_dettes,1762.281,2
 CFAC,2020,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,633.094,2
 CFAC,2020,social,syscohada,capital,Capital,9068.595,2
+CFAC,2020,social,syscohada,capitaux_propres,Capitaux propres,23392.005,2
 CFAC,2020,social,syscohada,charges_personnel,Charges de personnel,6485.011,2
 CFAC,2020,social,syscohada,chiffre_affaires,Chiffre d'affaires,99126.216,2
 CFAC,2020,social,syscohada,clients,Clients,12499.744,2
@@ -4822,6 +4975,7 @@ CFAC,2022,social,syscohada,autres_dettes,autres_dettes,3501.006,1
 CFAC,2022,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,1579.697,1
 CFAC,2022,social,syscohada,capex_incorp,Acquisitions d'immobilisations incorporelles,40.39,1
 CFAC,2022,social,syscohada,capital,Capital,9068.595,1
+CFAC,2022,social,syscohada,capitaux_propres,Capitaux propres,17133.122,1
 CFAC,2022,social,syscohada,charges_personnel,Charges de personnel,8407.154,1
 CFAC,2022,social,syscohada,chiffre_affaires,Chiffre d'affaires,146375.311,1
 CFAC,2022,social,syscohada,clients,Clients,16275.818,1
@@ -5078,6 +5232,7 @@ CIEC,2002,social,syscohada,immo_incorp,Immobilisations incorporelles,6112.572,1
 CIEC,2002,social,syscohada,impots_resultat,Impôts sur le résultat,1911.155,1
 CIEC,2002,social,syscohada,primes_reserves,Primes et réserves,3324.542,1
 CIEC,2002,social,syscohada,produits_accessoires,Produits accessoires,1037.663,1
+CIEC,2002,social,syscohada,rao,Résultat des activités ordinaires,6321.241,1
 CIEC,2002,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4425.895,1
 CIEC,2002,social,syscohada,resultat_exploitation,Résultat d'exploitation,4630.022,1
 CIEC,2002,social,syscohada,resultat_financier,Résultat financier,1691.219,1
@@ -5141,6 +5296,7 @@ CIEC,2004,social,syscohada,impots_resultat,Impôts sur le résultat,744.274,2
 CIEC,2004,social,syscohada,passif_circulant,Passif circulant,161695.368,2
 CIEC,2004,social,syscohada,primes_reserves,Primes et réserves,2822.079,2
 CIEC,2004,social,syscohada,produits_accessoires,Produits accessoires,256.814,2
+CIEC,2004,social,syscohada,rao,Résultat des activités ordinaires,1558.296,2
 CIEC,2004,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),841.837,2
 CIEC,2004,social,syscohada,resultat_exploitation,Résultat d'exploitation,247.669,2
 CIEC,2004,social,syscohada,resultat_financier,Résultat financier,1310.627,2
@@ -5172,6 +5328,7 @@ CIEC,2005,social,syscohada,impots_resultat,Impôts sur le résultat,2023.042,2
 CIEC,2005,social,syscohada,passif_circulant,Passif circulant,157683.322,2
 CIEC,2005,social,syscohada,primes_reserves,Primes et réserves,2823.915,2
 CIEC,2005,social,syscohada,produits_accessoires,Produits accessoires,216.339,2
+CIEC,2005,social,syscohada,rao,Résultat des activités ordinaires,4682.86,2
 CIEC,2005,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2319.078,2
 CIEC,2005,social,syscohada,resultat_exploitation,Résultat d'exploitation,3603.601,2
 CIEC,2005,social,syscohada,resultat_financier,Résultat financier,1079.259,2
@@ -5203,6 +5360,7 @@ CIEC,2006,social,syscohada,impots_resultat,Impôts sur le résultat,1166.45,2
 CIEC,2006,social,syscohada,passif_circulant,Passif circulant,230908.715,2
 CIEC,2006,social,syscohada,primes_reserves,Primes et réserves,2818.993,2
 CIEC,2006,social,syscohada,produits_accessoires,Produits accessoires,4464.645,2
+CIEC,2006,social,syscohada,rao,Résultat des activités ordinaires,5212.729,2
 CIEC,2006,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3709.303,2
 CIEC,2006,social,syscohada,resultat_exploitation,Résultat d'exploitation,4817.406,2
 CIEC,2006,social,syscohada,resultat_financier,Résultat financier,395.323,2
@@ -5234,6 +5392,7 @@ CIEC,2007,social,syscohada,impots_resultat,Impôts sur le résultat,1988.143,2
 CIEC,2007,social,syscohada,passif_circulant,Passif circulant,164800.91,2
 CIEC,2007,social,syscohada,primes_reserves,Primes et réserves,2832.296,2
 CIEC,2007,social,syscohada,produits_accessoires,Produits accessoires,481.797,2
+CIEC,2007,social,syscohada,rao,Résultat des activités ordinaires,6709.129,2
 CIEC,2007,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4634.412,2
 CIEC,2007,social,syscohada,resultat_exploitation,Résultat d'exploitation,6273.432,2
 CIEC,2007,social,syscohada,resultat_financier,Résultat financier,435.697,2
@@ -5516,6 +5675,7 @@ CIEC,2015,social,syscohada,impots_resultat,Impôts sur le résultat,3374.98,2
 CIEC,2015,social,syscohada,passif_circulant,Passif circulant,759341.071,2
 CIEC,2015,social,syscohada,primes_reserves,Primes et réserves,2802.14,2
 CIEC,2015,social,syscohada,produits_accessoires,Produits accessoires,7558.963,2
+CIEC,2015,social,syscohada,rao,Résultat des activités ordinaires,11438.325,2
 CIEC,2015,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),8219.879,2
 CIEC,2015,social,syscohada,resultat_exploitation,Résultat d'exploitation,10815.24,2
 CIEC,2015,social,syscohada,resultat_financier,Résultat financier,623.085,2
@@ -5543,6 +5703,7 @@ CIEC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,4076.739,2
 CIEC,2016,social,syscohada,passif_circulant,Passif circulant,892314.267,2
 CIEC,2016,social,syscohada,primes_reserves,Primes et réserves,2804.019,2
 CIEC,2016,social,syscohada,produits_accessoires,Produits accessoires,6585.472,2
+CIEC,2016,social,syscohada,rao,Résultat des activités ordinaires,14759.001,2
 CIEC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),10780.309,2
 CIEC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,14210.307,2
 CIEC,2016,social,syscohada,resultat_financier,Résultat financier,548.694,2
@@ -6244,6 +6405,7 @@ FTSC,2003,social,syscohada,immo_incorp,Immobilisations incorporelles,13.287,1
 FTSC,2003,social,syscohada,impots_resultat,Impôts sur le résultat,2014.59,1
 FTSC,2003,social,syscohada,primes_reserves,Primes et réserves,19952.484,1
 FTSC,2003,social,syscohada,produits_accessoires,Produits accessoires,2.077,1
+FTSC,2003,social,syscohada,rao,Résultat des activités ordinaires,7051.68,1
 FTSC,2003,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),5040.752,1
 FTSC,2003,social,syscohada,resultat_exploitation,Résultat d'exploitation,6924.681,1
 FTSC,2003,social,syscohada,resultat_financier,Résultat financier,126.999,1
@@ -6270,6 +6432,7 @@ FTSC,2004,social,syscohada,immo_incorp,Immobilisations incorporelles,28.197,2
 FTSC,2004,social,syscohada,impots_resultat,Impôts sur le résultat,238.836,2
 FTSC,2004,social,syscohada,primes_reserves,Primes et réserves,20648.634,2
 FTSC,2004,social,syscohada,produits_accessoires,Produits accessoires,25.164,2
+FTSC,2004,social,syscohada,rao,Résultat des activités ordinaires,4227.885,2
 FTSC,2004,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3982.796,2
 FTSC,2004,social,syscohada,resultat_exploitation,Résultat d'exploitation,5179.741,2
 FTSC,2004,social,syscohada,resultat_financier,Résultat financier,-951.856,2
@@ -6295,6 +6458,7 @@ FTSC,2005,social,syscohada,immo_fin,Immobilisations financières,12222.218,2
 FTSC,2005,social,syscohada,immo_incorp,Immobilisations incorporelles,8.781,2
 FTSC,2005,social,syscohada,impots_resultat,Impôts sur le résultat,30,2
 FTSC,2005,social,syscohada,primes_reserves,Primes et réserves,22117.978,2
+FTSC,2005,social,syscohada,rao,Résultat des activités ordinaires,-2184.45,2
 FTSC,2005,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-1927.388,2
 FTSC,2005,social,syscohada,resultat_exploitation,Résultat d'exploitation,-1313.807,2
 FTSC,2005,social,syscohada,resultat_financier,Résultat financier,-870.643,2
@@ -8883,7 +9047,7 @@ ONTBF,2017,social,syscohada,passif_circulant,Passif circulant,84545.39,2
 ONTBF,2017,social,syscohada,primes_capital,Primes liées au capital,2.019,2
 ONTBF,2017,social,syscohada,produits_accessoires,Produits accessoires,4588.049,2
 ONTBF,2017,social,syscohada,provisions_risques_ct,provisions_risques_ct,1479.589,2
-ONTBF,2017,social,syscohada,rao,Résultat des activités ordinaires,41167,3
+ONTBF,2017,social,syscohada,rao,Résultat des activités ordinaires,41167.406,2
 ONTBF,2017,social,syscohada,reserves_indisponibles,Réserves indisponibles,6800,2
 ONTBF,2017,social,syscohada,ressources_stables,Ressources stables,91434.286,2
 ONTBF,2017,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),28284.547,2
@@ -9716,6 +9880,7 @@ PALC,2011,social,syscohada,produits_accessoires,Produits accessoires,3785.263,2
 PALC,2011,social,syscohada,rao,Résultat des activités ordinaires,32461.117,2
 PALC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),29346.121,2
 PALC,2011,social,syscohada,resultat_exploitation,Résultat d'exploitation,36968.531,2
+PALC,2011,social,syscohada,resultat_financier,Résultat financier,-4507.414,2
 PALC,2011,social,syscohada,resultat_net,Résultat net,29346.121,2
 PALC,2011,social,syscohada,revenus_financiers,Revenus financiers,147.15,2
 PALC,2011,social,syscohada,rhao,Résultat hors activités ordinaires,0.2,2
@@ -9853,6 +10018,7 @@ PALC,2015,social,syscohada,impots_resultat,Impôts sur le résultat,208.475,1
 PALC,2015,social,syscohada,passif_circulant,Passif circulant,18896.461,1
 PALC,2015,social,syscohada,primes_reserves,Primes et réserves,6154.329,1
 PALC,2015,social,syscohada,produits_accessoires,Produits accessoires,3077.486,1
+PALC,2015,social,syscohada,rao,Résultat des activités ordinaires,-509.51,1
 PALC,2015,social,syscohada,report_nouveau,Report à nouveau,51356.788,1
 PALC,2015,social,syscohada,ressources_stables,Ressources stables,106941.789,1
 PALC,2015,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-482.714,1
@@ -11602,44 +11768,44 @@ SCRC,2023,social,syscohada,valeur_ajoutee,Valeur ajoutée,19335.256,1
 SCRC,2023,social,syscohada,variation_tresorerie,Variation de la trésorerie,-1308.46,1
 SCRC,2023,social,syscohada,ventes_marchandises,Ventes de marchandises,18830.282,1
 SCRC,2023,social,syscohada,ventes_produits,Ventes de produits fabriqués,47751.808,1
-SCRC,2024,social,syscohada,actif_circulant,Actif circulant,44179.05,1
-SCRC,2024,social,syscohada,actif_immobilise,Actif immobilisé,74168.602,1
-SCRC,2024,social,syscohada,cafg,Capacité d'autofinancement globale,15692.693,1
-SCRC,2024,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,18109.044,1
-SCRC,2024,social,syscohada,capex_incorp,Acquisitions d'immobilisations incorporelles,163.009,1
-SCRC,2024,social,syscohada,capital,Capital,8820,1
-SCRC,2024,social,syscohada,capitaux_propres,Capitaux propres,19953.835,1
-SCRC,2024,social,syscohada,charges_personnel,Charges de personnel,12935.532,1
-SCRC,2024,social,syscohada,chiffre_affaires,Chiffre d'affaires,87219.127,1
-SCRC,2024,social,syscohada,clients,Clients,2589.741,1
-SCRC,2024,social,syscohada,dotations,Dotations aux amortissements et provisions,13088.583,1
-SCRC,2024,social,syscohada,ebe,Excédent brut d'exploitation,20307.777,1
-SCRC,2024,social,syscohada,flux_financement,Flux des activités de financement,-5399.32,1
-SCRC,2024,social,syscohada,flux_investissement,Flux des activités d'investissement,-16107.743,1
-SCRC,2024,social,syscohada,flux_operationnels,Flux des activités opérationnelles,18243.765,1
-SCRC,2024,social,syscohada,frais_financiers,Frais financiers,4577.605,1
-SCRC,2024,social,syscohada,impots_resultat,Impôts sur le résultat,44.036,1
-SCRC,2024,social,syscohada,marge_commerciale,Marge commerciale,302.467,1
-SCRC,2024,social,syscohada,passif_circulant,Passif circulant,55650.077,1
-SCRC,2024,social,syscohada,primes_reserves,Primes et réserves,22367.799,1
-SCRC,2024,social,syscohada,produits_accessoires,Produits accessoires,1838.205,1
-SCRC,2024,social,syscohada,rao,Résultat des activités ordinaires,3410.25,1
-SCRC,2024,social,syscohada,report_nouveau,Report à nouveau,-13824.574,1
-SCRC,2024,social,syscohada,ressources_stables,Ressources stables,52032.636,1
-SCRC,2024,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2590.611,1
-SCRC,2024,social,syscohada,resultat_exploitation,Résultat d'exploitation,8076.141,1
-SCRC,2024,social,syscohada,resultat_financier,Résultat financier,-4665.891,1
-SCRC,2024,social,syscohada,resultat_net,Résultat net,2590.611,1
-SCRC,2024,social,syscohada,revenus_financiers,Revenus financiers,6.557,1
-SCRC,2024,social,syscohada,rhao,Résultat hors activités ordinaires,-775.602,1
-SCRC,2024,social,syscohada,stocks,Stocks,37630.527,1
-SCRC,2024,social,syscohada,total_actif,Total actif,123092.042,1
-SCRC,2024,social,syscohada,total_passif,Total passif,123092.042,1
-SCRC,2024,social,syscohada,tresorerie_actif,Trésorerie actif,4744.39,1
-SCRC,2024,social,syscohada,tresorerie_passif,Trésorerie passif,15409.329,1
-SCRC,2024,social,syscohada,valeur_ajoutee,Valeur ajoutée,33243.309,1
-SCRC,2024,social,syscohada,variation_tresorerie,Variation de la trésorerie,-3263.298,1
-SCRC,2024,social,syscohada,ventes_produits,Ventes de produits fabriqués,70651.072,1
+SCRC,2024,social,syscohada,actif_circulant,Actif circulant,44179.05,2
+SCRC,2024,social,syscohada,actif_immobilise,Actif immobilisé,74168.602,2
+SCRC,2024,social,syscohada,cafg,Capacité d'autofinancement globale,15692.693,2
+SCRC,2024,social,syscohada,capex_corp,Acquisitions d'immobilisations corporelles,18109.044,2
+SCRC,2024,social,syscohada,capex_incorp,Acquisitions d'immobilisations incorporelles,163.009,2
+SCRC,2024,social,syscohada,capital,Capital,8820,2
+SCRC,2024,social,syscohada,capitaux_propres,Capitaux propres,19953.835,2
+SCRC,2024,social,syscohada,charges_personnel,Charges de personnel,12935.532,2
+SCRC,2024,social,syscohada,chiffre_affaires,Chiffre d'affaires,87219.127,2
+SCRC,2024,social,syscohada,clients,Clients,2589.741,2
+SCRC,2024,social,syscohada,dotations,Dotations aux amortissements et provisions,13088.583,2
+SCRC,2024,social,syscohada,ebe,Excédent brut d'exploitation,20307.777,2
+SCRC,2024,social,syscohada,flux_financement,Flux des activités de financement,-5399.32,2
+SCRC,2024,social,syscohada,flux_investissement,Flux des activités d'investissement,-16107.743,2
+SCRC,2024,social,syscohada,flux_operationnels,Flux des activités opérationnelles,18243.765,2
+SCRC,2024,social,syscohada,frais_financiers,Frais financiers,4577.605,2
+SCRC,2024,social,syscohada,impots_resultat,Impôts sur le résultat,44.036,2
+SCRC,2024,social,syscohada,marge_commerciale,Marge commerciale,302.467,2
+SCRC,2024,social,syscohada,passif_circulant,Passif circulant,55650.077,2
+SCRC,2024,social,syscohada,primes_reserves,Primes et réserves,22367.799,2
+SCRC,2024,social,syscohada,produits_accessoires,Produits accessoires,1838.205,2
+SCRC,2024,social,syscohada,rao,Résultat des activités ordinaires,3410.25,2
+SCRC,2024,social,syscohada,report_nouveau,Report à nouveau,-13824.574,2
+SCRC,2024,social,syscohada,ressources_stables,Ressources stables,52032.636,2
+SCRC,2024,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2590.611,2
+SCRC,2024,social,syscohada,resultat_exploitation,Résultat d'exploitation,8076.141,2
+SCRC,2024,social,syscohada,resultat_financier,Résultat financier,-4665.891,2
+SCRC,2024,social,syscohada,resultat_net,Résultat net,2590.611,2
+SCRC,2024,social,syscohada,revenus_financiers,Revenus financiers,6.557,2
+SCRC,2024,social,syscohada,rhao,Résultat hors activités ordinaires,-775.602,2
+SCRC,2024,social,syscohada,stocks,Stocks,37630.527,2
+SCRC,2024,social,syscohada,total_actif,Total actif,123092.042,2
+SCRC,2024,social,syscohada,total_passif,Total passif,123092.042,2
+SCRC,2024,social,syscohada,tresorerie_actif,Trésorerie actif,4744.39,2
+SCRC,2024,social,syscohada,tresorerie_passif,Trésorerie passif,15409.329,2
+SCRC,2024,social,syscohada,valeur_ajoutee,Valeur ajoutée,33243.309,2
+SCRC,2024,social,syscohada,variation_tresorerie,Variation de la trésorerie,-3263.298,2
+SCRC,2024,social,syscohada,ventes_produits,Ventes de produits fabriqués,70651.072,2
 SCRC,2025,social,syscohada,actif_circulant,Actif circulant,59213.083,1
 SCRC,2025,social,syscohada,actif_immobilise,Actif immobilisé,83125.332,1
 SCRC,2025,social,syscohada,cafg,Capacité d'autofinancement globale,8027.465,1
@@ -11835,6 +12001,7 @@ SDCC,2005,social,syscohada,impots_resultat,Impôts sur le résultat,840.75,2
 SDCC,2005,social,syscohada,passif_circulant,Passif circulant,44666.342,2
 SDCC,2005,social,syscohada,primes_reserves,Primes et réserves,5174.598,2
 SDCC,2005,social,syscohada,produits_accessoires,Produits accessoires,409.891,2
+SDCC,2005,social,syscohada,rao,Résultat des activités ordinaires,1032.032,2
 SDCC,2005,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),604.41,2
 SDCC,2005,social,syscohada,resultat_exploitation,Résultat d'exploitation,978.216,2
 SDCC,2005,social,syscohada,resultat_financier,Résultat financier,53.816,2
@@ -11865,6 +12032,7 @@ SDCC,2006,social,syscohada,impots_resultat,Impôts sur le résultat,57.892,2
 SDCC,2006,social,syscohada,passif_circulant,Passif circulant,55616.184,2
 SDCC,2006,social,syscohada,primes_reserves,Primes et réserves,5239.009,2
 SDCC,2006,social,syscohada,produits_accessoires,Produits accessoires,683.265,2
+SDCC,2006,social,syscohada,rao,Résultat des activités ordinaires,-142.378,2
 SDCC,2006,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),735.174,2
 SDCC,2006,social,syscohada,resultat_exploitation,Résultat d'exploitation,85.811,2
 SDCC,2006,social,syscohada,resultat_financier,Résultat financier,-228.189,2
@@ -11895,6 +12063,7 @@ SDCC,2007,social,syscohada,impots_resultat,Impôts sur le résultat,818.943,2
 SDCC,2007,social,syscohada,passif_circulant,Passif circulant,67627.597,2
 SDCC,2007,social,syscohada,primes_reserves,Primes et réserves,5366.683,2
 SDCC,2007,social,syscohada,produits_accessoires,Produits accessoires,459.421,2
+SDCC,2007,social,syscohada,rao,Résultat des activités ordinaires,937.45,2
 SDCC,2007,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),788.426,2
 SDCC,2007,social,syscohada,resultat_exploitation,Résultat d'exploitation,1217.625,2
 SDCC,2007,social,syscohada,resultat_financier,Résultat financier,-280.175,2
@@ -12021,6 +12190,7 @@ SDCC,2010,social,syscohada,impots_resultat,Impôts sur le résultat,678.546,2
 SDCC,2010,social,syscohada,passif_circulant,Passif circulant,69190.86,2
 SDCC,2010,social,syscohada,primes_reserves,Primes et réserves,5203.712,2
 SDCC,2010,social,syscohada,produits_accessoires,Produits accessoires,342.76,2
+SDCC,2010,social,syscohada,rao,Résultat des activités ordinaires,1297.257,2
 SDCC,2010,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2635.256,2
 SDCC,2010,social,syscohada,resultat_exploitation,Résultat d'exploitation,681.757,2
 SDCC,2010,social,syscohada,resultat_financier,Résultat financier,615.5,2
@@ -12050,6 +12220,7 @@ SDCC,2011,social,syscohada,impots_resultat,Impôts sur le résultat,31.535,2
 SDCC,2011,social,syscohada,passif_circulant,Passif circulant,85332.754,2
 SDCC,2011,social,syscohada,primes_reserves,Primes et réserves,5453.967,2
 SDCC,2011,social,syscohada,produits_accessoires,Produits accessoires,664.44,2
+SDCC,2011,social,syscohada,rao,Résultat des activités ordinaires,-1116.822,2
 SDCC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1699.92,2
 SDCC,2011,social,syscohada,resultat_exploitation,Résultat d'exploitation,-1114.509,2
 SDCC,2011,social,syscohada,resultat_financier,Résultat financier,-2.313,2
@@ -12079,6 +12250,7 @@ SDCC,2012,social,syscohada,impots_resultat,Impôts sur le résultat,2319.075,2
 SDCC,2012,social,syscohada,passif_circulant,Passif circulant,96928.632,2
 SDCC,2012,social,syscohada,primes_reserves,Primes et réserves,4723.887,2
 SDCC,2012,social,syscohada,produits_accessoires,Produits accessoires,1569.246,2
+SDCC,2012,social,syscohada,rao,Résultat des activités ordinaires,1169.153,2
 SDCC,2012,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4538.103,2
 SDCC,2012,social,syscohada,resultat_exploitation,Résultat d'exploitation,1120.198,2
 SDCC,2012,social,syscohada,resultat_financier,Résultat financier,48.955,2
@@ -12107,6 +12279,7 @@ SDCC,2013,social,syscohada,impots_resultat,Impôts sur le résultat,693.346,2
 SDCC,2013,social,syscohada,passif_circulant,Passif circulant,108271.255,2
 SDCC,2013,social,syscohada,primes_reserves,Primes et réserves,5751.99,2
 SDCC,2013,social,syscohada,produits_accessoires,Produits accessoires,1836.824,2
+SDCC,2013,social,syscohada,rao,Résultat des activités ordinaires,2697.719,2
 SDCC,2013,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2447.794,2
 SDCC,2013,social,syscohada,resultat_exploitation,Résultat d'exploitation,3230.343,2
 SDCC,2013,social,syscohada,resultat_financier,Résultat financier,-532.624,2
@@ -12231,6 +12404,7 @@ SDCC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,1541.968,2
 SDCC,2016,social,syscohada,passif_circulant,Passif circulant,86074.09,2
 SDCC,2016,social,syscohada,primes_reserves,Primes et réserves,5878.835,2
 SDCC,2016,social,syscohada,produits_accessoires,Produits accessoires,1992.623,2
+SDCC,2016,social,syscohada,rao,Résultat des activités ordinaires,4327.743,2
 SDCC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2707.132,2
 SDCC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,3535.852,2
 SDCC,2016,social,syscohada,resultat_financier,Résultat financier,791.891,2
@@ -12552,11 +12726,13 @@ SDSC,1999,social,syscohada,impots_resultat,Impôts sur le résultat,1.065,1
 SDSC,1999,social,syscohada,resultat_avant_impot,Résultat avant impôt,2.775,1
 SDSC,1999,social,syscohada,resultat_net,Résultat net,1.71,1
 SDSC,2000,social,syscohada,impots_resultat,Impôts sur le résultat,485,1
+SDSC,2000,social,syscohada,rao,Résultat des activités ordinaires,251,1
 SDSC,2000,social,syscohada,resultat_exploitation,Résultat d'exploitation,1078,1
 SDSC,2000,social,syscohada,resultat_financier,Résultat financier,-827,1
 SDSC,2000,social,syscohada,resultat_net,Résultat net,-224,1
 SDSC,2000,social,syscohada,rhao,Résultat hors activités ordinaires,10,1
 SDSC,2001,social,syscohada,impots_resultat,Impôts sur le résultat,737,1
+SDSC,2001,social,syscohada,rao,Résultat des activités ordinaires,1475,1
 SDSC,2001,social,syscohada,resultat_exploitation,Résultat d'exploitation,2447,1
 SDSC,2001,social,syscohada,resultat_financier,Résultat financier,-972,1
 SDSC,2001,social,syscohada,resultat_net,Résultat net,754,1
@@ -12571,6 +12747,7 @@ SDSC,2002,social,syscohada,immo_fin,Immobilisations financières,4255.236,1
 SDSC,2002,social,syscohada,immo_incorp,Immobilisations incorporelles,66.965,1
 SDSC,2002,social,syscohada,impots_resultat,Impôts sur le résultat,1296.7,1
 SDSC,2002,social,syscohada,primes_reserves,Primes et réserves,8890.746,1
+SDSC,2002,social,syscohada,rao,Résultat des activités ordinaires,1946.4,1
 SDSC,2002,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),625.43,1
 SDSC,2002,social,syscohada,resultat_exploitation,Résultat d'exploitation,2715.3,1
 SDSC,2002,social,syscohada,resultat_financier,Résultat financier,-768.9,1
@@ -12591,6 +12768,7 @@ SDSC,2003,social,syscohada,immo_fin,Immobilisations financières,5742.905,2
 SDSC,2003,social,syscohada,immo_incorp,Immobilisations incorporelles,29.347,2
 SDSC,2003,social,syscohada,impots_resultat,Impôts sur le résultat,1233.8,2
 SDSC,2003,social,syscohada,primes_reserves,Primes et réserves,8964.413,2
+SDSC,2003,social,syscohada,rao,Résultat des activités ordinaires,3361.2,2
 SDSC,2003,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1466.848,2
 SDSC,2003,social,syscohada,resultat_exploitation,Résultat d'exploitation,3859,2
 SDSC,2003,social,syscohada,resultat_financier,Résultat financier,-497.8,2
@@ -13295,6 +13473,7 @@ SEMC,2003,social,syscohada,fournisseurs,Fournisseurs,4612.994,2
 SEMC,2003,social,syscohada,impots_resultat,Impôts sur le résultat,1329.092,2
 SEMC,2003,social,syscohada,passif_circulant,Passif circulant,6769.286,2
 SEMC,2003,social,syscohada,produits_accessoires,Produits accessoires,54.951,2
+SEMC,2003,social,syscohada,rao,Résultat des activités ordinaires,3497.144,2
 SEMC,2003,social,syscohada,report_nouveau,Report à nouveau,2431.443,2
 SEMC,2003,social,syscohada,reserves_indisponibles,Réserves indisponibles,377.844,2
 SEMC,2003,social,syscohada,reserves_libres,Réserves libres,1513.032,2
@@ -13418,6 +13597,7 @@ SEMC,2009,social,syscohada,immo_incorp,Immobilisations incorporelles,53.385,1
 SEMC,2009,social,syscohada,impots_resultat,Impôts sur le résultat,410.961,1
 SEMC,2009,social,syscohada,passif_circulant,Passif circulant,4814.41,1
 SEMC,2009,social,syscohada,produits_accessoires,Produits accessoires,334.603,1
+SEMC,2009,social,syscohada,rao,Résultat des activités ordinaires,4646.017,1
 SEMC,2009,social,syscohada,report_nouveau,Report à nouveau,283.626,1
 SEMC,2009,social,syscohada,reserves_indisponibles,Réserves indisponibles,377.844,1
 SEMC,2009,social,syscohada,reserves_libres,Réserves libres,1560.283,1
@@ -13450,6 +13630,7 @@ SEMC,2010,social,syscohada,immo_incorp,Immobilisations incorporelles,53.385,2
 SEMC,2010,social,syscohada,impots_resultat,Impôts sur le résultat,21.86,2
 SEMC,2010,social,syscohada,passif_circulant,Passif circulant,4892.405,2
 SEMC,2010,social,syscohada,produits_accessoires,Produits accessoires,274.2,2
+SEMC,2010,social,syscohada,rao,Résultat des activités ordinaires,-1003.022,2
 SEMC,2010,social,syscohada,report_nouveau,Report à nouveau,2945.034,2
 SEMC,2010,social,syscohada,reserves_indisponibles,Réserves indisponibles,377.844,2
 SEMC,2010,social,syscohada,reserves_libres,Réserves libres,1560.283,2
@@ -13483,6 +13664,7 @@ SEMC,2011,social,syscohada,immo_incorp,Immobilisations incorporelles,53.385,1
 SEMC,2011,social,syscohada,impots_resultat,Impôts sur le résultat,30,1
 SEMC,2011,social,syscohada,passif_circulant,Passif circulant,6362.266,1
 SEMC,2011,social,syscohada,produits_accessoires,Produits accessoires,190.921,1
+SEMC,2011,social,syscohada,rao,Résultat des activités ordinaires,1569.349,1
 SEMC,2011,social,syscohada,report_nouveau,Report à nouveau,1454.884,1
 SEMC,2011,social,syscohada,reserves_indisponibles,Réserves indisponibles,377.844,1
 SEMC,2011,social,syscohada,reserves_libres,Réserves libres,1560.283,1
@@ -14573,26 +14755,68 @@ SGBC,2025,social,syscohada,resultat_exploitation,Résultat d'exploitation,122245
 SGBC,2025,social,syscohada,resultat_net,Résultat net,101352,1
 SGBC,2025,social,syscohada,total_actif,Total actif,3769174,1
 SGBC,2025,social,syscohada,total_passif,Total passif,3769174,1
-SHEC,2016,social,syscohada,autres_cp,Autres capitaux propres,500.377,1
-SHEC,2016,social,syscohada,capital,Capital,3150,1
-SHEC,2016,social,syscohada,charges_immobilisees,Charges immobilisées,0,1
-SHEC,2016,social,syscohada,dettes_financieres,Dettes financières,8113.756,1
-SHEC,2016,social,syscohada,immo_corp,Immobilisations corporelles,32340.073,1
-SHEC,2016,social,syscohada,immo_fin,Immobilisations financières,9237.526,1
-SHEC,2016,social,syscohada,immo_incorp,Immobilisations incorporelles,5164.344,1
-SHEC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,1859.52,1
-SHEC,2016,social,syscohada,primes_reserves,Primes et réserves,14246.084,1
-SHEC,2016,social,syscohada,rao,Résultat des activités ordinaires,6247.495,1
-SHEC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4388.766,1
-SHEC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,7131.935,1
-SHEC,2016,social,syscohada,resultat_financier,Résultat financier,-884.44,1
-SHEC,2016,social,syscohada,resultat_net,Résultat net,4388.766,1
-SHEC,2016,social,syscohada,rhao,Résultat hors activités ordinaires,0.792,1
-SHEC,2016,social,syscohada,stocks,Stocks,4771.95,1
-SHEC,2016,social,syscohada,total_actif,Total actif,97502.448,1
-SHEC,2016,social,syscohada,total_passif,Total passif,97502.448,1
-SHEC,2016,social,syscohada,tresorerie_actif,Trésorerie actif,1920.325,1
-SHEC,2016,social,syscohada,tresorerie_passif,Trésorerie passif,7034.144,1
+SHEC,2015,social,syscohada,autres_cp,Autres capitaux propres,500.377,1
+SHEC,2015,social,syscohada,capital,Capital,3150,1
+SHEC,2015,social,syscohada,charges_immobilisees,Charges immobilisées,0,1
+SHEC,2015,social,syscohada,charges_personnel,Charges de personnel,4271.683,1
+SHEC,2015,social,syscohada,chiffre_affaires,Chiffre d'affaires,276368.692,1
+SHEC,2015,social,syscohada,dettes_financieres,Dettes financières,7446.583,1
+SHEC,2015,social,syscohada,ebe,Excédent brut d'exploitation,5081.381,1
+SHEC,2015,social,syscohada,frais_financiers,Frais financiers,1458.727,1
+SHEC,2015,social,syscohada,immo_corp,Immobilisations corporelles,28117.952,1
+SHEC,2015,social,syscohada,immo_fin,Immobilisations financières,10197.279,1
+SHEC,2015,social,syscohada,immo_incorp,Immobilisations incorporelles,5164.344,1
+SHEC,2015,social,syscohada,impots_resultat,Impôts sur le résultat,1290.588,1
+SHEC,2015,social,syscohada,primes_reserves,Primes et réserves,13311.427,1
+SHEC,2015,social,syscohada,produits_accessoires,Produits accessoires,1304.852,1
+SHEC,2015,social,syscohada,rao,Résultat des activités ordinaires,4569.935,1
+SHEC,2015,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3265.657,1
+SHEC,2015,social,syscohada,resultat_exploitation,Résultat d'exploitation,5347.222,1
+SHEC,2015,social,syscohada,resultat_financier,Résultat financier,-777.287,1
+SHEC,2015,social,syscohada,resultat_net,Résultat net,3265.657,1
+SHEC,2015,social,syscohada,revenus_financiers,Revenus financiers,681.44,1
+SHEC,2015,social,syscohada,rhao,Résultat hors activités ordinaires,-13.69,1
+SHEC,2015,social,syscohada,stocks,Stocks,4876.608,1
+SHEC,2015,social,syscohada,total_actif,Total actif,89672.964,1
+SHEC,2015,social,syscohada,total_passif,Total passif,89672.964,1
+SHEC,2015,social,syscohada,travaux_services,"Travaux, services vendus",0,1
+SHEC,2015,social,syscohada,tresorerie_actif,Trésorerie actif,11323.762,1
+SHEC,2015,social,syscohada,tresorerie_fin,Trésorerie nette à la clôture,10573.982,1
+SHEC,2015,social,syscohada,tresorerie_passif,Trésorerie passif,21897.744,1
+SHEC,2015,social,syscohada,valeur_ajoutee,Valeur ajoutée,9353.064,1
+SHEC,2015,social,syscohada,variation_tresorerie,Variation de la trésorerie,10723.242,1
+SHEC,2015,social,syscohada,ventes_marchandises,Ventes de marchandises,275063.84,1
+SHEC,2016,social,syscohada,autres_cp,Autres capitaux propres,500.377,2
+SHEC,2016,social,syscohada,capital,Capital,3150,2
+SHEC,2016,social,syscohada,charges_immobilisees,Charges immobilisées,0,2
+SHEC,2016,social,syscohada,charges_personnel,Charges de personnel,4312.749,2
+SHEC,2016,social,syscohada,chiffre_affaires,Chiffre d'affaires,271008.641,2
+SHEC,2016,social,syscohada,dettes_financieres,Dettes financières,8113.756,2
+SHEC,2016,social,syscohada,ebe,Excédent brut d'exploitation,7068.369,2
+SHEC,2016,social,syscohada,frais_financiers,Frais financiers,1047.826,2
+SHEC,2016,social,syscohada,immo_corp,Immobilisations corporelles,32340.073,2
+SHEC,2016,social,syscohada,immo_fin,Immobilisations financières,9237.526,2
+SHEC,2016,social,syscohada,immo_incorp,Immobilisations incorporelles,5164.344,2
+SHEC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,1859.52,2
+SHEC,2016,social,syscohada,primes_reserves,Primes et réserves,14246.084,2
+SHEC,2016,social,syscohada,produits_accessoires,Produits accessoires,1611.525,2
+SHEC,2016,social,syscohada,rao,Résultat des activités ordinaires,6247.495,2
+SHEC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4388.766,2
+SHEC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,7131.935,2
+SHEC,2016,social,syscohada,resultat_financier,Résultat financier,-884.44,2
+SHEC,2016,social,syscohada,resultat_net,Résultat net,4388.766,2
+SHEC,2016,social,syscohada,revenus_financiers,Revenus financiers,163.386,2
+SHEC,2016,social,syscohada,rhao,Résultat hors activités ordinaires,0.792,2
+SHEC,2016,social,syscohada,stocks,Stocks,4771.95,2
+SHEC,2016,social,syscohada,total_actif,Total actif,97502.448,2
+SHEC,2016,social,syscohada,total_passif,Total passif,97502.448,2
+SHEC,2016,social,syscohada,travaux_services,"Travaux, services vendus",0,2
+SHEC,2016,social,syscohada,tresorerie_actif,Trésorerie actif,1920.325,2
+SHEC,2016,social,syscohada,tresorerie_fin,Trésorerie nette à la clôture,-5113.819,2
+SHEC,2016,social,syscohada,tresorerie_passif,Trésorerie passif,7034.144,2
+SHEC,2016,social,syscohada,valeur_ajoutee,Valeur ajoutée,11381.117,2
+SHEC,2016,social,syscohada,variation_tresorerie,Variation de la trésorerie,-5460.163,2
+SHEC,2016,social,syscohada,ventes_marchandises,Ventes de marchandises,269397.116,2
 SHEC,2017,social,syscohada,autres_cp,Autres capitaux propres,500.377,2
 SHEC,2017,social,syscohada,autres_passifs_circulants,Autres passifs circulants,20910,2
 SHEC,2017,social,syscohada,capital,Capital,3150,2
@@ -15193,6 +15417,7 @@ SICC,2009,social,syscohada,impots_resultat,Impôts sur le résultat,57.521,2
 SICC,2009,social,syscohada,passif_circulant,Passif circulant,1476.988,2
 SICC,2009,social,syscohada,primes_reserves,Primes et réserves,287.756,2
 SICC,2009,social,syscohada,produits_accessoires,Produits accessoires,3.202,2
+SICC,2009,social,syscohada,rao,Résultat des activités ordinaires,-1355.684,2
 SICC,2009,social,syscohada,reserves_indisponibles,Réserves indisponibles,282.154,2
 SICC,2009,social,syscohada,ressources_stables,Ressources stables,1706.791,2
 SICC,2009,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-1362.523,2
@@ -15467,6 +15692,7 @@ SICC,2019,social,syscohada,actif_circulant,Actif circulant,1884.062,1
 SICC,2019,social,syscohada,actif_circulant_hao,Actif circulant HAO,0,1
 SICC,2019,social,syscohada,autres_dettes,autres_dettes,51.29,1
 SICC,2019,social,syscohada,capital,Capital,1500,1
+SICC,2019,social,syscohada,capitaux_propres,Capitaux propres,2895.609,1
 SICC,2019,social,syscohada,charges_personnel,Charges de personnel,262.614,1
 SICC,2019,social,syscohada,clients,Clients,634.064,1
 SICC,2019,social,syscohada,clients_avances,clients_avances,1.86,1
@@ -15512,6 +15738,7 @@ SICC,2020,social,syscohada,reserves_indisponibles,Réserves indisponibles,282.15
 SICC,2020,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),109.826,1
 SICC,2020,social,syscohada,resultat_exploitation,Résultat d'exploitation,109.05,1
 SICC,2020,social,syscohada,resultat_net,Résultat net,109.826,1
+SICC,2020,social,syscohada,valeur_ajoutee,Valeur ajoutée,562.81,1
 SICC,2020,social,syscohada,ventes_produits,Ventes de produits fabriqués,2357.378,1
 SICC,2021,social,syscohada,actif_circulant,Actif circulant,2344.801,1
 SICC,2021,social,syscohada,actif_circulant_hao,Actif circulant HAO,0,1
@@ -16333,6 +16560,7 @@ SLBC,2007,social,syscohada,impots_resultat,Impôts sur le résultat,5938.884,2
 SLBC,2007,social,syscohada,passif_circulant,Passif circulant,21166.007,2
 SLBC,2007,social,syscohada,primes_reserves,Primes et réserves,13369.36,2
 SLBC,2007,social,syscohada,produits_accessoires,Produits accessoires,343.401,2
+SLBC,2007,social,syscohada,rao,Résultat des activités ordinaires,22331.73,2
 SLBC,2007,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),17180.081,2
 SLBC,2007,social,syscohada,resultat_exploitation,Résultat d'exploitation,22529.881,2
 SLBC,2007,social,syscohada,resultat_financier,Résultat financier,-198.151,2
@@ -16369,6 +16597,7 @@ SLBC,2008,social,syscohada,impots_resultat,Impôts sur le résultat,5174.162,2
 SLBC,2008,social,syscohada,passif_circulant,Passif circulant,20468.782,2
 SLBC,2008,social,syscohada,primes_reserves,Primes et réserves,19571.529,2
 SLBC,2008,social,syscohada,produits_accessoires,Produits accessoires,453.566,2
+SLBC,2008,social,syscohada,rao,Résultat des activités ordinaires,21887.158,2
 SLBC,2008,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),16804.56,2
 SLBC,2008,social,syscohada,resultat_exploitation,Résultat d'exploitation,22106.129,2
 SLBC,2008,social,syscohada,resultat_financier,Résultat financier,-218.971,2
@@ -16404,6 +16633,7 @@ SLBC,2009,social,syscohada,impots_resultat,Impôts sur le résultat,4937.462,2
 SLBC,2009,social,syscohada,passif_circulant,Passif circulant,22843.967,2
 SLBC,2009,social,syscohada,primes_reserves,Primes et réserves,25347.326,2
 SLBC,2009,social,syscohada,produits_accessoires,Produits accessoires,120.772,2
+SLBC,2009,social,syscohada,rao,Résultat des activités ordinaires,18979.117,2
 SLBC,2009,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),14068.792,2
 SLBC,2009,social,syscohada,resultat_exploitation,Résultat d'exploitation,19752.985,2
 SLBC,2009,social,syscohada,resultat_financier,Résultat financier,-773.868,2
@@ -16440,6 +16670,7 @@ SLBC,2010,social,syscohada,impots_resultat,Impôts sur le résultat,6059.735,2
 SLBC,2010,social,syscohada,passif_circulant,Passif circulant,20617.823,2
 SLBC,2010,social,syscohada,primes_reserves,Primes et réserves,28387.355,2
 SLBC,2010,social,syscohada,produits_accessoires,Produits accessoires,475.695,2
+SLBC,2010,social,syscohada,rao,Résultat des activités ordinaires,20655.501,2
 SLBC,2010,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),14672.065,2
 SLBC,2010,social,syscohada,resultat_exploitation,Résultat d'exploitation,21148.842,2
 SLBC,2010,social,syscohada,resultat_financier,Résultat financier,-493.341,2
@@ -16474,6 +16705,7 @@ SLBC,2011,social,syscohada,immo_fin,Immobilisations financières,2412.654,2
 SLBC,2011,social,syscohada,impots_resultat,Impôts sur le résultat,5446.079,2
 SLBC,2011,social,syscohada,passif_circulant,Passif circulant,25497.193,2
 SLBC,2011,social,syscohada,primes_reserves,Primes et réserves,28080.056,2
+SLBC,2011,social,syscohada,rao,Résultat des activités ordinaires,24228.626,2
 SLBC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),18801.69,2
 SLBC,2011,social,syscohada,resultat_exploitation,Résultat d'exploitation,24464.188,2
 SLBC,2011,social,syscohada,resultat_financier,Résultat financier,-235.562,2
@@ -16603,6 +16835,7 @@ SLBC,2016,social,syscohada,immo_fin,Immobilisations financières,538,1
 SLBC,2016,social,syscohada,immo_incorp,Immobilisations incorporelles,3737,1
 SLBC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,7280,1
 SLBC,2016,social,syscohada,passif_circulant,Passif circulant,33469,1
+SLBC,2016,social,syscohada,rao,Résultat des activités ordinaires,34840,1
 SLBC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),27563,1
 SLBC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,36558,1
 SLBC,2016,social,syscohada,resultat_financier,Résultat financier,-1718,1
@@ -16699,6 +16932,7 @@ SLBC,2019,social,syscohada,immo_fin,Immobilisations financières,378,2
 SLBC,2019,social,syscohada,immo_incorp,Immobilisations incorporelles,26339,2
 SLBC,2019,social,syscohada,impots_resultat,Impôts sur le résultat,959,2
 SLBC,2019,social,syscohada,passif_circulant,Passif circulant,58541,2
+SLBC,2019,social,syscohada,rao,Résultat des activités ordinaires,11517,2
 SLBC,2019,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),13095,2
 SLBC,2019,social,syscohada,resultat_exploitation,Résultat d'exploitation,17267,2
 SLBC,2019,social,syscohada,resultat_financier,Résultat financier,-5750,2
@@ -16731,6 +16965,7 @@ SLBC,2020,social,syscohada,immo_fin,Immobilisations financières,12613,2
 SLBC,2020,social,syscohada,immo_incorp,Immobilisations incorporelles,25991,2
 SLBC,2020,social,syscohada,impots_resultat,Impôts sur le résultat,4407,2
 SLBC,2020,social,syscohada,passif_circulant,Passif circulant,61100,2
+SLBC,2020,social,syscohada,rao,Résultat des activités ordinaires,22016,2
 SLBC,2020,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),17520,2
 SLBC,2020,social,syscohada,resultat_exploitation,Résultat d'exploitation,27415,2
 SLBC,2020,social,syscohada,resultat_financier,Résultat financier,-5399,2
@@ -16829,6 +17064,7 @@ SLBC,2023,social,syscohada,immo_fin,Immobilisations financières,841,2
 SLBC,2023,social,syscohada,immo_incorp,Immobilisations incorporelles,34888,2
 SLBC,2023,social,syscohada,impots_resultat,Impôts sur le résultat,3750,2
 SLBC,2023,social,syscohada,passif_circulant,Passif circulant,49868,2
+SLBC,2023,social,syscohada,rao,Résultat des activités ordinaires,11286,2
 SLBC,2023,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),15078,2
 SLBC,2023,social,syscohada,resultat_exploitation,Résultat d'exploitation,16807,2
 SLBC,2023,social,syscohada,resultat_financier,Résultat financier,-5521,2
@@ -17176,6 +17412,7 @@ SMBC,2011,social,syscohada,provisions_risques_ct,provisions_risques_ct,1771,2
 SMBC,2011,social,syscohada,rao,Résultat des activités ordinaires,3460,2
 SMBC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3280,2
 SMBC,2011,social,syscohada,resultat_exploitation,Résultat d'exploitation,9251,2
+SMBC,2011,social,syscohada,resultat_financier,Résultat financier,-5791,2
 SMBC,2011,social,syscohada,resultat_net,Résultat net,3280,2
 SMBC,2011,social,syscohada,revenus_financiers,Revenus financiers,3931,2
 SMBC,2011,social,syscohada,rhao,Résultat hors activités ordinaires,-26,2
@@ -17209,6 +17446,7 @@ SMBC,2012,social,syscohada,provisions_risques_ct,provisions_risques_ct,30,2
 SMBC,2012,social,syscohada,rao,Résultat des activités ordinaires,-720,2
 SMBC,2012,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-824,2
 SMBC,2012,social,syscohada,resultat_exploitation,Résultat d'exploitation,2584,2
+SMBC,2012,social,syscohada,resultat_financier,Résultat financier,-3304,2
 SMBC,2012,social,syscohada,resultat_net,Résultat net,-824,2
 SMBC,2012,social,syscohada,revenus_financiers,Revenus financiers,8060,2
 SMBC,2012,social,syscohada,rhao,Résultat hors activités ordinaires,-73,2
@@ -17459,12 +17697,16 @@ SMBC,2021,social,syscohada,chiffre_affaires,Chiffre d'affaires,139353,2
 SMBC,2021,social,syscohada,creances,Créances et emplois assimilés,35935,2
 SMBC,2021,social,syscohada,dividendes_verses,Dividendes versés,7016,2
 SMBC,2021,social,syscohada,ebe,Excédent brut d'exploitation,17042,2
+SMBC,2021,social,syscohada,ecart_conversion_passif,Écart de conversion passif,6,2
+SMBC,2021,social,syscohada,fournisseurs,Fournisseurs,69112,2
 SMBC,2021,social,syscohada,frais_financiers,Frais financiers,1191,2
 SMBC,2021,social,syscohada,immo_corp,Immobilisations corporelles,16741,2
 SMBC,2021,social,syscohada,immo_fin,Immobilisations financières,4424,2
 SMBC,2021,social,syscohada,immo_incorp,Immobilisations incorporelles,293,2
 SMBC,2021,social,syscohada,impots_resultat,Impôts sur le résultat,3908,2
+SMBC,2021,social,syscohada,passif_circulant,Passif circulant,78467,2
 SMBC,2021,social,syscohada,produits_accessoires,Produits accessoires,-1820,2
+SMBC,2021,social,syscohada,provisions_risques_ct,provisions_risques_ct,1359,2
 SMBC,2021,social,syscohada,rao,Résultat des activités ordinaires,13302,2
 SMBC,2021,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),8623,2
 SMBC,2021,social,syscohada,resultat_exploitation,Résultat d'exploitation,13649,2
@@ -17475,6 +17717,7 @@ SMBC,2021,social,syscohada,rhao,Résultat hors activités ordinaires,-771,2
 SMBC,2021,social,syscohada,total_actif,Total actif,107351,2
 SMBC,2021,social,syscohada,total_passif,Total passif,107351,2
 SMBC,2021,social,syscohada,tresorerie_actif,Trésorerie actif,35160,2
+SMBC,2021,social,syscohada,tresorerie_passif,Trésorerie passif,47,2
 SMBC,2021,social,syscohada,valeur_ajoutee,Valeur ajoutée,19799,2
 SMBC,2021,social,syscohada,variation_tresorerie,Variation de la trésorerie,16297,2
 SMBC,2022,social,syscohada,actif_circulant,Actif circulant,120863,2
@@ -17485,12 +17728,16 @@ SMBC,2022,social,syscohada,chiffre_affaires,Chiffre d'affaires,276854,2
 SMBC,2022,social,syscohada,creances,Créances et emplois assimilés,86279,2
 SMBC,2022,social,syscohada,dividendes_verses,Dividendes versés,6236,2
 SMBC,2022,social,syscohada,ebe,Excédent brut d'exploitation,14390,2
+SMBC,2022,social,syscohada,ecart_conversion_passif,Écart de conversion passif,132,2
+SMBC,2022,social,syscohada,fournisseurs,Fournisseurs,94120,2
 SMBC,2022,social,syscohada,frais_financiers,Frais financiers,2492,2
 SMBC,2022,social,syscohada,immo_corp,Immobilisations corporelles,17493,2
 SMBC,2022,social,syscohada,immo_fin,Immobilisations financières,6328,2
 SMBC,2022,social,syscohada,immo_incorp,Immobilisations incorporelles,278,2
 SMBC,2022,social,syscohada,impots_resultat,Impôts sur le résultat,3086,2
+SMBC,2022,social,syscohada,passif_circulant,Passif circulant,108430,2
 SMBC,2022,social,syscohada,produits_accessoires,Produits accessoires,-2577,2
+SMBC,2022,social,syscohada,provisions_risques_ct,provisions_risques_ct,1880,2
 SMBC,2022,social,syscohada,rao,Résultat des activités ordinaires,12535,2
 SMBC,2022,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),9421,2
 SMBC,2022,social,syscohada,resultat_exploitation,Résultat d'exploitation,13808,2
@@ -17501,6 +17748,7 @@ SMBC,2022,social,syscohada,rhao,Résultat hors activités ordinaires,-28,2
 SMBC,2022,social,syscohada,total_actif,Total actif,164780,2
 SMBC,2022,social,syscohada,total_passif,Total passif,164780,2
 SMBC,2022,social,syscohada,tresorerie_actif,Trésorerie actif,19176,2
+SMBC,2022,social,syscohada,tresorerie_passif,Trésorerie passif,25273,2
 SMBC,2022,social,syscohada,valeur_ajoutee,Valeur ajoutée,17768,2
 SMBC,2022,social,syscohada,variation_tresorerie,Variation de la trésorerie,-41210,2
 SMBC,2023,social,syscohada,actif_circulant,Actif circulant,155055,2
@@ -17883,6 +18131,23 @@ SOGC,2004,social,syscohada,total_actif,Total actif,59634,1
 SOGC,2004,social,syscohada,total_passif,Total passif,59634,1
 SOGC,2004,social,syscohada,tresorerie_actif,Trésorerie actif,1495,1
 SOGC,2004,social,syscohada,tresorerie_passif,Trésorerie passif,8109,1
+SOGC,2005,social,syscohada,actif_circulant,Actif circulant,16916,1
+SOGC,2005,social,syscohada,actif_immobilise,Actif immobilisé,44045,1
+SOGC,2005,social,syscohada,autres_dettes,autres_dettes,8245,1
+SOGC,2005,social,syscohada,capitaux_propres,Capitaux propres,34180,1
+SOGC,2005,social,syscohada,creances,Créances et emplois assimilés,9782,1
+SOGC,2005,social,syscohada,dettes_financieres,Dettes financières,7116,1
+SOGC,2005,social,syscohada,fournisseurs,Fournisseurs,1926,1
+SOGC,2005,social,syscohada,immo_corp,Immobilisations corporelles,43769,1
+SOGC,2005,social,syscohada,immo_incorp,Immobilisations incorporelles,4,1
+SOGC,2005,social,syscohada,passif_circulant,Passif circulant,10171,1
+SOGC,2005,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2873,1
+SOGC,2005,social,syscohada,resultat_net,Résultat net,2873,1
+SOGC,2005,social,syscohada,stocks,Stocks,7134,1
+SOGC,2005,social,syscohada,total_actif,Total actif,63120,1
+SOGC,2005,social,syscohada,total_passif,Total passif,63120,1
+SOGC,2005,social,syscohada,tresorerie_actif,Trésorerie actif,2159,1
+SOGC,2005,social,syscohada,tresorerie_passif,Trésorerie passif,9978,1
 SOGC,2007,social,syscohada,actif_circulant,Actif circulant,12861,1
 SOGC,2007,social,syscohada,actif_immobilise,Actif immobilisé,45352,1
 SOGC,2007,social,syscohada,autres_dettes,autres_dettes,8440,1
@@ -19708,6 +19973,7 @@ STAC,2019,social,syscohada,ebe,Excédent brut d'exploitation,1135.373,2
 STAC,2019,social,syscohada,flux_operationnels,Flux des activités opérationnelles,3000.306,2
 STAC,2019,social,syscohada,impots_resultat,Impôts sur le résultat,258.823,2
 STAC,2019,social,syscohada,passif_circulant,Passif circulant,10059.775,2
+STAC,2019,social,syscohada,rao,Résultat des activités ordinaires,1115.129,2
 STAC,2019,social,syscohada,report_nouveau,Report à nouveau,-1264.761,2
 STAC,2019,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),865.967,2
 STAC,2019,social,syscohada,resultat_exploitation,Résultat d'exploitation,978.905,2
@@ -19728,6 +19994,7 @@ STAC,2020,social,syscohada,ebe,Excédent brut d'exploitation,3871.646,2
 STAC,2020,social,syscohada,flux_operationnels,Flux des activités opérationnelles,-278.391,2
 STAC,2020,social,syscohada,impots_resultat,Impôts sur le résultat,1038.508,2
 STAC,2020,social,syscohada,passif_circulant,Passif circulant,14615.49,2
+STAC,2020,social,syscohada,rao,Résultat des activités ordinaires,3349.358,2
 STAC,2020,social,syscohada,report_nouveau,Report à nouveau,2.02,2
 STAC,2020,social,syscohada,resultat_avant_impot,Résultat avant impôt,3359.141,2
 STAC,2020,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2320.633,2
@@ -19749,6 +20016,7 @@ STAC,2021,social,syscohada,ebe,Excédent brut d'exploitation,1185.71,2
 STAC,2021,social,syscohada,flux_operationnels,Flux des activités opérationnelles,4311.997,2
 STAC,2021,social,syscohada,impots_resultat,Impôts sur le résultat,461.772,2
 STAC,2021,social,syscohada,passif_circulant,Passif circulant,12769.57,2
+STAC,2021,social,syscohada,rao,Résultat des activités ordinaires,1497.917,2
 STAC,2021,social,syscohada,report_nouveau,Report à nouveau,2.021,2
 STAC,2021,social,syscohada,resultat_avant_impot,Résultat avant impôt,1581.22,2
 STAC,2021,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1119.448,2
@@ -19782,6 +20050,7 @@ STAC,2023,social,syscohada,ebe,Excédent brut d'exploitation,-151.938,2
 STAC,2023,social,syscohada,flux_operationnels,Flux des activités opérationnelles,-2012.269,2
 STAC,2023,social,syscohada,impots_resultat,Impôts sur le résultat,117.698,2
 STAC,2023,social,syscohada,passif_circulant,Passif circulant,9153.452,2
+STAC,2023,social,syscohada,rao,Résultat des activités ordinaires,-968.876,2
 STAC,2023,social,syscohada,resultat_avant_impot,Résultat avant impôt,-1000.021,2
 STAC,2023,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-1117.719,2
 STAC,2023,social,syscohada,resultat_exploitation,Résultat d'exploitation,-1136.144,2
@@ -19802,6 +20071,7 @@ STAC,2024,social,syscohada,ebe,Excédent brut d'exploitation,-1775.898,2
 STAC,2024,social,syscohada,flux_operationnels,Flux des activités opérationnelles,-930.901,2
 STAC,2024,social,syscohada,impots_resultat,Impôts sur le résultat,11.106,2
 STAC,2024,social,syscohada,passif_circulant,Passif circulant,6472.894,2
+STAC,2024,social,syscohada,rao,Résultat des activités ordinaires,-922.566,2
 STAC,2024,social,syscohada,resultat_avant_impot,Résultat avant impôt,-337.09,2
 STAC,2024,social,syscohada,resultat_exploitation,Résultat d'exploitation,-1007.887,2
 STAC,2024,social,syscohada,resultat_financier,Résultat financier,85.321,2
@@ -19821,6 +20091,7 @@ STAC,2025,social,syscohada,ebe,Excédent brut d'exploitation,-650.132,1
 STAC,2025,social,syscohada,flux_operationnels,Flux des activités opérationnelles,-2211.652,1
 STAC,2025,social,syscohada,impots_resultat,Impôts sur le résultat,100.899,1
 STAC,2025,social,syscohada,passif_circulant,Passif circulant,4626.456,1
+STAC,2025,social,syscohada,rao,Résultat des activités ordinaires,-544.944,1
 STAC,2025,social,syscohada,resultat_avant_impot,Résultat avant impôt,4.341,1
 STAC,2025,social,syscohada,resultat_exploitation,Résultat d'exploitation,-771.953,1
 STAC,2025,social,syscohada,resultat_financier,Résultat financier,227.009,1
@@ -19900,6 +20171,7 @@ STBC,1999,social,syscohada,clients_avances,clients_avances,24.069,2
 STBC,1999,social,syscohada,dettes_fiscales_sociales,dettes_fiscales_sociales,3078.799,2
 STBC,1999,social,syscohada,dettes_sociales,dettes_sociales,194.151,2
 STBC,1999,social,syscohada,dotations,Dotations aux amortissements et provisions,949.556,2
+STBC,1999,social,syscohada,ebe,Excédent brut d'exploitation,10469.03,2
 STBC,1999,social,syscohada,ecart_conversion_passif,Écart de conversion passif,0.006,2
 STBC,1999,social,syscohada,fournisseurs,Fournisseurs,10484.313,2
 STBC,1999,social,syscohada,frais_financiers,Frais financiers,576.821,2
@@ -19909,6 +20181,7 @@ STBC,1999,social,syscohada,passif_circulant,Passif circulant,17723.211,2
 STBC,1999,social,syscohada,primes_reserves,Primes et réserves,2454.691,2
 STBC,1999,social,syscohada,produits_accessoires,Produits accessoires,3685.241,2
 STBC,1999,social,syscohada,provisions_reglementees,Provisions réglementées,109.976,2
+STBC,1999,social,syscohada,rao,Résultat des activités ordinaires,10266.857,2
 STBC,1999,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),7024.268,2
 STBC,1999,social,syscohada,resultat_exploitation,Résultat d'exploitation,9519.475,2
 STBC,1999,social,syscohada,resultat_financier,Résultat financier,747.382,2
@@ -19932,6 +20205,7 @@ STBC,2000,social,syscohada,clients,Clients,2388.381,2
 STBC,2000,social,syscohada,dettes_fiscales_sociales,dettes_fiscales_sociales,3256.157,2
 STBC,2000,social,syscohada,dettes_sociales,dettes_sociales,305.977,2
 STBC,2000,social,syscohada,dotations,Dotations aux amortissements et provisions,1424.606,2
+STBC,2000,social,syscohada,ebe,Excédent brut d'exploitation,10729.209,2
 STBC,2000,social,syscohada,ecart_conversion_passif,Écart de conversion passif,9.771,2
 STBC,2000,social,syscohada,fournisseurs,Fournisseurs,9395.098,2
 STBC,2000,social,syscohada,frais_financiers,Frais financiers,504.303,2
@@ -19940,6 +20214,7 @@ STBC,2000,social,syscohada,impots_resultat,Impôts sur le résultat,3221.36,2
 STBC,2000,social,syscohada,primes_reserves,Primes et réserves,2449.576,2
 STBC,2000,social,syscohada,produits_accessoires,Produits accessoires,696.58,2
 STBC,2000,social,syscohada,provisions_reglementees,Provisions réglementées,75.842,2
+STBC,2000,social,syscohada,rao,Résultat des activités ordinaires,10200.3,2
 STBC,2000,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),6819.995,2
 STBC,2000,social,syscohada,resultat_exploitation,Résultat d'exploitation,9304.604,2
 STBC,2000,social,syscohada,resultat_financier,Résultat financier,895.696,2
@@ -19963,11 +20238,13 @@ STBC,2001,social,syscohada,clients,Clients,2704.85,2
 STBC,2001,social,syscohada,dettes_fiscales_sociales,dettes_fiscales_sociales,2073.745,2
 STBC,2001,social,syscohada,dettes_sociales,dettes_sociales,360.116,2
 STBC,2001,social,syscohada,dotations,Dotations aux amortissements et provisions,1607.303,2
+STBC,2001,social,syscohada,ebe,Excédent brut d'exploitation,10612.54,2
 STBC,2001,social,syscohada,fournisseurs,Fournisseurs,12180.338,2
 STBC,2001,social,syscohada,frais_financiers,Frais financiers,652.359,2
 STBC,2001,social,syscohada,immo_fin,Immobilisations financières,1151.11,2
 STBC,2001,social,syscohada,impots_resultat,Impôts sur le résultat,2978.527,2
 STBC,2001,social,syscohada,primes_reserves,Primes et réserves,2455.649,2
+STBC,2001,social,syscohada,rao,Résultat des activités ordinaires,9287.844,2
 STBC,2001,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),6457.503,2
 STBC,2001,social,syscohada,resultat_exploitation,Résultat d'exploitation,8983.267,2
 STBC,2001,social,syscohada,resultat_financier,Résultat financier,304.577,2
@@ -19996,6 +20273,7 @@ STBC,2002,social,syscohada,frais_financiers,Frais financiers,546.965,2
 STBC,2002,social,syscohada,immo_fin,Immobilisations financières,1172.852,2
 STBC,2002,social,syscohada,impots_resultat,Impôts sur le résultat,3625.751,2
 STBC,2002,social,syscohada,primes_reserves,Primes et réserves,2449.352,2
+STBC,2002,social,syscohada,rao,Résultat des activités ordinaires,10741.491,2
 STBC,2002,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),7121.762,2
 STBC,2002,social,syscohada,resultat_exploitation,Résultat d'exploitation,10148.992,2
 STBC,2002,social,syscohada,resultat_financier,Résultat financier,592.499,2
@@ -20024,6 +20302,7 @@ STBC,2003,social,syscohada,frais_financiers,Frais financiers,720.723,2
 STBC,2003,social,syscohada,immo_fin,Immobilisations financières,1179.535,2
 STBC,2003,social,syscohada,impots_resultat,Impôts sur le résultat,297.215,2
 STBC,2003,social,syscohada,primes_reserves,Primes et réserves,6025.001,2
+STBC,2003,social,syscohada,rao,Résultat des activités ordinaires,895.261,2
 STBC,2003,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),617.28,2
 STBC,2003,social,syscohada,resultat_exploitation,Résultat d'exploitation,865.024,2
 STBC,2003,social,syscohada,resultat_financier,Résultat financier,30.237,2
@@ -20058,6 +20337,7 @@ STBC,2004,social,syscohada,immo_incorp,Immobilisations incorporelles,2.303,2
 STBC,2004,social,syscohada,impots_resultat,Impôts sur le résultat,2596.337,2
 STBC,2004,social,syscohada,passif_circulant,Passif circulant,21705.181,2
 STBC,2004,social,syscohada,primes_reserves,Primes et réserves,4397.906,2
+STBC,2004,social,syscohada,rao,Résultat des activités ordinaires,7789.78,2
 STBC,2004,social,syscohada,report_nouveau,Report à nouveau,1948.861,2
 STBC,2004,social,syscohada,reserves_libres,Réserves libres,3.494,2
 STBC,2004,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),5194.911,2
@@ -20101,6 +20381,7 @@ STBC,2005,social,syscohada,passif_circulant,Passif circulant,19079.593,2
 STBC,2005,social,syscohada,primes_reserves,Primes et réserves,4206.317,2
 STBC,2005,social,syscohada,produits_accessoires,Produits accessoires,53.924,2
 STBC,2005,social,syscohada,provisions_reglementees,Provisions réglementées,0,2
+STBC,2005,social,syscohada,rao,Résultat des activités ordinaires,10078.957,2
 STBC,2005,social,syscohada,report_nouveau,Report à nouveau,1760.766,2
 STBC,2005,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),6443.629,2
 STBC,2005,social,syscohada,resultat_exploitation,Résultat d'exploitation,8970.922,2
@@ -20143,6 +20424,7 @@ STBC,2006,social,syscohada,passif_circulant,Passif circulant,21454.094,2
 STBC,2006,social,syscohada,primes_reserves,Primes et réserves,2445.552,2
 STBC,2006,social,syscohada,produits_accessoires,Produits accessoires,91.908,2
 STBC,2006,social,syscohada,provisions_reglementees,Provisions réglementées,0,2
+STBC,2006,social,syscohada,rao,Résultat des activités ordinaires,6253.526,2
 STBC,2006,social,syscohada,report_nouveau,Report à nouveau,1920.145,2
 STBC,2006,social,syscohada,reserves_libres,Réserves libres,0,2
 STBC,2006,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),5390.703,2
@@ -20225,6 +20507,7 @@ STBC,2008,social,syscohada,passif_circulant,Passif circulant,24039.558,2
 STBC,2008,social,syscohada,primes_reserves,Primes et réserves,2445.552,2
 STBC,2008,social,syscohada,produits_accessoires,Produits accessoires,118.327,2
 STBC,2008,social,syscohada,provisions_reglementees,Provisions réglementées,0,2
+STBC,2008,social,syscohada,rao,Résultat des activités ordinaires,6445.978,2
 STBC,2008,social,syscohada,report_nouveau,Report à nouveau,1230.208,2
 STBC,2008,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),5355.269,2
 STBC,2008,social,syscohada,resultat_exploitation,Résultat d'exploitation,4851.151,2
@@ -20358,6 +20641,7 @@ STBC,2011,social,syscohada,report_nouveau,Report à nouveau,1193.428,1
 STBC,2011,social,syscohada,reserves_libres,Réserves libres,0,1
 STBC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),8155.854,1
 STBC,2011,social,syscohada,resultat_exploitation,Résultat d'exploitation,5898.422,1
+STBC,2011,social,syscohada,resultat_financier,Résultat financier,2082.42,1
 STBC,2011,social,syscohada,resultat_net,Résultat net,8155.854,1
 STBC,2011,social,syscohada,revenus_financiers,Revenus financiers,2141.739,1
 STBC,2011,social,syscohada,rhao,Résultat hors activités ordinaires,1667.503,1
@@ -20390,6 +20674,7 @@ STBC,2012,social,syscohada,report_nouveau,Report à nouveau,1179.757,1
 STBC,2012,social,syscohada,reserves_libres,Réserves libres,0,1
 STBC,2012,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),7533.681,1
 STBC,2012,social,syscohada,resultat_exploitation,Résultat d'exploitation,7883.662,1
+STBC,2012,social,syscohada,resultat_financier,Résultat financier,1834.541,1
 STBC,2012,social,syscohada,resultat_net,Résultat net,7533.681,1
 STBC,2012,social,syscohada,revenus_financiers,Revenus financiers,1846.988,1
 STBC,2012,social,syscohada,rhao,Résultat hors activités ordinaires,9.354,1
@@ -20422,6 +20707,7 @@ STBC,2013,social,syscohada,report_nouveau,Report à nouveau,1082.563,1
 STBC,2013,social,syscohada,reserves_libres,Réserves libres,0,1
 STBC,2013,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),7834.294,1
 STBC,2013,social,syscohada,resultat_exploitation,Résultat d'exploitation,8594.624,1
+STBC,2013,social,syscohada,resultat_financier,Résultat financier,1398.858,1
 STBC,2013,social,syscohada,resultat_net,Résultat net,7834.294,1
 STBC,2013,social,syscohada,revenus_financiers,Revenus financiers,1433.078,1
 STBC,2013,social,syscohada,rhao,Résultat hors activités ordinaires,116.77,1
@@ -20454,6 +20740,7 @@ STBC,2014,social,syscohada,report_nouveau,Report à nouveau,1061.545,1
 STBC,2014,social,syscohada,reserves_libres,Réserves libres,0,1
 STBC,2014,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),6538.081,1
 STBC,2014,social,syscohada,resultat_exploitation,Résultat d'exploitation,6606.909,1
+STBC,2014,social,syscohada,resultat_financier,Résultat financier,1423.56,1
 STBC,2014,social,syscohada,resultat_net,Résultat net,6538.081,1
 STBC,2014,social,syscohada,revenus_financiers,Revenus financiers,1458.569,1
 STBC,2014,social,syscohada,rhao,Résultat hors activités ordinaires,9.512,1
@@ -20489,6 +20776,7 @@ STBC,2016,social,syscohada,report_nouveau,Report à nouveau,2117.04,2
 STBC,2016,social,syscohada,reserves_libres,Réserves libres,0,2
 STBC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2979.332,2
 STBC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,3784.669,2
+STBC,2016,social,syscohada,resultat_financier,Résultat financier,870.047,2
 STBC,2016,social,syscohada,resultat_net,Résultat net,2979.332,2
 STBC,2016,social,syscohada,revenus_financiers,Revenus financiers,874.476,2
 STBC,2016,social,syscohada,rhao,Résultat hors activités ordinaires,4.803,2
@@ -20523,6 +20811,7 @@ STBC,2017,social,syscohada,report_nouveau,Report à nouveau,1056.497,1
 STBC,2017,social,syscohada,reserves_libres,Réserves libres,0,1
 STBC,2017,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-4581.145,1
 STBC,2017,social,syscohada,resultat_exploitation,Résultat d'exploitation,-5226.19,1
+STBC,2017,social,syscohada,resultat_financier,Résultat financier,680.045,1
 STBC,2017,social,syscohada,resultat_net,Résultat net,-4581.145,1
 STBC,2017,social,syscohada,revenus_financiers,Revenus financiers,680.375,1
 STBC,2017,social,syscohada,rhao,Résultat hors activités ordinaires,0,1
@@ -22202,6 +22491,105 @@ TTLS,2025,social,syscohada,tresorerie_actif,Trésorerie actif,20567.268,1
 TTLS,2025,social,syscohada,tresorerie_passif,Trésorerie passif,8000,1
 TTLS,2025,social,syscohada,valeur_ajoutee,Valeur ajoutée,23205.045,1
 TTLS,2025,social,syscohada,ventes_marchandises,Ventes de marchandises,451054.167,1
+UNLC,2010,social,syscohada,cafg,Capacité d'autofinancement globale,2963.87,2
+UNLC,2010,social,syscohada,capital,Capital,8053,2
+UNLC,2010,social,syscohada,charges_immobilisees,Charges immobilisées,600,2
+UNLC,2010,social,syscohada,charges_personnel,Charges de personnel,9469.345,2
+UNLC,2010,social,syscohada,creances,Créances et emplois assimilés,19491.267,2
+UNLC,2010,social,syscohada,dotations,Dotations aux amortissements et provisions,3411.993,2
+UNLC,2010,social,syscohada,ebe,Excédent brut d'exploitation,4875.894,2
+UNLC,2010,social,syscohada,frais_financiers,Frais financiers,1314.789,2
+UNLC,2010,social,syscohada,immo_corp,Immobilisations corporelles,14540.317,2
+UNLC,2010,social,syscohada,immo_fin,Immobilisations financières,5917.716,2
+UNLC,2010,social,syscohada,immo_incorp,Immobilisations incorporelles,9791.435,2
+UNLC,2010,social,syscohada,impots_resultat,Impôts sur le résultat,761.1,2
+UNLC,2010,social,syscohada,passif_circulant,Passif circulant,27563.381,2
+UNLC,2010,social,syscohada,primes_reserves,Primes et réserves,3541.438,2
+UNLC,2010,social,syscohada,produits_accessoires,Produits accessoires,929.62,2
+UNLC,2010,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-90.108,2
+UNLC,2010,social,syscohada,resultat_net,Résultat net,-90.108,2
+UNLC,2010,social,syscohada,revenus_financiers,Revenus financiers,383.99,2
+UNLC,2010,social,syscohada,stocks,Stocks,9850.254,2
+UNLC,2010,social,syscohada,total_actif,Total actif,64464.443,2
+UNLC,2010,social,syscohada,total_passif,Total passif,64464.443,2
+UNLC,2010,social,syscohada,tresorerie_actif,Trésorerie actif,4273.454,2
+UNLC,2010,social,syscohada,tresorerie_passif,Trésorerie passif,20868.036,2
+UNLC,2010,social,syscohada,ventes_marchandises,Ventes de marchandises,2011.881,2
+UNLC,2010,social,syscohada,ventes_produits,Ventes de produits fabriqués,75388.772,2
+UNLC,2011,social,syscohada,cafg,Capacité d'autofinancement globale,5063.611,1
+UNLC,2011,social,syscohada,capital,Capital,8053,1
+UNLC,2011,social,syscohada,charges_immobilisees,Charges immobilisées,400,1
+UNLC,2011,social,syscohada,charges_personnel,Charges de personnel,8595.667,1
+UNLC,2011,social,syscohada,creances,Créances et emplois assimilés,17183.832,1
+UNLC,2011,social,syscohada,dotations,Dotations aux amortissements et provisions,2818.684,1
+UNLC,2011,social,syscohada,ebe,Excédent brut d'exploitation,7378.503,1
+UNLC,2011,social,syscohada,frais_financiers,Frais financiers,1338.898,1
+UNLC,2011,social,syscohada,immo_corp,Immobilisations corporelles,15756.68,1
+UNLC,2011,social,syscohada,immo_fin,Immobilisations financières,5884.078,1
+UNLC,2011,social,syscohada,immo_incorp,Immobilisations incorporelles,10883.325,1
+UNLC,2011,social,syscohada,impots_resultat,Impôts sur le résultat,815.788,1
+UNLC,2011,social,syscohada,passif_circulant,Passif circulant,31114.189,1
+UNLC,2011,social,syscohada,primes_reserves,Primes et réserves,3439.898,1
+UNLC,2011,social,syscohada,produits_accessoires,Produits accessoires,1222.673,1
+UNLC,2011,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2755.537,1
+UNLC,2011,social,syscohada,resultat_net,Résultat net,2755.537,1
+UNLC,2011,social,syscohada,revenus_financiers,Revenus financiers,99.184,1
+UNLC,2011,social,syscohada,stocks,Stocks,12376.748,1
+UNLC,2011,social,syscohada,total_actif,Total actif,67300.633,1
+UNLC,2011,social,syscohada,total_passif,Total passif,67300.633,1
+UNLC,2011,social,syscohada,tresorerie_actif,Trésorerie actif,4815.97,1
+UNLC,2011,social,syscohada,tresorerie_passif,Trésorerie passif,17535.151,1
+UNLC,2011,social,syscohada,ventes_marchandises,Ventes de marchandises,2057.309,1
+UNLC,2011,social,syscohada,ventes_produits,Ventes de produits fabriqués,78290.927,1
+UNLC,2012,social,syscohada,cafg,Capacité d'autofinancement globale,-822.771,2
+UNLC,2012,social,syscohada,capital,Capital,8053,2
+UNLC,2012,social,syscohada,charges_immobilisees,Charges immobilisées,200,2
+UNLC,2012,social,syscohada,charges_personnel,Charges de personnel,7658.204,2
+UNLC,2012,social,syscohada,creances,Créances et emplois assimilés,18223.202,2
+UNLC,2012,social,syscohada,dotations,Dotations aux amortissements et provisions,3196.586,2
+UNLC,2012,social,syscohada,ebe,Excédent brut d'exploitation,1007.212,2
+UNLC,2012,social,syscohada,frais_financiers,Frais financiers,1688.849,2
+UNLC,2012,social,syscohada,immo_corp,Immobilisations corporelles,18400.749,2
+UNLC,2012,social,syscohada,immo_fin,Immobilisations financières,5878.869,2
+UNLC,2012,social,syscohada,immo_incorp,Immobilisations incorporelles,12764.714,2
+UNLC,2012,social,syscohada,impots_resultat,Impôts sur le résultat,30,2
+UNLC,2012,social,syscohada,passif_circulant,Passif circulant,28117.729,2
+UNLC,2012,social,syscohada,primes_reserves,Primes et réserves,3988.913,2
+UNLC,2012,social,syscohada,produits_accessoires,Produits accessoires,633.828,2
+UNLC,2012,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-2843.266,2
+UNLC,2012,social,syscohada,resultat_net,Résultat net,-2843.266,2
+UNLC,2012,social,syscohada,revenus_financiers,Revenus financiers,88.485,2
+UNLC,2012,social,syscohada,stocks,Stocks,9018.317,2
+UNLC,2012,social,syscohada,total_actif,Total actif,68643.642,2
+UNLC,2012,social,syscohada,total_passif,Total passif,68643.642,2
+UNLC,2012,social,syscohada,tresorerie_actif,Trésorerie actif,4157.792,2
+UNLC,2012,social,syscohada,tresorerie_passif,Trésorerie passif,27450.713,2
+UNLC,2012,social,syscohada,ventes_marchandises,Ventes de marchandises,3784.186,2
+UNLC,2012,social,syscohada,ventes_produits,Ventes de produits fabriqués,68786.331,2
+UNLC,2013,social,syscohada,cafg,Capacité d'autofinancement globale,-13.222,1
+UNLC,2013,social,syscohada,capital,Capital,8053,1
+UNLC,2013,social,syscohada,charges_personnel,Charges de personnel,7383.883,1
+UNLC,2013,social,syscohada,creances,Créances et emplois assimilés,17437.883,1
+UNLC,2013,social,syscohada,dotations,Dotations aux amortissements et provisions,3579.563,1
+UNLC,2013,social,syscohada,ebe,Excédent brut d'exploitation,1324.485,1
+UNLC,2013,social,syscohada,frais_financiers,Frais financiers,1317.412,1
+UNLC,2013,social,syscohada,immo_corp,Immobilisations corporelles,17781.911,1
+UNLC,2013,social,syscohada,immo_fin,Immobilisations financières,5348.475,1
+UNLC,2013,social,syscohada,immo_incorp,Immobilisations incorporelles,12119.573,1
+UNLC,2013,social,syscohada,impots_resultat,Impôts sur le résultat,29.178,1
+UNLC,2013,social,syscohada,passif_circulant,Passif circulant,29027.969,1
+UNLC,2013,social,syscohada,primes_reserves,Primes et réserves,1145.647,1
+UNLC,2013,social,syscohada,produits_accessoires,Produits accessoires,557.001,1
+UNLC,2013,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-2130.657,1
+UNLC,2013,social,syscohada,resultat_net,Résultat net,-2130.657,1
+UNLC,2013,social,syscohada,revenus_financiers,Revenus financiers,67.033,1
+UNLC,2013,social,syscohada,stocks,Stocks,7738.446,1
+UNLC,2013,social,syscohada,total_actif,Total actif,62602.018,1
+UNLC,2013,social,syscohada,total_passif,Total passif,62602.018,1
+UNLC,2013,social,syscohada,tresorerie_actif,Trésorerie actif,2175.729,1
+UNLC,2013,social,syscohada,tresorerie_passif,Trésorerie passif,23090.729,1
+UNLC,2013,social,syscohada,ventes_marchandises,Ventes de marchandises,10071.834,1
+UNLC,2013,social,syscohada,ventes_produits,Ventes de produits fabriqués,48105.552,1
 UNLC,2015,social,syscohada,actif_circulant,Actif circulant,23993.832,1
 UNLC,2015,social,syscohada,actif_circulant_hao,Actif circulant HAO,0,1
 UNLC,2015,social,syscohada,actif_immobilise,Actif immobilisé,33871.541,1
@@ -22536,6 +22924,7 @@ UNXC,2002,social,syscohada,frais_financiers,Frais financiers,410.702,1
 UNXC,2002,social,syscohada,impots_resultat,Impôts sur le résultat,190.745,1
 UNXC,2002,social,syscohada,primes_reserves,Primes et réserves,1691.006,1
 UNXC,2002,social,syscohada,produits_accessoires,Produits accessoires,3.711,1
+UNXC,2002,social,syscohada,rao,Résultat des activités ordinaires,847.523,1
 UNXC,2002,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),655.796,1
 UNXC,2002,social,syscohada,resultat_exploitation,Résultat d'exploitation,1189.143,1
 UNXC,2002,social,syscohada,resultat_financier,Résultat financier,-341.62,1
@@ -22564,6 +22953,7 @@ UNXC,2003,social,syscohada,impots_resultat,Impôts sur le résultat,380.647,2
 UNXC,2003,social,syscohada,passif_circulant,Passif circulant,12829.627,2
 UNXC,2003,social,syscohada,primes_reserves,Primes et réserves,1821.802,2
 UNXC,2003,social,syscohada,produits_accessoires,Produits accessoires,5.492,2
+UNXC,2003,social,syscohada,rao,Résultat des activités ordinaires,530.761,2
 UNXC,2003,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),150.99,2
 UNXC,2003,social,syscohada,resultat_exploitation,Résultat d'exploitation,883.564,2
 UNXC,2003,social,syscohada,resultat_financier,Résultat financier,-352.803,2
@@ -22593,6 +22983,7 @@ UNXC,2004,social,syscohada,impots_resultat,Impôts sur le résultat,15,2
 UNXC,2004,social,syscohada,passif_circulant,Passif circulant,12247.624,2
 UNXC,2004,social,syscohada,primes_reserves,Primes et réserves,1972.792,2
 UNXC,2004,social,syscohada,produits_accessoires,Produits accessoires,5.29,2
+UNXC,2004,social,syscohada,rao,Résultat des activités ordinaires,-3005.731,2
 UNXC,2004,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-3018.252,2
 UNXC,2004,social,syscohada,resultat_exploitation,Résultat d'exploitation,-2107.774,2
 UNXC,2004,social,syscohada,resultat_financier,Résultat financier,-897.957,2
@@ -22685,6 +23076,7 @@ UNXC,2007,social,syscohada,immo_incorp,Immobilisations incorporelles,100,2
 UNXC,2007,social,syscohada,impots_resultat,Impôts sur le résultat,10,2
 UNXC,2007,social,syscohada,passif_circulant,Passif circulant,7158.349,2
 UNXC,2007,social,syscohada,primes_reserves,Primes et réserves,-1947.444,2
+UNXC,2007,social,syscohada,rao,Résultat des activités ordinaires,1913.148,2
 UNXC,2007,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2062.983,2
 UNXC,2007,social,syscohada,resultat_exploitation,Résultat d'exploitation,2387.851,2
 UNXC,2007,social,syscohada,resultat_financier,Résultat financier,-474.703,2
@@ -22715,6 +23107,7 @@ UNXC,2008,social,syscohada,impots_resultat,Impôts sur le résultat,15,1
 UNXC,2008,social,syscohada,passif_circulant,Passif circulant,9018.632,1
 UNXC,2008,social,syscohada,primes_reserves,Primes et réserves,115.539,1
 UNXC,2008,social,syscohada,produits_accessoires,Produits accessoires,46.41,1
+UNXC,2008,social,syscohada,rao,Résultat des activités ordinaires,1034.781,1
 UNXC,2008,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1020.956,1
 UNXC,2008,social,syscohada,resultat_exploitation,Résultat d'exploitation,1700.067,1
 UNXC,2008,social,syscohada,resultat_financier,Résultat financier,-665.286,1
@@ -22744,6 +23137,7 @@ UNXC,2009,social,syscohada,impots_resultat,Impôts sur le résultat,15,1
 UNXC,2009,social,syscohada,passif_circulant,Passif circulant,10553.945,1
 UNXC,2009,social,syscohada,primes_reserves,Primes et réserves,1136.496,1
 UNXC,2009,social,syscohada,produits_accessoires,Produits accessoires,62.504,1
+UNXC,2009,social,syscohada,rao,Résultat des activités ordinaires,770.01,1
 UNXC,2009,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),760.776,1
 UNXC,2009,social,syscohada,resultat_exploitation,Résultat d'exploitation,1131.724,1
 UNXC,2009,social,syscohada,resultat_financier,Résultat financier,-361.714,1
@@ -22774,6 +23168,7 @@ UNXC,2010,social,syscohada,impots_resultat,Impôts sur le résultat,70.578,2
 UNXC,2010,social,syscohada,passif_circulant,Passif circulant,10184.284,2
 UNXC,2010,social,syscohada,primes_reserves,Primes et réserves,1897.272,2
 UNXC,2010,social,syscohada,produits_accessoires,Produits accessoires,62.243,2
+UNXC,2010,social,syscohada,rao,Résultat des activités ordinaires,178.237,2
 UNXC,2010,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),107.298,2
 UNXC,2010,social,syscohada,resultat_exploitation,Résultat d'exploitation,565.538,2
 UNXC,2010,social,syscohada,resultat_financier,Résultat financier,-387.301,2
@@ -22862,6 +23257,7 @@ UNXC,2012,social,syscohada,impots_resultat,Impôts sur le résultat,164.647,2
 UNXC,2012,social,syscohada,passif_circulant,Passif circulant,12858.231,2
 UNXC,2012,social,syscohada,primes_reserves,Primes et réserves,1237.159,2
 UNXC,2012,social,syscohada,produits_accessoires,Produits accessoires,74.304,2
+UNXC,2012,social,syscohada,rao,Résultat des activités ordinaires,484.713,2
 UNXC,2012,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1405.379,2
 UNXC,2012,social,syscohada,resultat_exploitation,Résultat d'exploitation,697.235,2
 UNXC,2012,social,syscohada,resultat_financier,Résultat financier,-212.522,2
@@ -22894,6 +23290,7 @@ UNXC,2013,social,syscohada,impots_resultat,Impôts sur le résultat,170.032,2
 UNXC,2013,social,syscohada,passif_circulant,Passif circulant,11382.239,2
 UNXC,2013,social,syscohada,primes_reserves,Primes et réserves,1937.538,2
 UNXC,2013,social,syscohada,produits_accessoires,Produits accessoires,94.522,2
+UNXC,2013,social,syscohada,rao,Résultat des activités ordinaires,822.057,2
 UNXC,2013,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1150.571,2
 UNXC,2013,social,syscohada,resultat_exploitation,Résultat d'exploitation,1212.751,2
 UNXC,2013,social,syscohada,resultat_financier,Résultat financier,-390.694,2
@@ -22926,6 +23323,7 @@ UNXC,2014,social,syscohada,impots_resultat,Impôts sur le résultat,888.783,2
 UNXC,2014,social,syscohada,passif_circulant,Passif circulant,10042.964,2
 UNXC,2014,social,syscohada,primes_reserves,Primes et réserves,1963.108,2
 UNXC,2014,social,syscohada,produits_accessoires,Produits accessoires,322.286,2
+UNXC,2014,social,syscohada,rao,Résultat des activités ordinaires,3266.798,2
 UNXC,2014,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),2369.6,2
 UNXC,2014,social,syscohada,resultat_exploitation,Résultat d'exploitation,3951.059,2
 UNXC,2014,social,syscohada,resultat_financier,Résultat financier,-684.261,2
@@ -22957,6 +23355,7 @@ UNXC,2015,social,syscohada,impots_resultat,Impôts sur le résultat,1678.544,2
 UNXC,2015,social,syscohada,passif_circulant,Passif circulant,12218.737,2
 UNXC,2015,social,syscohada,primes_reserves,Primes et réserves,2307.708,2
 UNXC,2015,social,syscohada,produits_accessoires,Produits accessoires,130.909,2
+UNXC,2015,social,syscohada,rao,Résultat des activités ordinaires,6029.729,2
 UNXC,2015,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4357.587,2
 UNXC,2015,social,syscohada,resultat_exploitation,Résultat d'exploitation,7270.928,2
 UNXC,2015,social,syscohada,resultat_financier,Résultat financier,-1241.199,2
@@ -22988,6 +23387,7 @@ UNXC,2016,social,syscohada,impots_resultat,Impôts sur le résultat,1967.377,2
 UNXC,2016,social,syscohada,passif_circulant,Passif circulant,5664.878,2
 UNXC,2016,social,syscohada,primes_reserves,Primes et réserves,13964.653,2
 UNXC,2016,social,syscohada,produits_accessoires,Produits accessoires,77.154,2
+UNXC,2016,social,syscohada,rao,Résultat des activités ordinaires,6061.026,2
 UNXC,2016,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4087.003,2
 UNXC,2016,social,syscohada,resultat_exploitation,Résultat d'exploitation,6427.25,2
 UNXC,2016,social,syscohada,resultat_financier,Résultat financier,-366.224,2
@@ -23024,6 +23424,7 @@ UNXC,2017,social,syscohada,impots_resultat,Impôts sur le résultat,1435.138,2
 UNXC,2017,social,syscohada,passif_circulant,Passif circulant,8097.212,2
 UNXC,2017,social,syscohada,primes_reserves,Primes et réserves,14046.905,2
 UNXC,2017,social,syscohada,produits_accessoires,Produits accessoires,335.416,2
+UNXC,2017,social,syscohada,rao,Résultat des activités ordinaires,5443.669,2
 UNXC,2017,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4013.814,2
 UNXC,2017,social,syscohada,resultat_exploitation,Résultat d'exploitation,5434.824,2
 UNXC,2017,social,syscohada,resultat_financier,Résultat financier,8.845,2
@@ -23061,6 +23462,7 @@ UNXC,2018,social,syscohada,impots_resultat,Impôts sur le résultat,1282.842,2
 UNXC,2018,social,syscohada,passif_circulant,Passif circulant,11804.117,2
 UNXC,2018,social,syscohada,primes_reserves,Primes et réserves,14055.969,2
 UNXC,2018,social,syscohada,produits_accessoires,Produits accessoires,279.455,2
+UNXC,2018,social,syscohada,rao,Résultat des activités ordinaires,5479.819,2
 UNXC,2018,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),4197.878,2
 UNXC,2018,social,syscohada,resultat_exploitation,Résultat d'exploitation,5511.306,2
 UNXC,2018,social,syscohada,resultat_financier,Résultat financier,-31.487,2
@@ -23098,6 +23500,7 @@ UNXC,2019,social,syscohada,impots_resultat,Impôts sur le résultat,1225.698,2
 UNXC,2019,social,syscohada,passif_circulant,Passif circulant,15074.502,2
 UNXC,2019,social,syscohada,primes_reserves,Primes et réserves,14062.347,2
 UNXC,2019,social,syscohada,produits_accessoires,Produits accessoires,213.177,2
+UNXC,2019,social,syscohada,rao,Résultat des activités ordinaires,4321.951,2
 UNXC,2019,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),3094.074,2
 UNXC,2019,social,syscohada,resultat_exploitation,Résultat d'exploitation,4318.974,2
 UNXC,2019,social,syscohada,resultat_financier,Résultat financier,2.977,2
@@ -23131,6 +23534,7 @@ UNXC,2020,social,syscohada,impots_resultat,Impôts sur le résultat,313.808,1
 UNXC,2020,social,syscohada,passif_circulant,Passif circulant,9793.075,1
 UNXC,2020,social,syscohada,primes_reserves,Primes et réserves,17156.422,1
 UNXC,2020,social,syscohada,produits_accessoires,Produits accessoires,482.156,1
+UNXC,2020,social,syscohada,rao,Résultat des activités ordinaires,700.816,1
 UNXC,2020,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),369.764,1
 UNXC,2020,social,syscohada,resultat_exploitation,Résultat d'exploitation,675.546,1
 UNXC,2020,social,syscohada,resultat_financier,Résultat financier,25.27,1
@@ -23164,6 +23568,7 @@ UNXC,2021,social,syscohada,impots_resultat,Impôts sur le résultat,599.234,2
 UNXC,2021,social,syscohada,passif_circulant,Passif circulant,13611.744,2
 UNXC,2021,social,syscohada,primes_reserves,Primes et réserves,16972.687,2
 UNXC,2021,social,syscohada,produits_accessoires,Produits accessoires,265.394,2
+UNXC,2021,social,syscohada,rao,Résultat des activités ordinaires,1999.374,2
 UNXC,2021,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),1400.693,2
 UNXC,2021,social,syscohada,resultat_exploitation,Résultat d'exploitation,1984.939,2
 UNXC,2021,social,syscohada,resultat_financier,Résultat financier,14.435,2
@@ -23196,6 +23601,7 @@ UNXC,2022,social,syscohada,impots_resultat,Impôts sur le résultat,4,2
 UNXC,2022,social,syscohada,passif_circulant,Passif circulant,18679.539,2
 UNXC,2022,social,syscohada,primes_reserves,Primes et réserves,16972.687,2
 UNXC,2022,social,syscohada,produits_accessoires,Produits accessoires,229.584,2
+UNXC,2022,social,syscohada,rao,Résultat des activités ordinaires,-1315.307,2
 UNXC,2022,social,syscohada,resultat_bilan,Résultat de l'exercice (bilan),-1298.675,2
 UNXC,2022,social,syscohada,resultat_exploitation,Résultat d'exploitation,-1212.86,2
 UNXC,2022,social,syscohada,resultat_financier,Résultat financier,-102.447,2
@@ -23233,6 +23639,7 @@ UNXC,2023,social,syscohada,impots_resultat,Impôts sur le résultat,215.051,1
 UNXC,2023,social,syscohada,passif_circulant,Passif circulant,19563.489,1
 UNXC,2023,social,syscohada,primes_reserves,Primes et réserves,15685.559,1
 UNXC,2023,social,syscohada,produits_accessoires,Produits accessoires,524.214,1
+UNXC,2023,social,syscohada,rao,Résultat des activités ordinaires,-1830.138,1
 UNXC,2023,social,syscohada,reserves_indisponibles,Réserves indisponibles,830,1
 UNXC,2023,social,syscohada,reserves_libres,Réserves libres,5325.53,1
 UNXC,2023,social,syscohada,ressources_stables,Ressources stables,19002.965,1
