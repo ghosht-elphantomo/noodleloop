@@ -583,6 +583,41 @@ point de restauration avant chaque étape, tout le site testé après, accord du
   branche `main` sans passé puis demande de purge au support GitHub, ou dépôt supprimé et recréé sous le même nom). Aucune
   copie du dépôt n'existe (0 copie au 20/10).
 
+**9. Avancement (20/10/2026, 18 h 05).**
+- *Étape 1, copie* : faite (toutes les branches de `noodleloop` copiées à l'identique dans `bloopface`, vérifiées deux fois ;
+  anciennes automatisations rangées sous `automatisations/origine/`, inertes). Outil de recopie fidèle d'une branche :
+  `recopier.sh` (session du 20/10 ; à refaire au besoin : commit unique, même arbre, vérification de l'empreinte sur GitHub).
+- *Étape 2, moteur* : scripts privés dans `automatisations/moteur/` (un par ancienne automatisation, voir `LISEZMOI.md`),
+  fichiers publics génériques dans `automatisations/moteur/publics/` ; version d'essai (`publics/essai/`, générée par
+  `vers_essai.py`) copiée dans `.github/workflows/` de `noodleloop` **à côté** des anciennes (rien retiré). Secrets du moteur
+  créés par le propriétaire : `K1`, `K2` (jetons GitHub limités au coffre, expirent le 20/10/2027), `D1`, `K4` (clé Vercel
+  limitée au projet du site, 1 an). `K3` (secours) : à créer à la bascule.
+- *Essais faits le 20/10* (tous verts, écritures seulement dans les branches `-essai` du coffre) : Archive, Lecture A (comptes :
+  26 889 fichiers, registre identique à la production), Lecture B, Lecture C, Machines, Outil, Sortie, Accès (lien d'une
+  minute, écrit seulement sur la branche `lien-essai`), Mise à jour complète (33 min, données identiques à la production
+  hors relevés intermédiaires) et rapide (lancée en parallèle de la production à la même seconde : résultats identiques),
+  Vérification (rapport sur `probe-essai`), Publication (voir ci-dessous). Cadence (nouvelle horloge) tourne en parallèle du
+  Métronome depuis 14 h 30 UTC et déclenche « Ping » aux mêmes secondes (:00:16, :15:16, :30:17, :45:16) : rodage de quelques
+  jours avant de lui confier la mise à jour.
+- *Site* : `api/data.js` du coffre lit la branche de données du coffre avec la clé donnée à la version mise en ligne
+  (variables `K1`, `D1`, `B1` ; plus aucun nom de dépôt dans le code) ; `vercel.json` du coffre sans mise en ligne par Git.
+  **Publication** (`site.sh` + `site_api.py`) : envoi par l'API Vercel (la clé limitée au projet est refusée par l'outil en
+  ligne de commande), version vérifiée (page, relais, données récentes, fichier absent, en-têtes, aucun nom de source dans
+  live / summary / quotes / news) avant mise à l'adresse du site, retour à la version précédente si le contrôle à l'adresse
+  publique échoue (`mybbgterminal.vercel.app` ; l'adresse `-screener3` est protégée par l'hébergeur). Essai : aperçu
+  `…-screener3.vercel.app` lisant `data-essai`, vérifié vert deux fois (15 h 48 et 15 h 58 UTC). La mise à jour lance la
+  Publication quand le code du site change (production seulement).
+- *Corrigé en passant* : nom de source répété en fin d'extrait d'actualité (« … Sika Finance » dans une info-bulle, résumés
+  Google Actualités) : producteur et relais corrigés dans les deux dépôts (18 h 00). Contrôle B29 adapté au moteur d'essai.
+- *Reste avant la bascule* : rodage de Cadence ; essai de la base du soir en parallèle (Mise à jour d'essai, choix « soir », à
+  lancer à 22 h 35 UTC un jour de semaine) ; Secours (`copie.sh`, clé `K3`) ; sonde et archives (Outil tâches 2 et 3) ;
+  relecture « en étranger » du moteur public (rien d'identifiable) ; validation du propriétaire.
+- *Bascule* (dans l'ordre, accord du propriétaire à chaque pas) : 1) fichiers de production `publics/*.yml` copiés dans le
+  moteur, anciennes automatisations **désactivées sans être supprimées** (programmation retirée, fichiers gardés) ; 2)
+  Publication tâche 2 (site mis en ligne depuis le coffre) puis tâche 3 (mise en ligne automatique depuis Git débranchée) ;
+  3) Cadence remplace le Métronome ; 4) vérification complète comme un étranger ; 5) plus tard, avec l'accord explicite du
+  propriétaire : nettoyage de `noodleloop` (façon 1 ou 2 du point 8).
+
 ## Tâches programmées
 
 - « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
