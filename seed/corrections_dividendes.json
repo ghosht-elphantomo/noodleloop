@@ -1,0 +1,15 @@
+{
+ "v": 1,
+ "note": "Dates d'un versement corrigées après vérification sur les documents officiels de la BRVM (avis de report, bulletin officiel de la cote) quand l'avis lu par la branche dividendes en donne une autre (avis remplacé par un avis de report pas encore lu). Appliqué par build_terminal.py seulement si le versement porte encore la valeur « avant » ; une valeur déjà différente est laissée et signalée dans le journal. « apres » nul : date retirée (la date de paiement sert alors au rendement total). Une date n'est inscrite ici qu'avec sa preuve.",
+ "rows": [
+  {
+   "t": "CIEC",
+   "ex": 2016,
+   "champ": "pay",
+   "avant": "2017-07-12",
+   "apres": "2017-09-20",
+   "doc": "Avis n°161-2017 BRVM/DG du 04/09/2017 « paiement de dividende – CIE CI » (https://www.brvm.org/sites/default/files/20170904_-_avis_ndeg161_brvmdg_-_paiement_de_dividende_-_cie_ci.pdf), postérieur à l'avis n°96-2017 du 27/06/2017 (détachement le 10/07/2017, paiement le 12/07/2017)",
+   "preuve": "Base d'avis : paiement de l'exercice 2016 le 20/09/2017 (avis n°161, publié le 04/09/2017 ; aucune nouvelle date ex-dividende relevée dans cet avis). Bulletin officiel de la cote : 3 465 « payé le 12/07/2017 » affiché du 07/07 au 12/07/2017, puis retour au dividende 2015 (2 641 payé le 15/09/2016) dès le 13/07/2017 ; 3 465 « payé le 20/09/2017 » affiché à partir du 20/09/2017. La date de détachement de l'avis n°96 (10/07/2017) n'est contredite par aucun document lu : elle est gardée (l'avis n°161, sans texte dans le cache, est à relire par reconnaissance de caractères)."
+  }
+ ]
+}

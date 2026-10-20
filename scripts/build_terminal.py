@@ -930,6 +930,7 @@ def main():
             for kk, kd in (("date_detachement", "det"), ("date_paiement", "pay")):
                 if not x.get(kk) and a_.get(kd):
                     x[kk] = a_[kd]
+                    x[kd + "_off"] = 1  # (date lue dans l'avis officiel)
         if fixes:
             log("dividendes d'après les avis officiels :", "; ".join(fixes))
     if AV:  # dividendes annoncés sur brvm.org (montant net, détachement, paiement) absents de la base : ajoutés
@@ -953,7 +954,8 @@ def main():
             # montant de la colonne du calendrier brvm.org : net pour certaines sociétés, brut pour d'autres (l'avis PDF précise le net) -> signalé
             a_ = AVD.get((r["t"], r.get("ex")))
             nx = {"ticker": r["t"], "dividende": a_["net"] if a_ else r["dps"], "exercice": r.get("ex"), "date_annonce": r.get("d"), "date_detachement": r.get("det"),
-                  "date_paiement": r.get("pay"), "source": "BRVM", **({} if a_ else {"cal": 1})}
+                  "date_paiement": r.get("pay"), "source": "BRVM", **({} if a_ else {"cal": 1}),
+                  **({"det_off": 1} if r.get("det") else {}), **({"pay_off": 1} if r.get("pay") else {})}
             divs.append(nx)
             have[r["t"]].append(nx)
             av_chk["div"] += 1
@@ -1062,6 +1064,11 @@ def main():
                         if o.get("pub") and (not x.get("date_annonce") or x["date_annonce"] > (o.get("det") or o.get("pay") or "9")):
                             x["date_annonce"] = o["pub"]  # (annonce de la base postérieure au détachement : date de l'avis)
                         x["date_paiement"] = o.get("pay") or x.get("date_paiement")
+                        # (dates écrites dans le document officiel : jamais retirées par les contrôles de cohérence plus bas)
+                        if o.get("det"):
+                            x["det_off"] = 1
+                        if o.get("pay"):
+                            x["pay_off"] = 1
                         if o.get("ex") and not x.get("exercice"):
                             x["exercice"] = o["ex"]
                         x["source"], x["avis"] = "BRVM", 1
@@ -1083,6 +1090,7 @@ def main():
                               **({"weak": 1} if o.get("src") in ("bulletin", "revue trimestrielle") else {}),
                               **({"usd_c": o["usd_c"], "fx": o.get("fx")} if o.get("fx") or o.get("boc_fcfa") else {}), **({"exc": 1} if o.get("kind") == "exceptionnel" else {}), **({"px_raw": o["px"], "px_d": o["px_d"]} if o.get("px") and o.get("px_d") else {}),
                               **({"brut_avis": o["brut"], "irvm_avis": o["irvm"]} if o.get("brut") and o.get("irvm") is not None else {}),
+                              **({"det_off": 1} if o.get("det") else {}), **({"pay_off": 1} if o.get("pay") else {}),
                               **({"chk_off": o["chk"]} if o.get("chk") else {})}
                         divs.append(nx)
                         byt[o["t"]].append(nx)
@@ -1099,6 +1107,31 @@ def main():
         except Exception as e:  # noqa: BLE001
             log("dividendes officiels illisibles :", e)
             print("::warning::Construction : dividendes officiels illisibles (voir le journal)")
+    # dates d'un versement corrigées après vérification sur les documents officiels (seed/corrections_dividendes.json : avis de report
+    # pas encore lu, bulletin de la cote) : appliquées seulement si le versement porte encore la valeur notée « avant » ; une valeur
+    # déjà différente (avis de report lu depuis) est laissée et signalée
+    try:
+        cd_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "corrections_dividendes.json"), encoding="utf8"))
+        done_, skip_ = [], []
+        for c_ in cd_.get("rows") or []:
+            kk_ = {"det": "date_detachement", "pay": "date_paiement", "ann": "date_annonce"}[c_["champ"]]
+            for x in divs:
+                if x.get("ticker") != c_["t"] or x.get("exercice") != c_["ex"] or not x.get("dividende"):
+                    continue
+                if (x.get(kk_) or None) == c_["avant"]:
+                    x[kk_] = c_["apres"]
+                    x[c_["champ"] + "_off"] = 1  # (date vérifiée sur le document)
+                    x.setdefault("corr", {})[c_["champ"]] = c_["avant"]
+                    done_.append(f'{c_["t"]} {c_["ex"]} {c_["champ"]} {c_["avant"]} -> {c_["apres"] or "retirée"}')
+                elif (x.get(kk_) or None) != c_["apres"]:
+                    skip_.append(f'{c_["t"]} {c_["ex"]} {c_["champ"]} ({x.get(kk_)})')
+        if done_:
+            log("dates de dividendes corrigées d'après les documents :", "; ".join(done_))
+        if skip_:
+            log("dates de dividendes à revoir (le versement a changé depuis la correction) :", "; ".join(skip_))
+    except Exception as e:  # noqa: BLE001
+        log("corrections de dates de dividendes illisibles :", e)
+        print("::warning::Construction : corrections de dates de dividendes illisibles (voir le journal)")
     boc_chk = {"n": 0, "diff": 0, "added": 0, "div_added": 0, "by": {}}
     # jours de séance attestés par un bulletin officiel (et nombre de titres dont le cours a varié ce jour-là) ; valeurs des indices
     # lues dans les bulletins récents (relevé du soir, branche raw)
@@ -1278,8 +1311,17 @@ def main():
     # versements en double (même titre, même exercice, même montant à 1 % près, dates à 75 jours près ou absentes) : un bulletin de
     # l'ancien site lu avec une date décalée d'un mois, ou un avis et un bulletin pour le même versement — le mieux renseigné est gardé
     # (date de détachement, date d'annonce, source officielle). Les paiements fractionnés (montants différents) ne sont pas concernés.
+    # À qualité égale (deux lectures de bulletins), la lecture dont le paiement tombe un jour ouvré l'emporte : « 2-avr-11 », un
+    # samedi, est une coquille pour le 2 mai (BOA Bénin et BOA Burkina 2010)
+    def wd_(s):
+        try:
+            return dt.date.fromisoformat(str(s)[:10]).weekday() < 5
+        except ValueError:
+            return False
+
     def dq_(x):
-        return (bool(x.get("date_detachement")), bool(x.get("date_annonce")), x.get("source") not in ("BOC", None), bool(x.get("date_paiement")))
+        return (bool(x.get("date_detachement")), bool(x.get("date_annonce")), x.get("source") not in ("BOC", None), bool(x.get("date_paiement")),
+                wd_(x.get("date_paiement") or x.get("date_detachement") or ""))
     by_ = collections.defaultdict(list)
     for x in divs:
         if x.get("ticker") and x.get("exercice") and x.get("dividende") and not x.get("exc"):
@@ -2122,14 +2164,55 @@ def main():
         return {"brut": round(b_, 4), "irvm": r_} if abs(b_ * (1 - r_ / 100) - n_) <= max(.6, n_ * .002) else {}
     dmeta = [{"t": x.get("ticker"), "ex": x.get("exercice"), "dps": x.get("dividende"), "ann": x.get("date_annonce"), "det": x.get("date_detachement"),
               "pay": x.get("date_paiement"), "src": x.get("source"), **({"dps0": x["dividende_publie"], "adj": x["ajust"]} if x.get("ajust") else {}),
-              **({"cal": 1} if x.get("cal") else {}), **({"usd": x["usd_c"], **({"fx": x["fx"]} if x.get("fx") else {"fxb": 1})} if x.get("usd_c") else {}), **({"exc": 1} if x.get("exc") else {}), **brut_(x)} for x in divs if x.get("ticker")]
+              **({"cal": 1} if x.get("cal") else {}), **({"usd": x["usd_c"], **({"fx": x["fx"]} if x.get("fx") else {"fxb": 1})} if x.get("usd_c") else {}), **({"exc": 1} if x.get("exc") else {}), **brut_(x),
+              **({"corr": x["corr"]} if x.get("corr") else {}), "_do": bool(x.get("det_off")), "_po": bool(x.get("pay_off"))} for x in divs if x.get("ticker")]
+    # jour de séance : pas un week-end, et — les mois couverts par les bulletins officiels (au moins 10 bulletins) — un jour de bulletin
+    # ou de cours de la base qui varie (hors jour férié) ; avant les bulletins, le seul critère du week-end
+    boc_m_ = collections.Counter(d_ // 100 for d_ in BOC_DAYS)
+
+    def seance_(s):
+        try:
+            d_ = di(str(s)[:10])
+            return not is_weekend(d_) and (boc_m_[d_ // 100] < 10 or not no_session(d_))
+        except (TypeError, ValueError, IndexError):
+            return True  # (date illisible : laissée, d'autres contrôles la signalent)
+    # date de détachement qu'aucun document officiel ne donne (reprise de la base tierce) : retirée (le dividende est alors placé à
+    # sa date de paiement) si elle ne tombe pas un jour de séance ou précède le paiement de plus de 15 jours (dimanche 01/05/2016,
+    # 65 jours avant le paiement : PRSC et SGBC 2015) ; ancienne valeur gardée dans « det0 »
+    det_rm, pay_keep = [], []
+    for x in dmeta:
+        if x.get("det") and not x["_do"]:
+            try:
+                gap_ = (dt.date.fromisoformat(x["pay"][:10]) - dt.date.fromisoformat(x["det"][:10])).days if x.get("pay") else 0
+            except ValueError:
+                gap_ = 0
+            if not seance_(x["det"]) or gap_ > 15:
+                det_rm.append(f'{x["t"]} {x["ex"]} {x["det"]}')
+                x["det0"], x["det"] = x["det"], None
     # dates incohérentes entre elles : une annonce postérieure au détachement ou au paiement (date de mise en ligne d'un ancien avis)
-    # et un paiement antérieur au détachement (date mal lue) sont retirés plutôt qu'affichés faux
+    # et un paiement antérieur au détachement (date mal lue) sont retirés plutôt qu'affichés faux ; une date de paiement écrite dans
+    # le document officiel n'est jamais retirée : avec un détachement officiel postérieur (cotation suspendue jusqu'au détachement,
+    # SLBC 2023 : paiement le 14/08/2024, reprise ex-dividende le 12/09/2024) les deux sont gardées et signalées ; avec un
+    # détachement de la base, c'est lui qui est retiré
     for x in dmeta:
         if x.get("ann") and ((x.get("det") and x["ann"] > x["det"]) or (x.get("pay") and x["ann"] > x["pay"])):
             x["ann"] = None
         if x.get("det") and x.get("pay") and x["pay"] < x["det"]:
-            x["pay"] = None
+            if x["_po"] and x["_do"]:
+                pay_keep.append(f'{x["t"]} {x["ex"]} (paiement {x["pay"]}, détachement {x["det"]})')
+            elif x["_po"]:
+                det_rm.append(f'{x["t"]} {x["ex"]} {x["det"]}')
+                x["det0"], x["det"] = x["det"], None
+            else:
+                x["pay"] = None
+    DOFF = {}  # (dates écrites dans un document officiel, par versement : alignement des événements plus bas)
+    for x in dmeta:
+        DOFF[id(x)] = {"det": x.pop("_do", False), "pay": x.pop("_po", False)}
+    if det_rm:
+        log("dates de détachement de la base retirées (pas un jour de séance, plus de 15 jours avant le paiement, ou après le paiement officiel) :",
+            "; ".join(det_rm))
+    if pay_keep:
+        log("paiement officiel antérieur au détachement officiel, gardé :", "; ".join(pay_keep))
     if split_log:
         log("fractionnements :", "; ".join(split_log[:80]))
     ev = json.load(open(os.path.join(src, "events.json"), encoding="utf8"))["events"]
