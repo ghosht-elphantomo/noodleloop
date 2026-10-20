@@ -1054,9 +1054,11 @@ BNPA_DEUX_NORMES = {"BICB": "2025 : bulletin sur les comptes IFRS vérifiés, s�
 
 @bug("B47", "2026-10-20", "BNPA et PER différents entre le résumé et la fiche FA",
      "Le résumé prenait le BNPA du bulletin et FA celui de la série : PER, distribution et rendement différaient d'un écran à "
-     "l'autre pour la même société. Depuis le 20/10/2026 : une seule convention (BNPA du bulletin, sauf résultat du dernier "
-     "exercice vérifié et calculé autrement par le bulletin, pso « fqt », BNPA du bulletin gardé à côté) ; FA signale un écart.",
-     "actions BRVM : PER de FA = PER du résumé (à 0,1 près) ; distribution de FA = celle du résumé (à 1 point près)")
+     "l'autre pour la même société. Depuis le 20/10/2026 : PER du bulletin officiel partout ; quand le bulletin calcule le BNPA sur "
+     "un autre résultat que les comptes affichés (IFRS ou consolidés : CABC, SDCC, TTLS, ONTBF, BICB ; exercice plus ancien : "
+     "SEMC), FA le mentionne sur l'exercice (BNPA des comptes au résumé possible par BNPA_SERIE_AU_RESUME, choix du propriétaire).",
+     "actions BRVM : PER de FA = PER du résumé (à 0,1 près) ; distribution de FA = celle du résumé (à 1 point près) sauf écart "
+     "mentionné dans FA")
 def b47(ctx):
     S = jl(ctx["D"], "summary.json") or {}
     out = []
@@ -1064,11 +1066,34 @@ def b47(ctx):
         if s.get("mkt") != "BRVM" or s.get("cls") != "Equity" or s["id"] in BNPA_DEUX_NORMES:
             continue
         fa = jl(ctx["D"], f"fa/{s['id']}.json") or {}
+        # écart déjà expliqué dans FA (BNPA du bulletin officiel sur un autre résultat que celui des comptes affichés) : seule la
+        # distribution peut différer (dividende ÷ BNPA du bulletin au résumé, ÷ BNPA des comptes dans FA)
+        expl = any("du bulletin officiel" in str(x or "") for x in ((fa.get("Y") or {}).get("src") or []))
         if s.get("per") and fa.get("pe") and abs(s["per"] - fa["pe"]) > 0.1:
             out.append(f"{s['id']} PER {s['per']:g} / FA {fa['pe']:g}")
-        if s.get("pay") and fa.get("payout") and abs(s["pay"] - fa["payout"]) > 0.01:
+        if s.get("pay") and fa.get("payout") and abs(s["pay"] - fa["payout"]) > 0.01 and not expl:
             out.append(f"{s['id']} distribution {s['pay']:.1%} / FA {fa['payout']:.1%}")
     return ("orange", f"{len(out)} écart(s) : " + "; ".join(out[:8])) if out else ("vert", "PER et distribution identiques dans le résumé et FA")
+
+
+@bug("B48", "2026-10-20", "Dividende des fiches FA différent des versements officiels (exercice décalé, base non ajustée)",
+     "La série « dividende » des fiches (fundamentals.json, FA) reprenait la base tierce : exercices décalés d'un an (BOA 2019-2022), "
+     "dividendes d'avant les actions gratuites non ajustés (BOA CI 2014-2015). Depuis le 20/10/2026, le dividende d'un exercice est "
+     "la somme des versements officiels de cet exercice (dividends.json).",
+     "fundamentals.json : dividende de chaque exercice = somme des versements officiels du même exercice (à 0,5 % ou 0,01 FCFA près)")
+def b48(ctx):
+    F = jl(ctx["D"], "fundamentals.json") or {}
+    off = collections.defaultdict(float)
+    for x in jl(ctx["D"], "dividends.json") or []:
+        if x.get("ex") and x.get("dps") and not x.get("exc"):
+            off[(x["t"], int(x["ex"]))] += x["dps"]
+    out = []
+    for t, f in F.items():
+        for y, v in (((f or {}).get("series") or {}).get("dividende") or {}).items():
+            o = off.get((t, int(y))) if str(y).isdigit() else None
+            if v is not None and o and abs(v - o) > max(0.005 * o, 0.01):
+                out.append(f"{t} {y} fiche {v:g}, versements {o:.4g}")
+    return ("orange", f"{len(out)} exercice(s) : " + "; ".join(out[:8])) if out else ("vert", "dividendes des fiches = versements officiels")
 
 
 def verifier(R, ctx):

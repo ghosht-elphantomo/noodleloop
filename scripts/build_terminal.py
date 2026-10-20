@@ -145,6 +145,13 @@ def us_div_place(dates, rows, spl, max_days=7):
 VOL_OTHER = {"BRENT"}
 
 
+# BNPA du résumé quand le bulletin officiel calcule le même exercice sur un autre résultat (comptes IFRS ou consolidés ; CABC,
+# SDCC, TTLS, ONTBF au 20/10/2026) : False = le BNPA et le PER du bulletin officiel restent affichés (règle du propriétaire : la
+# BRVM est la source principale) et FA mentionne l'écart avec les comptes affichés ; True = BNPA des comptes vérifiés de la série
+# au résumé (« fqt »), celui du bulletin gardé à côté. Choix laissé au propriétaire (20/10/2026).
+BNPA_SERIE_AU_RESUME = False
+
+
 def vol_ok(hist, x):
     """Volume du jour vraisemblable face aux séances précédentes (hist, la plus récente en dernier) : au plus 5 fois la médiane
     des 60 dernières séances (QQQ 490,8 M, somme des barres de 5 min, contre 45,9 M) et différent de plus de 0,1 % du volume de
@@ -1961,7 +1968,7 @@ def main():
                     if abs(cb / rb["per"] / split_factor(t, kb, rows[-1][0]) / bnpa_off - 1) > .02:
                         break
                     k0_ = kb
-                if ver_ and k0_ and k0_ // 10000 == y_l + 1:
+                if BNPA_SERIE_AU_RESUME and ver_ and k0_ and k0_ // 10000 == y_l + 1:
                     bnpa_bul, bnpa_, pso_ = bnpa_off, sb_l[y_l], "fqt"
         except Exception as e:  # noqa: BLE001  (en cas de doute, le BNPA du bulletin reste)
             log("BNPA du dernier exercice : contrôle impossible pour", t, e)
