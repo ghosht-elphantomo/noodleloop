@@ -1483,7 +1483,21 @@ def run_divhist(out):
     for u, ts in idx.get("cdx") or []:
         jobs.append((1 + prio(u), u, ts, {"src": "wb"}))
     jobs.sort(key=lambda j: j[0])
-    jobs = [j for j in jobs if j[1] not in docs or (str(docs[j[1]].get("st", "")).startswith("erreur") and docs[j[1]].get("n_err", 0) < 3)]
+    # document numérisé lu sans reconnaissance de caractères (budget du passage épuisé, ou lecture en échec) : autrefois marqué « lu »
+    # sans texte, donc perdu pour dividendes.py et la recherche (67 avis de dividendes de 2017-2019, dont le report du paiement CIE
+    # 2016). Les anciennes entrées sont contrôlées une fois (nombre de caractères gardé dans « txtn ») et remises à l'état « à OCR »
+    for u, m in docs.items():
+        if m.get("st") == "lu" and "txtn" not in m and not m.get("ocr") and 0 < (m.get("pages") or 0) <= 12:
+            p_ = os.path.join(out, "txt", m["h"] + ".txt.gz")
+            try:
+                m["txtn"] = len(re.sub(r"\s", "", gzip.open(p_, "rt", encoding="utf8").read())) if os.path.exists(p_) else 0
+            except Exception:  # noqa: BLE001
+                m["txtn"] = 0
+            if m["txtn"] < 150 * m["pages"]:
+                m["st"] = "à OCR"
+    # (à relire : erreurs de téléchargement, trois essais ; documents « à OCR », trois échecs de lecture au plus)
+    jobs = [j for j in jobs if j[1] not in docs or (str(docs[j[1]].get("st", "")).startswith("erreur") and docs[j[1]].get("n_err", 0) < 3)
+            or (docs[j[1]].get("st") == "à OCR" and docs[j[1]].get("n_ocr", 0) < 3)]
     n_new = n_ocr = 0
     for pr, u, ts, meta in jobs:
         if time.time() - t0 > budget:
@@ -1513,10 +1527,12 @@ def run_divhist(out):
             if pages and not pages[-1].strip():
                 pages = pages[:-1]
             rec["pages"] = len(pages)
+            rec["txtn"] = len(re.sub(r"\s", "", txt))
             with gzip.open(os.path.join(out, "txt", h + ".txt.gz"), "wt", encoding="utf8") as f:
                 f.write(txt)
             # document numérisé (couche texte vide) : reconnaissance de caractères des premières pages
-            if len(re.sub(r"\s", "", txt)) < 150 * max(1, len(pages)) and 0 < len(pages) <= 12 and time.time() - t0 < budget - 120:
+            scan_ = rec["txtn"] < 150 * max(1, len(pages)) and 0 < len(pages) <= 12
+            if scan_ and time.time() - t0 < budget - 120:
                 try:
                     o = cpt_ocr(p_, list(range(1, min(len(pages), 6) + 1)), td)
                     for lang, t_ in o.items():
@@ -1526,16 +1542,24 @@ def run_divhist(out):
                     n_ocr += 1
                 except Exception as ex:  # noqa: BLE001
                     rec["ocr_err"] = str(ex)[:80]
-        rec["st"] = "lu"
+                    rec["n_ocr"] = (docs.get(u) or {}).get("n_ocr", 0) + 1
+                    if rec["n_ocr"] >= 3:
+                        note("divhist", False, f"lecture par reconnaissance de caractères impossible : {u.rsplit('/', 1)[-1][:60]}")
+            elif scan_ and (docs.get(u) or {}).get("n_ocr"):
+                rec["n_ocr"] = docs[u]["n_ocr"]
+        # (sans texte ni reconnaissance de caractères — temps épuisé ou lecture en échec — : « à OCR », relu au passage suivant ;
+        # jamais « lu » sans rien de lisible)
+        rec["st"] = "à OCR" if scan_ and not rec.get("ocr") else "lu"
         docs[u] = rec
         n_new += 1
         if n_new % 20 == 0:
             save(ip, idx)
     left = sum(1 for j in jobs if j[1] not in docs)
-    idx.update(v=1, left=left, last_new=n_new, ts=int(time.time()))
+    a_ocr = sum(1 for m in docs.values() if m.get("st") == "à OCR")
+    idx.update(v=1, left=left, a_ocr=a_ocr, last_new=n_new, ts=int(time.time()))
     save(ip, idx)
     note("divhist")
-    log(f"dividendes : {n_new} documents lus ({n_ocr} par reconnaissance de caractères), {left} restent, {len(docs)} en cache")
+    log(f"dividendes : {n_new} documents lus ({n_ocr} par reconnaissance de caractères), {left} restent, {a_ocr} à relire par reconnaissance de caractères, {len(docs)} en cache")
 
 
 def brvm_reports(out, evs, budget=420):

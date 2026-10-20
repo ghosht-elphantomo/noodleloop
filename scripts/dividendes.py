@@ -639,11 +639,19 @@ def run(d):
     boc_old, revue = {}, {}
     tick = {t_ for _, t_ in ALIAS if t_}
     cat = []  # catalogue des documents lus (recherche MOTS CLES du terminal) : intitulé, nature, date, société, exercice
+    # documents sans texte lisible : « à OCR » (numérisés, reconnaissance de caractères pas encore faite, relus par fetch_extra au
+    # passage suivant ; leur couche texte partielle, s'il y en a une, est lue comme avant) et « lu » sans texte (ni couche texte ni
+    # reconnaissance) : comptés et signalés, jamais ignorés en silence
+    a_ocr, sans_txt = [], []
     for u, m in (idx.get("docs") or {}).items():
-        if m.get("st") != "lu":
+        if m.get("st") not in ("lu", "à OCR"):
             continue
         t, ocr = read_text(d, m["h"])
+        if m.get("st") == "à OCR":
+            a_ocr.append(u)
         if not t:
+            if m.get("st") == "lu":
+                sans_txt.append(u)
             continue
         c_ = {"u": u, **({"wb": m["wb"]} if m.get("wb") else {})}
         cat.append(c_)
@@ -733,10 +741,20 @@ def run(d):
     json.dump({"v": 1, "docs": [{k: v for k, v in c_.items() if v not in (None, "")} for c_ in cat]},
               open(os.path.join(d, "catalog.json"), "w", encoding="utf8"), ensure_ascii=False, separators=(",", ":"))
     rows = consolidate(cal_rows, avis, boc_old, revue)
+    # (avis de paiement de dividendes parmi les documents sans texte : nom du fichier ; liste gardée pour le contrôle du matin)
+    div_sans = sorted(u for u in a_ocr + sans_txt if re.search(r"divid", urllib.parse.unquote(u.rsplit("/", 1)[-1]).lower()))
     json.dump({"v": 2, "ts": int(dt.datetime.now().timestamp()), "rows": rows,
-               "n": {"calendriers": len({r["u"] for r in cal_rows}), "lignes_calendrier": len(cal_rows), "avis": len(avis), "bulletins": n_boc, "versements_bulletins": len(boc_old), "revues": len(revue)}},
+               "n": {"calendriers": len({r["u"] for r in cal_rows}), "lignes_calendrier": len(cal_rows), "avis": len(avis), "bulletins": n_boc, "versements_bulletins": len(boc_old), "revues": len(revue),
+                     "a_ocr": len(a_ocr), "lus_sans_texte": len(sans_txt), "avis_dividende_sans_texte": len(div_sans)},
+               "sans_texte": div_sans[:300]},
               open(os.path.join(d, "dividendes.json"), "w", encoding="utf8"), ensure_ascii=False, separators=(",", ":"))
     print(f"[dividendes] {len(rows)} versements ({len(cal_rows)} lignes de calendrier, {len(avis)} avis, {n_boc} bulletins anciens, {len(boc_old)} versements lus dans les bulletins)")
+    if a_ocr or sans_txt:
+        print(f"[dividendes] documents sans texte : {len(a_ocr)} à relire par reconnaissance de caractères, {len(sans_txt)} lus sans texte"
+              f" (dont {len(div_sans)} avis de dividende)")
+    if div_sans:  # (un avis de dividende illisible peut annoncer un report ou un rectificatif : signalé tant qu'il n'est pas lu)
+        print(f"::warning::Dividendes : {len(div_sans)} avis de dividende sans texte (à relire par reconnaissance de caractères) : "
+              f"leurs montants et dates ne sont pas encore pris en compte ({', '.join(u.rsplit('/', 1)[-1][:50] for u in div_sans[:3])}…)")
 
 
 if __name__ == "__main__":
