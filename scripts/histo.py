@@ -2,7 +2,8 @@
 """Base historique BRVM : archive cumulative, contrôlée et journalisée.
 
 Lue chaque soir après la mise à jour du terminal, sur la branche `histo` (jamais publiée sur le site).
-- Rien n'est jamais effacé : une ligne absente de la source du jour reste dans la base.
+- Rien n'est jamais effacé : une ligne absente de la source du jour reste dans la base. Exception : dividendes.csv, table dérivée
+  de dividends.json, où une clé absente des versements du jour est retirée (et consignée) pour qu'un exercice ne compte qu'une fois.
 - Une valeur qui change est remplacée et l'ancienne est consignée dans corrections.csv.
 - Les contrôles de cohérence du jour sont écrits dans controles.csv (état courant) ; l'historique git garde les précédents.
 Bibliothèque standard Python uniquement.
@@ -240,6 +241,7 @@ def main():
     tdv = Table(out, "dividendes.csv", ["titre", "exercice", "origine", "type", "dividende_net", "dividende_ajuste", "facteur_ajustement", "annonce",
                                         "detachement", "paiement"], ["titre", "exercice", "origine", "type"], req=["titre", "exercice", "origine"])
     agg = {}
+    det_faux = {}  # date de détachement reconnue fausse par le terminal (« det0 », ou corrigée d'après un avis de report : « corr »)
     for x in load(os.path.join(a.data, "dividends.json"), []) or []:
         if x.get("t") not in brvm_eq or not x.get("dps"):
             continue
@@ -250,9 +252,33 @@ def main():
         g["adj"] += x.get("dps")
         if (iso(x.get("pay")) or "") >= (g["pay"] or ""):
             g.update(ann=iso(x.get("ann")) or g["ann"], det=iso(x.get("det")) or g["det"], pay=iso(x.get("pay")) or g["pay"])
+        d0_ = x.get("det0") or (x.get("corr") or {}).get("det")
+        if d0_ and not x.get("det"):
+            det_faux[(fnum(x["t"]), fnum(x.get("ex")), org, k[3])] = iso(d0_)
     for (t_, ex_, org, ty_), g in agg.items():
         tdv.upsert({"titre": t_, "exercice": ex_, "origine": org, "type": ty_, "dividende_net": round(g["net"], 6), "dividende_ajuste": round(g["adj"], 6),
                     "facteur_ajustement": g["f"], "annonce": g["ann"], "detachement": g["det"], "paiement": g["pay"]})
+    # (une date vide ne remplace jamais une date connue, sauf une date de détachement que le terminal a reconnue fausse — dimanche, 65
+    # jours avant le paiement, avis de report — et retirée : elle est effacée de l'archive, et consignée)
+    for k, d0_ in det_faux.items():
+        r_ = tdv.rows.get(k)
+        if r_ and r_.get("detachement") == d0_:
+            r_["detachement"] = ""
+            tdv.changed.append((k, [("detachement", d0_, "")]))
+            tdv.dirty = True
+    # table dérivée de dividends.json : une ligne dont la clé (titre, exercice, origine, type) n'est plus parmi les versements du jour
+    # (versement rattaché depuis à un avis plutôt qu'à un bulletin, doublon de lecture retiré, montant mal lu) ferait compter
+    # l'exercice deux fois : elle est retirée et consignée dans corrections.csv (seule exception à « rien n'est effacé », voir le
+    # README). Rien n'est retiré si les versements du jour manquent ou couvrent nettement moins de clés que l'archive (lecture incomplète),
+    # ni pour un titre qui n'a aucun versement du jour (titre radié, ou lecture du jour en échec pour lui)
+    keys_ = {(fnum(t_), fnum(ex_), org, ty_) for (t_, ex_, org, ty_) in agg}
+    tk_jour = {k[0] for k in keys_}
+    div_rm = []
+    if keys_ and len(keys_) >= 0.8 * len(tdv.rows):
+        div_rm = [(k, dict(r)) for k, r in tdv.rows.items() if k not in keys_ and r["titre"] in tk_jour]
+        tdv.drop(lambda r: tdv.k(r) not in keys_ and r["titre"] in tk_jour)
+    elif tdv.rows:
+        log.append(f"dividendes.csv : versements du jour incomplets ({len(keys_)} clés pour {len(tdv.rows)} archivées), aucune ligne retirée")
     tables.append(tdv)
 
     # ---------- 4. fractionnements / regroupements ----------
@@ -338,6 +364,10 @@ def main():
         for k in (t.drop(lambda r, di=di: r["date"] == di) if t else []):
             tco.upsert({"constate_le": today, "fichier": t.name, "cle": " | ".join(k), "champ": "ligne", "ancienne_valeur": "séance archivée",
                         "nouvelle_valeur": "retirée : bulletin identique à celui de la veille (jour sans séance)"})
+    for k, r in div_rm:  # versement archivé absent des versements du jour : ligne retirée, et consignée
+        tco.upsert({"constate_le": today, "fichier": tdv.name, "cle": " | ".join(k), "champ": "ligne",
+                    "ancienne_valeur": f"versement archivé : {r.get('dividende_net') or '—'} net ({r.get('dividende_ajuste') or '—'} ajusté), paiement {r.get('paiement') or '—'}",
+                    "nouvelle_valeur": "retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"})
     # exercice pas encore clos (comptes semestriels pris pour des comptes annuels par une source) : ligne retirée, et consignée
     for k in tre.drop(lambda r: (r.get("exercice") or "0").isdigit() and int(r["exercice"]) >= now.year):
         tco.upsert({"constate_le": today, "fichier": tre.name, "cle": " | ".join(k), "champ": "ligne", "ancienne_valeur": "exercice archivé",
