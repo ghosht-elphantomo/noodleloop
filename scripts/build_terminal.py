@@ -86,14 +86,181 @@ def rnd(v, nd):
 
 
 # ------------------------------------------------------------------ loaders
-def load_yn(sym, cache):
-    rows = []
-    for r in csv.DictReader(io.StringIO(fetch(YN.format(sym), cache).decode("utf8"))):
+def is_wkend(d):
+    """Samedi ou dimanche (date entière AAAAMMJJ)."""
+    return dt.date(d // 10000, d // 100 % 100, d % 100).weekday() >= 5
+
+
+def load_yn(sym, cache, text=None):
+    """Actions et ETF US et Taïwan (Yahoo, jeu yennanliu). Les lignes datées d'un samedi ou d'un dimanche sont écartées : séance
+    fantôme de la source (0050 et 2330 le dimanche 20/09/2026, clôture recopiée de la veille et plus haut à +10 % qui faussait le
+    plus haut sur 52 semaines) ; aucune séance réelle n'a lieu le week-end sur ces marchés (les samedis de rattrapage de Taïwan
+    sont des jours de règlement sans cotation). Un éventuel dividende porté par une ligne écartée passe à la séance suivante."""
+    rows, carry = [], 0
+    for r in csv.DictReader(io.StringIO(text if text is not None else fetch(YN.format(sym), cache).decode("utf8"))):
         c = fnum(r.get("close"))
         if not c:
             continue
-        rows.append((di(r["date"]), fnum(r["open"]) or c, fnum(r["high"]) or c, fnum(r["low"]) or c, c, int(fnum(r["volume"]) or 0), fnum(r.get("div")) or 0))
+        d_ = di(r["date"])
+        if is_wkend(d_):
+            carry += fnum(r.get("div")) or 0
+            continue
+        rows.append((d_, fnum(r["open"]) or c, fnum(r["high"]) or c, fnum(r["low"]) or c, c, int(fnum(r["volume"]) or 0), (fnum(r.get("div")) or 0) + carry))
+        carry = 0
     return rows
+
+
+def us_div_place(dates, rows, spl, max_days=7):
+    """Dividendes US (Nasdaq : [détachement AAAA-MM-JJ, montant, paiement]) placés sur une série à la date de détachement.
+    Un détachement un jour sans cotation passe à la première séance suivante, à 7 jours au plus (sinon ignoré). Un détachement
+    antérieur à la première séance de la série est ignoré : auparavant, tous ces dividendes étaient cumulés sur la première
+    séance (AEP 24,13 $ = 41 trimestres, KDP 117,47 $ = 529 % du cours) et listés comme un seul versement. Renvoie (div, nombre placé)."""
+    import bisect
+    div, n = [0] * len(dates), 0
+    idx = {d: i for i, d in enumerate(dates)}
+    for d_, amt, _pay in rows:
+        try:
+            k = di(d_)
+        except Exception:  # noqa: BLE001
+            continue
+        for sd, ratio in spl:  # montant nominal de l'époque ramené à la base d'actions actuelle (cours déjà ajustés)
+            if sd > d_:
+                amt = amt / ratio
+        i = idx.get(k)
+        if i is None:  # détachement un jour sans cotation dans la série : première séance suivante, à 7 jours au plus
+            j = bisect.bisect_left(dates, k)
+            if not dates or k < dates[0] or j >= len(dates):
+                continue
+            k_d, n_d = dt.date(k // 10000, k // 100 % 100, k % 100), dt.date(dates[j] // 10000, dates[j] // 100 % 100, dates[j] % 100)
+            if (n_d - k_d).days > max_days:
+                continue
+            i = j
+        div[i] = round(div[i] + amt, 4)
+        n += 1
+    return div, n
+
+
+# volume du relevé tiré d'un autre contrat que celui de la série : jamais greffé (BRENT : volume ICE de CNBC sur la série
+# Yahoo BZ=F du contrat NYMEX, ×7,5)
+VOL_OTHER = {"BRENT"}
+
+
+def vol_ok(hist, x):
+    """Volume du jour vraisemblable face aux séances précédentes (hist, la plus récente en dernier) : au plus 5 fois la médiane
+    des 60 dernières séances (QQQ 490,8 M, somme des barres de 5 min, contre 45,9 M) et différent de plus de 0,1 % du volume de
+    la séance précédente (volume de la veille resservi par la source : AAPL 59 946 370 puis 59 946 749)."""
+    if not x or x <= 0:
+        return False
+    nz = [y for y in (hist or [])[-60:] if y]
+    if len(nz) >= 20:
+        import statistics
+        if x > 5 * statistics.median(nz):
+            return False
+    p = (hist or [None])[-1]
+    return not (p and abs(x - p) / p <= 0.001)
+
+
+def graft_quote(sid, qt, d, c, o=None, h=None, l=None, v=None, div=None, val=None):
+    """Cours du jour (quotes.json) greffé sur une série : nouvelle séance ajoutée ou dernière séance mise à jour.
+    Bougie toujours cohérente : plus haut = max(ouverture, cours, plus haut relevé), plus bas = min(ouverture, cours, plus bas
+    relevé) (Nasdaq ne donne ni plus haut ni plus bas : la bougie était H = L = C avec une ouverture hors fourchette, et CNBC
+    renvoie 0 après le règlement) ; volume greffé seulement s'il est vraisemblable (vol_ok), sinon 0 (inconnu) ou celui de la source."""
+    k = di(qt["d"])
+    if k > d[-1]:
+        # cotation à plus de 4 jours ouvrés de la dernière séance de la série (source arrêtée : change Fed H.10 au 09/10, cotation
+        # du 19/10) : pas accolée, la variation et les rendements du résumé porteraient sur plusieurs séances (la page applique
+        # elle-même la cotation, avec sa propre clôture précédente)
+        a_ = dt.date(d[-1] // 10000, d[-1] // 100 % 100, d[-1] % 100)
+        n_ = (dt.date(k // 10000, k // 100 % 100, k % 100) - a_).days
+        if sum(1 for i in range(1, n_ + 1) if (a_ + dt.timedelta(days=i)).weekday() < 5) > 4:
+            return d, c, o, h, l, v, div, val
+    d, c = list(d), list(c)
+    o, h, l = (list(o), list(h), list(l)) if o else (None, None, None)
+    v = list(v) if v else v
+    # clôture du jour confirmée (relevé après 16 h) plutôt que le dernier cours de l'après-bourse : la série garde la clôture
+    px_ = qt.get("cl") or qt["last"]
+    pos = lambda x: x if isinstance(x, (int, float)) and x > 0 else None  # noqa: E731
+    qv = int(qt.get("vol") or 0) if sid not in VOL_OTHER else 0
+    if k > d[-1]:
+        o_ = pos(qt.get("o")) or c[-1]
+        d.append(k)
+        c.append(px_)
+        if o:
+            o.append(o_)
+            h.append(max(x for x in (o_, px_, pos(qt.get("h"))) if x))
+            l.append(min(x for x in (o_, px_, pos(qt.get("l"))) if x))
+        if v is not None:
+            v.append(qv if vol_ok(v, qv) else 0)
+        if div is not None:
+            div = list(div) + [0]
+        if val is not None:
+            val = list(val) + [0]
+    elif k == d[-1]:
+        c[-1] = px_
+        if o:
+            h[-1] = max(x for x in (h[-1], o[-1], px_, pos(qt.get("h"))) if x)
+            l[-1] = min(x for x in (l[-1], o[-1], px_, pos(qt.get("l"))) if x)
+        if v is not None and vol_ok(v[:-1], qv):
+            v[-1] = qv
+    return d, c, o, h, l, v, div, val
+
+
+def trailing_yield(d, div, last):
+    """Rendement sur 12 mois = dividendes détachés dans l'année calendaire écoulée (]dernière séance − 1 an ; dernière séance]) ÷
+    dernier cours, arrondi à 5 décimales comme pour la BRVM. None si la série couvre moins d'un an ou n'a aucun dividende sur ces
+    12 mois (jamais 0 inventé)."""
+    d, div = d or [], div or []
+    if len(d) < 2 or len(div) != len(d) or not last or last <= 0:
+        return None
+    e_ = dt.date(d[-1] // 10000, d[-1] // 100 % 100, d[-1] % 100)
+    try:
+        y0 = e_.replace(year=e_.year - 1)
+    except ValueError:  # 29 février
+        y0 = e_ - dt.timedelta(days=365)
+    y0i = y0.year * 10000 + y0.month * 100 + y0.day
+    if d[0] > y0i:
+        return None  # série de moins d'un an
+    tot = sum(x for dd, x in zip(d, div) if dd > y0i and x)
+    return rnd(tot / last, 5) if tot > 0 else None
+
+
+def fred_csv(extra, sid):
+    """Série FRED du dossier brut écrit par fetch_extra.py (fred/<id>.csv) : [(AAAAMMJJ, valeur)] ; [] si absente."""
+    p = os.path.join(extra, "fred", sid + ".csv") if extra else None
+    out = []
+    if p and os.path.exists(p):
+        with open(p, encoding="utf8") as f:
+            for r in csv.reader(f):
+                try:
+                    out.append((int(r[0][:10].replace("-", "")), float(r[1])))
+                except (ValueError, IndexError):
+                    continue  # (en-tête, valeurs manquantes « . »)
+    return out
+
+
+def monthly_avg(daily, min_obs=15):
+    """Moyenne mensuelle d'une série quotidienne, datée du 1er du mois ; le mois en cours (dernier mois de la série) et les mois de
+    moins de min_obs observations sont exclus : une moyenne partielle n'est jamais publiée comme celle du mois."""
+    by = {}
+    for d_, v_ in daily:
+        by.setdefault(d_ // 100, []).append(v_)
+    ms = sorted(by)[:-1]
+    return [(m * 100 + 1, round(sum(by[m]) / len(by[m]), 4)) for m in ms if len(by[m]) >= min_obs]
+
+
+def fred_extend(s, fred, rel=None, absol=None, min_ov=6):
+    """Série mensuelle s ([(AAAAMMJJ, v)]) prolongée par les mois FRED postérieurs à son dernier point, seulement si les deux
+    sources concordent sur les 12 derniers mois communs (au moins min_ov) : écart relatif ≤ rel ou absolu ≤ absol."""
+    if not s or not fred:
+        return s
+    fm, have = dict(fred), dict(s)
+    ov = [k for k in sorted(have) if k in fm][-12:]
+    if len(ov) < min_ov:
+        return s
+    for k in ov:
+        if (rel is not None and abs(have[k] / fm[k] - 1) > rel) or (absol is not None and abs(have[k] - fm[k]) > absol):
+            return s
+    return list(s) + [(k, v) for k, v in sorted(fm.items()) if k > s[-1][0]]
 
 
 def load_brvm_csv(path):
@@ -405,29 +572,8 @@ def main():
             secs[:] = [x for x in secs if x["id"] != sid]
         qt = QUOTES.get(sid) if freq == "D" and meta.get("mkt") != "BRVM" else None
         if qt and qt.get("last") and qt.get("d") and d:
-            # cours du jour (Nasdaq, Coinbase) : nouvelle séance ajoutée ou dernière séance mise à jour
-            k = di(qt["d"])
-            d, c = list(d), list(c)
-            o, h, l = (list(o), list(h), list(l)) if o else (None, None, None)
-            v = list(v) if v else v
-            px_ = qt["last"]
-            if k > d[-1]:
-                d.append(k)
-                c.append(px_)
-                if o:
-                    o.append(qt.get("o") or c[-2]); h.append(max(qt.get("h") or px_, px_)); l.append(min(qt.get("l") or px_, px_))
-                if v is not None:
-                    v.append(int(qt.get("vol") or 0))
-                if div is not None:
-                    div = list(div) + [0]
-                if val is not None:
-                    val = list(val) + [0]
-            elif k == d[-1]:
-                c[-1] = px_
-                if o:
-                    h[-1], l[-1] = max(h[-1], px_), min(l[-1], px_)
-                if v is not None and qt.get("vol"):
-                    v[-1] = int(qt["vol"])
+            # cours du jour (Nasdaq, Coinbase, CNBC) : nouvelle séance ajoutée ou dernière séance mise à jour
+            d, c, o, h, l, v, div, val = graft_quote(sid, qt, d, c, o, h, l, v, div, val)
         body = {"id": sid, "f": freq, "d": d, "c": [rnd(x, nd) for x in c]}
         if o:
             body.update(o=[rnd(x, nd) for x in o], h=[rnd(x, nd) for x in h], l=[rnd(x, nd) for x in l])
@@ -1648,19 +1794,29 @@ def main():
             [r[0] for r in rows], [r[4] for r in rows], nd=2, val=[r[6] for r in rows])
 
     # Macro -----------------------------------------------------------------
-    def macro(sid, tk, name, grp, path, dcol, vcol, freq, nd=2, filt=None, ccy="USD", cls="Comdty"):
+    def macro(sid, tk, name, grp, path, dcol, vcol, freq, nd=2, filt=None, ccy="USD", cls="Comdty", more=None):
         try:
             s = series_from_csv(fetch(DS.format(path), a.cache).decode("utf8"), dcol, vcol, filt)
         except Exception as e:  # noqa: BLE001
             log("skip", sid, e)
             return []
+        if more and s:  # mois plus récents tirés de FRED (même définition, raccord contrôlé)
+            try:
+                s = more(s)
+            except Exception as e:  # noqa: BLE001
+                log(sid, ": prolongement FRED impossible :", e)
         add({"id": sid, "tk": tk, "n": name, "cls": cls, "typ": cls, "mkt": "MACRO", "grp": grp, "ccy": ccy}, [x[0] for x in s], [x[1] for x in s], freq=freq, nd=nd)
         return s
     macro("XAU", "XAU Curncy", "Or (USD/once, mensuel)", "Métaux", "gold-prices/main/data/monthly.csv", "Date", "Price", "M")
     macro("SPXM", "SPX Index (mensuel)", "S&P 500 depuis 1871 (mensuel)", "Actions", "s-and-p-500/main/data/data.csv", "Date", "SP500", "M", cls="Index")
     macro("CAPE", "CAPE Index", "S&P 500 PER de Shiller (CAPE)", "Valorisation", "s-and-p-500/main/data/data.csv", "Date", "PE10", "M", cls="Index")
-    macro("CPI", "CPI INDX", "Indice des prix US (CPI-U)", "Inflation", "cpi-us/main/data/cpiai.csv", "Date", "Index", "M", cls="Index")
-    macro("US10Y", "USGG10YR Index", "Taux US 10 ans (%)", "Taux", "bond-yields-us-10y/main/data/monthly.csv", "Date", "Rate", "M", cls="Rate", ccy="%")
+    # CPI et taux à 10 ans : les jeux github.com/datasets suivent avec un ou deux mois de retard ; les mois suivants sont pris dans
+    # FRED (CPIAUCNS, même indice CPI-U non désaisonnalisé depuis 1913 ; moyenne mensuelle des taux quotidiens DGS10, même définition
+    # que la série mensuelle) quand les deux sources concordent sur les mois communs, sinon la série reste telle quelle
+    macro("CPI", "CPI INDX", "Indice des prix US (CPI-U)", "Inflation", "cpi-us/main/data/cpiai.csv", "Date", "Index", "M", cls="Index",
+          more=lambda s: fred_extend(s, fred_csv(a.extra, "CPIAUCNS"), rel=.0005))
+    macro("US10Y", "USGG10YR Index", "Taux US 10 ans (%)", "Taux", "bond-yields-us-10y/main/data/monthly.csv", "Date", "Rate", "M", cls="Rate", ccy="%",
+          more=lambda s: fred_extend(s, monthly_avg(fred_csv(a.extra, "DGS10")), absol=.05))
     # prix au comptant publiés par l'EIA (J-1) : Brent daté (physique), WTI Cushing, gaz Henry Hub. Les contrats à terme
     # (CO1, CL1, NG1 : ceux d'Investing, TradingView, Bloomberg) sont ajoutés par build_extra.ingest sous BRENT, WTI, NATGAS.
     import build_extra
@@ -1704,28 +1860,30 @@ def main():
             b = files.get(sid)
             if not b or not rows:
                 continue
-            idx = {d: i for i, d in enumerate(b["d"])}
-            div = list(b.get("div") or [0] * len(b["d"]))
-            if any(div):
+            if any(b.get("div") or []):
                 continue  # série qui porte déjà ses dividendes (Yahoo)
             spl = [(x[0], x[1]) for x in USSPL.get(sid, []) if x[1] and x[1] > 0]
-            for d_, amt, _pay in rows:
-                k = di(d_)
-                for sd, ratio in spl:  # montant nominal de l'époque ramené à la base d'actions actuelle (cours déjà ajustés)
-                    if sd > d_:
-                        amt = amt / ratio
-                i = idx.get(k)
-                if i is None:  # détachement un jour sans cotation dans la série : première séance suivante
-                    nxt = [j for j, dd in enumerate(b["d"]) if dd >= k]
-                    i = nxt[0] if nxt else None
-                if i is not None:
-                    div[i] = round(div[i] + amt, 4)
-                    n_usd += 1
+            div, n_ = us_div_place(b["d"], rows, spl)
+            n_usd += n_
             b["div"] = div
             n_ser += 1
         log("dividendes US :", n_usd, "versements placés dans", n_ser, "séries (écrits à la base du soir)")
     except Exception as e:  # noqa: BLE001
         log("dividendes US illisibles :", e)
+    # rendement des titres US et Taïwan = dividendes détachés sur les 12 derniers mois calendaires (série, après placement) ÷ dernier
+    # cours, arrondi comme pour la BRVM ; seulement si la série couvre au moins un an et porte au moins un dividende sur ces 12 mois,
+    # sinon vide (jamais 0 inventé : une série sans dividende peut venir d'une source qui ne les donne pas)
+    try:
+        n_y = 0
+        for s in secs:
+            if s["mkt"] not in ("US", "TW") or s.get("f") != "D":
+                continue
+            b = files.get(s["id"]) or {}
+            s["yld"] = trailing_yield(b.get("d"), b.get("div"), s.get("last"))
+            n_y += s["yld"] is not None
+        log("rendements US et Taïwan :", n_y, "titres")
+    except Exception as e:  # noqa: BLE001
+        log("rendements US impossibles :", e)
 
     for s in secs:  # métadonnées Nasdaq des titres US déjà suivis
         if s["mkt"] == "US" and s["id"] in xinfo["ndx"]:

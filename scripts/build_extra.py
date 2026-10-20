@@ -392,6 +392,11 @@ def to_weekly(d, v):
     return k, [out[x] for x in k]
 
 
+# unités des séries FRED telles que FRED les publie (prioritaires sur fred_meta.json, qui peut dater d'avant leur correction) :
+# WTREGEN en millions de dollars (et non en milliards), ICSA en nombre d'inscriptions (et non en milliers)
+FRED_U = {"WALCL": "M$", "WTREGEN": "M$", "RRPONTSYD": "Md$", "ICSA": ""}
+
+
 def eco(extra, out, log):
     F = fred_load(extra)
     if not F:
@@ -406,7 +411,7 @@ def eco(extra, out, log):
             if d[i] <= addays(dl, -365):
                 y1 = v[i]
                 break
-        res["meta"].append({"id": sid, "n": m["n"], "g": m["g"], "u": m["u"], "f": f, "last": r_(last, 4), "dl": dl, "prev": r_(v[-2], 4) if len(v) > 1 else None, "y1": r_(y1, 4),
+        res["meta"].append({"id": sid, "n": m["n"], "g": m["g"], "u": FRED_U.get(sid, m["u"]), "f": f, "last": r_(last, 4), "dl": dl, "prev": r_(v[-2], 4) if len(v) > 1 else None, "y1": r_(y1, 4),
                             "first": d[0]})
         res["s"][sid] = [dd, [r_(x, 4) for x in vv]]
     # récessions NBER
@@ -422,13 +427,20 @@ def eco(extra, out, log):
         if st:
             rec.append([st, d[-1]])
         res["rec"] = rec
-    # liquidité nette de la Fed = bilan - compte du Trésor - prises en pension inversées (Md$)
+    # liquidité nette de la Fed = bilan - compte du Trésor - prises en pension inversées (Md$) ; WALCL et WTREGEN sont publiés en
+    # millions de dollars (÷ 1 000), RRPONTSYD en milliards. Une valeur hors de ]0 ; bilan[ ne peut pas exister : laissée vide.
     if all(k in F for k in ("WALCL", "WTREGEN", "RRPONTSYD")):
         w = F["WALCL"]
         g = w[1]
         tg = ffill(F["WTREGEN"][1], F["WTREGEN"][2], g)
         rp = ffill(F["RRPONTSYD"][1], F["RRPONTSYD"][2], g)
-        res["s"]["NETLIQ"] = [g, [r_(w[2][i] / 1000 - (tg[i] or 0) - (rp[i] or 0), 1) if tg[i] is not None else None for i in range(len(g))]]
+
+        def nl_(i):
+            if tg[i] is None or not w[2][i]:
+                return None
+            x = w[2][i] / 1000 - tg[i] / 1000 - (rp[i] or 0)
+            return r_(x, 1) if 0 < x < w[2][i] / 1000 else None
+        res["s"]["NETLIQ"] = [g, [nl_(i) for i in range(len(g))]]
         res["meta"].append({"id": "NETLIQ", "n": "Liquidité nette de la Fed (bilan − TGA − RRP)", "g": "Liquidité", "u": "Md$", "f": "W", "last": res["s"]["NETLIQ"][1][-1], "dl": g[-1]})
     if "BAMLH0A0HYM2" in F and "BAMLC0A0CM" in F:
         a, b = F["BAMLH0A0HYM2"], F["BAMLC0A0CM"]

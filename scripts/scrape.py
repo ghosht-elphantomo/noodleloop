@@ -129,7 +129,8 @@ def live_quote():
         "open": r2(today[0][1]) if today else r2(price),
         "dayHigh": r2(max(b[2] for b in today)) if today else r2(price),
         "dayLow": r2(min(b[3] for b in today)) if today else r2(price),
-        "vol": int(sum(b[5] for b in today)), "time": int(meta.get("regularMarketTime") or bars[-1][0]),
+        # volume du jour : volume quotidien de Yahoo ; la somme des barres de 5 minutes n'est pas fiable (QQQ 490,8 M, ×10,7)
+        "vol": int(meta.get("regularMarketVolume") or 0) or None, "time": int(meta.get("regularMarketTime") or bars[-1][0]),
     }, {"t": [b[0] for b in bars], "o": [r2(b[1]) for b in bars], "h": [r2(b[2]) for b in bars],
         "l": [r2(b[3]) for b in bars], "c": [r2(b[4]) for b in bars], "v": [int(b[5]) for b in bars]}
 
@@ -404,9 +405,136 @@ def _nq_ext(sym, ac, kind):
     vol = num(str(r.get("volume") or "").replace(",", ""))
     hi = re.match(r"\$?([\d,.]+)", str(r.get("highPrice") or ""))
     lo = re.match(r"\$?([\d,.]+)", str(r.get("lowPrice") or ""))
-    rf = re.search(r"Close:\s*\$?([\d,.]+)", str(d.get("previousInfo") or ""))
-    return {"s": kind, "last": last, "d": when, "t": t, "vol": int(vol) if vol else None, "ref": money(rf.group(1)) if rf else None,
+    # clôture précédente (« Previous Close ») et clôture du jour (« Close » seul) : l'ancienne recherche de « Close: » prenait aussi
+    # « Previous Close », d'où un après-bourse calculé contre la clôture de la veille (variation du jour affichée comme après-bourse)
+    pc_ = cl_ = None
+    for m_ in re.finditer(r"(?:([A-Za-z'’.]+)\s+)?Close:\s*\$?([\d,.]+)", str(d.get("previousInfo") or "")):
+        w_ = (m_.group(1) or "").lower().rstrip(".")
+        if w_ in ("previous", "prev", "prior"):
+            pc_ = pc_ or money(m_.group(2))
+        elif w_ in ("", "today's", "today’s", "regular", "market", "official"):
+            cl_ = cl_ or money(m_.group(2))
+    return {"s": kind, "last": last, "d": when, "t": t, "vol": int(vol) if vol else None, "pc": pc_, "cl": cl_,
             "hi": money(hi.group(1)) if hi else None, "lo": money(lo.group(1)) if lo else None}
+
+
+# ------------------------------------------------------------------ contrôles des cours US (référence de variation, cours aberrants)
+TOL_REF = 0.0005  # deux sources d'une même clôture doivent concorder à 0,05 % près
+
+
+def _hm(t):
+    """« 18:01 ET » -> (18, 1) ; None si illisible."""
+    m = re.match(r"(\d{1,2}):(\d{2})", str(t or ""))
+    return (int(m.group(1)), int(m.group(2))) if m else None
+
+
+def confirmed(cands, tol=TOL_REF):
+    """Première valeur (par ordre de préférence) confirmée par au moins une autre source à tol près : (valeur, « src1+src2 ») ;
+    (None, None) si aucune ne l'est : référence incertaine, pas de variation plutôt qu'une variation fausse."""
+    cands = [(k, float(x)) for k, x in cands if isinstance(x, (int, float)) and x > 0]
+    for k, x in cands:
+        ok = [k2 for k2, y in cands if k2 != k and abs(y / x - 1) <= tol]
+        if ok:
+            return x, "+".join([k] + ok)
+    return None, None
+
+
+def vol_ok(hist, x):
+    """Volume du jour vraisemblable (même règle que build_terminal.vol_ok) : au plus 5 fois la médiane des 60 séances précédentes
+    et différent de plus de 0,1 % du volume de la séance précédente (volume de la veille resservi par la source)."""
+    if not x or x <= 0:
+        return False
+    nz = [y for y in (hist or [])[-60:] if y]
+    if len(nz) >= 20:
+        import statistics
+        if x > 5 * statistics.median(nz):
+            return False
+    p = (hist or [None])[-1]
+    return not (p and abs(x - p) / p <= 0.001)
+
+
+def series_ref(out_data, sid, d):
+    """Série publiée (data/s/<id>.json) : dernière séance antérieure à d (AAAA-MM-JJ) -> {c, d, vh (volumes jusqu'à elle)} ;
+    None si la série est illisible ou n'a rien avant d."""
+    try:
+        import bisect
+        b = load(sid.replace(".", "_") + ".json", folder=os.path.join(out_data, "s"))
+        i = bisect.bisect_left(b["d"], int(d.replace("-", ""))) - 1
+        if i < 0:
+            return None
+        v = b.get("v") or []
+        return {"c": b["c"][i], "d": b["d"][i], "vh": v[max(0, i - 59): i + 1] if len(v) == len(b["d"]) else []}
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def us_check(sid, rec, old, ser, sess, rng=None, notes=None):
+    """Cours US du relevé (Nasdaq) contrôlé avant publication ; renvoie la cotation à publier, ou None (la page garde alors la
+    dernière valeur sûre de la série).
+      - Référence de variation = clôture officielle de la séance précédente, retenue seulement si deux sources concordent
+        (clôture précédente de l'après-bourse, previousClosePrice de Nasdaq, série publiée, et en séance la clôture déduite
+        de la variation Nasdaq) ; sinon celle déjà confirmée plus tôt pour la même séance ; sinon aucune : pct = None.
+        (Le percentageChange de Nasdaq n'est plus publié tel quel : après 16 h il mesure l'après-bourse, et previousClosePrice
+        est alors souvent la clôture d'avant-veille.)
+      - Après-bourse : variation calculée contre la clôture du jour (confirmée par deux sources, ou déduite de la variation
+        Nasdaq de l'après-bourse) ; pré-marché : contre la clôture précédente ; sinon pas de variation.
+      - Cours aberrant (C2) : un dernier cours hors séance qui s'écarte de plus de 3 % de la séance étendue, ou un cours de séance
+        hors de la fourchette du jour élargie de 2 % (quand elle est connue), est écarté ; la clôture du jour confirmée ou le
+        cours sûr du relevé précédent le remplace, sinon la cotation n'est pas publiée. Le cours étendu reste dans ext.
+      - Volume du jour (I2) : retiré s'il n'est pas vraisemblable (vol_ok)."""
+    notes = notes if notes is not None else []
+    last, d = rec.get("last"), rec.get("d")
+    pnq = rec.pop("_pnq", None)
+    pc_nq = rec.pop("prev", None)
+    old = old if old and d and old.get("d") == d else {}
+    ext = rec.get("ext") or {}
+    x_pc, x_cl = ext.pop("pc", None), ext.pop("cl", None)
+    hm = _hm(rec.get("t"))
+    in_reg = hm is not None and (9, 30) <= hm <= (16, 0)
+    if not last or not d:
+        rec["pct"] = None
+        return rec
+    # clôture officielle de la séance précédente
+    imp = last / (1 + pnq) if pnq is not None and pnq > -1 and sess == "REGULAR" and in_reg and hm < (16, 0) else None
+    pc, rf = confirmed([("ext", x_pc), ("nq", pc_nq), ("serie", (ser or {}).get("c")), ("pct", imp)])
+    if not pc and old.get("rf") and old.get("prev"):
+        pc, rf = old["prev"], old["rf"]
+    # clôture du jour (après-bourse) : confirmée par deux sources, ou seulement déduite de la variation Nasdaq de l'après-bourse
+    post_print = hm is not None and hm > (16, 0) and sess in ("POST", "CLOSED")
+    imp_cl = last / (1 + pnq) if pnq is not None and pnq > -1 and post_print and sess == "POST" else None
+    if imp_cl and pc and abs(imp_cl / pc - 1) <= TOL_REF and abs(last / pc - 1) > TOL_REF:
+        imp_cl = None  # (variation Nasdaq peut-être mesurée contre la veille : sens douteux, rien n'est déduit)
+    t16 = last if hm == (16, 0) else old.get("last") if _hm(old.get("t")) == (16, 0) and not old.get("xl") else None
+    cl, _ = confirmed([("ext", x_cl), ("t16", t16), ("pct", imp_cl)])
+    cl = cl or old.get("cl")
+    # cours aberrant
+    def bad(px):
+        if ext.get("last") and (hm is None or not in_reg) and abs(px / ext["last"] - 1) > 0.03:
+            return f"{px:g} contre {ext['last']:g} en séance étendue"
+        if rng and (hm is None or in_reg) and not (rng[0] * 0.98 <= px <= rng[1] * 1.02):
+            return f"{px:g} hors de la fourchette du jour {rng[0]:g}-{rng[1]:g}"
+        return None
+    why = bad(last)
+    if why:
+        alt = cl or (old.get("last") if old.get("last") and not bad(old["last"]) else None)
+        notes.append(f"{sid} {why}" + (f" -> {alt:g}" if alt else " -> non publié"))
+        if not alt:
+            return None
+        rec["last"], rec["xl"], last = round(alt, 4), last, alt
+    rec["pct"] = round(last / pc - 1, 6) if pc else None
+    if pc:
+        rec["prev"], rec["rf"] = round(pc, 4), rf
+    if cl:
+        rec["cl"] = round(cl, 4)
+    # séance étendue : variation contre la clôture du jour (après-bourse) ou la clôture précédente (pré-marché)
+    if ext.get("last") and "ref" not in ext:
+        ref = pc if ext.get("s") == "pre" else (cl or imp_cl)
+        ext["chg"] = round(ext["last"] - ref, 4) if ref else None
+        ext["pct"] = round(ext["last"] / ref - 1, 6) if ref else None
+        ext["ref"] = round(ref, 4) if ref else None
+    if rec.get("vol") and ser is not None and not vol_ok(ser.get("vh"), rec["vol"]):
+        rec.pop("vol")
+    return rec
 
 
 # contrats à terme 1er mois (différé ~10 min) : les cours d'Investing, TradingView, Bloomberg (CO1, CL1, NG1, GC1)
@@ -420,7 +548,36 @@ def _fnum(x):
         return None
 
 
-def fut_quotes(q):
+def cnbc_reset(r, last, prev):
+    """Cotation CNBC remise à zéro après le règlement : variation « UNCH », clôture précédente égale au dernier cours (ou absente).
+    La variation publiée (0,00 %) n'est alors pas celle de la séance : elle doit être recalculée contre le règlement précédent."""
+    return (str(r.get("change") or "").strip().upper() == "UNCH" or str(r.get("change_pct") or "").strip().upper() == "UNCH"
+            or not prev or abs(prev - last) < 1e-9)
+
+
+def prev_bday(day):
+    """Jour ouvré (lundi-vendredi) précédent."""
+    day -= dt.timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= dt.timedelta(days=1)
+    return day
+
+
+def fut_settle(sid, day, ct, prev_q, out_data):
+    """Règlement de la séance ouvrée précédant day pour un contrat 1er mois : celui déjà relevé pour la même séance et le même
+    contrat (avant la remise à zéro de CNBC), sinon la clôture de la série publiée datée exactement du jour ouvré précédent
+    (jamais deux séances en arrière, ni un samedi ou un dimanche) ; (None, None) sinon."""
+    old = (prev_q or {}).get(sid) or {}
+    if old.get("d") == day.isoformat() and old.get("ct") == ct and old.get("rf") and old.get("prev"):
+        return old["prev"], old["rf"]
+    if out_data:
+        ser = series_ref(out_data, sid, day.isoformat())
+        if ser and ser.get("c") and ser.get("d") == int(prev_bday(day).strftime("%Y%m%d")):
+            return ser["c"], "serie"
+    return None, None
+
+
+def fut_quotes(q, prev_q=None, out_data=None):
     try:
         u = ("https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols=" + urllib.parse.quote("|".join(c for _, c in FUTS))
              + "&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json")
@@ -435,9 +592,21 @@ def fut_quotes(q):
             day = t.date() + (dt.timedelta(days=1) if t.hour >= 18 else dt.timedelta(0))  # séance CME/ICE : ouverte la veille à 18 h (New York)
             while day.weekday() >= 5:
                 day += dt.timedelta(days=1)
+            # après le règlement CNBC remet la variation à zéro (prev = last, « UNCH », ouverture / plus haut / plus bas à 0) : la
+            # variation est recalculée contre le règlement de la séance ouvrée précédente, ou laissée vide (jamais 0,00 % inventé)
+            rf = "cnbc"
+            try:
+                if cnbc_reset(r, last, prev):
+                    prev, rf = fut_settle(sid, day, r.get("name"), prev_q, out_data)
+            except Exception as e:  # noqa: BLE001
+                prev, rf = None, None
+                fail("cnbc_futures_ref_" + sid, e)
+            pos = lambda x: x if x and x > 0 else None  # noqa: E731
             q[sid] = {"last": last, "prev": prev, "pct": round(last / prev - 1, 6) if prev else None, "d": day.isoformat(),
-                      "o": _fnum(r.get("open")), "h": _fnum(r.get("high")), "l": _fnum(r.get("low")), "vol": int(_fnum(r.get("volume")) or 0),
+                      "o": pos(_fnum(r.get("open"))), "h": pos(_fnum(r.get("high"))), "l": pos(_fnum(r.get("low"))), "vol": int(_fnum(r.get("volume")) or 0) or None,
                       "src": "CNBC", "ct": r.get("name"), "exp": r.get("expiration_date")}
+            if rf and prev:
+                q[sid]["rf"] = rf
     except Exception as e:  # noqa: BLE001
         fail("cnbc_futures", e)
 
@@ -462,10 +631,48 @@ def oil_board(out_data):
     except Exception as e:  # noqa: BLE001
         fail("cnbc_oil", e)
         return
+    old_by = {}
+    try:  # relevé précédent : règlements de référence déjà connus pour la séance
+        old_ = load("oil.json", folder=out_data) or {}
+        for side in (old_.get("curve") or {}).values():
+            for x in side or []:
+                old_by[x.get("k")] = x
+        for k_, x in (old_.get("prod") or {}).items():
+            old_by[k_] = x
+    except Exception:  # noqa: BLE001
+        old_by = {}
+    fut_id = {"@CL.1": "WTI", "@NG.1": "NATGAS", "@LCO.1": "BRENT", "@GC.1": "GOLD"}
+
+    def sess_day(t_):
+        t = dt.datetime.fromisoformat(re.sub(r"([+-]\d\d)(\d\d)$", r"\1:\2", t_)).astimezone(NY)
+        day = t.date() + (dt.timedelta(days=1) if t.hour >= 18 else dt.timedelta(0))
+        while day.weekday() >= 5:
+            day += dt.timedelta(days=1)
+        return day
+
     def rec(r):
-        return {"n": r.get("name"), "last": _fnum(r.get("last")), "chg": _fnum(r.get("change")), "pct": (_fnum(r.get("change_pct")) or 0) / 100 if r.get("change_pct") else None,
-                "prev": _fnum(r.get("previous_day_closing")), "exp": r.get("expiration_date"), "t": r.get("last_time"), "ccy": r.get("currencyCode"),
-                "hi52": _fnum(r.get("yrhiprice")), "lo52": _fnum(r.get("yrloprice"))}
+        o = {"n": r.get("name"), "last": _fnum(r.get("last")), "chg": _fnum(r.get("change")), "pct": (_fnum(r.get("change_pct")) or 0) / 100 if r.get("change_pct") else None,
+             "prev": _fnum(r.get("previous_day_closing")), "exp": r.get("expiration_date"), "t": r.get("last_time"), "ccy": r.get("currencyCode"),
+             "hi52": _fnum(r.get("yrhiprice")), "lo52": _fnum(r.get("yrloprice"))}
+        # cotation remise à zéro après le règlement (« UNCH », prev = last) : variation recalculée contre le règlement précédent déjà
+        # relevé pour la même séance et la même échéance (relevé précédent), ou la série du contrat 1er mois ; sinon laissée vide
+        try:
+            if o["last"] and str(r.get("symbol") or "").startswith("@") and cnbc_reset(r, o["last"], o["prev"]):
+                o["chg"] = o["pct"] = None
+                ref, day = None, sess_day(r["last_time"]) if r.get("last_time") else None
+                ol = old_by.get(r.get("symbol")) or {}
+                if day and ol.get("exp") == o["exp"] and ol.get("t") and sess_day(ol["t"]) == day and ol.get("prev") and ol.get("last") and \
+                        (ol.get("rf") or (ol.get("chg") is not None and abs(ol["prev"] - ol["last"]) > 1e-9)):
+                    ref = ol["prev"]
+                elif day and r.get("symbol") in fut_id:
+                    ref, _ = fut_settle(fut_id[r["symbol"]], day, None, None, out_data)
+                o["prev"] = ref
+                if ref:
+                    o["chg"], o["pct"], o["rf"] = round(o["last"] - ref, 6), round(o["last"] / ref - 1, 6), 1
+        except Exception as e:  # noqa: BLE001
+            o["chg"] = o["pct"] = o["prev"] = None
+            fail("cnbc_oil_ref", e)
+        return o
     out = {"ts": int(time.time()), "src": "CNBC (ICE, NYMEX, NYSE ; différé)",
            "curve": {k: [dict(rec(by[s_]), k=s_) for s_ in v if s_ in by] for k, v in OIL_CURVE.items()},
            "prod": {s_: rec(by[s_]) for s_ in OIL_PROD if s_ in by}, "eq": [dict(rec(by[s_]), s=s_) for s_ in OIL_EQ if s_ in by]}
@@ -544,7 +751,7 @@ def world_board(out_data):
     def rec(g, s_):
         r = by[s_]
         return {"g": g, "s": s_, "n": (r.get("name") or "").strip(), "last": _fnum(str(r.get("last")).replace("%", "")), "chg": _fnum(r.get("change")),
-                "pct": (_fnum(r.get("change_pct")) or 0) / 100 if r.get("change_pct") not in (None, "UNCH") else 0.0, "prev": _fnum(r.get("previous_day_closing")),
+                "pct": (_fnum(r.get("change_pct")) or 0) / 100 if r.get("change_pct") not in (None, "UNCH") else None, "prev": _fnum(r.get("previous_day_closing")),
                 "t": r.get("last_time"), "cty": r.get("countryCode"), "hi52": _fnum(r.get("yrhiprice")), "lo52": _fnum(r.get("yrloprice")),
                 "exp": r.get("expiration_date"), "open": _fnum(r.get("open")), "hi": _fnum(r.get("high")), "lo": _fnum(r.get("low")), "y": "%" in str(r.get("last"))}
     out = {"ts": int(time.time()), "src": "CNBC (bourses, ICE, CME ; différé)"}
@@ -595,17 +802,47 @@ def world_board(out_data):
                 fail("world_yb", box.get("err") or TimeoutError("bases de début d'année : délai dépassé"))
     # variation de la dernière séance pour les places fermées : CNBC remet parfois la variation à zéro (« UNCH ») avant la
     # séance suivante ; on la recalcule alors contre la clôture de la séance précédente (historique quotidien ci-dessus).
+    # L'historique ne garde que des jours ouvrés : la cotation d'un contrat relevée après 18 h (New York) appartient à la séance du
+    # lendemain (celle du dimanche soir à la séance du lundi), et une date de samedi ou de dimanche n'est jamais écrite (l'or
+    # affichait −0,95 % contre la cotation du dimanche soir au lieu de −0,50 % contre le règlement du vendredi). La clôture de
+    # référence doit dater d'au plus 4 jours ouvrés avant la séance ; sinon la variation reste vide (jamais 0,00 % inventé).
+    def wkday(x):
+        try:
+            return dt.date.fromisoformat(x).weekday() < 5
+        except ValueError:
+            return False
+
+    def sess_d(k, t_):
+        if k != "cmd":  # indices et changes : date de la cotation, jours ouvrés seulement
+            d_ = t_[:10]
+            return d_ if re.match(r"\d{4}-\d{2}-\d{2}$", d_) and wkday(d_) else None
+        t = dt.datetime.fromisoformat(re.sub(r"([+-]\d\d)(\d\d)$", r"\1:\2", t_)).astimezone(NY)
+        day = t.date() + (dt.timedelta(days=1) if t.hour >= 18 else dt.timedelta(0))
+        if day.weekday() == 5:
+            return None
+        return (day + dt.timedelta(days=1 if day.weekday() == 6 else 0)).isoformat()
+
+    def bdays(a, b):  # jours ouvrés dans ]a ; b]
+        a_, b_ = dt.date.fromisoformat(a), dt.date.fromisoformat(b)
+        return sum(1 for i in range(1, (b_ - a_).days + 1) if (a_ + dt.timedelta(days=i)).weekday() < 5)
     for k in ("idx", "cmd", "fx"):
         for r in out.get(k, []):
-            cs, last, d = r["s"], r.get("last"), str(r.get("t") or "")[:10]
-            if not last or not re.match(r"\d{4}-\d{2}-\d{2}$", d):
-                continue
-            h = H.setdefault(cs, {}); h[d] = last
-            if (not r.get("chg")) or (r.get("prev") and abs(r["prev"] - last) < 1e-9):
-                older = sorted(x for x in h if x < d)
-                if older and h[older[-1]]:
-                    pc = h[older[-1]]; r["prev"] = pc; r["chg"] = round(last - pc, 6); r["pct"] = round(last / pc - 1, 6); r["cs"] = older[-1]
-    out["h"] = {cs: dict(sorted(v.items())[-12:]) for cs, v in H.items()}
+            try:
+                cs, last = r["s"], r.get("last")
+                d = sess_d(k, str(r.get("t") or "")) if r.get("t") else None
+                if not last or not d:
+                    continue
+                h = H.setdefault(cs, {}); h[d] = last
+                if (not r.get("chg")) or (r.get("prev") and abs(r["prev"] - last) < 1e-9):
+                    r["chg"] = r["pct"] = None
+                    older = sorted(x for x in h if x < d and wkday(x))
+                    if older and h[older[-1]] and bdays(older[-1], d) <= 4:
+                        pc = h[older[-1]]; r["prev"] = pc; r["chg"] = round(last - pc, 6); r["pct"] = round(last / pc - 1, 6); r["cs"] = older[-1]
+                    else:
+                        r["prev"] = None
+            except Exception as e:  # noqa: BLE001
+                fail("world_ref_" + str(r.get("s")), e)
+    out["h"] = {cs: dict(sorted((x, y) for x, y in v.items() if wkday(x))[-12:]) for cs, v in H.items()}
     out["hs"] = seen; out["hst"] = int(time.time()) if need_seed else hst
     if out["idx"]:
         dump(out, os.path.join(out_data, "world_mkt.json"))
@@ -647,7 +884,8 @@ def us_batch(out_data):
                 if not sid or not last:
                     continue
                 pct = num(str(r.get("percentageChange") or "").replace("%", "").replace("+", ""))
-                rec = {"last": last, "pct": round(pct / 100, 6) if pct is not None else None}
+                # (variation Nasdaq gardée à part : elle ne sert qu'à contrôler les références, voir us_check)
+                rec = {"last": last, "pct": None, "_pnq": pct / 100 if pct is not None else None}
                 m = re.search(r"([A-Z][a-z]{2}) (\d{1,2}), (\d{4})(?: (\d{1,2}):(\d{2}) (AM|PM))?", str(r.get("lastTradeTimestamp") or ""))
                 if m and m.group(1) in MONTHS_EN:
                     rec["d"] = f"{m.group(3)}-{MONTHS_EN[m.group(1)]:02d}-{int(m.group(2)):02d}"
@@ -687,12 +925,7 @@ def us_batch(out_data):
                     continue
                 if not ext or not ext.get("last"):
                     continue
-                rec = q[sid]
-                ref = ext.pop("ref", None) or (rec.get("prev") if kind == "pre" else rec.get("last"))
-                if ref:
-                    ext["chg"] = round(ext["last"] - ref, 4)
-                    ext["pct"] = round(ext["last"] / ref - 1, 6)
-                rec["ext"] = ext
+                q[sid]["ext"] = ext  # (variation de la séance étendue calculée par us_check, contre la bonne clôture)
         if nfail:
             ERRORS["nasdaq_ext"] = f"{nfail}/{len(todo)} séances étendues non lues"
         log("séance étendue", kind, sum(1 for v in q.values() if v.get("ext")), "titres")
@@ -701,7 +934,35 @@ def us_batch(out_data):
             old = (prev_q.get(sid) or {}).get("ext")
             if old and old.get("s") == "post":
                 rec["ext"] = old
-    fut_quotes(q)
+    # contrôle de chaque cours (référence de variation, cours aberrants, volume) ; une erreur ici ne bloque jamais le relevé :
+    # la cotation est alors publiée sans variation plutôt qu'avec celle, non contrôlée, du service
+    ee = load("ee.json", folder=out_data) or {}
+    notes = []
+    for sid in list(q):
+        rec = q[sid]
+        try:
+            rng = None
+            e_ = ee.get(sid) if isinstance(ee, dict) else None
+            if isinstance(e_, dict) and e_.get("ts") and e_.get("ts") == rec.get("d"):
+                hl = re.findall(r"\$?([\d,]+(?:\.\d+)?)", str((e_.get("sum") or {}).get("TodayHighLow") or ""))
+                if len(hl) == 2 and money(hl[0]) and money(hl[1]):
+                    rng = tuple(sorted((money(hl[0]), money(hl[1]))))
+            ser = series_ref(out_data, sid, rec["d"]) if rec.get("d") else None
+            r2 = us_check(sid, rec, prev_q.get(sid), ser, sess, rng, notes)
+            if r2 is None:
+                q.pop(sid)
+        except Exception as e:  # noqa: BLE001
+            rec.pop("_pnq", None)
+            rec["pct"] = None
+            if "rf" not in rec:
+                rec.pop("prev", None)  # (clôture précédente non contrôlée : jamais publiée)
+            for k_ in ("pc", "cl"):
+                (rec.get("ext") or {}).pop(k_, None)
+            fail("us_check_" + sid, e)
+    if notes:
+        ERRORS["us_ecartes"] = "; ".join(notes)[:300]
+        log("cours écartés :", "; ".join(notes))
+    fut_quotes(q, prev_q, out_data)
     for sid, prod in (("BTC", "BTC-USD"), ("ETH", "ETH-USD"), ("SOL", "SOL-USD")):
         try:
             t = json.loads(get(f"https://api.exchange.coinbase.com/products/{prod}/ticker", tries=2))
@@ -758,14 +1019,34 @@ def main():
             code = IDX_CODE.get(x.get("k"))
             if code and x.get("v"):
                 q[code] = {"last": x["v"], "pct": round((x.get("vj") or 0) / 100, 6), "d": brvm["asof"]}
+    usq = {}
     try:
-        for sid, rec in us_batch(out_data).items():
+        usq = us_batch(out_data)
+        for sid, rec in usq.items():
             if sid not in q:
                 q[sid] = rec
     except Exception as e:  # noqa: BLE001
         fail("us_batch", e)
+    # QQQ (Yahoo) : clôture précédente confirmée par le contrôle Nasdaq quand elle porte sur la même séance ; volume du jour =
+    # volume quotidien (Yahoo, sinon Nasdaq), jamais la somme des barres de 5 minutes (490,8 M au lieu d'environ 46 M), et
+    # seulement s'il est vraisemblable
+    try:
+        if "QQQ" in q:
+            qq, nq = q["QQQ"], usq.get("QQQ") or {}
+            if nq.get("rf") and nq.get("prev") and nq.get("d") == qq.get("d"):
+                qq["prev"], qq["pct"] = nq["prev"], round(qq["last"] / nq["prev"] - 1, 6)
+            v_ = qq.get("vol") or (nq.get("vol") if nq.get("d") == qq.get("d") else None)
+            ser = series_ref(out_data, "QQQ", qq["d"]) if qq.get("d") else None
+            qq["vol"] = v_ if v_ and (ser is None or vol_ok(ser.get("vh"), v_)) else None
+            if live:
+                live["vol"] = qq["vol"]
+    except Exception as e:  # noqa: BLE001
+        fail("qqq_ref", e)
     now = int(time.time())
-    oil_board(out_data)
+    try:
+        oil_board(out_data)
+    except Exception as e:  # noqa: BLE001
+        fail("cnbc_oil", e)
     wb = None
     try:
         wb = world_board(out_data)
@@ -774,14 +1055,24 @@ def main():
     # changes du jour pour les séries EURUSD, USDXOF (parité fixe 655,957 FCFA pour 1 euro) et USDTWD
     fxr = {r["s"]: r for r in ((wb or {}).get("fx") or [])}
     eu, tw = fxr.get("EUR="), fxr.get("TWD=")
-    if eu and eu.get("last"):
-        d_ = str(eu.get("t") or "")[:10] or dt.date.today().isoformat()
-        pe = eu.get("prev") or (eu["last"] / (1 + eu["pct"]) if eu.get("pct") is not None else None)
-        q["EURUSD"] = {"last": round(eu["last"], 5), "pct": round(eu["last"] / pe - 1, 6) if pe else None, "prev": round(pe, 5) if pe else None, "d": d_, "src": "CNBC"}
-        q["USDXOF"] = {"last": round(655.957 / eu["last"], 3), "pct": round(pe / eu["last"] - 1, 6) if pe else None, "prev": round(655.957 / pe, 3) if pe else None, "d": d_, "src": "parité"}
-    if tw and tw.get("last"):
-        pt = tw.get("prev")
-        q["USDTWD"] = {"last": tw["last"], "pct": round(tw["last"] / pt - 1, 6) if pt else None, "prev": pt, "d": str(tw.get("t") or "")[:10] or dt.date.today().isoformat(), "src": "CNBC"}
+    # (clôture précédente prise seulement si la variation est sûre : après une remise à zéro de CNBC, prev = last donnait 0,00 % ;
+    # une cotation datée d'un samedi ou d'un dimanche n'est pas publiée : jamais de séance de week-end greffée sur les séries)
+    def wkend(x):
+        try:
+            return dt.date.fromisoformat(x).weekday() >= 5
+        except ValueError:
+            return False
+    try:
+        if eu and eu.get("last") and not wkend(str(eu.get("t") or "")[:10]):
+            d_ = str(eu.get("t") or "")[:10] or dt.date.today().isoformat()
+            pe = (eu.get("prev") or eu["last"] / (1 + eu["pct"])) if eu.get("pct") is not None and eu["pct"] > -1 else None
+            q["EURUSD"] = {"last": round(eu["last"], 5), "pct": round(eu["last"] / pe - 1, 6) if pe else None, "prev": round(pe, 5) if pe else None, "d": d_, "src": "CNBC"}
+            q["USDXOF"] = {"last": round(655.957 / eu["last"], 3), "pct": round(pe / eu["last"] - 1, 6) if pe else None, "prev": round(655.957 / pe, 3) if pe else None, "d": d_, "src": "parité"}
+        if tw and tw.get("last") and not wkend(str(tw.get("t") or "")[:10]):
+            pt = tw.get("prev") if tw.get("pct") is not None else None
+            q["USDTWD"] = {"last": tw["last"], "pct": round(tw["last"] / pt - 1, 6) if pt else None, "prev": pt, "d": str(tw.get("t") or "")[:10] or dt.date.today().isoformat(), "src": "CNBC"}
+    except Exception as e:  # noqa: BLE001
+        fail("fx_quotes", e)
     dump({"ts": now, "qqq": live, "intraday": intraday, "errors": ERRORS}, os.path.join(out_data, "live.json"))
     dump({"ts": now, "asof": brvm.get("asof") if brvm else None, "q": q}, os.path.join(out_data, "quotes.json"))
     if brvm:

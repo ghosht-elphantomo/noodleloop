@@ -68,14 +68,15 @@ FRED = [  # id, nom, groupe, unité
     ("T5YIFR", "Inflation anticipée 5 ans dans 5 ans", "Inflation", "%"), ("MORTGAGE30US", "Taux immobilier 30 ans", "Taux", "%"),
     ("BAMLH0A0HYM2", "Écart haut rendement (OAS)", "Crédit", "%"), ("BAMLC0A0CM", "Écart catégorie investissement (OAS)", "Crédit", "%"),
     ("BAMLH0A3HYC", "Écart CCC et moins (OAS)", "Crédit", "%"), ("BAA10Y", "Écart Moody's Baa - 10 ans", "Crédit", "%"), ("AAA10Y", "Écart Moody's Aaa - 10 ans", "Crédit", "%"),
-    ("WALCL", "Bilan de la Fed", "Liquidité", "M$"), ("WTREGEN", "Compte du Trésor à la Fed (TGA)", "Liquidité", "Md$"),
+    ("WALCL", "Bilan de la Fed", "Liquidité", "M$"), ("WTREGEN", "Compte du Trésor à la Fed (TGA)", "Liquidité", "M$"),  # (FRED : millions de dollars)
     ("RRPONTSYD", "Prises en pension inversées (RRP)", "Liquidité", "Md$"), ("M2SL", "Masse monétaire M2", "Liquidité", "Md$"),
     ("STLFSI4", "Indice de stress financier (St. Louis)", "Stress", "idx"), ("NFCI", "Conditions financières (Chicago)", "Stress", "idx"),
     ("VIXCLS", "VIX", "Stress", "pts"), ("VXNCLS", "VXN (volatilité Nasdaq-100)", "Stress", "pts"), ("OVXCLS", "OVX (volatilité du pétrole)", "Stress", "pts"),
     ("GVZCLS", "GVZ (volatilité de l'or)", "Stress", "pts"), ("DTWEXBGS", "Dollar US pondéré (large)", "Change", "idx"),
-    ("UNRATE", "Taux de chômage", "Emploi", "%"), ("ICSA", "Inscriptions hebdo. au chômage", "Emploi", "k"), ("PAYEMS", "Emplois non agricoles", "Emploi", "k"),
+    ("UNRATE", "Taux de chômage", "Emploi", "%"), ("ICSA", "Inscriptions hebdo. au chômage", "Emploi", ""), ("PAYEMS", "Emplois non agricoles", "Emploi", "k"),  # (ICSA : nombre, pas milliers)
     ("SAHMREALTIME", "Règle de Sahm (temps réel)", "Emploi", "pts"), ("JTSJOL", "Offres d'emploi (JOLTS)", "Emploi", "k"),
     ("CPIAUCSL", "Prix à la consommation (CPI)", "Inflation", "idx"), ("CPILFESL", "CPI hors alimentation et énergie", "Inflation", "idx"),
+    ("CPIAUCNS", "Prix à la consommation (CPI, non désaisonnalisé)", "Inflation", "idx"),  # (prolonge la série CPI du terminal, même indice)
     ("PCEPILFE", "PCE sous-jacent", "Inflation", "idx"), ("PPIACO", "Prix à la production", "Inflation", "idx"),
     ("GDPC1", "PIB réel", "Activité", "Md$"), ("INDPRO", "Production industrielle", "Activité", "idx"), ("RSAFS", "Ventes au détail", "Activité", "M$"),
     ("HOUST", "Mises en chantier", "Activité", "k"), ("UMCSENT", "Confiance des ménages (Michigan)", "Activité", "idx"),
