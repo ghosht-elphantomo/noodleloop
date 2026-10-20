@@ -59,7 +59,9 @@ Une alerte signale un point à vérifier, pas une erreur certaine.
   calendrier publié après un avis reprend une rectification), sinon l'avis du Dépositaire central. Un montant brut n'est converti
   en net qu'avec le taux d'IRVM écrit dans le document. Les montants restent ceux publiés (par action de l'époque) ; ils sont
   ramenés sur la base des actions actuelles pour les fractionnements et attributions d'actions gratuites connus (avis) ou lus sur
-  les paliers du rapport « cours du bulletin ÷ cours ajusté » ; pour les années antérieures aux bulletins conservés, le cours
+  les paliers du rapport « cours du bulletin ÷ cours ajusté », ou vérifiés à la main avec leur preuve (`seed/operations_historiques.json` :
+  attributions BOA CI et BOA Niger 2016, CBI BF 2017 ; fractionnements Sonatel du 23/11/2012 et Onatel du 29/11/2013, dates lues
+  dans les bulletins officiels) ; pour les années antérieures aux bulletins conservés, le cours
   imprimé à côté du dividende dans le premier bulletin après le paiement donne la base d'actions du montant (Sonatel, Onatel :
   fractionnements d'avant 2013). Les archives de l'ancien site (avis depuis 2002, bulletins, revues trimestrielles) complètent
   les années que la base ne couvre pas ; dans ces bulletins la virgule sépare les milliers (« 1,800 ») sauf deux décimales

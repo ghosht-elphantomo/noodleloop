@@ -1075,12 +1075,15 @@ def main():
                             x["brut_avis"], x["irvm_avis"] = o["brut"], o["irvm"]
                         if o.get("px") and o.get("px_d"):
                             x["px_raw"], x["px_d"] = o["px"], o["px_d"]
+                        if o.get("chk"):  # (autres lectures du même versement, avec leur date : montant d'avant une opération)
+                            x["chk_off"] = o["chk"]
                     else:
                         nx = {"ticker": o["t"], "dividende": o["net"], "exercice": o.get("ex"), "date_annonce": o.get("pub"),
                               "date_detachement": o.get("det"), "date_paiement": o.get("pay"), "source": "BRVM", "avis": 1,
                               **({"weak": 1} if o.get("src") in ("bulletin", "revue trimestrielle") else {}),
                               **({"usd_c": o["usd_c"], "fx": o.get("fx")} if o.get("fx") or o.get("boc_fcfa") else {}), **({"exc": 1} if o.get("kind") == "exceptionnel" else {}), **({"px_raw": o["px"], "px_d": o["px_d"]} if o.get("px") and o.get("px_d") else {}),
-                              **({"brut_avis": o["brut"], "irvm_avis": o["irvm"]} if o.get("brut") and o.get("irvm") is not None else {})}
+                              **({"brut_avis": o["brut"], "irvm_avis": o["irvm"]} if o.get("brut") and o.get("irvm") is not None else {}),
+                              **({"chk_off": o["chk"]} if o.get("chk") else {})}
                         divs.append(nx)
                         byt[o["t"]].append(nx)
                         used.add(id(nx))
@@ -1218,9 +1221,35 @@ def main():
                 av_chk["split"] += 1
       except Exception as e:  # noqa: BLE001
         log("fractionnement brvm.org ignoré :", r.get("u"), e)
+    # opérations sur le capital vérifiées à la main (seed/operations_historiques.json : parité et date d'effet prouvées par un document
+    # ou un bulletin officiel cité) qui manquent à la base d'avis et aux avis brvm.org lus : attributions gratuites de 2016-2017 (la
+    # base ne lit que les fractionnements), fractionnements d'avant les bulletins conservés (Sonatel 23/11/2012, Onatel 29/11/2013).
+    # Une opération déjà connue à 20 jours près n'est pas ajoutée une seconde fois ; une ligne sans date d'effet n'est pas lue
+    OPH, oph_log = {}, []
+    i2d_o = lambda x: dt.date(x // 10000, x // 100 % 100, x % 100)  # noqa: E731
+    try:
+        for o_ in json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "operations_historiques.json"),
+                                encoding="utf8")).get("rows") or []:
+            n_, a0_ = (float(v_) for v_ in o_["parite"])
+            k_ = (n_ + a0_) / a0_ if o_["type"] == "attribution" else n_ / a0_
+            if not (k_ > 0 and abs(k_ - 1) > 1e-9) or not o_.get("date_effet"):
+                continue
+            e_ = di(o_["date_effet"])
+            if all(abs((i2d_o(e_) - i2d_o(e0)).days) > 20 for e0, _ in SPL[o_["t"]]):
+                SPL[o_["t"]].append((e_, k_))  # (rapport exact de la parité : 50/41, pas d'arrondi sur les dividendes)
+                OPH[(o_["t"], e_)] = o_
+                oph_log.append(f'{o_["t"]} {e_} x{k_:.6g}')
+            else:
+                oph_log.append(f'{o_["t"]} {e_} x{k_:.6g} déjà connue (avis), non ajoutée')
+        if oph_log:
+            log("opérations sur le capital vérifiées à la main :", "; ".join(oph_log))
+    except Exception as e:  # noqa: BLE001
+        log("opérations historiques illisibles :", e)
+        print("::warning::Construction : seed/operations_historiques.json illisible (voir le journal)")
     split_log, force_write, PX_DATE = [], set(), {}
     MIROIR = {}  # valeurs de la fiche et de la BRVM côte à côte (contrôle du matin : écarts signalés, rien de remplacé)
     SPL_DONE = set()  # opérations déduites des paliers du bulletin officiel (cours déjà ajustés par la base)
+    SPL_FORCE = set()  # opérations vérifiées à la main que la base de cours n'a pas ajustées (cours antérieurs ramenés même sans saut net)
 
     def split_factor(t, date_int, upto):
         """Produit des fractionnements effectifs après `date_int` (et au plus tard à `upto`)."""
@@ -1492,6 +1521,62 @@ def main():
                     continue  # opération déjà connue (avis, palier des cours)
                 SPL[t].append((e_, round(c_ / ref_, 6)))
                 split_log.append(f"{t} {e_} x{c_ / ref_:.4f} : opération sur le capital (cours de référence abaissé par la BRVM la veille, sans dividende)")
+        # opérations vérifiées à la main (seed/operations_historiques.json) : la base de cours les a-t-elle déjà ajustées ? Le rapport
+        # « clôture du bulletin ÷ série » (médiane de 10 séances de part et d'autre de la date d'effet) change du rapport de l'opération
+        # si la base a ajusté, reste le même sinon. Déjà ajustées : rien n'est refait sur les cours ; non ajustées : cours antérieurs
+        # ramenés (volumes multipliés) même sans saut net. Bulletins absents autour de la date (avant décembre 2013) : le champ « cours »
+        # de la ligne décide ; rapport lu ni l'un ni l'autre, ou contraire à ce champ : cours laissés, signalé
+        for (t0_, e_), o_ in OPH.items():
+            if t0_ != t or e_ > rows[-1][0]:
+                continue
+            k_ = next((k0 for e0, k0 in SPL.get(t, []) if e0 == e_), None)
+            if not k_:
+                continue
+            B_ = BOC.get(t) or {}
+            qb_ = [(r[0], B_[r[0]]["c"] / r[4]) for r in rows if r[4] and (B_.get(r[0]) or {}).get("c")]
+            av_ = sorted([q for d_, q in qb_ if d_ < e_][-10:])  # (10 dernières séances avant la date d'effet)
+            ap_ = sorted([q for d_, q in qb_ if d_ >= e_][:10])  # (10 premières à partir d'elle)
+            tol_ = min(.01, abs(math.log(k_)) / 3)
+            decl_ = o_.get("cours")  # (« a_ajuster » ou « deja_ajustes », constaté à la main)
+            if len(av_) >= 5 and len(ap_) >= 5:
+                q_ = av_[len(av_) // 2] / ap_[len(ap_) // 2]
+                lu_ = "a_ajuster" if abs(math.log(q_)) < tol_ else "deja_ajustes" if abs(math.log(q_ / k_)) < tol_ else None
+                if lu_ and decl_ in (None, lu_):
+                    (SPL_FORCE if lu_ == "a_ajuster" else SPL_DONE).add((t, e_))
+                    split_log.append(f"{t} {e_} x{k_:g} : opération vérifiée (seed), cours de la base "
+                                     f"{'non ajustés' if lu_ == 'a_ajuster' else 'déjà ajustés'} (rapport bulletin ÷ série {q_:.4f})")
+                    continue
+                print(f"::warning::Construction : {t} {e_} opération vérifiée x{k_:g}, rapport bulletin ÷ série {q_:.4f} "
+                      f"({lu_ or 'incohérent'}, ligne : {decl_}) : cours laissés")
+            elif decl_ in ("a_ajuster", "deja_ajustes"):
+                (SPL_FORCE if decl_ == "a_ajuster" else SPL_DONE).add((t, e_))
+                split_log.append(f"{t} {e_} x{k_:g} : opération vérifiée (seed), sans bulletin autour de la date : cours "
+                                 f"{'ramenés' if decl_ == 'a_ajuster' else 'de la base déjà ajustés'} (constat de la ligne)")
+                continue
+            split_log.append(f"{t} {e_} x{k_:g} : opération vérifiée (seed), cours laissés (rapport bulletin ÷ série non vérifiable)")
+            SPL_DONE.add((t, e_))
+        # versement payé avant une opération mais lu dans un bulletin qui l'a déjà ramené sur la nouvelle base (« dividendes ajustés
+        # par rapport au fractionnement ») : la lecture d'avant l'opération (contrôle « chk » de la branche dividendes, dans le rapport
+        # exact de l'opération) est le montant publié, que adj_divs ramène ensuite ; sans cela il serait divisé deux fois (Sonatel 2011 :
+        # 13 050 au bulletin du 30/04/2012, 1 305 au bulletin du 31/12/2012, fractionnement du 23/11/2012)
+        for x in divs:
+            if x.get("ticker") != t or not x.get("dividende") or not x.get("chk_off") or x.get("ajust"):
+                continue
+            ds_ = x.get("date_detachement") or x.get("date_paiement")
+            if not ds_:
+                continue
+            d0 = di(ds_[:10])
+            for s_, a_, dc_ in x["chk_off"]:
+                try:
+                    dc_i = di(str(dc_)[:10])
+                except (TypeError, ValueError):
+                    continue
+                k0_ = next((k0 for e0, k0 in sorted(SPL.get(t, [])) if d0 < e0 <= today_i and dc_i < e0
+                            and abs(float(a_) / (x["dividende"] * k0) - 1) < .005), None)
+                if s_ == "bulletin" and k0_:
+                    split_log.append(f"{t} {x.get('exercice')} : {x['dividende']:g} déjà ramené par le bulletin, montant publié {float(a_):g} (lecture du {dc_})")
+                    x["dividende"] = float(a_)
+                    break
         if t in SPL:
             adj_divs(t)
         for e_, k_ in sorted(SPL.get(t, [])):
@@ -1501,10 +1586,12 @@ def main():
                 continue  # (opération lue sur les paliers du bulletin : cours de la base déjà ajustés, données par action aussi)
             ep_ = PX_DATE.get((t, e_), e_)
             i_ = next((j for j, r in enumerate(rows) if r[0] >= ep_), None)
-            if i_ and rows[i_ - 1][4] and rows[i_][4] and abs(math.log((rows[i_ - 1][4] / rows[i_][4]) / k_)) < min(math.log(1.4), abs(math.log(k_)) / 3):  # (petit rapport : saut net exigé)
+            if i_ and rows[i_ - 1][4] and rows[i_][4] and ((t, e_) in SPL_FORCE or abs(math.log((rows[i_ - 1][4] / rows[i_][4]) / k_)) < min(math.log(1.4), abs(math.log(k_)) / 3)):  # (petit rapport : saut net exigé, sauf opération vérifiée)
                 rows = [(r[0], r[1] / k_, r[2] / k_, r[3] / k_, r[4] / k_, int(round(r[5] * k_)), r[6]) if j < i_ else r for j, r in enumerate(rows)]
                 split_log.append(f"{t} {e_} x{k_:g} : cours antérieurs ajustés")
                 force_write.add(t)
+            if (t, e_) in SPL_FORCE:
+                continue  # (opération vérifiée à la main, petit rapport : données par action de la fiche laissées à l'étape des BNPA par exercice)
             # données par action de la fiche société : ajustées si elles datent d'avant le fractionnement
             src_d = di(str(f.get("date_source") or "2000-01-01")[:10])
             per_boc = None
@@ -1716,6 +1803,28 @@ def main():
                 "susp": (status.get(t) or {}).get("statut") == "suspendue", **({"vde": 1} if val_est else {})}
         add(meta, [r[0] for r in rows], [r[4] for r in rows], [r[1] for r in rows], [r[2] for r in rows], [r[3] for r in rows],
             [r[5] for r in rows], [r[6] for r in rows], nd=2)
+    # avis de la base sur une opération sur le capital à parité lisible (fractionnement, regroupement, actions gratuites) sans
+    # opération de la liste à 30 jours près : signalé, jamais appliqué sans date d'effet prouvée (à vérifier au bulletin — l'effet
+    # tombe en général deux séances avant l'arrêté des registres — puis à inscrire dans seed/operations_historiques.json)
+    ost_nl = []
+    listed_ = {x_.get("ticker") for x_ in acts}
+    for x in EVS_:
+        try:
+            dd_ = x.get("details") or {}
+            if x.get("category") not in ("stock_split", "reverse_split", "bonus_issue") or x.get("ticker") not in listed_ or not x.get("event_at") \
+                    or not dd_.get("ratio_new") or not dd_.get("ratio_old"):
+                continue
+            n_, a0_ = float(dd_["ratio_new"]), float(dd_["ratio_old"])
+            k_ = (n_ + a0_) / a0_ if x["category"] == "bonus_issue" else n_ / a0_
+            e0_ = dt.date.fromisoformat(x["event_at"][:10])
+            if abs(k_ - 1) > 1e-9 and not any(abs((dt.date(e1 // 10000, e1 // 100 % 100, e1 % 100) - e0_).days) <= 30 for e1, _ in SPL.get(x["ticker"], [])):
+                ost_nl.append(f'{x["ticker"]} {x["event_at"][:10]} x{k_:.6g} ({x.get("category_label") or x["category"]})')
+        except Exception:  # noqa: BLE001
+            continue
+    if ost_nl:
+        boc_chk["ost_non_listees"] = ost_nl
+        log("opérations sur le capital de la base absentes de la liste :", "; ".join(ost_nl))
+        print(f"::warning::Construction : {len(ost_nl)} opération(s) sur le capital de la base sans date d'effet vérifiée, non appliquée(s) : {', '.join(ost_nl[:5])}")
     rep = json.load(open(os.path.join(src, "indices", "indices_report.json"), encoding="utf8"))
     imap = {"BRVM-C": "BRVMC", "BRVM-30": "BRVM30", "BRVM-PRES": "BRVMPR", "BRVM-PRIN": "BRVMPA", "TL": "BRVM-TEL", "CD": "BRVM-CD",
             "SF": "BRVM-SF", "CB": "BRVM-CB", "IN": "BRVM-IN", "EN": "BRVM-EN", "SP": "BRVM-SP"}
@@ -2022,7 +2131,7 @@ def main():
         if x.get("det") and x.get("pay") and x["pay"] < x["det"]:
             x["pay"] = None
     if split_log:
-        log("fractionnements :", "; ".join(split_log[:40]))
+        log("fractionnements :", "; ".join(split_log[:80]))
     ev = json.load(open(os.path.join(src, "events.json"), encoding="utf8"))["events"]
     emeta = [{"d": x.get("published_at") or x.get("event_at"), "e": x.get("event_at"), "t": x.get("ticker"), "c": "Modification du dividende" if x.get("category") == "dividend_amount_change" else x.get("category_label"),
               "ti": x.get("title"), "u": x.get("document_url")} for x in ev if (x.get("published_at") or x.get("event_at"))]

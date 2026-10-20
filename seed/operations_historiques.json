@@ -1,0 +1,51 @@
+{
+ "v": 1,
+ "note": "Opérations sur le capital vérifiées à la main (fractionnements, attributions d'actions gratuites) qui manquent dans la base d'avis, dans les avis brvm.org lus et dans les paliers détectés sur les bulletins. Lu par scripts/build_terminal.py. Une opération n'est inscrite qu'avec sa parité et sa date d'effet prouvées par un document ou un bulletin officiel de la BRVM cité. Rapport : « fractionnement » = nouvelles ÷ anciennes ; « attribution » = (nouvelles + anciennes) ÷ anciennes. L'opération rejoint la liste des opérations (fractionnements.csv, champ split) et ramène les dividendes antérieurs sur la base actuelle. Pour les cours, la construction lit le rapport « clôture du bulletin ÷ série » de part et d'autre de la date d'effet : inchangé, les cours de la base ne sont pas ajustés (cours antérieurs ramenés, volumes multipliés) ; égal au rapport de l'opération, ils le sont déjà (rien n'est refait). Sans bulletins autour de la date d'effet, le champ « cours » décide (« a_ajuster » ou « deja_ajustes ») ; un rapport lu qui le contredit est signalé et les cours sont laissés.",
+ "rows": [
+  {
+   "t": "BOAC",
+   "type": "attribution",
+   "parite": [9, 41],
+   "date_effet": "2016-06-08",
+   "cours": "a_ajuster",
+   "doc": "Page brvm.org « augmentation de capital » (base d'avis) : « BANK OF AFRICA CI : 9 actions nouvelles pour 41 anciennes », droit d'attribution, registres arrêtés le 10/06/2016",
+   "preuve": "Bulletin officiel de la cote : clôture 215 005 le 07/06/2016 puis 189 000 le 08/06/2016 (−12,1 %, hors du seuil quotidien de ±7,5 %), sans dividende (dernier payé le 18/04/2016) ; prix théorique 215 005 × 41/50 = 176 304, clôture du 08/06 à +7,2 % de ce prix ; cours de référence non imprimé le 07/06 (veille de l'effet, comme pour les opérations BOA de 2017 et 2024) ; 08/06/2016 = deux séances avant l'arrêté des registres du 10/06. Rapport clôture du bulletin ÷ série = 40,00 avant et après le 08/06/2016 : cours de la base non ajustés."
+  },
+  {
+   "t": "BOAN",
+   "type": "attribution",
+   "parite": [1, 19],
+   "date_effet": "2016-06-03",
+   "cours": "a_ajuster",
+   "doc": "Page brvm.org « augmentation de capital » (base d'avis) : « BANK OF AFRICA NG : 1 action nouvelle pour 19 anciennes », droit d'attribution, registres arrêtés le 07/06/2016",
+   "preuve": "Bulletin officiel de la cote : clôture 114 000 le 02/06/2016 puis 105 000 le 03/06/2016 (−7,89 %, hors du seuil quotidien de ±7,5 %), sans dividende (dernier payé le 09/05/2016) ; prix théorique 114 000 × 19/20 = 108 300, clôture du 03/06 à −3,0 % ; un effet au 01/06 donnerait +8,2 % sur le prix théorique, un effet après le 03/06 laisserait la baisse du 03/06 hors seuil : seul le 03/06 convient ; cours de référence non imprimé le 02/06 (veille de l'effet) ; 03/06/2016 = deux séances avant l'arrêté des registres du 07/06. Rapport clôture du bulletin ÷ série = 20,80 avant et après : cours de la base non ajustés."
+  },
+  {
+   "t": "CBIBF",
+   "type": "attribution",
+   "parite": [3, 125],
+   "date_effet": "2017-09-21",
+   "cours": "deja_ajustes",
+   "doc": "Avis n°152-2017 BRVM/DG du 28/08/2017 : augmentation de capital par incorporation de primes d'émission, 3 actions nouvelles pour 125 anciennes, registres arrêtés le 25/09/2017 (https://www.brvm.org/sites/default/files/20170828_-_avis_ndeg152-_brvmdg_-_augmentation_de_k_par_incorporation_de_primes_demission_-_cbi_bf.pdf)",
+   "preuve": "Rapport clôture du bulletin ÷ série : 5,12 du 27/12/2016 au 20/09/2017, puis 5,00 à partir du 21/09/2017 (la base a ajusté ses cours de 128/125 à cette date) ; cours de référence non imprimé le 20/09/2017 (veille de l'effet) ; 21/09/2017 = deux séances avant l'arrêté des registres du 25/09. Dividende 2016 (1 120 publié, payé le 09/06/2017) : 1 120 ÷ (5 × 1,024) = 218,75 sur la base actuelle."
+  },
+  {
+   "t": "SNTS",
+   "type": "fractionnement",
+   "parite": [10, 1],
+   "date_effet": "2012-11-23",
+   "cours": "deja_ajustes",
+   "doc": "Bulletin officiel de la cote du 25/01/2013, légende : « (*) dividendes et cours extrêmes ajustés par rapport au fractionnement du 23 novembre 2012 : à raison de dix (10) actions nouvelles pour une (1) action ancienne » (http://www.brvm.org/LinkClick.aspx?fileticket=3JHCBmDWuJc%3d&tabid=36&mid=476&language=en-US, copie web.archive.org du 04/04/2013) ; même date dans les bulletins d'avril, juin, août, septembre et novembre 2013 ; convocation de l'assemblée générale extraordinaire du 31/10/2012 ; « COMMUNIQUE - SONATEL SN - Exercice 2012 (Fractionnement du titre) » du 08/11/2012",
+   "preuve": "Bulletin du 17/08/2012 : cours 115 000 et dividende 2011 imprimé 13 050 (payé le 03/05/2012) ; bulletin du 31/12/2012 : cours 14 500 et dividende 2011 imprimé 1 305, marqués (*) « ajustés par rapport au fractionnement : dix actions nouvelles pour une ancienne ». Montants publiés réguliers sur l'ancienne base : 2 668,5 (2002), 3 960 (2003), 5 085 (2004), 9 900 (2007), 11 700 (2008), 12 150 (2009), 12 600 (2010). Série de cours de la base déjà ajustée (11 500 le 17/08/2012 contre 115 000 au bulletin du même jour ; 14 500 le 31/12/2012 comme le bulletin)."
+  },
+  {
+   "t": "ONTBF",
+   "type": "fractionnement",
+   "parite": [10, 1],
+   "date_effet": "2013-11-29",
+   "cours": "deja_ajustes",
+   "doc": "Bulletins officiels de la cote des 11, 12, 13, 14, 18, 19 et 21/11/2013, rubrique « Opérations en cours » : « ONATEL BF - Fractionnement (10 actions nouvelles pour 1 action ancienne), le 29/11/2013 » (ex. http://www.brvm.org/LinkClick.aspx?fileticket=7Ufq56prrgI%3d&tabid=36&mid=476&language=fr-FR, copie web.archive.org du 14/11/2013) ; bulletin n°90 du 12/05/2014, légende : « (*) Dividende, PER, taux de rendement et variation annuelle ajustés par rapport au fractionnement du 29 novembre 2013 : à raison de dix (10) actions nouvelles pour une (1) action ancienne » ; « COMMUNIQUE - ONATEL BF - Exercice 2013 (Fractionnement du titre) » du 28/10/2013",
+   "preuve": "Bulletin du 13/09/2013 : cours 57 900 et dividende 2012 de 4 634 ; bulletin du 10/12/2013 : cours 6 100 et dividende 2012 imprimé 463. Série de cours de la base déjà ajustée (5 790 le 13/09/2013 contre 57 900 au bulletin du même jour ; 6 100 le 10/12/2013 comme le bulletin)."
+  }
+ ]
+}
