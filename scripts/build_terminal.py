@@ -541,6 +541,77 @@ def base_fix(fund):
     return out
 
 
+def load_corr():
+    """Corrections vérifiées sur document (seed/corrections_bnpa.json). Une ligne : titre « t », exercice « ex », champ « champ »
+    (poste de la série, « bnpa » par défaut ; ou poste des comptes lus si « cpt » est donné), valeur fautive « avant » (null : poste
+    absent), valeur corrigée « apres » (« bnpa » dans les premières lignes ; null : valeur retirée, affichée « — »), document « doc »
+    et raison « pourquoi » ; « cpt » = « périmètre/norme » des comptes lus visés (ex. « social/syscohada ») ; « src » = mention de
+    l'exercice dans FA. Une correction ne s'applique que si la valeur en place est encore « avant » (sinon signalée à revoir)."""
+    try:
+        p_ = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "corrections_bnpa.json")
+        return json.load(open(p_, encoding="utf8")).get("rows") or []
+    except Exception as e:  # noqa: BLE001
+        log("corrections vérifiées illisibles :", e)
+        return []
+
+
+def corr_new(c_):
+    return c_["apres"] if "apres" in c_ else c_.get("bnpa")
+
+
+def corr_same(x, y):
+    """même valeur, à l'arrondi de lecture près (ou toutes deux absentes)"""
+    if x is None or y is None:
+        return x is None and y is None
+    return abs(x - y) <= max(.02, abs(y) * .001)
+
+
+def cpt_fix(cons, rows):
+    """Postes des comptes lus (comptes.consolidate) corrigés d'après le document cité : lignes de corrections_bnpa.json qui portent
+    « cpt » (« périmètre/norme » visé : comptes principaux ou autre référentiel du titre). Un poste corrigé est sûr (prouvé par le
+    document) : il quitte la liste des montants « faibles » (w, calc) et remplace donc ensuite le montant de la base tierce dans la
+    série. Rend (corrections faites, corrections à revoir, {(titre, exercice, poste)} corrigés)."""
+    done, skip, keys = [], [], set()
+    for c_ in rows:
+        if not c_.get("cpt") or not c_.get("champ"):
+            continue
+        try:
+            per_, std_ = c_["cpt"].split("/")
+            cc_ = cons.get(c_["t"]) or {}
+            g_ = next((g for g in (cc_, cc_.get("alt") or {}) if g.get("per") == per_ and g.get("std") == std_), None)
+            yy_ = (g_ or {}).get("y") or {}
+            e_ = yy_.get(int(c_["ex"])) if int(c_["ex"]) in yy_ else yy_.get(str(c_["ex"]))
+            lab_ = f'{c_["t"]} {c_["ex"]} {c_["champ"]} ({c_["cpt"]})'
+            if e_ is None:
+                skip.append(lab_ + " : exercice absent")
+                continue
+            v_, k_, new_ = e_["v"], c_["champ"], corr_new(c_)
+            if not corr_same(v_.get(k_), c_.get("avant")):
+                if not corr_same(v_.get(k_), new_):
+                    skip.append(f"{lab_} : {v_.get(k_)}")
+                continue
+            if new_ is None:
+                v_.pop(k_, None)
+            else:
+                v_[k_] = new_
+            for kw_ in ("w", "calc"):
+                if k_ in (e_.get(kw_) or []):
+                    e_[kw_] = [x for x in e_[kw_] if x != k_]
+                    if not e_[kw_]:
+                        e_.pop(kw_)
+            done.append(f'{lab_} {c_.get("avant")} -> {new_}')
+            keys.add((c_["t"], str(c_["ex"]), k_))
+        except Exception as e:  # noqa: BLE001  (une ligne mal formée est écartée, les suivantes restent appliquées)
+            skip.append(f'{c_.get("t")} {c_.get("ex")} : ligne illisible ({type(e).__name__})')
+    return done, skip, keys
+
+
+# ratios de la base tierce qui dépendent d'un chiffre clé de la série : retirés (recalculés dans FA) quand une correction vérifiée
+# change ce chiffre ; les autres ratios du même exercice restent (le coût du risque n'entre dans aucun)
+CORR_DEP = {"capitaux_propres": ("roe",), "total_bilan": ("roa",), "resultat_net": ("roe", "roa", "marge_nette", "croissance_resultat_net"),
+            "ca": ("marge_nette", "marge_exploitation", "croissance_ca"), "ebit": ("marge_exploitation",), "cout_du_risque": ()}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--brvm-src", required=True)
@@ -655,6 +726,7 @@ def main():
     # états financiers publiés à la BRVM (branche comptes), lus et vérifiés par les identités comptables : prioritaires sur la base
     # tierce pour les exercices qu'ils couvrent, quand leur périmètre est le même (comptes sociaux ou consolidés)
     cpt_chk = {"t": 0, "y": 0, "set": 0, "fix": 0, "fill": 0, "detail_only": [], "ex": []}
+    CORR_ROWS = load_corr()  # corrections vérifiées sur document (comptes lus, puis séries de la fiche)
     ECARTES = []  # éléments mal formés écartés à la construction (publiés dans boc_check.json, listés par le contrôle du matin)
     calc_fill = []  # (titre, poste, exercice, montant) calculés d'après les comptes publiés : comblent les exercices encore vides en dernier
     # exercices plus anciens : pages SikaFinance archivées (web.archive.org) — chiffres publiés (CA, résultat net, BNPA, dividende)
@@ -695,6 +767,16 @@ def main():
                         if rec.get(k) is not None and (ser_.get(sk) or {}).get(str(y)) is None:
                             ser_.setdefault(sk, {})[str(y)] = rec[k]
             CONS = CPT.consolidate(json.load(open(a.comptes, encoding="utf8")), mir, fx_)
+            # postes des comptes lus corrigés après vérification sur le document (seed/corrections_bnpa.json, lignes « cpt » :
+            # unité lue fausse, renvoi de note lu comme montant, montant vérifié écarté face à une base fausse) ; appliqué avant la
+            # reprise dans la série, que la correction suit donc d'elle-même (voir cpt_fix)
+            cpt_fix_log = cpt_fix(CONS, CORR_ROWS)
+            if cpt_fix_log[0]:
+                log("comptes publiés corrigés d'après les documents :", "; ".join(cpt_fix_log[0]))
+            if cpt_fix_log[1]:
+                log("corrections de comptes à revoir (le montant lu a changé depuis la correction) :", "; ".join(cpt_fix_log[1]))
+                # (signalées au contrôle du matin : une correction vérifiée qui ne s'applique plus est à revoir sur le document)
+                ECARTES.extend(f"correction vérifiée à revoir (seed/corrections_bnpa.json) : {x}" for x in cpt_fix_log[1])
             bank_t = {x.get("symbole") or x.get("ticker"): bool(x.get("banque")) for x in acts}
             MAPC = (("resultat_net", "resultat_net"), ("total_bilan", "total_actif"), ("capitaux_propres", "capitaux_propres"),
                     ("ebit", "resultat_exploitation"), ("ebitda", "ebe"), ("depots_clientele", "b_dettes_clientele"),
@@ -725,6 +807,7 @@ def main():
                     bank = bank_t.get(t) or any("b_pnb" in r["v"] for r in src_g["y"].values())
                     for y, r in src_g["y"].items():
                         v, ys = r["v"], str(y)
+                        corr_y = {k_ for t_, y_, k_ in cpt_fix_log[2] if t_ == t and y_ == ys}  # (postes corrigés d'après le document)
                         cpt_chk["y"] += 1
                         pairs = [("ca", "b_pnb" if bank else "chiffre_affaires")] + list(MAPC)
                         if v.get("resultat_net") is None and v.get("resultat_bilan") is not None:
@@ -739,7 +822,22 @@ def main():
                                 v = dict(v, _cdr=cr_)
                             if "_cdr" in v:
                                 pairs.append(("cout_du_risque", "_cdr"))
+                        elif bank and v.get("b_cout_risque") is None and v.get("b_rbe") is not None and v.get("resultat_exploitation") is not None:
+                            # coût du risque non lu, mais RBE et résultat d'exploitation publiés : la charge vaut RBE − résultat
+                            # d'exploitation. Un coût du risque de la base de signe contraire est faux : remplacé par cette différence
+                            # s'il en est l'opposé (signe perdu), retiré sinon (SGBC 2024 : −36 235 pour une charge de 36 236)
+                            d_cr = v["b_rbe"] - v["resultat_exploitation"]
+                            x_cr = (ser.get("cout_du_risque") or {}).get(ys)
+                            if isinstance(x_cr, (int, float)) and x_cr * d_cr < 0 and abs(d_cr) > max(1.0, abs(v["b_rbe"]) * .01):
+                                if abs(x_cr + d_cr) <= max(2.0, abs(d_cr) * .01):
+                                    v = dict(v, _cdr=d_cr)
+                                    pairs.append(("cout_du_risque", "_cdr"))
+                                    corr_y.add("_cdr")
+                                else:
+                                    ser["cout_du_risque"].pop(ys, None)
+                                    cpt_chk.setdefault("cdr_retire", []).append(f"{t} {ys} {x_cr:g} (RBE − RE = {d_cr:g})")
                         changed = False
+                        dep_ = set()  # (ratios de la base à retirer après une correction vérifiée : seulement ceux qui en dépendent)
                         weak_ = set(r.get("w") or ())
                         calc_ = set(r.get("calc") or ())
                         for sk, ck in pairs:
@@ -760,7 +858,10 @@ def main():
                                 cpt_chk["fill"] += 1
                             elif abs(old - new) > max(1.0, abs(old) * .005):
                                 cpt_chk["fix"] += 1
-                                changed = True
+                                if ck in corr_y:
+                                    dep_.update(CORR_DEP.get(sk, DERIVED))
+                                else:
+                                    changed = True
                                 if len(cpt_chk["ex"]) < 25:
                                     cpt_chk["ex"].append(f"{t} {y} {sk} {old:g} -> {new:g}")
                             o[ys] = new
@@ -770,8 +871,8 @@ def main():
                             f.setdefault("src_years", {})[ys] = (f"converti : comptes publiés en dollars US, 1 USD = {r['fx']:.2f} FCFA".replace(".", ",")
                                                                  + (f" au {dd_[8:10]}/{dd_[5:7]}/{dd_[:4]} (date de publication)" if dd_ else ""))
                             changed = True
-                        if changed:  # ratios de la base tierce calculés sur les montants corrigés : retirés (recalculés plus loin)
-                            for dk in DERIVED:
+                        if changed or dep_:  # ratios de la base tierce calculés sur les montants corrigés : retirés (recalculés plus loin)
+                            for dk in (DERIVED if changed else sorted(dep_)):
                                 (ser.get(dk) or {}).pop(ys, None)
                     # exercices plus anciens publiés dans l'autre norme (comptes SYSCOHADA d'avant le passage aux IFRS, même périmètre) :
                     # ajoutés seulement là où rien n'existe, et signalés comme tels (sup « r » dans le FA)
@@ -1202,25 +1303,40 @@ def main():
                 boc_chk["div_added"] += 1
     # BNPA d'un exercice corrigé après vérification sur le document (seed/corrections_bnpa.json) : appliqué seulement si la
     # fiche donne encore la valeur fautive notée (« avant ») ; une valeur déjà différente est laissée et signalée
+    # (même fichier : autres postes de la série — résultat net, capitaux propres, coût du risque… — ; « apres » null retire la
+    # valeur ; un chiffre clé corrigé retire les ratios de la base calculés dessus, recalculés plus loin ; les lignes « cpt » ont
+    # déjà été appliquées aux comptes lus, voir cpt_fix)
     try:
-        cb_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "corrections_bnpa.json"), encoding="utf8"))
         done_, skip_ = [], []
-        for c_ in cb_.get("rows") or []:
-            sb_ = ((fund.get(c_["t"]) or {}).get("series") or {}).get(c_.get("champ") or "bnpa")
+        for c_ in CORR_ROWS:
+            if c_.get("cpt"):
+                continue
+            f_c = fund.get(c_["t"]) or {}
+            k_c = c_.get("champ") or "bnpa"
+            sb_ = (f_c.get("series") or {}).get(k_c)
             y_ = str(c_["ex"])
+            new_ = corr_new(c_)
             if sb_ is None or y_ not in sb_:
                 continue
             if sb_[y_] is not None and abs(sb_[y_] - c_["avant"]) <= max(.02, abs(c_["avant"]) * .001):
-                sb_[y_] = c_["bnpa"]
+                if new_ is None:
+                    sb_.pop(y_)
+                else:
+                    sb_[y_] = new_
+                for dk in CORR_DEP.get(k_c, ()):
+                    ((f_c.get("series") or {}).get(dk) or {}).pop(y_, None)
+                if c_.get("src"):
+                    f_c.setdefault("src_years", {})[y_] = c_["src"]
                 done_.append(f'{c_["t"]} {y_}' + (f' ({c_["champ"]})' if c_.get("champ") else ""))
-            elif sb_[y_] is not None and abs(sb_[y_] - c_["bnpa"]) > .02:
-                skip_.append(f'{c_["t"]} {y_} ({sb_[y_]:g})')
+            elif sb_[y_] is not None and (new_ is None or abs(sb_[y_] - new_) > .02):
+                skip_.append(f'{c_["t"]} {y_} {k_c} ({sb_[y_]:g})')
         if done_:
-            log("données par action corrigées d'après les documents :", ", ".join(done_))
+            log("données de la fiche corrigées d'après les documents :", ", ".join(done_))
         if skip_:
-            log("BNPA à revoir (la fiche a changé depuis la correction) :", ", ".join(skip_))
+            log("corrections à revoir (la fiche a changé depuis la correction) :", ", ".join(skip_))
+            ECARTES.extend(f"correction vérifiée à revoir (seed/corrections_bnpa.json) : {x}" for x in skip_)
     except Exception as e:  # noqa: BLE001
-        log("corrections de BNPA illisibles :", e)
+        log("corrections de la fiche illisibles :", e)
     # Fractionnements (avis BRVM) : cours, dividendes et données par action ramenés sur la base des actions actuelles.
     # Un fractionnement n'est appliqué qu'une fois effectif (date d'effet atteinte par les cours) et seulement s'il manque dans la source.
     SPL = collections.defaultdict(list)
@@ -1812,6 +1928,41 @@ def main():
         # BNPA du bulletin = cours ÷ PER (PER arrondi à 2 décimales) : le BNPA publié par la société, s'il concorde à 1 % près, est gardé tel quel
         if bnpa_off and not (bnpa_ and bnpa_ > 0 and abs(bnpa_ / bnpa_off - 1) < .01):
             bnpa_ = bnpa_off
+        # une seule convention pour le résumé et FA (audit du 20/10/2026, constat I-1) : le BNPA d'un exercice est le résultat net
+        # des comptes affichés ÷ nombre de titres. Le bulletin calcule parfois son PER du même exercice sur un autre résultat (comptes
+        # IFRS ou consolidés, quand FQT affiche les comptes SYSCOHADA sociaux : CABC, SDCC, TTLS, ONTBF). Quand le résultat net du
+        # dernier exercice vient de comptes publiés et vérifiés, que le BNPA de la série en est le quotient par le nombre de titres et
+        # que le BNPA du bulletin date de l'année qui suit cet exercice (même exercice), le BNPA de la série est retenu (PER = cours
+        # ÷ BNPA, distribution = dividende ÷ BNPA, comme dans FA) et celui du bulletin est gardé à côté (« bnpa_bul »)
+        bnpa_bul = None
+        try:
+            sb_l = {int(y_): v_ for y_, v_ in ((f.get("series") or {}).get("bnpa") or {}).items() if v_ is not None and str(y_).isdigit()}
+            sr_l = {int(y_): v_ for y_, v_ in ((f.get("series") or {}).get("resultat_net") or {}).items() if v_ is not None and str(y_).isdigit()}
+            y_l = max(sr_l) if sr_l else None
+            if bnpa_off and bnpa_ == bnpa_off and y_l and (sb_l.get(y_l) or 0) > 0 and sr_l[y_l] > 0 and shares \
+                    and abs(sb_l[y_l] * shares / (sr_l[y_l] * 1e6) - 1) <= .01 and abs(sb_l[y_l] / bnpa_off - 1) > .01:
+                cc_l = f.get("cpt") or {}
+                ver_ = False
+                for g_ in (cc_l, cc_l.get("alt") or {}):
+                    yy_ = g_.get("y") or {}
+                    e_ = yy_.get(y_l) or yy_.get(str(y_l)) or {}
+                    rv_ = (e_.get("v") or {}).get("resultat_net", (e_.get("v") or {}).get("resultat_bilan"))
+                    if rv_ is not None and abs(rv_ - sr_l[y_l]) <= .6 and "resultat_net" not in (e_.get("w") or []):
+                        ver_ = True
+                # (date où le BNPA du bulletin a pris sa valeur actuelle : il se rapporte à l'exercice publié l'année précédente)
+                k0_ = None
+                for kb in sorted(BOC.get(t) or {}, reverse=True):
+                    rb = BOC[t][kb]
+                    cb = rb.get("c") or rb.get("ref")
+                    if not (rb.get("per") and rb["per"] > 0 and cb):
+                        continue
+                    if abs(cb / rb["per"] / split_factor(t, kb, rows[-1][0]) / bnpa_off - 1) > .02:
+                        break
+                    k0_ = kb
+                if ver_ and k0_ and k0_ // 10000 == y_l + 1:
+                    bnpa_bul, bnpa_, pso_ = bnpa_off, sb_l[y_l], "fqt"
+        except Exception as e:  # noqa: BLE001  (en cas de doute, le BNPA du bulletin reste)
+            log("BNPA du dernier exercice : contrôle impossible pour", t, e)
         cty = "BF" if t.endswith("BF") else CTY.get(t[-1], "CI")
         ld = last_div.get(t, (None, {}))[1]
         last = rows[-1][4]
@@ -1842,7 +1993,8 @@ def main():
                 "dps_adj": ld.get("ajust"), "pay": pay_, "split": [[e_, k_] for e_, k_ in sorted(SPL.get(t, []))] or None,
                 "per": rnd(last / bnpa_, 2) if bnpa_ and bnpa_ > 0 else None,
                 "yld": rnd(ld_tot / last, 6) if ld_tot and ld_recent else None,
-                "susp": (status.get(t) or {}).get("statut") == "suspendue", **({"vde": 1} if val_est else {})}
+                "susp": (status.get(t) or {}).get("statut") == "suspendue", **({"vde": 1} if val_est else {}),
+                **({"bnpa_bul": rnd(bnpa_bul, 2)} if bnpa_bul else {})}
         add(meta, [r[0] for r in rows], [r[4] for r in rows], [r[1] for r in rows], [r[2] for r in rows], [r[3] for r in rows],
             [r[5] for r in rows], [r[6] for r in rows], nd=2)
     # avis de la base sur une opération sur le capital à parité lisible (fractionnement, regroupement, actions gratuites) sans
@@ -2156,6 +2308,35 @@ def main():
     fmeta = {k: {"nom": v.get("nom"), "secteur": v.get("secteur"), "shares": v.get("nb_titres"), "float": v.get("flottant"), "ex": v.get("exercice"),
                  "series": {s: v["series"][s] for s in keep if v.get("series", {}).get(s)}}
              for k, v in fund.items() if k != "_meta"}
+    # dividende d'un exercice publié dans fundamentals.json (et repris par l'export historique) : la somme de ses versements
+    # ordinaires officiels, comme dans FA (audit du 20/10/2026, constat I-3 : la base donnait parfois le versement de l'exercice
+    # précédent, l'exceptionnel en plus ou le brut) ; le montant de la base ne reste que pour un exercice sans versement officiel
+    # recensé (aucun exercice n'est ajouté ici)
+    try:
+        dps_off_ = collections.defaultdict(dict)
+        for x in divs:
+            if x.get("ticker") and x.get("exercice") and x.get("dividende") and not x.get("exc"):
+                try:
+                    y_ = str(int(x["exercice"]))
+                except (TypeError, ValueError):
+                    continue  # (exercice illisible : versement ignoré ici, comme dans FA)
+                dps_off_[x["ticker"]][y_] = dps_off_[x["ticker"]].get(y_, 0) + x["dividende"]
+        div_fix_ = []
+        for k, m_ in fmeta.items():
+            o_ = (m_.get("series") or {}).get("dividende")
+            if not isinstance(o_, dict):
+                continue
+            n_o = dict(o_)  # (copie : la série de la fiche elle-même n'est pas modifiée)
+            for y_, x_ in o_.items():
+                n_ = dps_off_.get(k, {}).get(str(y_))
+                if n_ and isinstance(x_, (int, float)) and abs(x_ - n_) > max(.01, abs(n_) * .005):
+                    n_o[y_] = round(n_, 4)
+                    div_fix_.append(f"{k} {y_} {x_:g} -> {n_:g}")
+            m_["series"]["dividende"] = n_o
+        if div_fix_:
+            log(f"dividendes de la fiche remplacés par les versements officiels de l'exercice ({len(div_fix_)}) :", "; ".join(div_fix_))
+    except Exception as e:  # noqa: BLE001
+        log("dividendes de la fiche : contrôle impossible", e)
     def brut_(x):  # dividende brut et taux de l'impôt de l'avis, cohérents avec le net publié (sinon rien)
         b_, r_, n_ = x.get("brut_avis"), x.get("irvm_avis"), x.get("dividende")
         if not b_ or r_ is None or not n_ or not 0 <= r_ < 50:

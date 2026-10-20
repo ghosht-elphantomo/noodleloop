@@ -1343,7 +1343,9 @@ def brvm_company(sid, s, fd_, fcf, dps_hist, b, tax):
     ev = mcap + li("nd") * M if mcap and li("nd") is not None and not bank else None
     eps = li("eps")
     r = {"src": "bulletin officiel de la cote BRVM (PER, dividende) · brvm.org (nombre de titres) · états financiers BRVM · SikaFinance en secours (comptes)", "ccy": "XOF", "bank": bank, "fy": yrs[L] if yrs else None, "mcap": mcap, "ev": ev, "price": price,
-         "pe": (s.get("per") if s.get("pso") == "off" and s.get("per") else (div0(price, eps) if eps and eps > 0 else None)), "pb": div0(mcap, li("eq") * M) if mcap and (li("eq") or 0) > 0 else None,
+         # (PER du résumé : bulletin officiel, ou BNPA de la série quand le bulletin calcule le même exercice sur d'autres comptes —
+         # pso « fqt », build_terminal.py — : le même PER partout)
+         "pe": (s.get("per") if s.get("pso") in ("off", "fqt") and s.get("per") else (div0(price, eps) if eps and eps > 0 else None)), "pb": div0(mcap, li("eq") * M) if mcap and (li("eq") or 0) > 0 else None,
          "ps": div0(mcap, li("rev") * M) if mcap and li("rev") else None,
          "ev_ebitda": div0(ev, li("ebitda") * M) if ev and (li("ebitda") or 0) > 0 else None, "ev_sales": div0(ev, li("rev") * M) if ev and li("rev") else None,
          "ev_ebit": div0(ev, li("ebit") * M) if ev and (li("ebit") or 0) > 0 else None, "ey": div0(li("ebit") * M, ev) if ev and li("ebit") is not None else None,

@@ -1,6 +1,6 @@
 {
  "v": 1,
- "note": "Données par action d'un exercice corrigées après vérification sur le document officiel (champ « bnpa » par défaut, ou « dividende » de la fiche) : la fiche donnait une valeur d'un autre référentiel, d'un autre signe ou d'une autre base d'actions que le reste de la série. Appliqué par build_terminal.py seulement si la fiche donne encore la valeur « avant » ; contrôle « BNPA / résultat net ÷ titres » du matin.",
+ "note": "Valeurs d'un exercice corrigées après vérification sur le document officiel. Lignes sans « cpt » : série de la fiche (champ « bnpa » par défaut, ou « dividende », « cout_du_risque »… ; nouvelle valeur « apres », « bnpa » dans les premières lignes) ; un chiffre clé corrigé retire les ratios de la base calculés dessus. Lignes « cpt » (« périmètre/norme ») : poste des comptes lus (comptes.consolidate) corrigé avant sa reprise dans la série, qui suit (« avant » null : poste absent, ajouté ; « apres » null : valeur retirée, affichée « — »). Convention du BNPA : résultat net de la série (comptes affichés) ÷ nombre de titres actuel. Appliqué par build_terminal.py seulement si la valeur en place vaut encore « avant » (sinon signalé « à revoir » dans le journal) ; contrôles « BNPA / résultat net ÷ titres » et cohérence du matin.",
  "rows": [
   {
    "t": "ORGT",
@@ -101,6 +101,463 @@
    "avant": 271.0,
    "doc": "même attribution du 28/08/2024",
    "pourquoi": "dividende de la fiche sur l'ancienne base ; ÷ 1,5 comme les dividendes des avis affichés"
+  },
+  {
+   "t": "ABJC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "resultat_net",
+   "avant": 184506.103,
+   "apres": 184.506,
+   "doc": "SERVAIR ABIDJAN CI : Rapport annuel Exercice 1999 (20090530_-_ra_-_servair_abidjan_ci_-_exercice_1999.pdf), bilan et compte de résultat simplifiés, colonne 1998, montants en FCFA",
+   "pourquoi": "colonne 1998 lue en milliers alors que le document est en francs (la colonne 1999 du même tableau est bien lue en francs) : résultat net 184 506 103 FCFA = RAO 386 724 765 + HAO 341 106 − impôt 202 559 768 ; ÷ 1 000"
+  },
+  {
+   "t": "ABJC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "resultat_bilan",
+   "avant": 184506.103,
+   "apres": 184.506,
+   "doc": "SERVAIR ABIDJAN CI : Rapport annuel Exercice 1999 (20090530_-_ra_-_servair_abidjan_ci_-_exercice_1999.pdf), bilan et compte de résultat simplifiés, colonne 1998, montants en FCFA",
+   "pourquoi": "colonne 1998 lue en milliers alors que le document est en francs (la colonne 1999 du même tableau est bien lue en francs) : résultat net 184 506 103 FCFA = RAO 386 724 765 + HAO 341 106 − impôt 202 559 768 ; ÷ 1 000"
+  },
+  {
+   "t": "ABJC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "rao",
+   "avant": 386724.765,
+   "apres": 386.725,
+   "doc": "SERVAIR ABIDJAN CI : Rapport annuel Exercice 1999 (20090530_-_ra_-_servair_abidjan_ci_-_exercice_1999.pdf), bilan et compte de résultat simplifiés, colonne 1998, montants en FCFA",
+   "pourquoi": "colonne 1998 lue en milliers alors que le document est en francs (la colonne 1999 du même tableau est bien lue en francs) : résultat net 184 506 103 FCFA = RAO 386 724 765 + HAO 341 106 − impôt 202 559 768 ; ÷ 1 000"
+  },
+  {
+   "t": "ABJC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "rhao",
+   "avant": 341.106,
+   "apres": 0.341,
+   "doc": "SERVAIR ABIDJAN CI : Rapport annuel Exercice 1999 (20090530_-_ra_-_servair_abidjan_ci_-_exercice_1999.pdf), bilan et compte de résultat simplifiés, colonne 1998, montants en FCFA",
+   "pourquoi": "colonne 1998 lue en milliers alors que le document est en francs (la colonne 1999 du même tableau est bien lue en francs) : résultat net 184 506 103 FCFA = RAO 386 724 765 + HAO 341 106 − impôt 202 559 768 ; ÷ 1 000"
+  },
+  {
+   "t": "ABJC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "impots_resultat",
+   "avant": 202559.768,
+   "apres": 202.56,
+   "doc": "SERVAIR ABIDJAN CI : Rapport annuel Exercice 1999 (20090530_-_ra_-_servair_abidjan_ci_-_exercice_1999.pdf), bilan et compte de résultat simplifiés, colonne 1998, montants en FCFA",
+   "pourquoi": "colonne 1998 lue en milliers alors que le document est en francs (la colonne 1999 du même tableau est bien lue en francs) : résultat net 184 506 103 FCFA = RAO 386 724 765 + HAO 341 106 − impôt 202 559 768 ; ÷ 1 000"
+  },
+  {
+   "t": "SDSC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "resultat_net",
+   "avant": 1.989,
+   "apres": 1989.166,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
+  },
+  {
+   "t": "SDSC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "resultat_avant_impot",
+   "avant": 3.096,
+   "apres": 3096.0,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
+  },
+  {
+   "t": "SDSC",
+   "ex": 1998,
+   "cpt": "social/syscohada",
+   "champ": "impots_resultat",
+   "avant": 1.107,
+   "apres": 1107.0,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
+  },
+  {
+   "t": "SDSC",
+   "ex": 1999,
+   "cpt": "social/syscohada",
+   "champ": "resultat_net",
+   "avant": 1.71,
+   "apres": 1710.0,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
+  },
+  {
+   "t": "SDSC",
+   "ex": 1999,
+   "cpt": "social/syscohada",
+   "champ": "resultat_avant_impot",
+   "avant": 2.775,
+   "apres": 2775.0,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
+  },
+  {
+   "t": "SDSC",
+   "ex": 1999,
+   "cpt": "social/syscohada",
+   "champ": "impots_resultat",
+   "avant": 1.065,
+   "apres": 1065.0,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
+  },
+  {
+   "t": "BOAS",
+   "ex": 2014,
+   "cpt": "social/syscohada",
+   "champ": "resultat_net",
+   "avant": 3.17,
+   "apres": 3376.0,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "pourquoi": "numéro de note (3.17, 3.6) lu comme montant 2014, et le montant 2014 décalé sur 2013"
+  },
+  {
+   "t": "BOAS",
+   "ex": 2014,
+   "cpt": "social/syscohada",
+   "champ": "resultat_bilan",
+   "avant": 3.17,
+   "apres": 3376.0,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "pourquoi": "numéro de note (3.17, 3.6) lu comme montant 2014, et le montant 2014 décalé sur 2013"
+  },
+  {
+   "t": "BOAS",
+   "ex": 2014,
+   "cpt": "social/syscohada",
+   "champ": "b_titres_placement",
+   "avant": 3.6,
+   "apres": 54463.0,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "pourquoi": "numéro de note (3.17, 3.6) lu comme montant 2014, et le montant 2014 décalé sur 2013"
+  },
+  {
+   "t": "BOAS",
+   "ex": 2013,
+   "cpt": "social/syscohada",
+   "champ": "resultat_net",
+   "avant": 3376.0,
+   "apres": 2650.0,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "pourquoi": "le montant 2014 (3 376) avait été placé en 2013 ; le document donne 2 650 pour 2013 (bilan et compte de résultat)"
+  },
+  {
+   "t": "BOAS",
+   "ex": 2013,
+   "cpt": "social/syscohada",
+   "champ": "resultat_bilan",
+   "avant": 3376.0,
+   "apres": 2650.0,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "pourquoi": "le montant 2014 (3 376) avait été placé en 2013 ; le document donne 2 650 pour 2013 (bilan et compte de résultat)"
+  },
+  {
+   "t": "SOGC",
+   "ex": 2002,
+   "cpt": "social/syscohada",
+   "champ": "actif_immobilise",
+   "avant": 41.524,
+   "apres": 41524.0,
+   "doc": "SOGB CI : Rapport annuel Exercice 2002 (20090530_-_ra_-_sogb_ci_-_exercice_2002.pdf), bilan en millions : « Actif immobilisé 32.352 41,524 »",
+   "pourquoi": "point des milliers lu comme une virgule décimale ; identité : immobilisations incorporelles 3 + corporelles 38 116 + autres 3 405 = 41 524"
+  },
+  {
+   "t": "ONTBF",
+   "ex": 2011,
+   "cpt": "social/syscohada",
+   "champ": "resultat_exploitation",
+   "avant": 0.0,
+   "apres": 8726.34,
+   "doc": "ONATEL BF : Rapport de gestion Exercice 2012 (20131104_-_rg_-_onatel_bf_-_exercice_2012.pdf, couche texte), compte de résultat, colonne 2011 : TX résultat d'exploitation 8 726 340 097 FCFA",
+   "pourquoi": "0 lu par reconnaissance de caractères dans les comptes approuvés 2012 ; identité : RE 8 726,3 + résultat financier −2 155,8 = RAO 6 570,5 (montant retenu)"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2022,
+   "cpt": "social/syscohada",
+   "champ": "capitaux_propres",
+   "avant": null,
+   "apres": -10773.429,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503), bilan passif CP « TOTAL CAPITAUX PROPRES » −10 773 429 335 FCFA",
+   "pourquoi": "la base affichait +10 773 (signe perdu) ; même document que le résultat (−6 382,6) et le total du bilan (22 361,4) affichés ; les comptes 2023 donnent en colonne N−1 la version retraitée (−11 299,2 avec un résultat de −6 908,4)"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "resultat_net",
+   "avant": 0.175,
+   "apres": 6090.756,
+   "doc": "UNILEVER CI : Etats financiers Exercice 2021 (20220520), bilan CJ et compte de résultat XI : 6 090 755 732 FCFA",
+   "pourquoi": "0,175 M (175 130 FCFA) vient de la colonne N−1 incohérente des comptes 2022 ; le total du bilan (48 697,4), les capitaux propres (1 699,8) et le BNPA (663,24 = 6 090,8 M ÷ 9 183 400 titres) affichés sont ceux des comptes 2021"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "resultat_bilan",
+   "avant": 0.175,
+   "apres": 6090.756,
+   "doc": "UNILEVER CI : Etats financiers Exercice 2021 (20220520), bilan CJ : 6 090 755 732 FCFA",
+   "pourquoi": "même correction (résultat inscrit au bilan)"
+  },
+  {
+   "t": "SCRC",
+   "ex": 2025,
+   "cpt": "social/syscohada",
+   "champ": "capitaux_propres",
+   "avant": null,
+   "apres": 13822.035,
+   "doc": "SUCRIVOIRE CI : Etats financiers SYSCOHADA - Exercice 2025 (20260430), « Total capitaux propres 13 822 035 189 »",
+   "pourquoi": "la base affichait 17 243 = capitaux propres IFRS, alors que le résultat (−6 131,8) et le total du bilan (146 852,1) sont SYSCOHADA ; continuité : 19 953,8 + (−6 131,8) = 13 822,0"
+  },
+  {
+   "t": "ORGT",
+   "ex": 2022,
+   "cpt": "conso/ifrs",
+   "champ": "capitaux_propres",
+   "avant": null,
+   "apres": 165995.0,
+   "doc": "ORAGROUP TOGO : Etats financiers Exercice 2022 (20230426) et Exercice 2023 (colonne 2022) : « Total des capitaux propres 165 995 »",
+   "pourquoi": "la base affichait 115 056 = capitaux propres part du groupe, alors que la série (2021 : 164 752 ; 2023 : 143 822) et le résultat net (19 199) sont ceux de l'ensemble consolidé"
+  },
+  {
+   "t": "ABJC",
+   "ex": 2021,
+   "cpt": "social/ifrs",
+   "champ": "capitaux_propres",
+   "avant": null,
+   "apres": 4352.0,
+   "doc": "SERVAIR ABIDJAN CI : Etats financiers exercice 2022 IFRS (20230602), colonne 2021 : « Total capitaux propres 4 924 | 4 352 »",
+   "pourquoi": "la base affichait les capitaux propres SYSCOHADA (4 000,8) à côté du résultat net et du total du bilan IFRS de la série"
+  },
+  {
+   "t": "ABJC",
+   "ex": 2025,
+   "cpt": "social/ifrs",
+   "champ": "capitaux_propres",
+   "avant": null,
+   "apres": 5512.0,
+   "doc": "SERVAIR ABIDJAN CI : Etats financiers IFRS - Exercice 2025 (20260427) : « Total capitaux propres 5 512 | 4 182 »",
+   "pourquoi": "la base affichait les capitaux propres SYSCOHADA (5 159,2) à côté du résultat net et du total du bilan IFRS de la série"
+  },
+  {
+   "t": "ORGT",
+   "ex": 2024,
+   "champ": "cout_du_risque",
+   "avant": -69056,
+   "apres": 69056,
+   "doc": "ORAGROUP TG : Etats financiers - Exercice 2025 (20260504), compte de résultat consolidé, colonne 2024 : RBE 24 292, coût du risque −69 056, résultat d'exploitation −44 764",
+   "pourquoi": "signe : la série compte le coût du risque positivement quand c'est une charge (2023 : 96 231 ; 2025 : 6 971) ; 24 292 − 69 056 = −44 764"
+  },
+  {
+   "t": "BOAS",
+   "ex": 2023,
+   "bnpa": 472.83,
+   "avant": 525.75,
+   "doc": "BOA SENEGAL : Etats financiers certifiés Exercice 2023 (résultat net 17 022 M) ; bulletin officiel du 03/04/2024 : PER 4,91, BNPA 709,78 avant l'attribution de 2024 (÷ 1,5 = 473,19)",
+   "pourquoi": "résultat net 2023 17 022 M ÷ 36 000 000 titres ; 525,75 ne correspond à aucun montant publié"
+  },
+  {
+   "t": "BOAC",
+   "ex": 2017,
+   "bnpa": 493.95,
+   "avant": 449.05,
+   "doc": "BOA CÔTE D'IVOIRE : Etats financiers provisoires 2018 et Rapport annuel 2018, colonne 2017 retraitée : résultat net 9 879 M",
+   "pourquoi": "résultat net 2017 de la série (9 879 M, retraité selon le plan comptable bancaire révisé) ÷ 20 000 000 titres de l'époque = 493,95 (la fiche est encore sur l'ancienne base à ce stade : la construction ramène ensuite la série ÷ 2 pour l'attribution d'octobre 2024, soit 246,98 sur la base actuelle de 40 000 000 titres) ; 449,05 (224,525 affiché) ne correspond à aucun montant publié (le bulletin du 23/04/2018 donnait 542,1, calculé sur le résultat d'origine 10 845 M)"
+  },
+  {
+   "t": "STBC",
+   "ex": 2019,
+   "bnpa": 329.98,
+   "avant": 306.04,
+   "doc": "SITAB CI : Etats financiers 2020 et Etats financiers certifiés et approuvés 2020, colonne 2019 : résultat net 5 924,8 M",
+   "pourquoi": "résultat net 2019 de la série (5 924,8 M, version des comptes 2020 ; 5 290,8 M dans les comptes 2019 d'origine, base du bulletin du 15/05/2020 : 294,12) ÷ 17 955 000 titres ; 306,04 ne correspond à aucune version"
+  },
+  {
+   "t": "SHEC",
+   "ex": 2021,
+   "bnpa": 37.45,
+   "avant": 33.97,
+   "doc": "VIVO ENERGY CI : Etats financiers exercice 2021 (résultat net 2 359,6 M) ; bulletin officiel du 06/09/2022 : BNPA 37,46 (le 33,97 du 09/05/2022 a été corrigé)",
+   "pourquoi": "résultat net 2021 2 359,6 M ÷ 63 000 000 titres ; 33,97 était la valeur périmée du bulletin"
+  },
+  {
+   "t": "SHEC",
+   "ex": 2022,
+   "bnpa": 56.33,
+   "avant": 59.56,
+   "doc": "VIVO ENERGY : Etats financiers - Exercice 2022 (version du 03/11/2023) et Etats financiers provisoires 2023 (colonne 2022) : résultat net 3 548,6 M",
+   "pourquoi": "résultat net 2022 de la série (3 548,6 M, comptes corrigés publiés en novembre 2023 ; 3 752,6 M dans la première version, base du bulletin du 04/05/2023) ÷ 63 000 000 titres"
+  },
+  {
+   "t": "ECOC",
+   "ex": 2017,
+   "bnpa": 414.82,
+   "avant": 482.27,
+   "doc": "ECOBANK CI : Etats financiers 2018, Etats financiers certifiés et approuvés 2018, Rapport annuel 2018, colonne 2017 retraitée : résultat net 22 836 M",
+   "pourquoi": "résultat net 2017 de la série (22 836 M, retraité selon le plan comptable bancaire révisé) ÷ 55 050 600 titres ; 482,27 était calculé sur le résultat d'origine"
+  },
+  {
+   "t": "ABJC",
+   "ex": 2025,
+   "bnpa": 121.98,
+   "avant": 123.78,
+   "doc": "SERVAIR ABIDJAN CI : Etats financiers IFRS - Exercice 2025 : résultat net 1 331 M, « Résultat net par action 122 » ; bulletin officiel : BNPA 121,96",
+   "pourquoi": "résultat net 2025 de la série (IFRS, 1 331 M) ÷ 10 912 000 titres ; 123,78 = résultat SYSCOHADA (1 350,7 M) ÷ titres, autre référentiel que la série"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2015,
+   "bnpa": 3.46,
+   "avant": 1.68,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 62 483,9 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2017,
+   "bnpa": 7.38,
+   "avant": 6.75,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 133 508,4 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2018,
+   "bnpa": 10.62,
+   "avant": 4.11,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 191 995,1 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2019,
+   "bnpa": 9.27,
+   "avant": 4.56,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 167 612,4 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2020,
+   "bnpa": 2.87,
+   "avant": 2.99,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 51 896,8 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2021,
+   "bnpa": 11.89,
+   "avant": 10.72,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 215 077,5 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2022,
+   "bnpa": 12.2,
+   "avant": 12.65,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 220 689,7 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "ETIT",
+   "ex": 2025,
+   "bnpa": 19.11,
+   "avant": 10.0,
+   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 345 523,0 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
+   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+  },
+  {
+   "t": "SICC",
+   "ex": 2012,
+   "cpt": "social/syscohada",
+   "champ": "capitaux_propres",
+   "avant": 238.321,
+   "apres": -162.864,
+   "doc": "SICOR CI : Etats financiers approuvés - Exercice 2013 (20140701, couche texte), bilan passif : « CAPITAUX PROPRES −162 863 544 | 238 321 035 » puis « RESULTAT NET DE L'EXERCICE 40 552 244 | −401 184 579 » sur une ligne distincte (colonnes 2013 | 2012) ; même présentation dans les Etats financiers provisoires 2012",
+   "pourquoi": "le document donne les capitaux propres avant le résultat de l'exercice ; capitaux propres SYSCOHADA (résultat compris) = 238 321 035 − 401 184 579 = −162 863 544, montant que les comptes 2013 reprennent comme capitaux propres d'ouverture ; 238,3 est le total 2011"
+  },
+  {
+   "t": "SICC",
+   "ex": 2013,
+   "cpt": "social/syscohada",
+   "champ": "capitaux_propres",
+   "avant": -162.864,
+   "apres": -122.311,
+   "doc": "SICOR CI : Etats financiers approuvés - Exercice 2013 (20140701, couche texte), bilan passif : « CAPITAUX PROPRES −162 863 544 | 238 321 035 » puis « RESULTAT NET DE L'EXERCICE 40 552 244 | −401 184 579 » sur une ligne distincte (colonnes 2013 | 2012) ; même présentation dans les Etats financiers provisoires 2012",
+   "pourquoi": "même présentation : −162 863 544 (avant résultat) + 40 552 244 (résultat 2013) = −122 311 300"
+  },
+  {
+   "t": "PALC",
+   "ex": 2022,
+   "cpt": "social/syscohada",
+   "champ": "ventes_produits",
+   "avant": 288180.965,
+   "apres": null,
+   "doc": "PALM CÔTE D'IVOIRE : États financiers exercice 2022 (lecture par reconnaissance de caractères) : chiffre d'affaires 232 712,9 M, ventes de marchandises négatives écartées",
+   "pourquoi": "composante plus grande que son total (ventes de produits 288 181 > chiffre d'affaires 232 713) : le découpage publié comprend des ventes de marchandises négatives qui ne sont pas affichées ; poste retiré plutôt qu'affiché seul (le chiffre d'affaires reste)"
+  },
+  {
+   "t": "PALC",
+   "ex": 2023,
+   "cpt": "social/syscohada",
+   "champ": "ventes_produits",
+   "avant": 301408.46,
+   "apres": null,
+   "doc": "PALM CÔTE D'IVOIRE : Etats financiers provisoires validés par le CA - Exercice 2024, colonne 2023 : ventes de marchandises −86 467 120, ventes de produits fabriqués 301 408 460, chiffre d'affaires 206 244 391 (milliers de FCFA)",
+   "pourquoi": "composante plus grande que son total (301 408 > 206 244) : le découpage publié comprend des ventes de marchandises négatives (−86 467) qui ne sont pas affichées ; poste retiré plutôt qu'affiché seul (le chiffre d'affaires et la marge commerciale restent)"
+  },
+  {
+   "t": "BICC",
+   "ex": 2021,
+   "champ": "depots_clientele",
+   "avant": 751339,
+   "apres": 737120.0,
+   "doc": "BICICI : Etats financiers exercice 2021 (20220406) et Etats financiers Exercice 2022 (colonne 2021) : « DETTES A L'EGARD DE LA CLIENTELE 737 120 »",
+   "pourquoi": "deux documents officiels concordants ; 751 339 (base) ne correspond à aucun document ; FA affichait les deux valeurs (comptes 737 120, en-tête et ratios 751 339)"
+  },
+  {
+   "t": "BICC",
+   "ex": 2021,
+   "champ": "credits_clientele",
+   "avant": 457596,
+   "apres": 424284.0,
+   "doc": "BICICI : Etats financiers exercice 2021 (20220406) et Etats financiers Exercice 2022 (colonne 2021) : « CREANCES SUR LA CLIENTELE 424 284 »",
+   "pourquoi": "deux documents officiels concordants ; 457 596 (base) ne correspond à aucun document ; FA affichait les deux valeurs"
+  },
+  {
+   "t": "TTLS",
+   "ex": 2024,
+   "cpt": "social/syscohada",
+   "champ": "capitaux_propres",
+   "avant": null,
+   "apres": 22262.894,
+   "doc": "TOTALENERGIES MARKETING SENEGAL : Rapport annuel - Exercice 2024 (20250610, couche texte), états SYSCOHADA : « CP TOTAL CAPITAUX PROPRES ET RESSOURCES ASSIMILEES 22 262 894 022 | 22 394 548 276 », « DZ TOTAL GENERAL 201 307 696 890 | 203 539 372 960 » (colonnes 2024 | 2023) ; Etats financiers - Norme SYSCOHADA - Exercice 2024 : total du bilan 201 307,7",
+   "pourquoi": "la base affichait 29 522, qui ne correspond à aucun document (IFRS : 27 161,5) ; la colonne 2023 du même tableau (22 394,5) est celle de la série"
+  },
+  {
+   "t": "TTLS",
+   "ex": 2024,
+   "cpt": "social/syscohada",
+   "champ": "total_actif",
+   "avant": null,
+   "apres": 201307.697,
+   "doc": "TOTALENERGIES MARKETING SENEGAL : Rapport annuel - Exercice 2024 (20250610, couche texte), états SYSCOHADA : « CP TOTAL CAPITAUX PROPRES ET RESSOURCES ASSIMILEES 22 262 894 022 | 22 394 548 276 », « DZ TOTAL GENERAL 201 307 696 890 | 203 539 372 960 » (colonnes 2024 | 2023) ; Etats financiers - Norme SYSCOHADA - Exercice 2024 : total du bilan 201 307,7",
+   "pourquoi": "la base affichait 216 766, qui ne correspond à aucun document ; deux documents SYSCOHADA donnent 201 307,7 (IFRS : 214 404,9)"
   }
  ]
 }
