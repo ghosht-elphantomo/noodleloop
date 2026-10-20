@@ -148,8 +148,9 @@ VOL_OTHER = {"BRENT"}
 # BNPA du résumé quand le bulletin officiel calcule le même exercice sur un autre résultat (comptes IFRS ou consolidés ; CABC,
 # SDCC, TTLS, ONTBF au 20/10/2026) : False = le BNPA et le PER du bulletin officiel restent affichés (règle du propriétaire : la
 # BRVM est la source principale) et FA mentionne l'écart avec les comptes affichés ; True = BNPA des comptes vérifiés de la série
-# au résumé (« fqt »), celui du bulletin gardé à côté. Choix laissé au propriétaire (20/10/2026).
-BNPA_SERIE_AU_RESUME = False
+# au résumé (« fqt »), celui du bulletin gardé à côté. Décision du propriétaire (20/10/2026) : True (résultat cohérent entre le
+# résumé, le PER et les comptes affichés dans FA).
+BNPA_SERIE_AU_RESUME = True
 
 
 def vol_ok(hist, x):
@@ -711,6 +712,13 @@ def main():
     # secteur officiel de la BRVM (sept pages par secteur de brvm.org, lues chaque soir) : source principale du secteur affiché,
     # la fiche ne sert que si la BRVM ne classe pas le titre (décision du propriétaire, 19/10/2026)
     SECT_OFF = {}
+    # avis officiel du flottant (transcrit et recoupé avec la lecture automatique de l'avis, seed/flottant_avis.json)
+    FLT_AVIS, FLT_AVIS_PRIS, FLT_AVIS_META = {}, [], {}
+    try:
+        fa_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "flottant_avis.json"), encoding="utf8"))
+        FLT_AVIS, FLT_AVIS_META = fa_.get("rows") or {}, {k: fa_.get(k) for k in ("avis", "date", "asof", "u")}
+    except Exception as e:  # noqa: BLE001
+        log("avis du flottant (seed) illisible :", e)
     try:
         sp0_ = os.path.join(a.extra, "secteurs_brvm.json") if a.extra else None
         if sp0_ and os.path.exists(sp0_):
@@ -1929,6 +1937,14 @@ def main():
             split_log.append(f"{t} : BNPA de la fiche ({bnpa_:g}) écarté, base officielle {bnpa_off:.2f}")
         MIROIR[t] = {"sh_fiche": f.get("nb_titres"), "sh_brvm": so_.get("sh"), "flt_fiche": f.get("flottant"), "flt_brvm": flt_off,
                      "sect_fiche": act.get("secteur"), "bnpa_fiche": f.get("bnpa"), "bnpa_off": round(bnpa_off, 4) if bnpa_off else None}
+        # flottant : avis officiel du flottant de la BRVM (seed/flottant_avis.json, avis n°303-2026 au 31/12/2025, décision du
+        # propriétaire du 20/10/2026) quand la page « Capitalisations » ne concorde pas (BOA Bénin 22,61 % sur la page, 45,89 % à
+        # l'avis) ; la page reste si le nombre de titres a changé depuis l'avis (augmentation de capital : SAFC)
+        fav_ = FLT_AVIS.get(t)
+        if fav_ and fav_.get("pct") is not None and (flt_off is None or abs(flt_off - fav_["pct"]) > .5) \
+                and not (so_.get("sh") and fav_.get("sh") and abs(float(so_["sh"]) / fav_["sh"] - 1) > .01):
+            FLT_AVIS_PRIS.append(f"{t} {flt_off if flt_off is not None else '—'} → {fav_['pct']:g}")
+            flt_off = fav_["pct"]
         if so_.get("sh"):
             f["nb_titres"] = shares
         if flt_off is not None:
@@ -2748,10 +2764,16 @@ def main():
                 json.dump(shutil_copy, fh, separators=(",", ":"), ensure_ascii=False)
     except Exception as e:  # noqa: BLE001
         log("intervenants illisibles :", e)
-    # flottant officiel (avis de la BRVM lu la veille au soir) : publié tel quel, et rattaché à chaque action
+    # flottant officiel (avis de la BRVM lu la veille au soir) : publié tel quel, et rattaché à chaque action ; l'avis transcrit
+    # (seed/flottant_avis.json) complète et remplace les lignes de la lecture automatique pour le même avis (CFAC et ETIT absents)
+    if FLT_AVIS_PRIS:
+        log("flottant de l'avis officiel retenu (page brvm.org différente) :", "; ".join(FLT_AVIS_PRIS))
     try:
         fp_ = os.path.join(a.extra, "flottant.json") if a.extra else None
         FLO = json.load(open(fp_, encoding="utf8")) if fp_ and os.path.exists(fp_) else None
+        if FLT_AVIS and (not FLO or not FLO.get("u") or FLO.get("u") == FLT_AVIS_META.get("u")):
+            FLO = FLO or {k: v for k, v in FLT_AVIS_META.items() if v}
+            FLO["rows"] = {**(FLO.get("rows") or {}), **FLT_AVIS}
         if FLO and FLO.get("rows"):
             for s_ in secs:
                 r_ = FLO["rows"].get(s_["id"])

@@ -28,6 +28,8 @@ EXPLIQUES = {
     ("SAFC", "titres"): "augmentation de capital avec droits, actions nouvelles admises à la cote le 25/07/2026 (avis BRVM) : "
                         "11 869 750 titres ; l'avis du flottant (chiffres au 31/12/2025) et la fiche sont antérieurs",
     ("SAFC", "flottant"): "même augmentation de capital : l'avis du flottant (au 31/12/2025) et la fiche sont antérieurs",
+    ("ORGT", "titres"): "décision du propriétaire (20/10/2026) : nombre de titres de la page brvm.org gardé (69 415 031) ; l'avis "
+                        "du flottant et les états financiers 2024-2025 donnent 69 986 131",
     ("ETIT", "bnpa"): "BNPA officiel part du groupe (états financiers IFRS : 10,00 FCFA en 2025, 4,56 en 2019), résultat net de la "
                       "série total, intérêts minoritaires compris",
 }
@@ -115,20 +117,22 @@ def verifier(R, D, boc=None):
         out, note = _expl(out, "titres", D)
         R.add("Fiche / BRVM : nombre de titres", "orange" if out else "vert",
               ((f"{len(out)} écart(s) à vérifier sur les documents : " + _liste(out)) if out else f"{len(by)} actions, fiche, brvm.org et avis concordent") + note)
-        out, out2 = [], []
+        # flottant affiché = avis officiel du flottant quand la page brvm.org ne concorde pas (décision du propriétaire du
+        # 20/10/2026) : l'affiché doit égaler l'avis ; les écarts de la page et de la fiche (miroirs) sont rappelés sans alerte
+        out, mir = [], []
         for t in sorted(by):
             m = M.get(t) or {}
-            a, b, c = m.get("flt_fiche"), m.get("flt_brvm"), (FL.get(t) or {}).get("pct")
-            if a is not None and b is not None and abs(a - b) > TOL_FLT:
-                out.append(f"{t} fiche {_f(a)} %, brvm.org {_f(b)} %")
-            if b is not None and c is not None and abs(b - c) > TOL_FLT:
-                out2.append(f"{t} brvm.org {_f(b)} %, avis {_f(c)} %")
+            d_, c = by[t].get("float"), (FL.get(t) or {}).get("pct")
+            if d_ is not None and c is not None and abs(d_ - c) > TOL_FLT:
+                out.append(f"{t} affiché {_f(d_)} %, avis {_f(c)} %")
+            for k, nm in (("flt_brvm", "brvm.org"), ("flt_fiche", "fiche")):
+                if m.get(k) is not None and c is not None and abs(m[k] - c) > TOL_FLT:
+                    mir.append(f"{t} {nm} {_f(m[k])} %")
         out, note = _expl(out, "flottant", D)
-        out2, note2 = _expl(out2, "flottant", D)
-        R.add("Fiche / BRVM : flottant (fiche / brvm.org)", "orange" if out else "vert",
-              ((f"{len(out)} écart(s) : " + _liste(out)) if out else "concordent") + note)
-        R.add("Fiche / BRVM : flottant (brvm.org / avis officiel du flottant)", "orange" if out2 else "vert",
-              ((f"{len(out2)} écart(s), à vérifier sur l'avis (le flottant affiché est celui de brvm.org) : " + _liste(out2, 12)) if out2 else "concordent") + note2)
+        R.add("Fiche / BRVM : flottant affiché / avis officiel du flottant", "rouge" if out else "vert",
+              ((f"{len(out)} écart(s) : " + _liste(out)) if out else f"{len(by)} actions : flottant de l'avis officiel") + note)
+        R.add("Fiche / BRVM : flottant des miroirs (page brvm.org, fiche) / avis", "vert",
+              (f"{len(mir)} écart(s) des miroirs, avis affiché : " + _liste(mir, 12)) if mir else "concordent")
     if not SC.get("rows"):
         R.add("Fiche / BRVM : secteur", "orange", "secteurs officiels pas encore lus (lecture chaque soir sur brvm.org)")
     else:
@@ -173,6 +177,12 @@ def verifier(R, D, boc=None):
             per = r[11] if len(r) > 11 else None
             if per and per > 0 and bc and s.get("bnpa"):
                 b = bc / per
+                # BNPA des comptes vérifiés au résumé (pso « fqt », décision du propriétaire du 20/10/2026) : le BNPA du bulletin
+                # est gardé à côté (« bnpa_bul ») et c'est lui qui doit concorder
+                if s.get("pso") == "fqt" and s.get("bnpa_bul"):
+                    if abs(s["bnpa_bul"] / b - 1) > TOL_BNPA:
+                        outp.append(f"{t} BNPA du bulletin gardé {_f(s['bnpa_bul'])}, bulletin {_f(b)} (PER {_f(per)})")
+                    continue
                 if abs(s["bnpa"] / b - 1) > TOL_BNPA:
                     outp.append(f"{t} BNPA affiché {_f(s['bnpa'])}, bulletin {_f(b)} (PER {_f(per)})")
         dd = f"{kb[6:8]}/{kb[4:6]}/{kb[:4]}"
