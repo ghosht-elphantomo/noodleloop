@@ -3003,19 +3003,10 @@
    "ex": 2025,
    "champ": "resultat_net",
    "avant": 24182,
-   "apres": 36237,
-   "doc": "BIIC : Rapport des commissaires aux comptes sur les états financiers annuels - Exercice 2025 (20260619_-_rapport_des_commissaires_aux_comptes_sur_les_etats_financiers_annuels_-_exercice_2025_-_biic.pdf, reconnaissance de caractères : « bénéfice de F CFA 36 237 millions ») et Rapport d'activités annuel et états financiers IFRS - Exercice 2025 (20260619_-_rapport_dactivites_annuel_et_etats_financiers_ifrs_-_exercice_2025_-_biic.pdf, couche texte : résultat net 36 237, exercice vérifié)",
-   "pourquoi": "la base tierce donnait 24 182, qui ne correspond à aucun document publié ; la société a adopté les IFRS pour l'exercice 2025 (première application, IFRS 1) et n'a publié que des comptes IFRS pour 2025 : le résultat IFRS vérifié est le seul résultat 2025 publié, et le bulletin officiel calcule déjà son BNPA dessus (627,33)",
-   "src": "2025 : comptes IFRS (premier exercice IFRS de la société ; exercices précédents en plan comptable bancaire)"
-  },
-  {
-   "t": "BICB",
-   "ex": 2025,
-   "champ": "bnpa",
-   "avant": 418.66,
-   "apres": 627.33,
-   "doc": "BIIC : Rapport des commissaires aux comptes sur les états financiers annuels - Exercice 2025 (20260619_-_rapport_des_commissaires_aux_comptes_sur_les_etats_financiers_annuels_-_exercice_2025_-_biic.pdf, reconnaissance de caractères : « bénéfice de F CFA 36 237 millions ») et Rapport d'activités annuel et états financiers IFRS - Exercice 2025 (20260619_-_rapport_dactivites_annuel_et_etats_financiers_ifrs_-_exercice_2025_-_biic.pdf, couche texte : résultat net 36 237, exercice vérifié) ; bulletin officiel de la cote : BNPA 627,33",
-   "pourquoi": "BNPA de la base tierce calculé sur le résultat 24 182 non publié ; 36 237 M ÷ 57 759 800 titres = 627,4, BNPA du bulletin officiel 627,33 (même convention que le résumé et le PER)"
+   "apres": 24182,
+   "doc": "base tierce (instantané) : états financiers 2025 selon le plan comptable bancaire remis aux actionnaires, non publiés sur brvm.org ; brvm.org ne publie pour 2025 que les comptes IFRS (Rapport d'activités annuel et états financiers IFRS - Exercice 2025 ; rapport des commissaires aux comptes : « bénéfice de F CFA 36 237 millions »)",
+   "pourquoi": "décision du propriétaire (20/10/2026) : la série reste en plan comptable bancaire (SYSCOHADA) comme les exercices précédents, le résultat 2025 de la base tierce (24 182, −20 % sur 2024 : 30 341) est gardé comme instantané ; le bulletin officiel calcule son BNPA sur le résultat IFRS (627,33) : les deux BNPA sont expliqués dans FA et au contrôle B47 (BNPA_DEUX_NORMES) ; à l'avenir, seules les publications de brvm.org alimentent les comptes",
+   "src": "2025 : résultat selon le plan comptable bancaire (instantané de la base tierce, états non publiés sur brvm.org) ; comptes IFRS 2025 publiés : résultat net 36 237 M, BNPA du bulletin 627,33"
   }
  ]
 }

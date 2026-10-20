@@ -2238,8 +2238,8 @@ def main():
         except Exception as e:  # noqa: BLE001  (en cas de doute, le BNPA du bulletin reste)
             log("BNPA du dernier exercice : contrôle impossible pour", t, e)
         # le BNPA du bulletin reste au résumé (et le PER partout) quand le résultat du dernier exercice de la série n'est pas vérifié
-        # (cas BICB 2025 jusqu'au 20/10/2026 : comptes IFRS vérifiés au bulletin, résultat de la base tierce dans la série ; la série
-        # est depuis alignée sur le résultat IFRS vérifié par seed/corrections_bnpa.json) ou quand le bulletin porte encore
+        # (BICB 2025 : comptes IFRS vérifiés au bulletin, résultat du plan comptable bancaire de la base tierce dans la série, gardé
+        # par décision du propriétaire du 20/10/2026) ou quand le bulletin porte encore
         # sur un exercice plus ancien (SEMC : 2023 au bulletin, 2024 de la base tierce dans la série) : les deux BNPA ne sont alors
         # pas ceux d'un même résultat, et la mention de l'exercice dans FA (src_years) le dit, avec le BNPA du bulletin et son origine
         try:

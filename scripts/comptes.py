@@ -2819,14 +2819,13 @@ def consolidate(cj, mirror=None, fx=None):
             return res
         # référentiel principal (décision du propriétaire du 20/10/2026) : les comptes SYSCOHADA d'abord, dès qu'ils couvrent au
         # moins un des deux derniers exercices (le plan comptable de la zone, celui de l'impôt et du dividende) ; IFRS seulement si la
-        # société ne publie que des comptes IFRS récents (Ecobank, Orange CI), ou n'en publie plus d'autres : une société passée aux
-        # IFRS (BIIC, premier exercice IFRS 2025) dont le dernier exercice n'existe qu'en IFRS les prend pour principal. À normes
+        # société ne publie que des comptes IFRS récents (Ecobank, Orange CI). Une société passée aux IFRS dont le dernier exercice
+        # n'existe qu'en IFRS (BIIC, premier exercice IFRS 2025) garde le SYSCOHADA (décision du propriétaire du 20/10/2026 : SYSCOHADA
+        # à l'ouverture, l'utilisateur bascule vers l'IFRS ; pour cet exercice, la série garde le résultat PCB de la base tierce). À normes
         # égales : le plus de jours récents couverts, puis la meilleure concordance avec la base de référence, puis le plus
         # d'exercices. L'autre référentiel reste proposé.
         y_max = max(x["y"] for x in xs)
-        last_ = {std_: any(x["y"] == y_max for k in groups if (k[1] == "ifrs") == (std_ == "ifrs") for x in groups[k]) for std_ in ("ifrs", "syscohada")}
-        main = max(groups, key=lambda k: ((k[1] != "ifrs" and any(x["y"] >= y_max - 1 for x in groups[k]) and (last_["syscohada"] or not last_["ifrs"]))
-                                          or (k[1] == "ifrs" and last_["ifrs"] and not last_["syscohada"]),
+        main = max(groups, key=lambda k: (k[1] != "ifrs" and any(x["y"] >= y_max - 1 for x in groups[k]),
                                           len({x["y"] for x in groups[k] if x["y"] >= y_max - 4})) + agree(groups[k])[:3])
         res = years_of(main)
 

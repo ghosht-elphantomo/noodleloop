@@ -114,9 +114,8 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
   (bouton « Comptes », `R2` dans `fa/*.json` ; PER et distribution seulement sur le principal, le BNPA officiel n'existant que
   pour lui) ; le référentiel principal est SYSCOHADA dès qu'il couvre un des deux derniers exercices (`comptes.py`), IFRS
   seulement pour les sociétés qui ne publient qu'en IFRS (Sonatel et Oragroup : derniers comptes SYSCOHADA en 2015 et 2018 ;
-  Ecobank, Orange CI) ou qui n'en publient plus d'autres (BIIC, premier exercice IFRS 2025 : FA ouvre sur IFRS 2024-2025, les
-  comptes bancaires 2023-2024 restent au second jeu). Années anciennes : 73 exercices à trous dans les comptes détaillés, voir
-  « Données manquantes ».
+  Ecobank, Orange CI). BIIC (premier exercice IFRS 2025) reste en SYSCOHADA à l'ouverture, IFRS 2024-2025 au second jeu
+  (décision du propriétaire). Années anciennes : 73 exercices à trous dans les comptes détaillés, voir « Données manquantes ».
 - **Agents** : le propriétaire décide seul de leur emploi (consommation) ; par défaut, travail sans agent.
 - **Reste de l'audit** :
   - Dates d'effet des opérations : **fait le 20/10** — CFAO ×100 corrigée au 13/12/2017 (bulletin : dernière séance à
@@ -129,8 +128,7 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
        et Tractafric 2025) ; les rapports des commissaires aux comptes classés IFRS parce qu'ils citent les « normes internationales
        d'audit » (Coris BF 2021-2022, BOA Bénin 2020, SMB, Nestlé, Sicable, Palm…) — désormais seul un titre d'état (ligne
        courte ou en capitales, sans mot de phrase) fait basculer en IFRS ; « le total bilan s'est consolidé » pris pour un
-       périmètre consolidé (SIB 2023) ; une société passée aux IFRS dont le dernier exercice n'existe qu'en IFRS (BIIC, premier
-       exercice IFRS 2025) les prend pour référentiel principal. Relecture complète de la base (6 065 documents, 21 min) avant /
+       périmètre consolidé (SIB 2023). Relecture complète de la base (6 065 documents, 21 min) avant /
        après : 13 documents changent, tous en mieux pour les comptes consolidés par titre (aucun résultat, total, chiffre
        d'affaires ni capitaux propres perdu dans les séries principales) ; trois documents lisent moins de postes qu'avant
        (BOA BF 2018, NEI-CEDA 2004, Onatel 2013 : tableaux récapitulatifs du rapport des commissaires fusionnés avec les états),
@@ -143,8 +141,10 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
        présentation des résultats recoupée avec la page lisible des états IFRS et le rapport de gestion), Onatel 2020 (résultat exact
        de la convocation à l'AGO, communiqués), Sucrivoire 2019-2020, SICOR 2022-2023 (rapports annuels) et 2024 (chiffre
        d'affaires seul). Règle suivie : seuls des montants imprimés, confirmés par une identité comptable ou un second document ;
-       BIIC 2025 : série alignée sur le résultat IFRS vérifié (36 237 M, celui du bulletin), la base tierce donnait 24 182 sans
-       document.
+       BIIC 2025 (décision du propriétaire) : la société n'a publié sur brvm.org que des comptes IFRS 2025 (résultat 36 237 M,
+       BNPA du bulletin 627,33) ; la série reste en plan comptable bancaire comme les exercices précédents et garde le résultat
+       24 182 de la base tierce (instantané ; états PCB remis aux actionnaires, −20 % sur 2024), les deux BNPA sont expliqués
+       dans FA et au contrôle B47. À l'avenir, seules les publications de brvm.org alimentent les comptes.
     3. *Reste sans document sur brvm.org* (rien à faire tant que la société ne publie pas) : Bridge Bank (tous), BIIC 2019-2022,
        Air Liquide 2021-2023 (rapports semestriels seulement), Alios 2022, Orange CI 2019-2020 (cotée fin 2022), SIEM 2024-2025,
        Uniwax 2024-2025, SICOR 2025 (le document « exercice 2025 » est le rapport 2024 ; résultat 2024 dans des pages non lues

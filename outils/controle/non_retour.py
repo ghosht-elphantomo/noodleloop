@@ -1048,8 +1048,9 @@ def b46(ctx):
 
 # deux BNPA expliqués pour le même exercice (mention dans FA) : les unifier mettrait un chiffre non vérifié au résumé ou mêlerait
 # deux normes comptables dans un exercice
-BNPA_DEUX_NORMES = {"SEMC": "2024 : bulletin encore sur 2023, 2024 de la base non publié à la BRVM"}
-# (BICB 2025 : série alignée le 20/10/2026 sur le résultat IFRS vérifié, seul résultat 2025 publié, comme le bulletin ; plus d'exception)
+BNPA_DEUX_NORMES = {"BICB": "2025 : bulletin sur les comptes IFRS vérifiés (36 237 M), série sur le résultat du plan comptable bancaire "
+                            "(24 182, instantané de la base tierce ; décision du propriétaire du 20/10/2026)",
+                    "SEMC": "2024 : bulletin encore sur 2023, 2024 de la base non publié à la BRVM"}
 
 
 @bug("B47", "2026-10-20", "BNPA et PER différents entre le résumé et la fiche FA",
@@ -1150,7 +1151,7 @@ def b52(ctx):
 # résultat net attendu dans la série (millions de FCFA), lu sur le document cité dans seed/corrections_bnpa.json ou par le lecteur corrigé
 RN_VERIFIES_20261020 = {("LNBB", 2023): 3914, ("ABJC", 2023): 1335.3, ("SNTS", 2020): 201272, ("SNTS", 2019): 195343, ("ONTBF", 2020): 31051.5,
                         ("SCRC", 2020): 1788.2, ("SCRC", 2019): -5339.1, ("SICC", 2022): -39.9, ("SICC", 2023): 19.2, ("CBIBF", 2021): 46549,
-                        ("CBIBF", 2022): 56478, ("SIBC", 2022): 40090, ("SIVC", 2025): 179.3, ("PRSC", 2025): 2367.4, ("BICB", 2025): 36237,
+                        ("CBIBF", 2022): 56478, ("SIBC", 2022): 40090, ("SIVC", 2025): 179.3, ("PRSC", 2025): 2367.4,
                         ("BOAM", 2025): 11081.2, ("CFAC", 2025): 8416.3, ("BOAS", 2025): 21905, ("BOAC", 2025): 35540, ("CBIBF", 2023): 64247,
                         ("CBIBF", 2024): 47937, ("CBIBF", 2025): 65495, ("BOAN", 2023): 10076.7, ("BOAN", 2024): 5001.7, ("BOAN", 2025): 409.3}
 
@@ -1159,7 +1160,7 @@ RN_VERIFIES_20261020 = {("LNBB", 2023): 3914, ("ABJC", 2023): 1335.3, ("SNTS", 2
      "Une cinquantaine d'exercices 2019-2025 n'avaient pas de résultat net vérifié : scans d'une page illisibles, « 0 » de la colonne "
      "des notes pris pour un montant (Erium, Tractafric 2025 : exercice N perdu), rapports des commissaires aux comptes classés IFRS "
      "parce qu'ils citent les « normes internationales d'audit » (Coris, BOA Bénin), « le total bilan s'est consolidé » pris pour un "
-     "périmètre consolidé (SIB 2023), BIIC passée aux IFRS en 2025 gardée en SYSCOHADA. Lecteur corrigé le 20/10/2026 et exercices "
+     "périmètre consolidé (SIB 2023). Lecteur corrigé le 20/10/2026 et exercices "
      "relus à la main (seed/corrections_bnpa.json, lignes « ajout »).",
      "fundamentals.json : résultat net des exercices relus présent et égal au montant du document (à 0,1 % près)")
 def b53(ctx):
