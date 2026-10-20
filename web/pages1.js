@@ -235,9 +235,10 @@ PAGES.GP = async (m, alive) => {
     <div class="pn gpm">${row1}${row2}<div class="gpcw"><div class="gpbar"><span id="gpZ" title="Zoom avant sur le centre (molette : zoom libre)">⌕ Zoom</span><span id="gpRs" title="Revenir à la période choisie (double-clic)">⟲ Vue initiale</span></div><div class="cv" id="gpCv" style="height:420px"></div></div>${sugBar}</div>
     ${showSide ? `<div class="grid gpside" style="align-content:start">${g.tbl ? pn('Tableau des cours', 'GP', '<div class="tw" id="gpTbl" style="max-height:calc(100vh - 230px)"></div>', { np: true, sel: esc(ccyT) }) : `${pn('Statistiques', '', '<div class="kv2" id="gpKv"></div>')}<div id="gpSide"></div>`}</div>` : ''}</div>`;
   /* hauteur : le graphique remplit la fenêtre (bandeau d'actualités déduit sauf en plein écran) */
-  const fit = () => { const cv = $('gpCv'); if (!cv) return; const top = cv.getBoundingClientRect().top, nw = document.body.classList.contains('maxi') || PREF.nonews ? 0 : ($('nwp') ? $('nwp').offsetHeight : 0), sg = m.querySelector('.gpsug');
+  const fit = () => { const cv = $('gpCv'); if (!cv) return; const top = cv.getBoundingClientRect().top + (window.scrollY || 0), nw = document.body.classList.contains('maxi') || PREF.nonews ? 0 : ($('nwp') ? $('nwp').offsetHeight : 0), sg = m.querySelector('.gpsug');
     cv.style.height = Math.max(340, Math.floor(window.innerHeight - top - nw - (sg ? sg.offsetHeight : 0) - 10)) + 'px'; };
-  fit(); window.onresize = () => { if (ST.fn === 'GP') fit(); };
+  /* (seulement si la largeur change : sur iPhone la hauteur de la fenêtre varie à chaque défilement, barre de Safari repliée) */
+  let fitW = window.innerWidth; fit(); window.onresize = () => { if (ST.fn === 'GP' && window.innerWidth !== fitW) { fitW = window.innerWidth; fit(); } };
   const inp = $('cmpIn'); inp.onkeydown = e => { if (e.key === 'Enter') { const r = searchSecs(inp.value)[0]; if (r && r.id !== ST.sec && !g.cmp.includes(r.id)) { g.cmp.push(r.id); render(); } else if (!r) toast('Titre introuvable.'); } };
   m.querySelectorAll('[data-gp]').forEach(b => b.onclick = () => { const [k, v] = b.dataset.gp.split(':');
     if (k === 'r') { g.range = v; if (v === '1J' || chart.intra || g.cmp.length) render(); else chart.setView(...rangeView(v)); m.querySelectorAll('[data-gp^="r:"]').forEach(x => x.classList.toggle('on', x === b)); return; }

@@ -633,3 +633,12 @@ async function boot() {
 }
 function renderKeysSkeleton() { $('fkeys').innerHTML = MKT_KEYS.map(k => `<button class="fk" data-fn="${k}"><b>${k}</b></button>`).join(''); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+
+/* ligne et colonne suivies dans les tableaux : toucher (iPhone) une case marque sa ligne ; dans une matrice (.hm), la colonne de la
+   case survolée ou touchée est marquée aussi */
+(() => { let rs = null, cs = [];
+  const colOf = td => { const tb = td.closest('table.hm'); if (!tb) return []; const k = td.cellIndex; return [...tb.rows].map(r => r.cells[k]).filter(Boolean); };
+  const mark = td => { cs.forEach(c => c.classList.remove('csel')); cs = td ? colOf(td) : []; cs.forEach(c => c.classList.add('csel')); };
+  document.addEventListener('mouseover', e => { const td = e.target.closest && e.target.closest('table.hm td'); if (td) mark(td); else if (cs.length) mark(null); }, { passive: true });
+  document.addEventListener('touchstart', e => { const td = e.target.closest && e.target.closest('table.t td'); if (rs) rs.classList.remove('rsel'); rs = td ? td.parentElement : null; if (rs) rs.classList.add('rsel'); mark(td && td.closest('table.hm') ? td : null); }, { passive: true });
+})();

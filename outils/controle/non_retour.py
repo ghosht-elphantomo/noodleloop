@@ -1123,6 +1123,18 @@ def b50(ctx):
     return ("orange", "; ".join(pb)) if pb else ("vert", "aucune donnée de plus de dix ans présentée comme la dernière valeur")
 
 
+@bug("B51", "2026-10-20", "GP : graphique qui s'étire tout seul sur iPhone",
+     "La hauteur du graphique de GP était recalculée à chaque redimensionnement de la fenêtre depuis la position du graphique dans "
+     "la fenêtre : sur iPhone, la barre de Safari se replie au défilement (la fenêtre change de hauteur) et le graphique, plus bas "
+     "dans la page défilée, grandissait à chaque fois. Depuis le 20/10/2026 : position mesurée depuis le haut de la page, et "
+     "hauteur recalculée seulement si la largeur change.",
+     "pages1.js : hauteur de GP calculée avec le défilement de la page et seulement sur changement de largeur")
+def b51(ctx):
+    w = _web("pages1.js")
+    ok = "getBoundingClientRect().top + (window.scrollY || 0)" in w and "window.innerWidth !== fitW" in w
+    return ("vert", "hauteur stable au défilement") if ok else ("orange", "calcul de la hauteur de GP revenu à l'ancienne forme")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

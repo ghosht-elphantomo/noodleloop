@@ -37,24 +37,36 @@ class TSChart {
     this.host = host; this.o = Object.assign({ panes: [{ h: 1 }], padR: 58, padB: 18, minBars: 20, xfmt: null, onHover: null }, opts);
     this.data = null; this.v0 = 0; this.v1 = 0; this.hover = null; this.drag = null; this.raf = 0;
     const cv = document.createElement('canvas'); host.appendChild(cv); this.cv = cv; cv.style.touchAction = 'none';
-    cv.addEventListener('mousemove', e => this.onMove(e)); cv.addEventListener('mouseleave', () => { this.hover = null; this.drag = null; this.req(); });
-    cv.addEventListener('mousedown', e => { this.drag = { x: e.clientX, v0: this.v0, v1: this.v1 }; cv.style.cursor = 'grabbing'; TSChart.cur = this; });
-    if (!TSChart.mu) { TSChart.mu = true; window.addEventListener('mouseup', () => { const c = TSChart.cur; TSChart.cur = null; if (c) { c.drag = null; c.cv.style.cursor = ''; } }); }
+    this.ysc = {}; this.ydrag = null;
+    cv.addEventListener('mousemove', e => this.onMove(e)); cv.addEventListener('mouseleave', () => { this.hover = null; this.drag = null; if (!this.ydrag) cv.style.cursor = ''; this.req(); });
+    cv.addEventListener('mousedown', e => { const pi = this.axisPane(e.clientX, e.clientY);
+      if (pi != null) { this.ydrag = { pi, y: e.clientY, s0: this.ysc[pi] || 1 }; cv.style.cursor = 'ns-resize'; TSChart.cur = this; return; }
+      this.drag = { x: e.clientX, v0: this.v0, v1: this.v1 }; cv.style.cursor = 'grabbing'; TSChart.cur = this; });
+    if (!TSChart.mu) { TSChart.mu = true;
+      window.addEventListener('mousemove', e => { const c = TSChart.cur; if (c && c.ydrag) c.yDragTo(e.clientY); });
+      window.addEventListener('mouseup', () => { const c = TSChart.cur; TSChart.cur = null; if (c) { c.drag = null; c.ydrag = null; c.cv.style.cursor = ''; } }); }
     cv.addEventListener('wheel', e => this.onWheel(e), { passive: false });
-    cv.addEventListener('dblclick', () => { if (this.def) { [this.v0, this.v1] = this.def; this.req(); } });
+    cv.addEventListener('dblclick', e => { const pi = this.axisPane(e.clientX, e.clientY); if (pi != null) { delete this.ysc[pi]; this.req(); return; } if (this.def) { [this.v0, this.v1] = this.def; this.ysc = {}; this.req(); } });
     let t1 = null, t2 = null;
     cv.addEventListener('touchstart', e => { const T = e.touches;
-      if (T.length === 1) { t1 = { x: T[0].clientX, v0: this.v0, v1: this.v1 }; t2 = null; }
+      if (T.length === 1) { const pi = this.axisPane(T[0].clientX, T[0].clientY); if (pi != null) { this.ydrag = { pi, y: T[0].clientY, s0: this.ysc[pi] || 1 }; t1 = t2 = null; return; }
+        t1 = { x: T[0].clientX, v0: this.v0, v1: this.v1 }; t2 = null; }
       else if (T.length === 2) { t2 = { d: Math.abs(T[0].clientX - T[1].clientX) || 1, m: this.idxAtX((T[0].clientX + T[1].clientX) / 2), v0: this.v0, v1: this.v1 }; t1 = null; } }, { passive: true });
     cv.addEventListener('touchmove', e => { if (!this.data) return; const T = e.touches; e.preventDefault();
+      if (this.ydrag && T.length === 1) { this.yDragTo(T[0].clientY); return; }
       if (t1 && T.length === 1) { const span = t1.v1 - t1.v0; this.panTo(t1.v0 + (t1.x - T[0].clientX) / this.plotW() * span, span); }
       else if (t2 && T.length === 2) { const d = Math.abs(T[0].clientX - T[1].clientX) || 1; this.zoomFrom(t2, t2.d / d); } }, { passive: false });
-    cv.addEventListener('touchend', () => { t1 = t2 = null; }, { passive: true });
+    cv.addEventListener('touchend', () => { t1 = t2 = null; this.ydrag = null; }, { passive: true });
     this.ro = new ResizeObserver(() => { if (cv.isConnected) this.draw(); }); this.ro.observe(host);
   }
   get i0() { return Math.max(0, Math.floor(this.v0)); }
   get i1() { return this.data ? Math.min(this.data.x.length - 1, Math.ceil(this.v1)) : 0; }
-  set(data, view) { this.data = data; const n = data.x.length; const v = view || [Math.max(0, n - 250), n - 1]; this.v0 = Math.max(0, v[0]); this.v1 = Math.min(n - 1, v[1]); this.def = [this.v0, this.v1]; this.draw(); }
+  /* échelle des prix sous le pointeur (colonne de droite d'un panneau) : numéro du panneau, sinon null */
+  axisPane(cx, cy) { if (!this.layout) return null; const r = this.cv.getBoundingClientRect(), mx = cx - r.left, my = cy - r.top; if (mx < r.width - this.o.padR) return null;
+    const k = this.layout.findIndex(l => my >= l.top && my <= l.bot && !l.p.fixed); return k >= 0 ? k : null; }
+  /* tirer vers le bas : échelle resserrée (graphique tassé) ; vers le haut : étirée */
+  yDragTo(cy) { const d = this.ydrag; if (!d) return; this.ysc[d.pi] = U.clamp(d.s0 * Math.exp((cy - d.y) / 160), .05, 20); this.req(); }
+  set(data, view) { this.data = data; this.ysc = {}; const n = data.x.length; const v = view || [Math.max(0, n - 250), n - 1]; this.v0 = Math.max(0, v[0]); this.v1 = Math.min(n - 1, v[1]); this.def = [this.v0, this.v1]; this.draw(); }
   setView(i0, i1) { const n = this.data.x.length; this.v0 = Math.max(0, i0); this.v1 = Math.min(n - 1, i1); this.def = [this.v0, this.v1]; this.draw(); }
   plotW() { return Math.max(10, this.cv.getBoundingClientRect().width - this.o.padR); }
   idxAtX(cx) { const r = this.cv.getBoundingClientRect(); const f = U.clamp((cx - r.left) / this.plotW(), 0, 1); return this.v0 - .5 + f * (this.v1 - this.v0 + 1); }
@@ -76,6 +88,8 @@ class TSChart {
     this.zoom(f, this.idxAtX(e.clientX));
   }
   onMove(e) { if (!this.data) return;
+    if (this.ydrag) return;
+    if (!this.drag) this.cv.style.cursor = this.axisPane(e.clientX, e.clientY) != null ? 'ns-resize' : '';
     if (this.drag) { const span = this.drag.v1 - this.drag.v0; this.panTo(this.drag.v0 + (this.drag.x - e.clientX) / this.plotW() * span, span); return; }
     const r = this.cv.getBoundingClientRect(); this.hover = { i: this.idxAt(e), y: e.clientY - r.top }; this.req(); if (this.o.onHover) this.o.onHover(this.hover.i); }
   draw() {
@@ -94,6 +108,7 @@ class TSChart {
       if (p.min != null) lo = Math.min(lo, p.min); if (p.max != null) hi = Math.max(hi, p.max); if (p.fixed) { lo = p.fixed[0]; hi = p.fixed[1]; }
       if (!isFinite(lo)) { lo = 0; hi = 1; } if (lo === hi) { lo -= Math.abs(lo) * .05 || 1; hi += Math.abs(hi) * .05 || 1; }
       const lg = p.log && lo > 0; const pad = lg ? 0 : (hi - lo) * .06; if (!p.fixed) { lo -= p.zero && lo >= 0 ? 0 : pad; hi += pad; }
+      const ys = this.ysc[pi]; if (ys && ys !== 1 && !p.fixed) { if (lg) { const a = Math.log(lo), b = Math.log(hi), mm = (a + b) / 2, hh = (b - a) / 2 * ys; lo = Math.exp(mm - hh); hi = Math.exp(mm + hh); } else { const mm = (lo + hi) / 2, hh = (hi - lo) / 2 * ys; lo = mm - hh; hi = mm + hh; } }
       const L = v => lg ? Math.log(v) : v, Y = v => bot - (L(v) - L(lo)) / (L(hi) - L(lo)) * (ph - 2) - 1;
       this.layout.push({ top, bot, lo, hi, Y, lg, p });
       x.strokeStyle = this.o.grid === 'dot' ? '#2a2a2a' : CL.line; x.lineWidth = 1; x.strokeRect(.5, top + .5, W, ph);

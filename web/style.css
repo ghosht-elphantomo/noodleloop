@@ -685,3 +685,11 @@ html.anim #main canvas{animation:fqtDraw .6s cubic-bezier(.2,.7,.2,1) both}
 html.anim .tb,html.anim .fk,html.anim #ptabs button{transition:background-color .15s,color .15s,border-color .15s}
 @media (prefers-reduced-motion:reduce){html.anim *{animation:none!important;transition:none!important}}
 @media print{html.anim *{animation:none!important}}
+
+/* ligne suivie dans les tableaux (20/10/2026) : trait au-dessus et au-dessous de la ligne survolée (ou touchée sur iPhone) ; dans
+   les matrices (.hm), colonne suivie aussi et première colonne figée quand le tableau défile horizontalement */
+.t tbody tr:hover td,.t tbody tr.rsel td{box-shadow:inset 0 1px 0 var(--amber),inset 0 -1px 0 var(--amber)}
+.t.hm td.csel{box-shadow:inset 1px 0 0 var(--amber),inset -1px 0 0 var(--amber)}
+.t.hm tbody tr:hover td.csel,.t.hm tbody tr.rsel td.csel{box-shadow:inset 0 0 0 2px var(--amber)}
+.t.hm td:first-child,.t.hm th:first-child{position:sticky;left:0;background:#000;z-index:2}
+.t.hm thead th:first-child{z-index:3}
