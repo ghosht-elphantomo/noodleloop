@@ -1940,7 +1940,10 @@ def main():
         # des actions actuelles par le facteur de la séance (clôture du bulletin ÷ clôture de la série, rapproché du produit exact des
         # opérations sur titres connues : avant un fractionnement x10, un titre échangé vaut dix actions d'aujourd'hui) ; montant en FCFA
         # tel quel (un fractionnement ne change pas la somme échangée). Facteur non reconnu (opération absente de la liste) ou montant
-        # invraisemblable : ligne de la base gardée et comptée (vol_doute)
+        # invraisemblable : ligne de la base gardée et comptée (vol_doute).
+        # Cours d'ouverture : celui du bulletin, au même facteur (rapport ouverture ÷ clôture du bulletin appliqué à la clôture de la
+        # série), la base n'ayant souvent que la clôture ; avant 2018, seulement si la ligne du bulletin se vérifie d'elle-même (règle
+        # « lisible » de l'archive histo.py) ; plus haut et plus bas recalculés
         if BOC.get(t) and rows:
             B_ = BOC[t]
             ops_f = sorted((e_, k_) for e_, k_ in SPL.get(t, []) if e_ <= rows[-1][0])
@@ -1951,23 +1954,36 @@ def main():
                     continue
                 q_ = r[4] / b_["c"]
                 f_ = min(facs_, key=lambda x: abs(math.log(q_ * x)))
-                if abs(math.log(q_ * f_)) >= math.log(1.006) or not montant_plausible(b_["vol"], b_.get("val"), b_["c"]):
+                f_ok = abs(math.log(q_ * f_)) < math.log(1.006)
+                if not f_ok or not montant_plausible(b_["vol"], b_.get("val"), b_["c"]):
                     boc_chk["vol_doute"] = boc_chk.get("vol_doute", 0) + 1
                     vdb_ = boc_chk.setdefault("vol_doute_by", {})
                     vdb_[t] = vdb_.get(t, 0) + 1
-                    continue
-                # (volume ajusté d'un rapport non entier : l'arrondi déjà en place est gardé s'il est à moins d'une action du volume exact)
-                vo_ = r[5] if abs(r[5] - b_["vol"] * f_) < 1 else int(round(b_["vol"] * f_))
-                # (montant du bulletin imprimé en milliers, égal au montant à l'unité déjà en place : on garde le plus précis)
-                keep_ = b_.get("val_k") and vo_ == r[5] and r[6] and abs(r[6] - b_["val"]) <= 1000
-                va_ = r[6] if keep_ else int(round(b_["val"]))
-                if (vo_, va_) != (r[5], r[6]):
-                    rows[i_] = tuple(r[:5]) + (vo_, va_)
-                    boc_chk["val_fix"] = boc_chk.get("val_fix", 0) + 1
-                    vfb_ = boc_chk.setdefault("val_fix_by", {})
-                    vfb_[t] = vfb_.get(t, 0) + 1
-                if r[0] == rows[-1][0]:
-                    val_est = False
+                else:
+                    # (volume ajusté d'un rapport non entier : l'arrondi déjà en place est gardé s'il est à moins d'une action du volume exact)
+                    vo_ = r[5] if abs(r[5] - b_["vol"] * f_) < 1 else int(round(b_["vol"] * f_))
+                    # (montant du bulletin imprimé en milliers, égal au montant à l'unité déjà en place : on garde le plus précis)
+                    keep_ = b_.get("val_k") and vo_ == r[5] and r[6] and abs(r[6] - b_["val"]) <= 1000
+                    va_ = r[6] if keep_ else int(round(b_["val"]))
+                    if (vo_, va_) != (r[5], r[6]):
+                        rows[i_] = r = tuple(r[:5]) + (vo_, va_)
+                        boc_chk["val_fix"] = boc_chk.get("val_fix", 0) + 1
+                        vfb_ = boc_chk.setdefault("val_fix_by", {})
+                        vfb_[t] = vfb_.get(t, 0) + 1
+                    if r[0] == rows[-1][0]:
+                        val_est = False
+                lis_ = r[0] >= 20180101 or (b_.get("prev") and b_.get("var") is not None and abs((b_["c"] / b_["prev"] - 1) * 100 - b_["var"]) <= .06)
+                # (ouverture et clôture d'une même séance : au plus 1,075 ÷ 0,925 = 1,162 l'une de l'autre)
+                if f_ok and lis_ and b_.get("o") and abs(math.log(b_["o"] / b_["c"])) <= math.log(1.17):
+                    o_new = round(r[4] * b_["o"] / b_["c"], 2)
+                    # (série non ajustée : ouverture officielle exacte ; série ajustée : écart de plus de 0,5 %, l'arrondi de la base gardé)
+                    if (abs(r[1] - o_new) > .005) if f_ == 1.0 else (abs(r[1] / o_new - 1) > .005):
+                        h_, l_ = (max(o_new, r[4]), min(o_new, r[4])) if (r[2], r[3]) == (max(r[1], r[4]), min(r[1], r[4])) \
+                            else (max(r[2], o_new, r[4]), min(r[3], o_new, r[4]))
+                        rows[i_] = (r[0], o_new, h_, l_) + tuple(r[4:])
+                        boc_chk["open_fix"] = boc_chk.get("open_fix", 0) + 1
+                        ofb_ = boc_chk.setdefault("open_fix_by", {})
+                        ofb_[t] = ofb_.get(t, 0) + 1
         # données officielles de la BRVM, prioritaires sur les sites tiers :
         # nombre de titres et capitalisation flottante (page « Capitalisations » de brvm.org), PER et dividende du bulletin officiel de la cote
         so_ = sess_rows.get(t) or {}
