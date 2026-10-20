@@ -288,7 +288,7 @@ function initCmd() {
 function ddOpen(anchor, rows) {
   const d = $('ddm'); d.innerHTML = rows.map((r, i) => r.h ? `<div class="dh">${esc(r.h)}</div>` : `<div class="di${r.code ? '' : ' nc'}${r.off ? ' off' : ''}${r.on ? ' on' : ''}" data-di="${i}" title="${esc(r.tt || '')}"><em>${r.n != null ? r.n + ')' : ''}</em>${r.code ? `<b>${esc(r.code)}</b>` : ''}<span>${r.l}</span></div>`).join('');
   d.hidden = false; const a = anchor.getBoundingClientRect(); const w = d.getBoundingClientRect().width;
-  d.style.left = Math.max(4, Math.min(window.innerWidth - w - 4, a.left)) + 'px'; d.style.top = (a.bottom + 1) + 'px';
+  const z = typeof pageZoom === 'function' ? pageZoom(d) : 1; d.style.left = Math.max(4, Math.min(window.innerWidth - w - 4, a.left)) / z + 'px'; d.style.top = (a.bottom + 1) / z + 'px';
   d.onclick = e => { const x = e.target.closest('[data-di]'); if (!x) return; const r = rows[+x.dataset.di]; ddClose(); if (r && r.run && !r.off) r.run(); };
 }
 function ddClose() { $('ddm').hidden = true; }

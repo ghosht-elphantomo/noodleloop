@@ -1135,6 +1135,16 @@ def b51(ctx):
     return ("vert", "hauteur stable au défilement") if ok else ("orange", "calcul de la hauteur de GP revenu à l'ancienne forme")
 
 
+@bug("B52", "2026-10-20", "Info-bulle et menus décalés vers la droite quand l'interface est agrandie",
+     "Avec le réglage de taille de l'interface (zoom de la page), la position de l'info-bulle et des menus déroulants, calculée "
+     "en coordonnées d'écran, était multipliée par le zoom : l'info-bulle des graphiques (dividendes distribués par exercice) "
+     "s'éloignait du pointeur vers la droite et sortait de l'écran. Corrigé le 20/10/2026 (position divisée par le zoom effectif).",
+     "chart.js et core.js : info-bulle et menus positionnés avec le zoom de la page (pageZoom)")
+def b52(ctx):
+    ok = "pageZoom(t)" in _web("chart.js") and "pageZoom(d)" in _web("core.js")
+    return ("vert", "positions corrigées du zoom") if ok else ("orange", "correction du zoom absente de l'info-bulle ou des menus")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

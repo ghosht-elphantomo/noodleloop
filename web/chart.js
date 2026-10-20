@@ -223,7 +223,11 @@ function sparkSVG(v, w = 72, h = 16) { const a = v.filter(x => x != null && isFi
   const pts = a.map((y, i) => `${(i / (a.length - 1) * (w - 2) + 1).toFixed(1)},${(h - 1 - (y - lo) / r * (h - 2)).toFixed(1)}`).join(' ');
   return `<svg class="spk" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline fill="none" stroke="${a[a.length - 1] >= a[0] ? 'var(--up)' : 'var(--dn)'}" stroke-width="1.2" points="${pts}"/></svg>`; }
 function heatBg(v, scale) { if (v == null || !isFinite(v)) return 'transparent'; const a = Math.min(1, Math.abs(v) / scale); return v >= 0 ? `rgba(52,210,110,${(a * .75).toFixed(3)})` : `rgba(255,75,66,${(a * .75).toFixed(3)})`; }
-function tip(e, html) { const t = document.getElementById('tip'); t.innerHTML = html; t.hidden = false; const r = t.getBoundingClientRect(); t.style.left = Math.min(window.innerWidth - r.width - 8, e.clientX + 14) + 'px'; t.style.top = Math.max(4, e.clientY - r.height - 10) + 'px'; }
+/* agrandissement de l'interface (réglage « taille », zoom CSS de la page) : les positions écrites en px sont multipliées par le zoom,
+   les coordonnées du pointeur ne le sont pas ; sans correction, l'info-bulle partait vers la droite et sortait de l'écran */
+function pageZoom(el) { const w = el && el.offsetWidth, r = el && el.getBoundingClientRect().width; return w && r ? r / w : (parseFloat(document.documentElement.style.zoom) || 1); }
+function tip(e, html) { const t = document.getElementById('tip'); t.innerHTML = html; t.hidden = false; const r = t.getBoundingClientRect(), z = pageZoom(t);
+  const L = Math.max(4, e.clientX + 14 + r.width > window.innerWidth - 8 ? e.clientX - r.width - 14 : e.clientX + 14), T = Math.max(4, e.clientY - r.height - 10); t.style.left = L / z + 'px'; t.style.top = T / z + 'px'; }
 function untip() { const t = document.getElementById('tip'); if (t) t.hidden = true; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
