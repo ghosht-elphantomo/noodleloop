@@ -117,8 +117,18 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
   Ecobank, Orange CI). Années anciennes : 73 exercices à trous dans les comptes détaillés, voir « Données manquantes ».
 - **Agents** : le propriétaire décide seul de leur emploi (consommation) ; par défaut, travail sans agent.
 - **Reste de l'audit** :
-  - Dates d'effet listées à plus de 5 jours du palier du bulletin (CFAC ×100 13/11 → 19/12/2017, SAFC ×25, SEMC ×40) :
-    signalées chaque matin (« Historique / bulletins : dates d'effet »), à corriger sur document.
+  - Dates d'effet des opérations : **fait le 20/10** — CFAO ×100 corrigée au 13/12/2017 (bulletin : dernière séance à
+    l'ancienne base le 12/12, cours précédent 375 imprimé le 13/12, première séance nouvelle base le 19/12 ;
+    `seed/operations_historiques.json`, champ « date_listee ») ; Alios ×25 (24/12/2018) et SIEM ×40 (20/12/2018) justes
+    (titres suspendus entre les deux bases ; le contrôle accepte une date listée pendant la suspension).
+  - **Comptes non vérifiés (état au 20/10)** : 42 états financiers annuels 2019-2025 restent « non vérifiés » (tous des scans ;
+    26 sans aucun montant dans la couche texte, lus par reconnaissance de caractères mais sans identités comptables
+    vérifiées : BOA CI 2022 et 2025, BOA Niger 2022-2023-2025, Onatel 2019-2021 et 2024, Servair 2020-2024, SODECI 2021,
+    AGL 2022, Sucrivoire 2019-2020, Palm CI 2021, Tractafric 2023-2024, Loterie 2023, Oragroup 2024, SICOR 2025…). Les
+    chiffres clés de ces exercices viennent de la base tierce (non vérifiés sur document). Bridge Bank (BBGC) : aucun état
+    financier annuel sur brvm.org (seulement le 1er semestre 2026), 2021-2025 de la base seulement. Voie possible : relire
+    chaque document à la main (texte OCR sur la branche `comptes`, `txt/<empreinte>.fra.gz`) et inscrire les postes vérifiés
+    dans `seed/corrections_bnpa.json` (lignes « cpt »), environ 10 à 20 k jetons par exercice ; à décider par le propriétaire.
   - Relais du métronome en plusieurs essais (R3) : seulement avec un essai en parallèle (règle du propriétaire).
   - Une base complète lancée en journée remplace pendant au plus 15 min des calculs plus récents (V13) : le relevé suivant
     les refait ; séparation complète à faire avec la migration.
