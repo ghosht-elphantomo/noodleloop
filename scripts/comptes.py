@@ -2788,10 +2788,13 @@ def consolidate(cj, mirror=None, fx=None):
                 if calc_:
                     res[y]["calc"] = sorted(calc_)  # (postes calculés d'après le document : ne comblent qu'un exercice vide, en dernier)
             return res
-        # référentiel principal : celui qui couvre le mieux les exercices récents, puis qui concorde le mieux avec la base de
-        # référence, puis qui couvre le plus d'exercices (comptes SYSCOHADA à égalité) ; l'autre référentiel publié reste proposé
+        # référentiel principal (décision du propriétaire du 20/10/2026) : les comptes SYSCOHADA d'abord, dès qu'ils couvrent au
+        # moins un des deux derniers exercices (le plan comptable de la zone, celui de l'impôt et du dividende) ; IFRS seulement si la
+        # société ne publie que des comptes IFRS récents (Ecobank, Orange CI). À normes égales : le plus de jours récents couverts,
+        # puis la meilleure concordance avec la base de référence, puis le plus d'exercices. L'autre référentiel reste proposé.
         y_max = max(x["y"] for x in xs)
-        main = max(groups, key=lambda k: (len({x["y"] for x in groups[k] if x["y"] >= y_max - 4}),) + agree(groups[k])[:3])
+        main = max(groups, key=lambda k: (k[1] != "ifrs" and any(x["y"] >= y_max - 1 for x in groups[k]),
+                                          len({x["y"] for x in groups[k] if x["y"] >= y_max - 4})) + agree(groups[k])[:3])
         res = years_of(main)
 
         # concordance avec la base de référence (même périmètre, mêmes normes ?) : un écart confirmé par au moins deux documents
