@@ -39,7 +39,8 @@ jobs:
         run: |
           [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
           [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
-          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
       - name: Étape 1
         id: n
         run: bash "$M/comptes.sh" liste
@@ -60,7 +61,8 @@ jobs:
         run: |
           [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
           [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
-          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
       - name: Étape 2
         run: bash "$M/comptes.sh" avant
       - uses: actions/upload-artifact@v7
@@ -86,7 +88,8 @@ jobs:
         run: |
           [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
           [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
-          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
       - uses: actions/download-artifact@v8
         with:
           name: a1
@@ -114,7 +117,8 @@ jobs:
         run: |
           [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
           [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
-          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
       - uses: actions/download-artifact@v8
         with:
           name: a1
