@@ -114,21 +114,42 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
   (bouton « Comptes », `R2` dans `fa/*.json` ; PER et distribution seulement sur le principal, le BNPA officiel n'existant que
   pour lui) ; le référentiel principal est SYSCOHADA dès qu'il couvre un des deux derniers exercices (`comptes.py`), IFRS
   seulement pour les sociétés qui ne publient qu'en IFRS (Sonatel et Oragroup : derniers comptes SYSCOHADA en 2015 et 2018 ;
-  Ecobank, Orange CI). Années anciennes : 73 exercices à trous dans les comptes détaillés, voir « Données manquantes ».
+  Ecobank, Orange CI) ou qui n'en publient plus d'autres (BIIC, premier exercice IFRS 2025 : FA ouvre sur IFRS 2024-2025, les
+  comptes bancaires 2023-2024 restent au second jeu). Années anciennes : 73 exercices à trous dans les comptes détaillés, voir
+  « Données manquantes ».
 - **Agents** : le propriétaire décide seul de leur emploi (consommation) ; par défaut, travail sans agent.
 - **Reste de l'audit** :
   - Dates d'effet des opérations : **fait le 20/10** — CFAO ×100 corrigée au 13/12/2017 (bulletin : dernière séance à
     l'ancienne base le 12/12, cours précédent 375 imprimé le 13/12, première séance nouvelle base le 19/12 ;
     `seed/operations_historiques.json`, champ « date_listee ») ; Alios ×25 (24/12/2018) et SIEM ×40 (20/12/2018) justes
     (titres suspendus entre les deux bases ; le contrôle accepte une date listée pendant la suspension).
-  - **Comptes non vérifiés (état au 20/10)** : 42 états financiers annuels 2019-2025 restent « non vérifiés » (tous des scans ;
-    26 sans aucun montant dans la couche texte, lus par reconnaissance de caractères mais sans identités comptables
-    vérifiées : BOA CI 2022 et 2025, BOA Niger 2022-2023-2025, Onatel 2019-2021 et 2024, Servair 2020-2024, SODECI 2021,
-    AGL 2022, Sucrivoire 2019-2020, Palm CI 2021, Tractafric 2023-2024, Loterie 2023, Oragroup 2024, SICOR 2025…). Les
-    chiffres clés de ces exercices viennent de la base tierce (non vérifiés sur document). Bridge Bank (BBGC) : aucun état
-    financier annuel sur brvm.org (seulement le 1er semestre 2026), 2021-2025 de la base seulement. Voie possible : relire
-    chaque document à la main (texte OCR sur la branche `comptes`, `txt/<empreinte>.fra.gz`) et inscrire les postes vérifiés
-    dans `seed/corrections_bnpa.json` (lignes « cpt »), environ 10 à 20 k jetons par exercice ; à décider par le propriétaire.
+  - **Comptes non vérifiés : fait le 20/10 (après-midi)**, en trois points.
+    1. *Lecteur corrigé* (`scripts/comptes.py`, quatre défauts trouvés en relisant les documents) : un « 0 » de la colonne des
+       notes pris pour un montant (« TOTAL GENERAL 0 14 611 080 094 14 023 255 232 » : l'exercice N perdait ses totaux, Erium
+       et Tractafric 2025) ; les rapports des commissaires aux comptes classés IFRS parce qu'ils citent les « normes internationales
+       d'audit » (Coris BF 2021-2022, BOA Bénin 2020, SMB, Nestlé, Sicable, Palm…) — désormais seul un titre d'état (ligne
+       courte ou en capitales, sans mot de phrase) fait basculer en IFRS ; « le total bilan s'est consolidé » pris pour un
+       périmètre consolidé (SIB 2023) ; une société passée aux IFRS dont le dernier exercice n'existe qu'en IFRS (BIIC, premier
+       exercice IFRS 2025) les prend pour référentiel principal. Relecture complète de la base (6 065 documents, 21 min) avant /
+       après : 13 documents changent, tous en mieux pour les comptes consolidés par titre (aucun résultat, total, chiffre
+       d'affaires ni capitaux propres perdu dans les séries principales) ; trois documents lisent moins de postes qu'avant
+       (BOA BF 2018, NEI-CEDA 2004, Onatel 2013 : tableaux récapitulatifs du rapport des commissaires fusionnés avec les états),
+       sans effet sur les séries. La correction du lecteur prend effet au prochain passage `comptes.yml` (04 h 17 UTC), donc dans
+       la base du soir suivante ; le contrôle B53 vérifie que les 25 exercices relus sont bien dans les séries.
+    2. *Exercices relus à la main* sur le texte des documents (`seed/corrections_bnpa.json`, lignes « cpt » avec « ajout » :
+       exercice créé dans les comptes du titre, marqué « m » dans l'en-tête des comptes de FA) : BOA CI 2022 (confirmation) et
+       2025, BOA Niger 2020-2025, BOA Sénégal 2025, Coris BF 2023-2025, Tractafric 2025, CFAO 2025, Loterie du Bénin 2023,
+       Servair 2023 (SYSCOHADA : comptes provisoires + colonne 2023 des comptes 2024), Sonatel 2019-2020 (IFRS consolidé,
+       présentation des résultats recoupée avec la page lisible des états IFRS et le rapport de gestion), Onatel 2020 (résultat exact
+       de la convocation à l'AGO, communiqués), Sucrivoire 2019-2020, SICOR 2022-2023 (rapports annuels) et 2024 (chiffre
+       d'affaires seul). Règle suivie : seuls des montants imprimés, confirmés par une identité comptable ou un second document ;
+       BIIC 2025 : série alignée sur le résultat IFRS vérifié (36 237 M, celui du bulletin), la base tierce donnait 24 182 sans
+       document.
+    3. *Reste sans document sur brvm.org* (rien à faire tant que la société ne publie pas) : Bridge Bank (tous), BIIC 2019-2022,
+       Air Liquide 2021-2023 (rapports semestriels seulement), Alios 2022, Orange CI 2019-2020 (cotée fin 2022), SIEM 2024-2025,
+       Uniwax 2024-2025, SICOR 2025 (le document « exercice 2025 » est le rapport 2024 ; résultat 2024 dans des pages non lues
+       du scan), Loterie du Bénin 2019-2022 (cotée fin 2024). Les chiffres clés de ces exercices restent ceux de la base tierce
+       (non vérifiés sur document).
   - Relais du métronome en plusieurs essais (R3) : seulement avec un essai en parallèle (règle du propriétaire).
   - Une base complète lancée en journée remplace pendant au plus 15 min des calculs plus récents (V13) : le relevé suivant
     les refait ; séparation complète à faire avec la migration.
@@ -319,8 +340,8 @@ Ordre décidé par le propriétaire (samedi 17/10, revu le 19/10) — commencer 
      cotation** au bulletin absente de la fiche : signalée chaque matin. Conclusion sur les cours anciens : l'archive web n'a
      presque aucun bulletin d'avant décembre 2014 (2004 : 210 seulement) ; les cours 2006-2013 et janvier-novembre 2014 ne
      peuvent pas être refaits depuis la BRVM : la copie de la base (branche `raw`, base historique, copie de secours) reste la
-     protection. Reste : fondamentaux non couverts (comptes scannés que la vérification refuse, ex. BOAC 2022, BOAN 2022-2023 ;
-     documents de banques typés « entreprise »), à lire et vérifier.
+     protection. Fondamentaux non couverts (comptes scannés que la vérification refuse) : relus à la main le 20/10 (voir
+     « Comptes non vérifiés : fait »).
      **Fait le 19/10** : contrôle automatique de ces écarts (`outils/controle/coherence.py`, données
      `miroir.json` et `secteurs.json`, secteurs officiels lus chaque soir sur brvm.org). Nombre de titres et flottant affichés :
      page « Capitalisations » de brvm.org (la fiche seulement si elle manque) ; secteur affiché : celui de la BRVM depuis le
@@ -560,3 +581,7 @@ réglages. Aujourd'hui tout est gardé dans le navigateur ; l'historique de rech
 (`kwHistLoad`, `kwHistSave`, `kwHistAdd` dans `web/pages17.js`) à brancher sur le compte, avec la copie du navigateur en secours
 hors connexion. Aucune clé dans le dépôt ni dans la conversation : le propriétaire les met lui-même dans les réglages sécurisés
 (variables d'environnement Vercel, secrets GitHub) ; aucune donnée d'utilisateur dans le dépôt.
+
+Décision du propriétaire (20/10/2026) pour le backend et le système de paiement : **un seul type d'abonnement**, à
+**3 999 FCFA par mois**, donnant accès au terminal complet (plus de distinction Particulier / Professionnel : la grille
+du 19/10 et la page tarifs de la landing sont à reprendre dans ce sens au moment du backend).

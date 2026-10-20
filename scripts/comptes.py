@@ -165,6 +165,11 @@ def nrm(x):
 _COMMA_K = [False]  # document où la virgule sépare les milliers (« 435,697 » = 435 697)
 _TOLERANT = [False]  # lecture tolérante des libellés (reconnaissance de caractères) : essayée en second par read_doc
 _COMMA_FORCE = [False]  # lecture « virgule des milliers » forcée (seconde lecture d'un document ambigu, voir read_doc)
+IFRS_RE = r"\bifrs\b|normes? internationales?\b(?!\s*d\W?\s*audit)"  # (« normes internationales d'audit » : normes ISA, pas IFRS)
+# mots d'une phrase (rapport des commissaires, notes) : une ligne qui en contient n'est pas un titre d'état
+NARRATIF_RE = (r"\b(?:pas|n\W?a|selon|conformement|sont|est|ont|a ete|notre|nous|vous|elle|il|cette|ces|qui|que|dont|requiert|comprend|lorsque|ainsi"
+               r"|a decide|conformer|elaborant|en vigueur|a compter|afin de|au titre de|a la date|permettant|concernant|relatifs?|relatives?|applicables?"
+               r"|not|has|have|is|are|our|we|you|which|that|these|this|requires|includes|under|accordance)\b")  # (et leurs équivalents anglais)
 _NOTE_DOT = [False]  # document à virgule décimale : « 5.3 » est un renvoi de note, pas un montant
 
 
@@ -702,7 +707,8 @@ def parse(txt, fy_hint=None, title="", ocr=False):
     heads = []  # [(ligne, [(fin, début, année)])]
     sec, split, perim = None, None, None
     tt_ = nrm(title or "") + " " + nrm(txt[:3000])
-    std_cur = "ifrs" if re.search(r"\bifrs\b|normes? internationales?", tt_) and not re.search(r"syscohada", nrm(title or "")) else "syscohada"
+    # (« normes internationales d'audit » : normes ISA du rapport des commissaires aux comptes, pas le référentiel des comptes)
+    std_cur = "ifrs" if re.search(IFRS_RE, tt_) and not re.search(r"syscohada", nrm(title or "")) else "syscohada"
     # vocabulaire propre aux normes IFRS et aux comptes consolidés, quand les titres ne le disent pas
     if std_cur == "syscohada" and not re.search(r"syscohada", nt_) and \
             len(re.findall(r"resultat global|ne donnant pas le controle|actifs? non courants?|passifs? non courants?", nt_)) >= 2:
@@ -758,7 +764,8 @@ def parse(txt, fy_hint=None, title="", ocr=False):
         if title_ok:
             # titres d'états et sous-titres (actif / passif côte à côte, consolidé / social)
             if re.search(r"(?:bilan|comptes?|etats?(?: de synthese| financiers)?|compte de resultat|tableau des flux(?: de tresorerie)?|resultats?|situation financiere|"
-                         r"etat du resultat global|flux de tresorerie)\s+(?:[a-z']+\s+){0,3}consolid", n_) and not re.search(r"sociaux|individuel", n_):
+                         r"etat du resultat global|flux de tresorerie)\s+(?:[a-z']+\s+){0,3}consolid", n_) and not re.search(r"sociaux|individuel", n_) \
+                    and not re.search(r"\b(?:s\W?\s?est|se|s\W?\s?etant|a|ont|avait|sont)\s+consolid", n_):  # (« le total bilan s'est consolidé » : un verbe, pas un périmètre)
                 perim = "conso"
             elif re.search(r"(?:bilan|comptes?|etats?(?: de synthese| financiers)?|compte de resultat|tableau des flux)\s+(?:[a-z']+\s+){0,2}(?:sociaux|individuels?|social)\b|"
                            r"comptes sociaux", n_):
@@ -768,7 +775,10 @@ def parse(txt, fy_hint=None, title="", ocr=False):
                 perim = "social"  # « états financiers résumés Sonatel SA » : comptes de la société seule, après ceux du groupe
             elif re.fullmatch(r"(?:[a-z'&.-]+ ){1,4}s\.?a\.?", n_.strip()) and not re.search(r"consolid|groupe", n_):
                 perim = "social"  # ligne « ONATEL SA » en tête des états de la société seule
-            if re.search(r"\bifrs\b|normes? internationales?", n_) and not re.search(r"syscohada", n_):
+            if re.search(IFRS_RE, n_) and not re.search(r"syscohada", n_) and not re.search(NARRATIF_RE, n_) \
+                    and (len(n_) <= 100 or sum(ch.isupper() for ch in ln) >= 0.45 * max(1, sum(ch.isalpha() for ch in ln))):
+                # (titre d'état seulement, court ou en capitales : une phrase du rapport des commissaires ou des notes qui cite les IFRS
+                # n'en change pas le référentiel)
                 std_cur = "ifrs"
             elif re.search(r"syscohada", n_) and not re.search(r"\bifrs\b", n_):
                 std_cur = "syscohada"
@@ -958,6 +968,9 @@ def parse(txt, fy_hint=None, title="", ocr=False):
                     and i - note_at < 120 and heads and 0 <= i - heads[-1][0] < 160 and len(heads[-1][1]) == 2 \
                     and abs(nn_[0] - nn_[1] - nn_[2]) > 0.5 and abs(nn_[1] - nn_[0] - nn_[2]) > 0.5:  # (N, N-1, variation : pas de note)
                 vals = vals[1:]  # colonne des notes devant deux exercices (comptes en millions : « 21  (402)  (391) »)
+            elif len(nn_) >= 3 and vals[0][0] == 0 and ncol_h is not None and len(vals) == ncol_h + 1 and 0 <= i - note_at < 120 \
+                    and all(abs(x) >= 10000 for x in nn_[1:]):
+                vals = vals[1:]  # case vide de la colonne des notes rendue « 0 » (« TOTAL GENERAL  0  14 611 080 094  14 023 255 232 »)
             if not any(v is not None for v, _ in vals):
                 if labn and not any(e_ in illegible for _, e_ in vals):
                     new_pend.append((labn, s_here))
@@ -1738,7 +1751,9 @@ def read_doc(texts, meta):
                 continue
             x = v[y]
             if basec in OCR_SRC:
-                ovs = [((o_["perims"].get(per) or {}).get(k) or {}).get(y) for o_ in others]
+                # (même périmètre dans l'autre lecture, avec ou sans le suffixe IFRS : une reconnaissance qui a pris une phrase pour un
+                # titre IFRS range les mêmes tableaux sous l'autre nom)
+                ovs = [(((o_["perims"].get(per) or o_["perims"].get(per[:-5] if per.endswith("_ifrs") else per + "_ifrs") or {}).get(k) or {}).get(y)) for o_ in others]
                 same = any(ov is not None and abs(ov - x) <= 0.5 for ov in ovs)
                 if k in ok_id:
                     # montant vérifié par une identité, mais lu autrement (à moins d'un centième près : un chiffre confondu, 3 pour 9)
@@ -2175,6 +2190,20 @@ def consolidate(cj, mirror=None, fx=None):
                              "guess": per in (r.get("guess") or []), "cf": set(x.get("cf") or []) if r.get("cat") in (None, "financial_statements", "auditor_report") else set(),
                              "strong": len({c_[0] for c_ in (x.get("c") or []) if c_[0] in STRONG and c_[1] is not None and c_[1] <= 0.001}),
                              "fx": rate})
+    # total du bilan lu plus petit qu'un de ses propres éléments (créances, dépôts, capitaux propres, immobilisations… du même
+    # document, à plus de dix fois) : c'est le total qui est mal lu (BOA Mali 2025 : 593 455 pour des postes en francs), pas
+    # l'exercice ; le total est retiré, les autres postes gardés (avant, l'ordre de grandeur faux du total faisait écarter tout le
+    # jeu d'états vérifié)
+    for x in recs:
+        v_ = x["v"]
+        ta_ = v_.get("total_actif") or v_.get("total_passif")
+        if ta_ and ta_ > 0 and any((v_.get(k) or 0) > ta_ * 10 for k in ("b_creances_clientele", "b_dettes_clientele", "b_effets_publics", "b_caisse",
+                                                                           "capitaux_propres", "actif_immobilise", "actif_circulant", "tresorerie_actif", "stocks")):
+            for k in ("total_actif", "total_passif"):
+                v_.pop(k, None)
+                x["vk"].discard(k)
+                x["cf"].discard(k)
+            x["tot_mal_lu"] = ta_
     # exercice dont la société publie elle-même la contre-valeur FCFA : les conversions de ses états en dollars sont écartées
     off_ = {(x["t"], x["y"], x["per"]) for x in recs if not x["fx"]}
     recs = [x for x in recs if not x["fx"] or (x["t"], x["y"], x["per"]) not in off_]
@@ -2790,10 +2819,14 @@ def consolidate(cj, mirror=None, fx=None):
             return res
         # référentiel principal (décision du propriétaire du 20/10/2026) : les comptes SYSCOHADA d'abord, dès qu'ils couvrent au
         # moins un des deux derniers exercices (le plan comptable de la zone, celui de l'impôt et du dividende) ; IFRS seulement si la
-        # société ne publie que des comptes IFRS récents (Ecobank, Orange CI). À normes égales : le plus de jours récents couverts,
-        # puis la meilleure concordance avec la base de référence, puis le plus d'exercices. L'autre référentiel reste proposé.
+        # société ne publie que des comptes IFRS récents (Ecobank, Orange CI), ou n'en publie plus d'autres : une société passée aux
+        # IFRS (BIIC, premier exercice IFRS 2025) dont le dernier exercice n'existe qu'en IFRS les prend pour principal. À normes
+        # égales : le plus de jours récents couverts, puis la meilleure concordance avec la base de référence, puis le plus
+        # d'exercices. L'autre référentiel reste proposé.
         y_max = max(x["y"] for x in xs)
-        main = max(groups, key=lambda k: (k[1] != "ifrs" and any(x["y"] >= y_max - 1 for x in groups[k]),
+        last_ = {std_: any(x["y"] == y_max for k in groups if (k[1] == "ifrs") == (std_ == "ifrs") for x in groups[k]) for std_ in ("ifrs", "syscohada")}
+        main = max(groups, key=lambda k: ((k[1] != "ifrs" and any(x["y"] >= y_max - 1 for x in groups[k]) and (last_["syscohada"] or not last_["ifrs"]))
+                                          or (k[1] == "ifrs" and last_["ifrs"] and not last_["syscohada"]),
                                           len({x["y"] for x in groups[k] if x["y"] >= y_max - 4})) + agree(groups[k])[:3])
         res = years_of(main)
 

@@ -1444,6 +1444,17 @@ def brvm_company(sid, s, fd_, fcf, dps_hist, b, tax):
               ("capitaux_propres", "capitaux_propres"), ("ebit", "resultat_exploitation"), ("ebitda", "ebe"),
               ("depots_clientele", "b_dettes_clientele"), ("credits_clientele", "b_creances_clientele"))
         ccr, yk = {"y": {str(y): v for y, v in cc["y"].items()}}, []
+        # exercice relu à la main (seed/corrections_bnpa.json « ajout »), souvent incomplet (résumé, scan partiel) : les chiffres
+        # clés publiés qu'il n'a pas (capitaux propres, total du bilan…) complètent ses ratios, et l'exercice porte la marque « a »
+        for y, x in cc["y"].items():
+            if not x.get("manuel"):
+                continue
+            v_doc = x.get("v") or {}
+            add_ = {ck: (S.get(sk) or {}).get(str(y)) for sk, ck in KF if v_doc.get(ck) is None}
+            add_ = {k: v for k, v in add_.items() if v is not None}
+            if add_:
+                ccr["y"][str(y)] = dict(x, v=dict(v_doc, **add_))
+                yk.append(int(y))
         for y in yrs:
             if str(y) in ccr["y"]:
                 continue
@@ -1457,11 +1468,17 @@ def brvm_company(sid, s, fd_, fcf, dps_hist, b, tax):
         fxy = {str(y): [x["fx"], x.get("d")] for y, x in cc["y"].items() if x.get("fx")}
         if fxy:  # (états publiés en dollars, convertis au cours du jour de publication : cours et date par exercice)
             r["C"]["fx"] = fxy
+        man_ = sorted(int(y) for y, x in cc["y"].items() if x.get("manuel"))
+        if man_:  # (exercices relus à la main sur le document publié, seed/corrections_bnpa.json « ajout » : marqués dans l'en-tête)
+            r["C"]["m"] = man_
         r["R"] = {"y": Yr, "g": groups, "k": [y for y in yk if y in Yr]}
         alt = cc.get("alt") or {}
         if len(alt.get("y") or {}) >= 2:  # l'autre référentiel publié par la société (sociaux / consolidés, SYSCOHADA / IFRS)
             Ya = sorted(int(y) for y in alt["y"])
             r["C2"] = {"y": Ya, "per": alt.get("per"), "std": alt.get("std"), "s": sections(alt, Ya)}
+            man2_ = sorted(int(y) for y, x in alt["y"].items() if x.get("manuel"))
+            if man2_:
+                r["C2"]["m"] = man2_
             # ratios sur l'autre référentiel (demande du propriétaire du 20/10/2026 : lire les deux à sa discrétion) ; le BNPA publié
             # porte sur le référentiel principal : PER et distribution non calculés ici (rendement = dividende ÷ cours, inchangé)
             Yr2, groups2 = brvm_ratios({"y": {str(y): v for y, v in alt["y"].items()}}, bank, {}, dps_y, px_y)

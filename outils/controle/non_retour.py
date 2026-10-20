@@ -1048,8 +1048,8 @@ def b46(ctx):
 
 # deux BNPA expliqués pour le même exercice (mention dans FA) : les unifier mettrait un chiffre non vérifié au résumé ou mêlerait
 # deux normes comptables dans un exercice
-BNPA_DEUX_NORMES = {"BICB": "2025 : bulletin sur les comptes IFRS vérifiés, série sur les comptes SYSCOHADA de la base",
-                    "SEMC": "2024 : bulletin encore sur 2023, 2024 de la base non publié à la BRVM"}
+BNPA_DEUX_NORMES = {"SEMC": "2024 : bulletin encore sur 2023, 2024 de la base non publié à la BRVM"}
+# (BICB 2025 : série alignée le 20/10/2026 sur le résultat IFRS vérifié, seul résultat 2025 publié, comme le bulletin ; plus d'exception)
 
 
 @bug("B47", "2026-10-20", "BNPA et PER différents entre le résumé et la fiche FA",
@@ -1143,6 +1143,35 @@ def b51(ctx):
 def b52(ctx):
     ok = "pageZoom(t)" in _web("chart.js") and "pageZoom(d)" in _web("core.js")
     return ("vert", "positions corrigées du zoom") if ok else ("orange", "correction du zoom absente de l'info-bulle ou des menus")
+
+
+# exercices récents dont la lecture automatique ne vérifiait pas le résultat (scans, colonne « 0 » de la colonne des notes, rapport
+# des commissaires classé IFRS à cause des « normes internationales d'audit », verbe « s'est consolidé » pris pour un périmètre) :
+# résultat net attendu dans la série (millions de FCFA), lu sur le document cité dans seed/corrections_bnpa.json ou par le lecteur corrigé
+RN_VERIFIES_20261020 = {("LNBB", 2023): 3914, ("ABJC", 2023): 1335.3, ("SNTS", 2020): 201272, ("SNTS", 2019): 195343, ("ONTBF", 2020): 31051.5,
+                        ("SCRC", 2020): 1788.2, ("SCRC", 2019): -5339.1, ("SICC", 2022): -39.9, ("SICC", 2023): 19.2, ("CBIBF", 2021): 46549,
+                        ("CBIBF", 2022): 56478, ("SIBC", 2022): 40090, ("SIVC", 2025): 179.3, ("PRSC", 2025): 2367.4, ("BICB", 2025): 36237,
+                        ("BOAM", 2025): 11081.2, ("CFAC", 2025): 8416.3, ("BOAS", 2025): 21905, ("BOAC", 2025): 35540, ("CBIBF", 2023): 64247,
+                        ("CBIBF", 2024): 47937, ("CBIBF", 2025): 65495, ("BOAN", 2023): 10076.7, ("BOAN", 2024): 5001.7, ("BOAN", 2025): 409.3}
+
+
+@bug("B53", "2026-10-20", "Exercices récents sans résultat vérifié dans les comptes lus (scans, colonne des notes à « 0 », rapports des CAC classés IFRS)",
+     "Une cinquantaine d'exercices 2019-2025 n'avaient pas de résultat net vérifié : scans d'une page illisibles, « 0 » de la colonne "
+     "des notes pris pour un montant (Erium, Tractafric 2025 : exercice N perdu), rapports des commissaires aux comptes classés IFRS "
+     "parce qu'ils citent les « normes internationales d'audit » (Coris, BOA Bénin), « le total bilan s'est consolidé » pris pour un "
+     "périmètre consolidé (SIB 2023), BIIC passée aux IFRS en 2025 gardée en SYSCOHADA. Lecteur corrigé le 20/10/2026 et exercices "
+     "relus à la main (seed/corrections_bnpa.json, lignes « ajout »).",
+     "fundamentals.json : résultat net des exercices relus présent et égal au montant du document (à 0,1 % près)")
+def b53(ctx):
+    F = jl(ctx["D"], "fundamentals.json") or {}
+    out = []
+    for (t, y), att in RN_VERIFIES_20261020.items():
+        v = (((F.get(t) or {}).get("series") or {}).get("resultat_net") or {}).get(str(y))
+        if not isinstance(v, (int, float)):
+            out.append(f"{t} {y} absent")
+        elif abs(v - att) > max(0.6, abs(att) * 0.001):  # (la série garde le montant de la base quand il est le même au million près)
+            out.append(f"{t} {y} {v:g} (attendu {att:g})")
+    return ("rouge", f"{len(out)} exercice(s) : " + "; ".join(out[:10])) if out else ("vert", f"{len(RN_VERIFIES_20261020)} exercices relus présents")
 
 
 def verifier(R, ctx):

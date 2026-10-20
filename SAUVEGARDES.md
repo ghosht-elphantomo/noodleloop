@@ -9,7 +9,7 @@ demander « reviens au point de restauration du … » ; le code de ce point est
 ## Règles de travail (obligatoires — demandées par le propriétaire, à respecter par toute personne ou session qui modifie le projet)
 
 1. **Rien n'est modifié sans sauvegarde** : un point de restauration est noté dans le tableau ci-dessous AVANT toute modification (code main et site publié).
-2. **Toujours tester TOUT après chaque modification** (ajout de fonction, mise à jour, correction) : le site complet (toutes les fonctions et tous leurs onglets, QLAB pour les 48 actions), aucune erreur JavaScript, aucun texte NaN / undefined / null — et signaler tout problème trouvé n'importe où, même s'il ne vient pas de la modification.
+2. **Tester** (règle précisée par le propriétaire le 20/10/2026) : après chaque modification, vérifier que ce qui a été demandé fonctionne ; quand plusieurs modifications ou un cahier des charges sont demandés, les faire toutes d'abord, puis tester TOUT le site une seule fois à la fin du lot, avant la publication (toutes les fonctions et tous leurs onglets, QLAB pour les 48 actions, iPhone), aucune erreur JavaScript, aucun texte NaN / undefined / null — et signaler tout problème trouvé n'importe où, même s'il ne vient pas de la modification.
 3. **Vérifier que rien ne se casse nulle part** : aucune donnée manquante (fichier absent, vide ou nettement plus court qu'avant), aucun doublon (événements, avis, documents, calendrier, recherche), aucune automatisation en échec, et les mêmes chiffres qu'avant quand la modification ne doit pas les changer.
 4. **Ne publier que si tout est bon** ; sinon, revenir au point de restauration.
 5. « Tant que ça ne casse rien, on peut le faire. »

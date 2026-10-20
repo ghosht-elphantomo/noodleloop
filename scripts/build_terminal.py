@@ -617,6 +617,10 @@ def cpt_fix(cons, rows):
             yy_ = (g_ or {}).get("y") or {}
             e_ = yy_.get(int(c_["ex"])) if int(c_["ex"]) in yy_ else yy_.get(str(c_["ex"]))
             lab_ = f'{c_["t"]} {c_["ex"]} {c_["champ"]} ({c_["cpt"]})'
+            if e_ is None and c_.get("ajout") and g_ is not None:
+                # exercice sans document vérifié par la lecture automatique (scan) : postes relus à la main sur le texte du document
+                # cité, exercice créé dans les comptes du titre (« ajout » : date du document)
+                e_ = yy_[str(c_["ex"])] = {"v": {}, "n": 1, "d": c_["ajout"] if isinstance(c_["ajout"], str) else None, "own": 1, "w": [], "manuel": 1}
             if e_ is None:
                 skip.append(lab_ + " : exercice absent")
                 continue
@@ -644,7 +648,7 @@ def cpt_fix(cons, rows):
 # ratios de la base tierce qui dépendent d'un chiffre clé de la série : retirés (recalculés dans FA) quand une correction vérifiée
 # change ce chiffre ; les autres ratios du même exercice restent (le coût du risque n'entre dans aucun)
 CORR_DEP = {"capitaux_propres": ("roe",), "total_bilan": ("roa",), "resultat_net": ("roe", "roa", "marge_nette", "croissance_resultat_net"),
-            "ca": ("marge_nette", "marge_exploitation", "croissance_ca"), "ebit": ("marge_exploitation",), "cout_du_risque": ()}
+            "ca": ("marge_nette", "marge_exploitation", "croissance_ca"), "ebit": ("marge_exploitation",), "cout_du_risque": (), "bnpa": ("per",)}
 
 
 def main():
@@ -2234,7 +2238,8 @@ def main():
         except Exception as e:  # noqa: BLE001  (en cas de doute, le BNPA du bulletin reste)
             log("BNPA du dernier exercice : contrôle impossible pour", t, e)
         # le BNPA du bulletin reste au résumé (et le PER partout) quand le résultat du dernier exercice de la série n'est pas vérifié
-        # (BICB 2025 : comptes IFRS vérifiés au bulletin, SYSCOHADA de la base tierce dans la série) ou quand le bulletin porte encore
+        # (cas BICB 2025 jusqu'au 20/10/2026 : comptes IFRS vérifiés au bulletin, résultat de la base tierce dans la série ; la série
+        # est depuis alignée sur le résultat IFRS vérifié par seed/corrections_bnpa.json) ou quand le bulletin porte encore
         # sur un exercice plus ancien (SEMC : 2023 au bulletin, 2024 de la base tierce dans la série) : les deux BNPA ne sont alors
         # pas ceux d'un même résultat, et la mention de l'exercice dans FA (src_years) le dit, avec le BNPA du bulletin et son origine
         try:
