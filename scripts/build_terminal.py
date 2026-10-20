@@ -85,6 +85,16 @@ def rnd(v, nd):
     return None if v is None or (isinstance(v, float) and not math.isfinite(v)) else round(v, nd)
 
 
+def montant_plausible(vol, val, px):
+    """Montant échangé d'un bulletin officiel vraisemblable : cours moyen (montant ÷ volume) à 15 % au plus du cours du jour (une
+    séance ne s'écarte pas de plus de 7,5 % du cours de référence ; transactions de bloc comprises). Règle unique, partagée avec
+    l'archive des bulletins (histo.py)."""
+    try:
+        return bool(vol and val and px and vol > 0 and val > 0 and px > 0 and .85 <= val / vol / px <= 1.15)
+    except (TypeError, ZeroDivisionError):
+        return False
+
+
 # ------------------------------------------------------------------ loaders
 def is_wkend(d):
     """Samedi ou dimanche (date entière AAAAMMJJ)."""
@@ -1604,22 +1614,9 @@ def main():
             s = sess_rows[t]
             bar = (sess_d, s.get("o") or s["c"], max(s["c"], s.get("o") or s["c"]), min(s["c"], s.get("o") or s["c"]), s["c"], s.get("vol", 0), int((s.get("vol") or 0) * s["c"]))
             rows = [r for r in rows if r[0] != sess_d] + [bar]
-        # volumes et montants échangés : ceux du bulletin officiel de la cote quand il existe (montant jugé lisible s'il est à ±30 % de volume × cours) ;
-        # sinon le montant du jour n'est qu'une estimation (volume × cours de clôture), signalée comme telle
+        # montant du jour de la séance en cours : estimation (volume × cours de clôture), signalée comme telle tant que le bulletin
+        # officiel ne l'a pas remplacé (volumes et montants du bulletin repris plus bas, une fois les cours ajustés des opérations)
         val_est = bool(rows) and rows[-1][0] == sess_d and t in sess_rows
-        if BOC.get(t) and rows:
-            B_ = BOC[t]
-            for i_, r in enumerate(rows):
-                b_ = B_.get(r[0])
-                if b_ and b_.get("val") and b_.get("vol") and r[4] and 0.7 < b_["val"] / (b_["vol"] * r[4]) < 1.3:
-                    # (montant du bulletin imprimé en milliers, égal au montant à l'unité déjà en place : on garde le plus précis)
-                    keep_ = b_.get("val_k") and int(b_["vol"]) == r[5] and r[6] and abs(r[6] - b_["val"]) <= 1000
-                    if not keep_ and (int(b_["vol"]), int(b_["val"])) != (r[5], r[6]):
-                        boc_chk["val_fix"] = boc_chk.get("val_fix", 0) + 1
-                    if not keep_:
-                        rows[i_] = tuple(r[:5]) + (int(b_["vol"]), int(b_["val"]))
-                    if r[0] == rows[-1][0]:
-                        val_est = False
         if len(rows) < 3:
             continue
         f = fund.get(t, {})
@@ -1939,6 +1936,38 @@ def main():
                 cfb_[t] = cfb_.get(t, 0) + 1
                 if not a.live:
                     force_write.add(t)
+        # volumes et montants échangés : ceux du bulletin officiel de la cote pour toute séance qu'il imprime. Volume ramené sur la base
+        # des actions actuelles par le facteur de la séance (clôture du bulletin ÷ clôture de la série, rapproché du produit exact des
+        # opérations sur titres connues : avant un fractionnement x10, un titre échangé vaut dix actions d'aujourd'hui) ; montant en FCFA
+        # tel quel (un fractionnement ne change pas la somme échangée). Facteur non reconnu (opération absente de la liste) ou montant
+        # invraisemblable : ligne de la base gardée et comptée (vol_doute)
+        if BOC.get(t) and rows:
+            B_ = BOC[t]
+            ops_f = sorted((e_, k_) for e_, k_ in SPL.get(t, []) if e_ <= rows[-1][0])
+            facs_ = {1.0} | {math.prod(k_ for _, k_ in ops_f[i0:]) for i0 in range(len(ops_f))}
+            for i_, r in enumerate(rows):
+                b_ = B_.get(r[0])
+                if not b_ or not b_.get("c") or not (b_.get("vol") or 0) > 0 or not r[4]:
+                    continue
+                q_ = r[4] / b_["c"]
+                f_ = min(facs_, key=lambda x: abs(math.log(q_ * x)))
+                if abs(math.log(q_ * f_)) >= math.log(1.006) or not montant_plausible(b_["vol"], b_.get("val"), b_["c"]):
+                    boc_chk["vol_doute"] = boc_chk.get("vol_doute", 0) + 1
+                    vdb_ = boc_chk.setdefault("vol_doute_by", {})
+                    vdb_[t] = vdb_.get(t, 0) + 1
+                    continue
+                # (volume ajusté d'un rapport non entier : l'arrondi déjà en place est gardé s'il est à moins d'une action du volume exact)
+                vo_ = r[5] if abs(r[5] - b_["vol"] * f_) < 1 else int(round(b_["vol"] * f_))
+                # (montant du bulletin imprimé en milliers, égal au montant à l'unité déjà en place : on garde le plus précis)
+                keep_ = b_.get("val_k") and vo_ == r[5] and r[6] and abs(r[6] - b_["val"]) <= 1000
+                va_ = r[6] if keep_ else int(round(b_["val"]))
+                if (vo_, va_) != (r[5], r[6]):
+                    rows[i_] = tuple(r[:5]) + (vo_, va_)
+                    boc_chk["val_fix"] = boc_chk.get("val_fix", 0) + 1
+                    vfb_ = boc_chk.setdefault("val_fix_by", {})
+                    vfb_[t] = vfb_.get(t, 0) + 1
+                if r[0] == rows[-1][0]:
+                    val_est = False
         # données officielles de la BRVM, prioritaires sur les sites tiers :
         # nombre de titres et capitalisation flottante (page « Capitalisations » de brvm.org), PER et dividende du bulletin officiel de la cote
         so_ = sess_rows.get(t) or {}
