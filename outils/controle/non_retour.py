@@ -1022,6 +1022,55 @@ def b45(ctx):
     return ("orange", " ; ".join(pb)) if pb else ("vert", f"{a} avis de dividende sans texte" + (f" (précédent {a0})" if a0 is not None else "") + f", {l or 0} lus sans texte, {n.get('a_ocr', 0)} à relire")
 
 
+@bug("B46", "2026-10-20", "Postes des comptes lus à la mauvaise échelle (milliers, francs) ou avec le mauvais signe",
+     "Des postes lus dans les comptes étaient repris à la mauvaise échelle (Servair 1998 et AGL 1998-1999 en francs, SOGB 2002 "
+     "en millions au lieu de milliers…), des capitaux propres vérifiés étaient écartés au profit de la base (Unilever 2022 de signe "
+     "contraire) et le coût du risque d'Oragroup 2024 avait le mauvais signe. Corrigés le 20/10/2026 dans seed/corrections_bnpa.json, "
+     "chaque ligne avec son document.",
+     "fundamentals.json : aucun résultat, chiffre d'affaires, capitaux propres ou total du bilan à un facteur 200 ou plus de la "
+     "médiane des exercices voisins (±6 ans) de la même société")
+def b46(ctx):
+    import statistics
+    F = jl(ctx["D"], "fundamentals.json") or {}
+    out = []
+    for t, f in F.items():
+        se = (f or {}).get("series") or {}
+        for k in ("ca", "resultat_net", "capitaux_propres", "total_bilan"):
+            v = {int(y): x for y, x in (se.get(k) or {}).items() if str(y).isdigit() and isinstance(x, (int, float)) and x}
+            for y, x in v.items():
+                vois = [abs(z) for yy, z in v.items() if yy != y and abs(yy - y) <= 6]
+                if len(vois) >= 3:
+                    m = statistics.median(vois)
+                    if m and not 1 / 200 < abs(x) / m < 200:
+                        out.append(f"{t} {k} {y} {x:g} (médiane {m:g})")
+    return ("rouge", f"{len(out)} poste(s) à une autre échelle : " + "; ".join(out[:8])) if out else ("vert", f"{len(F)} sociétés, aucun poste hors d'échelle")
+
+
+# deux BNPA expliqués pour le même exercice (mention dans FA) : les unifier mettrait un chiffre non vérifié au résumé ou mêlerait
+# deux normes comptables dans un exercice
+BNPA_DEUX_NORMES = {"BICB": "2025 : bulletin sur les comptes IFRS vérifiés, série sur les comptes SYSCOHADA de la base",
+                    "SEMC": "2024 : bulletin encore sur 2023, 2024 de la base non publié à la BRVM"}
+
+
+@bug("B47", "2026-10-20", "BNPA et PER différents entre le résumé et la fiche FA",
+     "Le résumé prenait le BNPA du bulletin et FA celui de la série : PER, distribution et rendement différaient d'un écran à "
+     "l'autre pour la même société. Depuis le 20/10/2026 : une seule convention (BNPA du bulletin, sauf résultat du dernier "
+     "exercice vérifié et calculé autrement par le bulletin, pso « fqt », BNPA du bulletin gardé à côté) ; FA signale un écart.",
+     "actions BRVM : PER de FA = PER du résumé (à 0,1 près) ; distribution de FA = celle du résumé (à 1 point près)")
+def b47(ctx):
+    S = jl(ctx["D"], "summary.json") or {}
+    out = []
+    for s in S.get("secs") or []:
+        if s.get("mkt") != "BRVM" or s.get("cls") != "Equity" or s["id"] in BNPA_DEUX_NORMES:
+            continue
+        fa = jl(ctx["D"], f"fa/{s['id']}.json") or {}
+        if s.get("per") and fa.get("pe") and abs(s["per"] - fa["pe"]) > 0.1:
+            out.append(f"{s['id']} PER {s['per']:g} / FA {fa['pe']:g}")
+        if s.get("pay") and fa.get("payout") and abs(s["pay"] - fa["payout"]) > 0.01:
+            out.append(f"{s['id']} distribution {s['pay']:.1%} / FA {fa['payout']:.1%}")
+    return ("orange", f"{len(out)} écart(s) : " + "; ".join(out[:8])) if out else ("vert", "PER et distribution identiques dans le résumé et FA")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

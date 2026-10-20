@@ -1,6 +1,6 @@
 # Passation — où en est le travail, ce qui reste
 
-À lire en premier par toute nouvelle session. Mis à jour : 19/10/2026, 17 h 20 (Paris).
+À lire en premier par toute nouvelle session. Mis à jour : 20/10/2026, matin (Paris).
 Une session qui termine une étape importante met ce fichier à jour (état, reste à faire, pièges).
 
 ## Démarrer une session
@@ -35,7 +35,8 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Aucune donnée d'utilisateur dans le dépôt ; ne jamais demander de coller une clé secrète dans la conversation.
 - Projet distinct du screener FOFCO BRVM (autre dépôt, autre site) : ne jamais mélanger les deux.
 - Ne pas pousser de travail inachevé ou non testé (le contrôle de fin de tour demande de tout valider : mettre le travail en
-  cours de côté avec `git stash -u` plutôt que de le publier).
+  cours de côté dans un commit local non poussé ; la pile `git stash` est partagée avec les copies de travail des agents :
+  jamais de `git stash` sans nom).
 - Le propriétaire ne veut pas d'e-mails d'échec : une automatisation ne doit échouer que pour une vraie panne ; un contrôle qui
   ne passe pas écrit un rapport et garde la dernière bonne version.
 
@@ -57,6 +58,48 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Relecture complète des comptes (`comptes.py`) : ~20 min de calcul ; la répartir sur deux processus en local.
 - Automatisations qui lisent des PDF : Ubuntu 24.04 (Ubuntu 26.04 lit autrement une partie des scans).
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
+- Les branches de données se récupèrent avec un refspec explicite (`git fetch origin +refs/heads/data:refs/remotes/origin/data`) ;
+  sans lui, `origin/data` reste sur une ancienne version (piège constaté le 20/10 : branche `histo` crue en retard).
+
+## État au 20/10/2026 (audit complet de la nuit)
+
+Audit demandé le 19/10 au soir (« ligne par ligne, colonne par colonne, toutes les automatisations, doublons, faux chiffres,
+systèmes de correction et de détection, comprendre pourquoi ça revient »), après la fin des travaux en cours (`c28827ca`).
+Rapports détaillés de l'audit (cours, dividendes, fondamentaux, affichage, automatisations, données hors BRVM) : gardés dans
+l'espace de travail de la session ; chaque constat corrigé a son entrée dans `outils/controle/BUGS_CORRIGES.md` (B24 à B45).
+
+- **Publié** (chaque lot après une construction complète comparée à la précédente et le parcours complet du site : 418 pages
+  et onglets, iPhone 100 pages, QLAB 48 × 3, aucune erreur JavaScript) :
+  - `ceef8d49` : cours US par paquets de 20 (33 titres restaient sur la veille sans erreur) ; référence du contrôle du matin
+    gardée par la sonde ; alerte « base extérieure figée » visible (B24, B25).
+  - `7a56f2f1` : calculs d'affichage (périodes 1M/3M/6M calendaires et séance de référence, 12 mois calendaires DES/TECH, PER
+    US de GF, drawdown 5 ans, rendements absents, secteurs pondérés, prime RV, Parkinson, unités FA, PORTF, Sharpe hors dollar,
+    notations expirées, obligations) ; clôture du jour réservée à la base programmée du soir (`FQT_CLOSE`) ; archive
+    `seed/brvm_daily.csv` réparée depuis les bulletins (221 clôtures de séance du 12 au 19/10) (B26 à B29).
+  - `bb7166a0`, `0ece6a33`, `40b20be5` : volatilité 1 an seulement sur une année entière ; référence SPY des indices US ; copie
+    complète du site ; données hors BRVM (liquidité nette de la Fed en milliards, séances de week-end retirées, dividendes US à
+    leur date, bougie du jour cohérente, volume vraisemblable, variation US contre une clôture confirmée, contrats à terme après
+    le règlement, rendement US, CPI et taux 10 ans prolongés) (B30 à B32).
+- **Lot suivant** (`bdfd8449`, `8df5189b` et les corrections des dividendes, publiés après leur parcours complet) :
+  protections des automatisations (lecture des branches en 3 essais, arrêt si une branche existe mais reste illisible,
+  republication refusée si une branche perd plus de 10 % de ses fichiers, file `terminal-eod` pour la base du soir, délais
+  propres, annotations des sources en échec et des étapes lentes, rapports anciens retirés) ; variation des taux ; actualités
+  BRVM gardées 45 jours ; scission Honeywell (`seed/scissions_us.json`) ; semaines datées de leur dernière observation ;
+  doublons (Fear & Greed, intervenants, capitalisations mondiales) ; séance manquante d'une série US ; dividendes : opérations
+  sur le capital prouvées par les bulletins (Sonatel ×10 au 23/11/2012, Onatel ×10 au 29/11/2013, BOA CI 9 pour 41, BOA Niger
+  1 pour 19, CBI BF 3 pour 125), dates de détachement fausses retirées, CIEC 2016 payé le 20/09/2017, avis sans texte relus
+  par reconnaissance de caractères, 43 doublons d'événements, archive `histo` (B33 à B45).
+- **Pourquoi ça revenait** (causes racines) : un passage complet lancé en journée faisait la clôture du jour ; une source qui
+  renvoie moins que demandé (20 symboles) sans erreur ; des étapes coupées par un délai sans signal (passage vert) ; des
+  branches réécrites de force sans vérifier ce qu'on publie ; des contrôles qui vérifiaient l'archive contre elle-même et
+  jamais la série publiée contre le bulletin ; des unités et des dates de sources différentes mélangées sans table de
+  référence. Chaque cause a maintenant sa protection dans le code et son contrôle du matin.
+- **Reste de l'audit** :
+  - Relais du métronome en plusieurs essais (R3) : seulement avec un essai en parallèle (règle du propriétaire).
+  - Une base complète lancée en journée remplace pendant au plus 15 min des calculs plus récents (V13) : le relevé suivant
+    les refait ; séparation complète à faire avec la migration.
+  - CAPE figé (source arrêtée, affiché avec sa date) ; PER de Honeywell calculé sur des bénéfices d'avant la scission.
+  - UBER : séance du 16/10/2026 absente de la source des séries US (signalée chaque matin par B41 ; variation du jour juste).
 
 ## État au 19/10/2026, 22 h 38
 
