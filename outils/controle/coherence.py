@@ -12,7 +12,7 @@ avec les valeurs côte à côte, pour être vérifié sur le document avant de t
   7. éléments mal formés écartés à la construction ; fiche des sociétés FQT / base, titre nouveau au bulletin, indices douteux ;
   8. valeurs extrêmes à revoir à la main (rendement, distribution, PER).
 """
-import json
+import math, json
 import os
 
 TOL_SH = 0.005    # nombre de titres : 0,5 %
@@ -89,6 +89,102 @@ def _boc_recents(boc, n=20):
     for f in sorted(x for x in os.listdir(boc) if x[:4].isdigit() and x.endswith(".json"))[-2:]:
         L += sorted((_jl(boc, f) or {}).items())
     return L[-n:]
+
+
+# séances échangées au bulletin absentes de la série, vérifiées (audit du 20/10/2026) : pas des erreurs de la série
+ABSENTES_CONNUES = {("TTLC", 20150316): "ligne du bulletin identique à celle du 12/03 (copie possible)",
+                    ("UNLC", 20200602): "cours de référence changé pendant la suspension (augmentation de capital)",
+                    ("PALC", 20131210): "avant le début de la série", ("ETIT", 20131210): "avant le début de la série"}
+def _jours(a, b):
+    import datetime as _d
+    return (_d.date(a // 10000, a // 100 % 100, a % 100) - _d.date(b // 10000, b // 100 % 100, b % 100)).days
+
+
+COLS_BOC = ("prev", "o", "c", "var", "vol", "val", "ref", "ytd", "div", "div_d", "yld", "per", "avg")
+
+
+def _hist_bulletins(R, D, boc, by):
+    if not boc or not os.path.isdir(boc):
+        return
+    B0 = {}
+    for f in sorted(x for x in os.listdir(boc) if x[:4].isdigit() and x.endswith(".json")):
+        B0.update(_jl(boc, f) or {})
+    if len(B0) < 500:  # (seulement l'année en cours et la précédente : historique complet absent)
+        R.add("Historique / bulletins officiels", "vert", f"non vérifié ici : {len(B0)} bulletins seulement")
+        return
+    dup, prev = set(), None
+    for k in sorted(B0):
+        if prev is not None and B0[k] == prev:
+            dup.add(int(k))
+        else:
+            prev = B0[k]
+    cl, vo, mt, ab, rc, dec, n = [], [], [], [], [], [], 0
+    for t, s in sorted(by.items()):
+        x = _jl(D, f"s/{t}.json") or {}
+        d_, c_ = x.get("d") or [], x.get("c") or []
+        v_, val_ = x.get("v") or [0] * len(d_), x.get("val") or [0] * len(d_)
+        if not d_:
+            continue
+        idx = {d: j for j, d in enumerate(d_)}
+        # date d'effet de chaque opération lue sur les paliers du bulletin (clôture ÷ clôture précédente ≈ rapport, à 120 jours
+        # de la date listée) : une date listée différente est signalée (CFAC 2017 : avis du 13/11, palier du 19/12)
+        ks_ = sorted(int(kb) for kb in B0 if isinstance(B0[kb].get(t), list) and dict(zip(COLS_BOC, B0[kb][t])).get("c"))
+        cs_ = {k: dict(zip(COLS_BOC, B0[str(k)][t]))["c"] for k in ks_}
+        spl = []
+        for e, kk in [(int(e), float(k)) for e, k in (s.get("split") or [])]:
+            best = None
+            for a_, b_ in zip(ks_, ks_[1:]):
+                if abs(math.log(cs_[a_] / cs_[b_] / kk)) < math.log(1.15) and abs(_jours(b_, e)) < 120 and \
+                        (best is None or abs(_jours(b_, e)) < abs(_jours(best, e))):
+                    best = b_
+            if best and abs(_jours(best, e)) > 5 and kk > 1.3:  # (avis et effet à quelques jours près : normal)
+                dec.append(f"{t} ×{kk:g} listé au {e}, palier du bulletin au {best}")
+            spl.append((best or e, kk))
+        for kb in sorted(B0):
+            k = int(kb)
+            r = B0[kb].get(t)
+            if not isinstance(r, list) or k in dup:
+                continue
+            b = dict(zip(COLS_BOC, r))
+            F = 1.0
+            for e, kk in spl:
+                if k < e <= d_[-1]:
+                    F *= kk
+            traded = bool(b.get("c")) and (b.get("vol") or 0) > 0
+            if k not in idx:
+                if traded and d_[0] <= k <= d_[-1] and (t, k) not in ABSENTES_CONNUES:
+                    ab.append(f"{t} {k}")
+                continue
+            j, n = idx[k], n + 1
+            if b.get("c") and c_[j] and abs(c_[j] * F / b["c"] - 1) > .005:
+                cl.append(f"{t} {k} {_f(c_[j])} × {F:g} / {_f(b['c'])}")
+            if traded:
+                bv = b.get("vol") or 0
+                if abs((v_[j] or 0) - bv * F) > max(1.0, .005 * bv * F):
+                    vo.append(f"{t} {k} {_f(v_[j] or 0, 0)} / {_f(bv * F, 0)}")
+                bval = b.get("val") or 0
+                if bval and bv and b.get("c") and not .7 < bval / (bv * b["c"]) < 1.3 and .85 <= bval * 1000 / (bv * b["c"]) <= 1.15:
+                    bval *= 1000
+                if bval and (not val_[j] or not .5 <= val_[j] / bval <= 2):
+                    mt.append(f"{t} {k} {_f(val_[j] or 0, 0)} / {_f(bval, 0)}")
+        for j in range(1, len(d_)):
+            if c_[j] == c_[j - 1] and v_[j] and v_[j] == v_[j - 1] and str(d_[j]) in B0 and d_[j] not in dup:
+                r = B0[str(d_[j])].get(t)
+                b = dict(zip(COLS_BOC, r)) if isinstance(r, list) else None
+                if b is None or not (b.get("c") and (b.get("vol") or 0) > 0):
+                    rc.append(f"{t} {d_[j]}")
+    R.add("Historique / bulletins : dates d'effet des opérations", "orange" if dec else "vert",
+          (f"{len(dec)} opération(s) listée(s) à une autre date que le palier du bulletin : " + _liste(dec)) if dec else "dates concordantes")
+    R.add("Historique / bulletins : clôtures", "rouge" if cl else "vert",
+          (f"{len(cl)} clôture(s) différente(s) du bulletin × facteur : " + _liste(cl)) if cl else f"{n} séances communes, clôtures identiques au bulletin")
+    R.add("Historique / bulletins : montants échangés", "rouge" if mt else "vert",
+          (f"{len(mt)} montant(s) hors [0,5 ; 2] du bulletin : " + _liste(mt)) if mt else "montants concordants")
+    R.add("Historique / bulletins : volumes", "orange" if len(vo) > 200 else "vert",
+          f"{len(vo)} volume(s) différent(s) du bulletin × facteur (référence du 20/10/2026 : 179, CBIBF)" + (" : " + _liste(vo, 6) if vo else ""))
+    R.add("Historique / bulletins : séances échangées absentes de la série", "orange" if ab else "vert",
+          (f"{len(ab)} séance(s) : " + _liste(ab)) if ab else f"aucune ({len(ABSENTES_CONNUES)} cas vérifiés)")
+    R.add("Historique / bulletins : lignes recopiées sans échange au bulletin", "rouge" if rc else "vert",
+          (f"{len(rc)} ligne(s) : " + _liste(rc)) if rc else "aucune")
 
 
 def verifier(R, D, boc=None):
@@ -190,6 +286,14 @@ def verifier(R, D, boc=None):
               (f"séance du {dd} : {len(out)} cours différent(s) du bulletin : " + _liste(out)) if out else f"séance du {dd} : {n} cours identiques au bulletin")
         R.add("BNPA et PER / bulletin officiel", "orange" if outp else "vert",
               (f"{len(outp)} écart(s) de plus de 2 % : " + _liste(outp)) if outp else f"séance du {dd} : BNPA concordants")
+
+    # 3 ter. tout l'historique / bulletins officiels (audit du 20/10/2026) : clôture × facteur des opérations sur le capital = bulletin
+    # (0,5 %), volume = volume du bulletin × facteur, montant (milliers ramenés en FCFA), séance échangée au bulletin absente de
+    # la série, ligne recopiée (cours et volume de la veille) un jour où le bulletin ne confirme pas d'échange
+    try:
+        _hist_bulletins(R, D, boc, by)
+    except Exception as e:  # noqa: BLE001
+        R.add("Historique / bulletins officiels", "orange", f"contrôle interrompu : {type(e).__name__} {e}")
 
     # 3 bis. volumes des dernières séances / bulletin officiel (montant volume × cours, insensible aux fractionnements) : un volume
     # partiel resté en place (relevé de la base pris en cours de séance) se voit ici

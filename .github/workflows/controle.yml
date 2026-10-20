@@ -45,10 +45,10 @@ jobs:
           # documents sans texte de la branche dividendes (avis à relire par reconnaissance de caractères) : compteurs seulement
           git fetch -q --depth 1 origin dividendes 2>/dev/null && git show FETCH_HEAD:dividendes.json 2>/dev/null \
             | python3 -c "import json,sys; d=json.load(sys.stdin); json.dump({'n': d.get('n') or {}, 'sans_texte': (d.get('sans_texte') or [])[:20]}, open('/tmp/prev/div_n.json', 'w'))" || rm -f /tmp/prev/div_n.json
-          # cohérence des chiffres : bulletins officiels de l'année en cours et de la précédente
+          # cohérence des chiffres : tous les bulletins officiels lus (historique complet, contrôle « Historique / bulletins »)
           mkdir -p /tmp/prev/boc
           if git fetch -q --depth 1 origin boc 2>/dev/null; then
-            for y in $(date -u +%Y) $(( $(date -u +%Y) - 1 )); do git show "FETCH_HEAD:boc_px/$y.json" > "/tmp/prev/boc/$y.json" 2>/dev/null || rm -f "/tmp/prev/boc/$y.json"; done
+            git archive FETCH_HEAD boc_px | tar -x -C /tmp/prev 2>/dev/null && mv /tmp/prev/boc_px/*.json /tmp/prev/boc/ 2>/dev/null || true
           fi
           gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100&created=>=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)" \
             --jq '.workflow_runs[] | {name, conclusion, status}' 2>/dev/null | jq -s '{runs: .}' > /tmp/prev/runs.json 2>/dev/null || rm -f /tmp/prev/runs.json
