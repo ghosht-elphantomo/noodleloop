@@ -304,7 +304,9 @@ def verifier(R, D, boc=None):
             gp_ = max((_bd(dd_[i - 1], dd_[i]) for i in range(1, len(dd_))), default=0)
             if gp_ > 5 and s.get("mkt") != "BRVM":
                 lastd[s["id"]] = (s.get("mkt"), x["d"][-1], gp_)
-    late = sorted(f"{k} ({v[1] % 100:02d}/{v[1] // 100 % 100:02d})" for k, v in lastd.items() if _bd(v[1], ref_m[v[0]]) > 3)
+    # (prix au comptant de l'EIA : publiés avec environ une semaine de retard, délai normal de la source : 8 jours ouvrés tolérés)
+    RETARD_NORMAL = {"BRENTS": 8, "WTIS": 8, "NGS": 8}
+    late = sorted(f"{k} ({v[1] % 100:02d}/{v[1] // 100 % 100:02d})" for k, v in lastd.items() if _bd(v[1], ref_m[v[0]]) > RETARD_NORMAL.get(k, 3))
     late += sorted(f"{k} (trou de {v[2]} jours ouvrés)" for k, v in lastd.items() if len(v) > 2)
     R.add("Séries quotidiennes en retard sur leur marché", "orange" if late else "vert",
           (f"{len(late)} série(s) arrêtée(s) depuis plus de 3 jours ouvrés : " + _liste(late, 15)) if late else f"{len(lastd)} séries à jour")

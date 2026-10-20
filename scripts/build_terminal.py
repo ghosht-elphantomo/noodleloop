@@ -2193,6 +2193,29 @@ def main():
         fx = fetch(DS.format("exchange-rates/main/data/daily.csv"), a.cache).decode("utf8")
         eur = series_from_csv(fx, "Date", "Exchange rate", lambda r: r.get("Country") == "Euro")
         twd = series_from_csv(fx, "Date", "Exchange rate", lambda r: r.get("Country") == "Taiwan")
+        # cours de la Réserve fédérale (publication hebdomadaire : jusqu'à 10 jours de retard, série du 09/10 au 19/10/2026 trouée)
+        # complétés après leur dernière date par les clôtures quotidiennes relevées à chaque passage (world_mkt.json, un mois) ;
+        # seulement si les deux sources concordent à 0,5 % près sur les dates communes (même unité, même cotation)
+        def fx_fill(rows, sym, inv):
+            try:
+                h_ = ((json.load(open(os.path.join(a.out, "world_mkt.json"), encoding="utf8")) or {}).get("h") or {}).get(sym) or {}
+                hh_ = {di(k_): (1 / v_ if inv else v_) for k_, v_ in h_.items() if v_ and v_ > 0 and not is_wkend(di(k_))}
+                com_ = [(v_, hh_[d_]) for d_, v_ in rows if d_ in hh_]
+                if not rows or len(com_) < 3:
+                    return rows
+                import statistics
+                if statistics.median(abs(b_ / a_ - 1) for a_, b_ in com_) > .005:
+                    log("change", sym, ": clôtures relevées éloignées des cours de la Fed, série non complétée")
+                    return rows
+                plus_ = sorted((d_, v_) for d_, v_ in hh_.items() if d_ > rows[-1][0])
+                if plus_:
+                    log("change", sym, ":", len(plus_), "séance(s) après le", rows[-1][0], "complétée(s) par les clôtures relevées")
+                return rows + plus_
+            except Exception as e:  # noqa: BLE001
+                log("change", sym, ": complément impossible", e)
+                return rows
+        eur = fx_fill(eur, "EUR=", True)
+        twd = fx_fill(twd, "TWD=", False)
         add({"id": "EURUSD", "tk": "EURUSD Curncy", "n": "Euro / Dollar US", "cls": "Curncy", "typ": "Curncy", "mkt": "MACRO", "grp": "Change", "ccy": "USD"},
             [x[0] for x in eur], [1 / x[1] for x in eur], nd=5)
         add({"id": "USDXOF", "tk": "USDXOF Curncy", "n": "Dollar US / Franc CFA (BCEAO)", "cls": "Curncy", "typ": "Curncy", "mkt": "MACRO", "grp": "Change", "ccy": "XOF"},

@@ -1096,6 +1096,17 @@ def b48(ctx):
     return ("orange", f"{len(out)} exercice(s) : " + "; ".join(out[:8])) if out else ("vert", "dividendes des fiches = versements officiels")
 
 
+@bug("B49", "2026-10-20", "Change euro, franc CFA et dollar taïwanais troués de dix jours (publication hebdomadaire de la Fed)",
+     "Les séries EURUSD, USDXOF et USDTWD venaient des cours de la Réserve fédérale, publiés chaque semaine : elles s'arrêtaient au "
+     "09/10/2026 puis reprenaient au 19/10 avec la cotation du jour (variation sur une semaine et demie, trou dans le graphique). "
+     "Depuis le 20/10/2026, elles sont complétées après la dernière date de la Fed par les clôtures quotidiennes relevées, si les "
+     "deux sources concordent à 0,5 % près.",
+     "contrôle « Séries quotidiennes en retard sur leur marché » (aucune série arrêtée depuis plus de 3 jours ouvrés, aucun trou de "
+     "plus de 5 jours ouvrés dans les dix derniers points)")
+def b49(ctx):
+    return deja("Séries quotidiennes en retard sur leur marché")(ctx)
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R
