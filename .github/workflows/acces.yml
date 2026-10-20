@@ -1,0 +1,33 @@
+name: Accès
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        default: "15"
+
+permissions:
+  contents: read
+
+env:
+  K1: ${{ secrets.K1 }}
+  K2: ${{ secrets.K2 }}
+  D1: ${{ secrets.D1 }}
+  ESSAI: "1"
+  M: /tmp/c/automatisations/moteur
+  MINUTES: ${{ inputs.minutes }}
+
+jobs:
+  a:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Préparation
+        run: git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation"; exit 1; }
+      - name: Étape 1
+        run: bash "$M/lien.sh" ouvrir
+      - name: Étape 2
+        if: always()
+        run: bash "$M/lien.sh" garder

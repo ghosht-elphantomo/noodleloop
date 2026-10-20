@@ -1,0 +1,42 @@
+name: Machines
+
+on:
+  workflow_dispatch:
+    inputs:
+      docs:
+        default: ""
+      terminal:
+        default: "oui"
+
+permissions:
+  contents: read
+
+env:
+  K1: ${{ secrets.K1 }}
+  D1: ${{ secrets.D1 }}
+  K2: ${{ secrets.K2 }}
+  ESSAI: "1"
+  M: /tmp/c/automatisations/moteur
+
+jobs:
+  a:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    env:
+      ESSAI_OS: ${{ matrix.os }}
+      DOCS: ${{ inputs.docs }}
+      TERMINAL: ${{ inputs.terminal }}
+    steps:
+      - name: Préparation
+        run: git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation"; exit 1; }
+      - uses: actions/cache/restore@v6
+        with:
+          path: /tmp/cc
+          key: c1-${{ github.run_id }}
+          restore-keys: c1-
+      - name: Étape 1
+        run: bash "$M/essai.sh"

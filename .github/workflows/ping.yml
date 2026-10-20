@@ -1,0 +1,17 @@
+name: Ping
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        default: ""
+
+permissions: {}
+
+jobs:
+  a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Étape 1
+        run: date -u +%H:%M:%S

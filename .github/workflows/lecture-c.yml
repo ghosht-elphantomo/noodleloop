@@ -1,0 +1,28 @@
+name: Lecture C
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lecture-c
+  cancel-in-progress: false
+
+env:
+  K1: ${{ secrets.K1 }}
+  K2: ${{ secrets.K2 }}
+  D1: ${{ secrets.D1 }}
+  ESSAI: "1"
+  M: /tmp/c/automatisations/moteur
+
+jobs:
+  a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Préparation
+        run: git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation"; exit 1; }
+      - name: Étape 1
+        run: bash "$M/bulletins.sh"

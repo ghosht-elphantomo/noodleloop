@@ -1,0 +1,53 @@
+name: Cadence
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+    inputs:
+      parent:
+        default: ""
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  a:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 355
+    env:
+      GH_TOKEN: ${{ github.token }}
+      P: ${{ inputs.parent }}
+      CIBLE: ping.yml
+    steps:
+      - name: Étape 1
+        id: chk
+        run: |
+          case "$P" in ''|*[!0-9]*) P=0;; esac
+          n=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/cadence.yml/runs?status=in_progress&per_page=20" \
+                --jq "[.workflow_runs[] | select(.id != $GITHUB_RUN_ID and .id != $P and ((.run_started_at // .created_at) | fromdateiso8601) > (now - 21600))] | length" 2> /dev/null || echo 0)
+          if [ "${n:-0}" -gt 0 ]; then echo "run=0" >> "$GITHUB_OUTPUT"; else echo "run=1" >> "$GITHUB_OUTPUT"; fi
+      - name: Étape 2
+        if: steps.chk.outputs.run == '1'
+        run: |
+          end=$(( $(date +%s) + 340 * 60 ))
+          while :; do
+            now=$(date +%s); next=$(( (now / 900 + 1) * 900 + 15 ))
+            [ "$next" -ge "$end" ] && break
+            sleep $(( next - now ))
+            for k in 1 2 3; do
+              if gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/$CIBLE/dispatches" -f ref=main -f "inputs[mode]=rapide" > /dev/null 2>&1; then
+                echo "$(date -u +%H:%M:%S)"; break
+              fi
+              sleep 20
+            done
+          done
+      - name: Étape 3
+        if: steps.chk.outputs.run == '1'
+        run: |
+          for k in 1 2 3; do
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/cadence.yml/dispatches" -f ref=main -f "inputs[parent]=$GITHUB_RUN_ID" > /dev/null 2>&1 && exit 0
+            sleep 20
+          done
+          echo "::error::relais"; exit 1
