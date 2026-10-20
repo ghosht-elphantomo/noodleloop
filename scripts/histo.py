@@ -287,10 +287,12 @@ def main():
 
     # ---------- 4. fractionnements / regroupements ----------
     tsp = Table(out, "fractionnements.csv", ["titre", "date", "ratio"], ["titre", "date"])
+    sp_jour = {}
     for s in secs:
         if s["id"] in brvm_eq:
             for d, r in s.get("split") or []:
                 tsp.upsert({"titre": s["id"], "date": iso(d), "ratio": r})
+                sp_jour.setdefault(s["id"], []).append((iso(d), fl(r)))
     tables.append(tsp)
 
     # ---------- 5. événements et opérations sur titres (avis publiés) ----------
@@ -376,6 +378,21 @@ def main():
     for k in tre.drop(lambda r: (r.get("exercice") or "0").isdigit() and int(r["exercice"]) >= now.year):
         tco.upsert({"constate_le": today, "fichier": tre.name, "cle": " | ".join(k), "champ": "ligne", "ancienne_valeur": "exercice archivé",
                     "nouvelle_valeur": "retirée : exercice pas encore clos (comptes semestriels)"})
+    # date d'une opération sur titres corrigée par le terminal (date d'effet constatée au bulletin au lieu de celle de l'avis, ex.
+    # BOABF 29/08 -> 28/08/2024) : l'ancienne ligne — même titre, même rapport, à 40 jours au plus d'une opération du jour — ferait
+    # compter l'opération deux fois ; retirée, et consignée
+    def sp_corrigee(r):
+        lst = sp_jour.get(r.get("titre")) or []
+        if not lst or any(d == r.get("date") for d, _ in lst):
+            return False
+        try:
+            d0, x0 = dt.date.fromisoformat(r["date"]), float(r["ratio"])
+            return any(x and abs(x / x0 - 1) < 1e-3 and abs((dt.date.fromisoformat(d) - d0).days) <= 40 for d, x in lst)
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            return False
+    for k in tsp.drop(sp_corrigee):
+        tco.upsert({"constate_le": today, "fichier": tsp.name, "cle": " | ".join(k), "champ": "ligne", "ancienne_valeur": "opération archivée",
+                    "nouvelle_valeur": "retirée : date corrigée par le terminal (même opération, même rapport)"})
     for t in tables:
         if t.n0 == 0:  # première alimentation du fichier : rien à corriger
             continue
