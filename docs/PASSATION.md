@@ -107,6 +107,11 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
   quand l'interface est agrandie (B52) ; UEMOA, donnée de plus de dix ans affichée « — » (dette de la Côte d'Ivoire de 1995,
   B50) ; retenues du Burkina (12,5 %) et du Bénin (5 %) au taux du code des impôts, marquées « à vérifier » (les avis ne
   donnent que le net). EVTS vérifié à jour (dernier avis de la BRVM le 15/10, dernière publication de société le 16/10).
+- **FA, deux référentiels (20/10, demande du propriétaire)** : les ratios se calculent aussi sur le second jeu de comptes
+  (bouton « Comptes », `R2` dans `fa/*.json` ; PER et distribution seulement sur le principal, le BNPA officiel n'existant que
+  pour lui) ; le référentiel principal est SYSCOHADA dès qu'il couvre un des deux derniers exercices (`comptes.py`), IFRS
+  seulement pour les sociétés qui ne publient qu'en IFRS (Sonatel et Oragroup : derniers comptes SYSCOHADA en 2015 et 2018 ;
+  Ecobank, Orange CI). Années anciennes : 73 exercices à trous dans les comptes détaillés, voir « Données manquantes ».
 - **Agents** : le propriétaire décide seul de leur emploi (consommation) ; par défaut, travail sans agent.
 - **Reste de l'audit** :
   - Dates d'effet listées à plus de 5 jours du palier du bulletin (CFAC ×100 13/11 → 19/12/2017, SAFC ×25, SEMC ×40) :
