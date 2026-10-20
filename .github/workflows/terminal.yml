@@ -29,15 +29,17 @@ permissions:
   contents: write
   actions: read
 
-# relevés de 15 min (programmés ou lancés par le métronome) et base complète dans deux files séparées :
-# un relevé en attente ne peut pas annuler la base du soir
+# relevés de 15 min (programmés ou lancés par le métronome), passages complets lancés à la main ou par un push, et base programmée
+# du soir dans trois files séparées : ni un relevé ni un push en attente ne peuvent annuler la base du soir (GitHub annule un
+# passage en attente quand un autre arrive dans la même file)
 concurrency:
-  group: ${{ ((github.event_name == 'schedule' && github.event.schedule != '35 22 * * 1-5') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'live')) && 'terminal-live' || 'terminal-full' }}
+  group: ${{ github.event.schedule == '35 22 * * 1-5' && 'terminal-eod' || (((github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'live')) && 'terminal-live' || 'terminal-full') }}
   cancel-in-progress: false
 
 jobs:
   # Le métronome (metronome.yml) lance un relevé pile à chaque quart d'heure ; la programmation */15 reste en secours
-  # et s'efface si le métronome a lancé un relevé il y a moins de 12 minutes (pas de doublon).
+  # et s'efface si le métronome a lancé un relevé il y a moins de 15 minutes (pas de doublon ; le secours, retardé par GitHub,
+  # partait encore 26 fois en 4 jours avec une fenêtre de 12 minutes).
   gate:
     runs-on: ubuntu-26.04
     timeout-minutes: 3
@@ -51,7 +53,7 @@ jobs:
           go=1
           if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" != "35 22 * * 1-5" ]; then
             n=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/terminal.yml/runs?event=workflow_dispatch&per_page=5" \
-                  --jq '[.workflow_runs[] | select((.created_at | fromdateiso8601) > (now - 720))] | length' || echo 0)
+                  --jq '[.workflow_runs[] | select((.created_at | fromdateiso8601) > (now - 900))] | length' || echo 0)
             if [ "${n:-0}" -gt 0 ]; then go=0; echo "Le métronome vient de lancer un relevé : relevé de secours inutile."; fi
           fi
           echo "go=$go" >> "$GITHUB_OUTPUT"
@@ -61,7 +63,9 @@ jobs:
     if: needs.gate.outputs.go == '1'
     # machines Ubuntu 24.04 gardées : lecture des PDF identique à celle de tout le cache (voir essai.yml et docs/GUIDE.md)
     runs-on: ubuntu-24.04
-    timeout-minutes: 95
+    # relevé de 15 min : 30 min au plus (pire cas des délais propres : lecture 1 min, cours 10, actualités 8, calcul et
+    # publication 5 ; un relevé bloqué ne retient plus la file des relevés 95 min) ; base complète : somme des délais des étapes
+    timeout-minutes: ${{ ((github.event_name == 'schedule' && github.event.schedule != '35 22 * * 1-5') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'live')) && 30 || 120 }}
     steps:
       - uses: actions/checkout@v7
 
@@ -82,19 +86,40 @@ jobs:
       - name: Restaurer les données et les données brutes
         run: |
           mkdir -p /tmp/site /tmp/state /tmp/raw
+          touch /tmp/t0  # début du passage (rapports des sources écrits par ce passage)
           cp seed/brvm.json /tmp/state/brvm.json
-          # données publiées (branche data ; à défaut l'ancienne branche site qui les contenait)
-          if git fetch -q --depth 1 origin data; then SRC=data; elif git fetch -q --depth 1 origin site; then SRC=site; else SRC=; fi
-          if [ -n "$SRC" ]; then
-            git rev-parse FETCH_HEAD > /tmp/data_sha; echo "$SRC" > /tmp/data_src
+          # lecture d'une branche : 3 essais ; une branche qui existe mais reste illisible arrête le passage (rien n'est republié
+          # par-dessus : sans elle, le passage repartirait de zéro et republierait de force une branche incomplète) ; une branche
+          # absente (premier passage) est créée par ce passage
+          lire() {
+            for i in 1 2 3; do
+              if git fetch -q --depth 1 origin "$1"; then return 0; fi
+              rc=0; git ls-remote --exit-code --heads origin "$1" > /dev/null 2>&1 || rc=$?
+              if [ "$rc" = 2 ]; then echo "Branche $1 absente : créée par ce passage"; return 1; fi
+              sleep $((i * 10))
+            done
+            echo "::error title=Restauration::branche $1 présente mais illisible après 3 essais : passage arrêté, rien n'est republié"; exit 1
+          }
+          # données publiées (branche data)
+          if lire data; then
+            git rev-parse FETCH_HEAD > /tmp/data_sha; echo data > /tmp/data_src
             git archive FETCH_HEAD data | tar -x -C /tmp/site || true
+            [ -s /tmp/site/data/summary.json ] || { echo "::error title=Restauration::branche data lue mais sans summary.json : passage arrêté, rien n'est republié"; exit 1; }
             if [ -f /tmp/site/data/session.json ]; then cp /tmp/site/data/session.json /tmp/state/brvm.json; fi
           fi
           mkdir -p /tmp/site/data
-          if git fetch -q --depth 1 origin raw; then git rev-parse FETCH_HEAD > /tmp/raw_sha; git archive FETCH_HEAD | tar -x -C /tmp/raw || true; fi
+          if lire raw; then
+            git rev-parse FETCH_HEAD > /tmp/raw_sha; git ls-tree -r --name-only FETCH_HEAD | wc -l > /tmp/raw_n
+            git archive FETCH_HEAD | tar -x -C /tmp/raw || true
+          fi
           rm -f /tmp/raw/.dirty
-          # bulletins officiels de la cote déjà lus (branche boc, écrite par le workflow « Bulletins officiels BRVM »)
-          mkdir -p /tmp/boc && if git fetch -q --depth 1 origin boc; then git archive FETCH_HEAD | tar -x -C /tmp/boc || true; fi
+          # bulletins officiels de la cote déjà lus (branche boc, écrite par le workflow « Bulletins officiels BRVM ») : lecture
+          # seule ; illisible, le passage continue avec les cours du jour (avertissement)
+          mkdir -p /tmp/boc
+          for i in 1 2 3; do
+            if git fetch -q --depth 1 origin boc; then git archive FETCH_HEAD | tar -x -C /tmp/boc || true; break; fi
+            [ "$i" = 3 ] && echo "::warning title=Restauration::branche boc illisible : bulletins officiels non utilisés pour ce passage"; sleep $((i * 5))
+          done
 
       - name: Cache des sources (miroirs CSV)
         uses: actions/cache@v6
@@ -120,7 +145,9 @@ jobs:
           # Fear & Greed de CNN relevé à chaque passage en semaine (le soir, il est déjà relevé avec les sources complémentaires)
           # calendrier du FOMC relu au plus une fois par jour (anticipations de la Fed)
           ONLY=avis,watch,obl,cmc,cal,fomc; if [ "$(date -u +%u)" -le 5 ] && [ "$FQT_MODE" != "eod" ]; then ONLY=$ONLY,cnn; fi
-          timeout 360 python3 scripts/fetch_extra.py --out /tmp/raw --only $ONLY --site /tmp/site/data --news /tmp/site/data/news.json
+          # délai de 480 s : aux passages de l'heure pile en séance, l'étape dure 300 à 345 s et était coupée à 360 s (fin de la
+          # liste non rafraîchie) ; une coupure est signalée par l'étape « Sources en échec » en fin de passage
+          timeout 480 python3 scripts/fetch_extra.py --out /tmp/raw --only $ONLY --site /tmp/site/data --news /tmp/site/data/news.json
 
       - name: Outils PDF (EOD)
         if: steps.mode.outputs.mode == 'eod'
@@ -211,7 +238,18 @@ jobs:
         run: |
           MODE="${{ steps.mode.outputs.mode }}"
           if [ "$MODE" != "eod" ] && [ ! -f /tmp/raw/.dirty ]; then echo "Rien à publier"; exit 0; fi
-          rm -f /tmp/raw/.dirty /tmp/raw/report_news-watch.json
+          rm -f /tmp/raw/.dirty
+          # rapports des sources d'anciennes listes (plus réécrits depuis 7 jours) : retirés, ils affichaient des erreurs anciennes
+          python3 - <<'PY' || true
+          import glob, json, os, time
+          for p in glob.glob("/tmp/raw/**/report_*.json", recursive=True):
+              try:
+                  ts = (json.load(open(p)).get("_") or {}).get("ts") or 0
+              except Exception:
+                  ts = 0
+              if ts < time.time() - 7 * 86400:
+                  os.remove(p); print("rapport ancien retiré :", os.path.relpath(p, "/tmp/raw"))
+          PY
           printf '{"git":{"deploymentEnabled":false}}\n' > /tmp/raw/vercel.json
           URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           export GIT_DIR=/tmp/raw.git GIT_WORK_TREE=/tmp/raw
@@ -228,6 +266,12 @@ jobs:
             git push -q "$URL" HEAD:raw || echo "Branche raw modifiée entre-temps : publication reportée"
           else
             git add -A && git commit -qm "Brut $(date -u +'%d/%m/%Y %H:%M') UTC" || exit 0
+            # republication forcée (commit unique) : refusée si la branche perd plus de 10 % de ses fichiers ; la version en ligne
+            # est gardée et le passage est signalé en échec à la fin (après la publication des données et du site)
+            N0=$(cat /tmp/raw_n 2>/dev/null || echo 0); N1=$(git ls-files | wc -l)
+            if [ "$N0" -gt 0 ] && [ $((N1 * 10)) -lt $((N0 * 9)) ]; then
+              echo "::error title=Branche raw::$N1 fichiers au lieu de $N0 : publication refusée, version en ligne gardée"; echo raw >> /tmp/refus; exit 0
+            fi
             git push -q -f "$URL" HEAD:raw
           fi
 
@@ -316,3 +360,28 @@ jobs:
             if git push -q origin HEAD:main; then echo "Archivé"; break; fi
             echo "main a bougé, nouvel essai ($i)"; sleep $((i * 5))
           done
+
+      - name: Sources en échec et étapes lentes (annotations), refus de publication
+        if: always()
+        run: |
+          # une annotation par source du passage restée sans aucune lecture réussie et par étape de plus de 4 minutes : visibles
+          # dans le passage et relevées par le contrôle du matin (les rapports des relevés de 15 min ne sont pas gardés)
+          python3 - <<'PY' || true
+          import glob, json, os
+          t0 = os.path.getmtime("/tmp/t0") if os.path.exists("/tmp/t0") else 0
+          for p in sorted(glob.glob("/tmp/raw/**/report_*.json", recursive=True)):
+              if os.path.getmtime(p) < t0:
+                  continue
+              try:
+                  r = json.load(open(p))
+              except Exception:
+                  continue
+              for k, v in sorted(r.items()):
+                  if isinstance(v, dict) and v.get("err") and not v.get("ok"):
+                      m = " | ".join(v.get("errors") or [])[:180].replace("\n", " ")
+                      print(f"::warning title=Source en échec::{k} : {v['err']} erreur(s), aucune lecture réussie ({m})")
+              for k, s in sorted((r.get("_steps") or {}).items()):
+                  if s >= 240:
+                      print(f"::warning title=Étape lente::{k} : {s} s")
+          PY
+          if [ -f /tmp/refus ]; then echo "::error title=Publication refusée::$(sort -u /tmp/refus | tr '\n' ' ')"; exit 1; fi

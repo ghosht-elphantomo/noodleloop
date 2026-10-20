@@ -395,6 +395,8 @@ def main():
     ap.add_argument("--runs", help="passages GitHub des dernières 24 h (JSON), pour les bugs corrigés")
     ap.add_argument("--comptes", help="index.json de la branche comptes, pour les bugs corrigés")
     ap.add_argument("--boc", help="dossier des bulletins officiels de l'année (boc_px), pour les contrôles de cohérence")
+    ap.add_argument("--branches", help="nombre et taille des fichiers de chaque branche (JSON, controle.yml)")
+    ap.add_argument("--annot", help="annotations des passages du terminal des dernières 24 h (JSON, controle.yml)")
     a = ap.parse_args()
     maintenant = a.maintenant or time.time()
     R = Rapport()
@@ -433,7 +435,13 @@ def main():
         if isinstance(runs, dict):
             runs = runs.get("workflow_runs") or runs.get("runs") or []
         ci = charge(a.comptes)[0] if a.comptes else None
-        non_retour.verifier(R, {"D": a.data, "pages": pages, "inst": inst, "maintenant": maintenant, "runs": runs, "comptes": ci})
+        br = (charge(a.branches)[0] or {}).get("branches") if a.branches else None
+        if br:
+            inst["branches"] = {x["b"]: {"n": x.get("n"), "o": x.get("o"), "tronque": x.get("tronque")} for x in br if isinstance(x, dict) and x.get("b")}
+        an = (charge(a.annot)[0] or {}).get("annot") if a.annot else None
+        non_retour.verifier(R, {"D": a.data, "pages": pages, "inst": inst, "maintenant": maintenant, "runs": runs, "comptes": ci,
+                                "branches": inst.get("branches"), "ref_branches": (ref or {}).get("branches") if isinstance(ref, dict) else None,
+                                "annot": an})
     except Exception as e:  # noqa: BLE001
         R.add("Bugs corrigés", "orange", f"contrôle interrompu : {type(e).__name__} {e}")
     res = {"niveau": R.niveau, "date": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(maintenant)), "verifications": R.v,

@@ -622,6 +622,7 @@ def b31(ctx):
 def b32(ctx):
     S = jl(ctx["D"], "summary.json") or {}
     mk = {x["id"]: x.get("mkt") for x in S.get("secs") or []}
+    PV = {x["id"]: x.get("prev") for x in S.get("secs") or []}
     bc, pc, zr, n = [], [], [], 0
     for x in S.get("secs") or []:
         se = jl(ctx["D"], f"s/{x['id']}.json") or {}
@@ -643,13 +644,245 @@ def b32(ctx):
         if mk.get(sid) not in ("US", "TW") or not se or q.get("pct") is None or not q.get("last") or not q.get("d"):
             continue
         k = int(str(q["d"]).replace("-", ""))
-        prev = next((c for d, c in zip(reversed(se["d"]), reversed(se["c"])) if d < k and c), None)
+        # clôture précédente affichée : celle du résumé quand la série porte la séance de la cotation (elle tient compte d'une
+        # séance manquante dans la série, B41), sinon la dernière clôture de la série avant la cotation
+        prev = PV.get(sid) if se["d"][-1] == k and PV.get(sid) else \
+            next((c for d, c in zip(reversed(se["d"]), reversed(se["c"])) if d < k and c), None)
         if prev and abs(q["pct"] - (q["last"] / prev - 1)) > 0.003:
             pc.append(f"{sid} {q['pct'] * 100:+.2f} % pour {(q['last'] / prev - 1) * 100:+.2f} %")
     pb = ([f"{len(bc)} bougie(s) impossible(s) : " + "; ".join(bc[:5])] if bc else []) + \
          ([f"{len(pc)} variation(s) US non conformes à la clôture précédente : " + "; ".join(pc[:5])] if pc else []) + \
          ([f"{len(zr)} cotation(s) à 0,00 % avec ouverture ou plus haut à 0 : " + ", ".join(zr[:8])] if zr else [])
     return ("rouge", " ; ".join(pb)) if pb else ("vert", f"{n} dernières bougies cohérentes ; variations US conformes")
+
+
+@bug("B33", "2026-10-20", "Base du soir annulable par un push en attente",
+     "La base programmée de 22 h 35 partageait sa file d'attente avec les passages lancés par un push : GitHub annule un passage en "
+     "attente quand un autre arrive dans la même file, et un push arrivé pendant l'attente supprimait la base du soir (ni archive de "
+     "la séance, ni données brutes, ni QLAB). Depuis le 20/10/2026 la base programmée a sa propre file (terminal-eod).",
+     "terminal.yml : file terminal-eod pour la base programmée ; la dernière séance BRVM (hors séance du jour) est archivée dans "
+     "seed/brvm_daily.csv")
+def b33(ctx):
+    import datetime as _dt
+    pb = []
+    t = open(os.path.join(DEPOT, ".github", "workflows", "terminal.yml"), encoding="utf8").read()
+    if "'terminal-eod'" not in t:
+        pb.append("base programmée sans file propre dans terminal.yml")
+    x = jl(ctx["D"], "s/BRVMC.json") or {}
+    d = x.get("d") or []
+    try:
+        last = max(l.split(",", 1)[0] for l in open(os.path.join(DEPOT, "seed", "brvm_daily.csv"), encoding="utf8").read().splitlines()[1:] if l[:2] == "20")
+    except (OSError, ValueError):
+        last = None
+    if len(d) >= 2 and last:
+        auj = int(_dt.datetime.utcfromtimestamp(ctx.get("maintenant") or 0).strftime("%Y%m%d")) if ctx.get("maintenant") else 0
+        att = d[-2] if d[-1] >= auj else d[-1]  # la séance du jour n'est archivée que le soir
+        if int(last.replace("-", "")) < att:
+            pb.append(f"séance du {att} non archivée (dernière archive {last}) : base du soir absente ou en échec")
+    return ("rouge", " ; ".join(pb)) if pb else ("vert", f"file propre ; dernière séance archivée {last}")
+
+
+@bug("B34", "2026-10-20", "Branche republiée incomplète après une restauration en échec",
+     "Les branches raw, boc, comptes et dividendes sont des commits uniques republiés de force : si leur lecture échouait en début de "
+     "passage, le passage repartait de zéro et republiait une branche incomplète (et le terminal reprenait l'ancienne branche site, "
+     "qui ne contient plus les données). Depuis le 20/10/2026 : 3 essais de lecture, passage arrêté si la branche reste illisible, "
+     "publication refusée si la branche perd plus de 10 % de ses fichiers.",
+     "nombre et taille des fichiers de chaque branche comparés au contrôle précédent (baisse de plus de 10 % = rouge) ; protections "
+     "présentes dans terminal.yml, boc.yml, dividendes.yml et comptes.yml")
+def b34(ctx):
+    pb = []
+    for f, m in (("terminal.yml", "publication refusée"), ("boc.yml", "publication refusée"), ("dividendes.yml", "publication refusée"),
+                 ("comptes.yml", "publication refusée"), ("terminal.yml", "présente mais illisible")):
+        try:
+            if m not in open(os.path.join(DEPOT, ".github", "workflows", f), encoding="utf8").read():
+                pb.append(f"{f} sans « {m} »")
+        except OSError:
+            pass
+    if "elif git fetch -q --depth 1 origin site" in open(os.path.join(DEPOT, ".github", "workflows", "terminal.yml"), encoding="utf8").read():
+        pb.append("terminal.yml reprend encore la branche site")
+    B, RB = ctx.get("branches") or {}, ctx.get("ref_branches") or {}
+    for b, v in sorted(B.items()):
+        r = RB.get(b) or {}
+        if v.get("tronque") or r.get("tronque"):
+            continue
+        for k, nom in (("n", "fichiers"), ("o", "octets")):
+            if r.get(k) and v.get(k) is not None and v[k] < 0.9 * r[k]:
+                pb.append(f"branche {b} : {v[k]:,} {nom} au lieu de {r[k]:,}".replace(",", " "))
+    if pb:
+        return "rouge", " ; ".join(pb[:8])
+    if not B:
+        return "vert", "protections présentes (taille des branches lue seulement dans le contrôle de GitHub)"
+    return "vert", "protections présentes ; " + ", ".join(f"{b} {v.get('n')} fichiers" for b, v in sorted(B.items())) + \
+        ("" if RB else " (première mesure, comparée au prochain contrôle)")
+
+
+@bug("B35", "2026-10-20", "Délais dépassés et sources en échec masqués dans les passages verts",
+     "L'étape « Actualités, publications BRVM… » était coupée à 360 s aux passages de l'heure pile (fin de la liste non rafraîchie) "
+     "sans signal : passage vert, ancien fichier republié. Depuis le 20/10/2026 : délai de 480 s, et une annotation par source "
+     "sans aucune lecture réussie, par étape de plus de 4 minutes et par délai dépassé.",
+     "annotations des passages du terminal des dernières 24 h : délais dépassés (exit code 124), refus de publication, sources en échec")
+def b35(ctx):
+    an = ctx.get("annot")
+    if an is None:
+        return "vert", "non vérifié ici (seulement dans le contrôle de GitHub)"
+    an = [a for a in an if isinstance(a, dict)]
+    to = sum(1 for a in an if "exit code 124" in (a.get("message") or ""))
+    rf = [a for a in an if (a.get("titre") or "").startswith(("Publication refusée", "Branche raw", "Restauration"))]
+    src = collections.Counter((a.get("message") or "").split(" :", 1)[0] for a in an if a.get("titre") == "Source en échec")
+    lent = collections.Counter((a.get("message") or "").split(" :", 1)[0] for a in an if a.get("titre") == "Étape lente")
+    pb = ([f"{len(rf)} refus ou restauration en échec : " + "; ".join((a.get("message") or "")[:90] for a in rf[:3])] if rf else []) + \
+         ([f"{to} délai(s) dépassé(s)"] if to else []) + \
+         ([f"sources en échec : " + ", ".join(f"{k} ×{v}" for k, v in src.most_common(8))] if src else []) + \
+         ([f"étapes lentes : " + ", ".join(f"{k} ×{v}" for k, v in lent.most_common(6))] if lent else [])
+    niv = "rouge" if rf else ("orange" if pb else "vert")
+    return niv, " ; ".join(pb) if pb else f"{len(an)} annotation(s), aucun délai dépassé ni source en échec"
+
+
+# chutes réelles vérifiées (marché, résultats) : pas des opérations sur titres
+CHUTES_US_CONNUES = {("IONQ", 20250108): "informatique quantique, −39 %", ("NBIS", 20250127): "séance DeepSeek, −37 %",
+                     ("SQQQ", 20250409): "ETF inverse ×3, Nasdaq +12 % ce jour-là", ("DXCM", 20240726): "résultats, −40 %",
+                     ("SNPS", 20250910): "résultats, −36 %"}
+
+
+@bug("B36", "2026-10-20", "Scission Honeywell non ajustée (chute de 51 % dans la série)",
+     "HON passait de 464,42 à 227,80 le 29/06/2026 (distribution d'Honeywell Aerospace) sans ajustement des cours antérieurs : "
+     "rendement 1 an −45 %, drawdown −58 %, volatilité 76 %. Depuis le 20/10/2026, les scissions US documentées "
+     "(seed/scissions_us.json) ajustent les cours et dividendes antérieurs.",
+     "séries US et Taïwan des 3 dernières années : aucune baisse d'une séance de plus de 35 % hors chutes réelles vérifiées "
+     "(liste CHUTES_US_CONNUES)")
+def b36(ctx):
+    out = []
+    for sid, se in _ser_us(ctx).items():
+        d, c = se["d"], se["c"]
+        k0 = next((i for i, x in enumerate(d) if x >= d[-1] - 30000), len(d))
+        for i in range(max(k0, 1), len(c)):
+            if c[i - 1] and c[i] and c[i] / c[i - 1] < 0.65 and (sid, d[i]) not in CHUTES_US_CONNUES:
+                out.append(f"{sid} {d[i]} {c[i - 1]:g} → {c[i]:g}")
+    return ("rouge", f"{len(out)} chute(s) de plus de 35 % à expliquer (scission, regroupement ?) : " + "; ".join(out[:8])) if out else \
+        ("vert", f"aucune chute inexpliquée ({len(CHUTES_US_CONNUES)} chutes réelles connues)")
+
+
+@bug("B37", "2026-10-20", "Points datés d'un vendredi à venir (séries hebdomadaires)",
+     "Les séries ramenées à la semaine étiquetaient la semaine en cours au vendredi suivant : 10 séries macro, la matrice "
+     "hebdomadaire et les historiques des fiches FA affichaient un point au 23/10/2026 le 19/10. Depuis le 20/10/2026, la semaine "
+     "en cours porte la date de sa dernière observation.",
+     "eco.json, weekly.json et fa/*.json : aucune date postérieure au jour du contrôle")
+def b37(ctx):
+    import datetime as _dt, glob as _gl
+    auj = int(_dt.datetime.utcfromtimestamp(ctx.get("maintenant") or __import__("time").time()).strftime("%Y%m%d"))
+    out = []
+    E = jl(ctx["D"], "eco.json") or {}
+    for sid, se in (E.get("s") or {}).items():
+        if se and se[0] and max(se[0]) > auj:
+            out.append(f"eco {sid} {max(se[0])}")
+    w = (jl(ctx["D"], "weekly.json") or {}).get("w") or []
+    if w and max(w) > auj:
+        out.append(f"weekly {max(w)}")
+    n = 0
+    for p in sorted(_gl.glob(os.path.join(ctx["D"], "fa", "*.json"))):
+        x = jl(os.path.dirname(p), os.path.basename(p)) or {}
+        dd = (x.get("mh") or {}).get("d") or []
+        if dd and max(dd) > auj:
+            n += 1
+    if n:
+        out.append(f"{n} fiche(s) FA")
+    return ("orange", f"dates après le {auj} : " + ", ".join(out[:10])) if out else ("vert", f"aucune date après le {auj}")
+
+
+@bug("B38", "2026-10-20", "Doublons et cours nuls (Fear & Greed CNN, intervenants, capitalisations mondiales)",
+     "fg.json portait deux points CNN le même jour ; l'annuaire des intervenants listait deux fois ORAGROUP SECURITIES et BAOBAB "
+     "ASSET MANAGEMENT (doublons dans une même page), avec des courriels contenant des espaces ; les capitalisations mondiales "
+     "affichaient un cours de 0 (NBB.BH) et deux « SK Innovation » sans distinction. Corrigé le 20/10/2026.",
+     "dates CNN uniques dans fg.json ; aucun nom en double par annuaire dans sgi.json ; aucun cours ≤ 0 ni nom en double dans world.json")
+def b38(ctx):
+    pb = []
+    cn = (((jl(ctx["D"], "fg.json") or {}).get("us") or {}).get("cnn") or {}).get("d") or []
+    if len(cn) != len(set(cn)):
+        pb.append(f"fg.json : {len(cn) - len(set(cn))} date(s) CNN en double")
+    sg = jl(ctx["D"], "sgi.json") or {}
+    for k, v in (sg.get("dirs") or {}).items():
+        nm = [re.sub(r"\s+", " ", r.get("n") or "").strip().lower() for r in v.get("rows") or []]
+        dup = sorted({x for x in nm if nm.count(x) > 1})
+        if dup:
+            pb.append(f"sgi.json {k} : {', '.join(dup[:3])} en double")
+        if any(re.search(r"\s", r.get("mail") or "") for r in v.get("rows") or []):
+            pb.append(f"sgi.json {k} : courriel avec espace")
+    rows = (jl(ctx["D"], "world.json") or {}).get("rows") or []
+    z = [r[0] for r in rows if isinstance(r, list) and len(r) > 4 and not (r[4] or 0) > 0]
+    nm = [r[1] for r in rows if isinstance(r, list) and len(r) > 1]
+    dn = sorted({x for x in nm if nm.count(x) > 1}) if len(nm) != len(set(nm)) else []
+    if z:
+        pb.append(f"world.json : cours ≤ 0 pour {', '.join(z[:5])}")
+    if dn:
+        pb.append(f"world.json : {', '.join(dn[:3])} en double")
+    return ("orange", " ; ".join(pb)) if pb else ("vert", "aucun doublon ni cours nul")
+
+
+@bug("B39", "2026-10-20", "Variation des taux affichée « 0,0 pb » ou contraire au rendement",
+     "Quand CNBC renvoyait « UNCH », la variation des taux était vide et l'écran BTMM affichait « 0,0 pb » (US2Y en hausse de "
+     "1,7 pb). Depuis le 20/10/2026, une variation absente est recalculée (rendement affiché − clôture précédente de la source) et, "
+     "à défaut, s'affiche « — » ; la variation en % des taux (de signe opposé) est retirée.",
+     "world_mkt.json : variation de chaque taux présente et égale à rendement − clôture précédente quand les deux diffèrent ; pas de "
+     "variation en % ; BTMM sans « bp(r.chg * 100) » non protégé")
+def b39(ctx):
+    pb = []
+    for r in (jl(ctx["D"], "world_mkt.json") or {}).get("rt") or []:
+        l_, p_, c_ = r.get("last"), r.get("prev"), r.get("chg")
+        if r.get("pct") is not None:
+            pb.append(f"{r.get('s')} variation en %")
+        if c_ is None and l_ is not None and p_ is not None and abs(l_ - p_) <= 0.5:
+            pb.append(f"{r.get('s')} variation vide pour {l_} − {p_}")
+        elif c_ is not None and l_ is not None and p_ is not None and abs(l_ - p_) > 1e-9 and abs(c_ - (l_ - p_)) > 0.0011:
+            pb.append(f"{r.get('s')} {c_:+.3f} pour {l_} − {p_}")
+    if "bp(r.chg * 100)}</td><td class=\"dm\">" in _web("pages14.js"):
+        pb.append("pages14.js : variation vide affichée 0,0")
+    return ("orange", "; ".join(pb[:8])) if pb else ("vert", "variations des taux conformes")
+
+
+@bug("B40", "2026-10-20", "Actualités BRVM effacées en 13 heures par le plafond global",
+     "news.json gardait les 900 dépêches les plus récentes tous flux confondus : les flux de marché remplissaient tout en 13 heures "
+     "et les dépêches BRVM et UEMOA de la veille disparaissaient (5 dépêches BRVM). Depuis le 20/10/2026, les flux BRVM, UEMOA et "
+     "banques centrales gardent leurs 45 jours et chaque autre flux 120 dépêches au plus.",
+     "news.json : au plus 120 dépêches par flux hors BRVM, UEMOA et banques centrales ; dépêches BRVM présentes au-delà de 24 h")
+def b40(ctx):
+    import time as _t
+    it = (jl(ctx["D"], "news.json") or {}).get("items") or []
+    if not it:
+        return "orange", "news.json vide ou absent"
+    c = collections.Counter(x.get("f") for x in it if x.get("c") not in ("BRVM", "UEMOA", "Banques centrales") and x.get("f") not in ("brvm-rapports", "sec"))
+    trop = [f"{k} {v}" for k, v in c.items() if v > 120]
+    now = ctx.get("maintenant") or _t.time()
+    br = [x["t"] for x in it if x.get("c") == "BRVM" and x.get("t")]
+    pb = ([f"flux au-delà de 120 dépêches : {', '.join(trop[:5])}"] if trop else []) + \
+         ([f"dépêches BRVM limitées aux dernières {int((now - min(br)) / 3600)} h"] if br and now - min(br) < 86400 and len(br) < 350 else [])
+    return ("orange", " ; ".join(pb)) if pb else ("vert", f"{len(it)} dépêches, dont {len(br)} BRVM")
+
+
+@bug("B41", "2026-10-20", "Séance manquante dans une série US (variation du jour sur deux séances)",
+     "La source des séries US n'avait pas la séance du 16/10/2026 pour UBER : la variation du jour du résumé portait sur deux "
+     "séances (−1,45 % au lieu de −0,16 %). Depuis le 20/10/2026, le résumé prend la clôture précédente de la cotation quand la "
+     "série n'a pas la séance précédente du calendrier (SPY, 0050) ; la série n'est pas complétée (aucune bougie inventée).",
+     "séries US et Taïwan : séances du calendrier du marché (SPY, 0050) des 20 dernières séances toutes présentes (orange sinon, "
+     "trou de la source) ; variation du résumé conforme à la cotation")
+def b41(ctx):
+    L = _ser_us(ctx)
+    S = jl(ctx["D"], "summary.json") or {}
+    mk = {x["id"]: x.get("mkt") for x in S.get("secs") or []}
+    out = []
+    for m, ref in (("US", "SPY"), ("TW", "0050")):
+        cal = (L.get(ref) or {}).get("d") or []
+        cal = cal[-20:]
+        if not cal:
+            continue
+        for sid, se in L.items():
+            if mk.get(sid) != m or sid == ref:
+                continue
+            have = set(se["d"][-40:])
+            miss = [d for d in cal if d >= se["d"][0] and d not in have and d <= se["d"][-1]]
+            if miss:
+                out.append(f"{sid} {','.join(map(str, miss[:3]))}")
+    return ("orange", f"{len(out)} série(s) avec une séance manquante (source) : " + "; ".join(out[:10])) if out else \
+        ("vert", "aucune séance manquante sur 20 séances")
 
 
 def verifier(R, ctx):

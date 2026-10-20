@@ -52,12 +52,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Taille des branches et annotations des passages du terminal (24 h)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          # nombre et taille des fichiers de chaque branche de données : une branche republiée incomplète se voit le lendemain
+          for b in data raw boc comptes dividendes histo site; do
+            sha=$(gh api "repos/${GITHUB_REPOSITORY}/branches/$b" --jq .commit.sha 2>/dev/null) || continue
+            gh api "repos/${GITHUB_REPOSITORY}/git/trees/$sha?recursive=1" \
+              --jq "{b: \"$b\", n: ([.tree[] | select(.type == \"blob\")] | length), o: ([.tree[] | select(.type == \"blob\") | .size] | add), tronque: .truncated}" 2>/dev/null
+          done | jq -s '{branches: .}' > /tmp/prev/branches.json 2>/dev/null || rm -f /tmp/prev/branches.json
+          # annotations des passages du terminal (sources en échec, étapes lentes, délais dépassés « exit code 124 », refus)
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/workflows/terminal.yml/runs?per_page=100&created=>=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)" \
+            --jq '.workflow_runs[].id' 2>/dev/null | head -150 | while read -r id; do
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$id/jobs" --jq '.jobs[] | select(.name == "refresh") | .id' 2>/dev/null
+          done | while read -r j; do
+            gh api "repos/${GITHUB_REPOSITORY}/check-runs/$j/annotations" --jq '.[] | {niveau: .annotation_level, titre: .title, message: (.message[0:200])}' 2>/dev/null
+          done | jq -s '{annot: .}' > /tmp/prev/annot.json 2>/dev/null || rm -f /tmp/prev/annot.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Contrôle
         continue-on-error: true
         run: |
           REF=""; [ -f /tmp/prev/controle/rapport.json ] && REF=/tmp/prev/controle/rapport.json
           export TITRE="Contrôle du $(date -u +'%d/%m/%Y %H:%M') UTC"
-          export RUNS=/tmp/prev/runs.json COMPTES=/tmp/prev/comptes_index.json BOC=/tmp/prev/boc
+          export RUNS=/tmp/prev/runs.json COMPTES=/tmp/prev/comptes_index.json BOC=/tmp/prev/boc BRANCHES=/tmp/prev/branches.json ANNOT=/tmp/prev/annot.json
           if python3 -c "import playwright" 2>/dev/null && command -v terser > /dev/null; then
             timeout 3000 bash outils/controle/verifier.sh /tmp/d/data /tmp/ctl $REF
           else

@@ -2541,7 +2541,17 @@ def run_news(path):
         if u:
             seen_u.add(u)
         items.append(x)
-    items = tag_news(items[:900], os.path.join(os.path.dirname(path), "summary.json"))
+    # rétention : les flux BRVM, UEMOA et banques centrales (et les publications officielles) gardent leurs 45 jours (350 au plus) ;
+    # les autres flux au plus 120 dépêches chacun ; 1 000 dépêches au total. Avec un plafond global seul (900), les flux de marché
+    # remplissaient tout en 13 heures et les dépêches BRVM d'avant-hier disparaissaient.
+    prio = [x for x in items if x.get("c") in ("BRVM", "UEMOA", "Banques centrales") or x.get("f") in ("brvm-rapports", "sec")][:350]
+    ip, n_f, autres = {id(x) for x in prio}, {}, []
+    for x in items:
+        if id(x) not in ip and n_f.get(x.get("f"), 0) < 120:
+            n_f[x.get("f")] = n_f.get(x.get("f"), 0) + 1
+            autres.append(x)
+    items = sorted(prio + autres[:1000 - len(prio)], key=lambda x: -x["t"])
+    items = tag_news(items, os.path.join(os.path.dirname(path), "summary.json"))
     save(path, {"ts": int(time.time()), "items": items, "feeds": {f[0]: f[1] for f in NEWS}})
 
 
@@ -3138,11 +3148,17 @@ def run_cmc(out, site_data=None):
     prev = eod.get("px") or {}
     out_rows = []
     for sym, (nm, cty, mc, pxx) in cur.items():
-        if mc < 2e9:
+        if mc < 2e9 or pxx <= 0:  # cours à 0 (NBB.BH) : ligne écartée, jamais un cours inventé
             continue
         p0 = prev.get(sym)
         out_rows.append([sym, nm, cty, round(mc), pxx, round(pxx / p0 - 1, 5) if p0 else None])
     out_rows.sort(key=lambda r: -r[3])
+    # deux catégories d'actions d'une même société (SK Innovation ordinaire et préférentielle) : la seconde porte son symbole
+    vus = set()
+    for r in out_rows:
+        if r[1] in vus:
+            r[1] = f"{r[1]} ({r[0]})"
+        vus.add(r[1])
     site = {"ts": now, "ref": eod.get("d"), "src": "companiesmarketcap.com", "rows": out_rows}
     if site_data:
         save(os.path.join(site_data, "world.json"), site)
@@ -4011,11 +4027,16 @@ def run_sgi(raw):
                 note("sgi", False, f"{key} p{pg}: {e}")
                 break
             part = dir_parse(html)
-            new = [r for r in part if (r["n"].lower(), r["tel"]) not in seen]
+            new = []
+            for r in part:  # doublons écartés aussi à l'intérieur d'une même page (ORAGROUP SECURITIES, BAOBAB ASSET MANAGEMENT ×2)
+                r["mail"] = re.sub(r"\s+", "", r.get("mail") or "")
+                if r.get("web") and not re.search(r"\.[a-z]{2,}", r["web"].lower()):
+                    r["web"] = ""  # champ « site » rempli avec le nom de la société : pas une adresse
+                k = (re.sub(r"\s+", " ", r["n"]).strip().lower(), r["tel"])
+                if k not in seen:
+                    seen.add(k); new.append(r)
             if not new:
                 break
-            for r in new:
-                seen.add((r["n"].lower(), r["tel"]))
             rows += new
             if f"{path_}?page={pg + 1}" not in html:
                 break

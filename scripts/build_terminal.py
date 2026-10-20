@@ -1864,6 +1864,9 @@ def main():
                 continue  # série qui porte déjà ses dividendes (Yahoo)
             spl = [(x[0], x[1]) for x in USSPL.get(sid, []) if x[1] and x[1] > 0]
             div, n_ = us_div_place(b["d"], rows, spl)
+            # scission (seed/scissions_us.json) : dividendes antérieurs ajustés comme les cours
+            for k_, f_ in (xinfo.get("scissions") or {}).get(sid, []):
+                div = [x * f_ if d_ < k_ and x else x for d_, x in zip(b["d"], div)]
             n_usd += n_
             b["div"] = div
             n_ser += 1
@@ -1884,6 +1887,27 @@ def main():
         log("rendements US et Taïwan :", n_y, "titres")
     except Exception as e:  # noqa: BLE001
         log("rendements US impossibles :", e)
+    # séance manquante dans une série US ou Taïwan (UBER sans le 16/10/2026 dans la source) : la variation du jour du résumé portait
+    # sur deux séances (−1,45 % au lieu de −0,16 %). Quand la cotation du jour donne sa clôture précédente et que la série n'a pas
+    # la séance précédente du calendrier du marché (SPY, 0050), le résumé prend cette clôture précédente ; la série n'est pas
+    # complétée (aucune bougie inventée) et le trou est signalé chaque matin (contrôle B41)
+    try:
+        cal_ = {"US": set((files.get("SPY") or {}).get("d") or []), "TW": set((files.get("0050") or {}).get("d") or [])}
+        gaps_ = []
+        for s in secs:
+            if s["mkt"] not in ("US", "TW") or s.get("f") != "D":
+                continue
+            q_, d_ = QUOTES.get(s["id"]) or {}, (files.get(s["id"]) or {}).get("d") or []
+            if not q_.get("prev") or not q_.get("d") or len(d_) < 2 or di(q_["d"]) != d_[-1] or not s.get("last"):
+                continue
+            miss_ = sorted(x for x in cal_[s["mkt"]] if d_[-2] < x < d_[-1])
+            if miss_ and q_["prev"] > 0:
+                s["prev"], s["pct"] = q_["prev"], rnd(s["last"] / q_["prev"] - 1, 6)
+                gaps_.append(f"{s['id']} {','.join(map(str, miss_))}")
+        if gaps_:
+            log("séances manquantes dans les séries (variation du jour sur la clôture précédente de la cotation) :", "; ".join(gaps_))
+    except Exception as e:  # noqa: BLE001
+        log("contrôle des séances manquantes impossible :", e)
 
     for s in secs:  # métadonnées Nasdaq des titres US déjà suivis
         if s["mkt"] == "US" and s["id"] in xinfo["ndx"]:
@@ -1918,6 +1942,10 @@ def main():
             col.append(rnd(last, 4) if last is not None else None)
         if sum(1 for v in col if v is not None) > 52:
             wm["s"][sid] = col
+    # semaine en cours datée de la dernière séance relevée, jamais d'un vendredi à venir (étiquette seulement)
+    dmax = max((b["d"][-1] for b in files.values() if b["f"] == "D" and b["d"]), default=0)
+    if allw and dmax and allw[-1] > dmax:
+        allw[-1] = dmax
 
     # BRVM breadth (since 2008) -------------------------------------------
     stocks = [s["id"] for s in secs if s["mkt"] == "BRVM" and s["cls"] == "Equity"]

@@ -151,10 +151,19 @@ jobs:
       - name: Restaurer la branche comptes (la même que les machines de lecture)
         run: |
           mkdir -p /tmp/cpt
-          if git fetch -q --depth 1 origin comptes; then
-            test "$(git rev-parse FETCH_HEAD)" = "${{ needs.liste.outputs.sha }}" || { echo "::error::La branche comptes a changé pendant la lecture"; exit 1; }
-            git archive FETCH_HEAD | tar -x -C /tmp/cpt
-          fi
+          # 3 essais ; une branche qui existe mais reste illisible arrête le passage (sinon le registre serait republié incomplet)
+          ok=0
+          for i in 1 2 3; do
+            if git fetch -q --depth 1 origin comptes; then
+              test "$(git rev-parse FETCH_HEAD)" = "${{ needs.liste.outputs.sha }}" || { echo "::error::La branche comptes a changé pendant la lecture"; exit 1; }
+              git ls-tree -r --name-only FETCH_HEAD | grep -cv '^report_\|^cpt_evs.json$' > /tmp/cpt_n0 || true
+              git archive FETCH_HEAD | tar -x -C /tmp/cpt; ok=1; break
+            fi
+            rc=0; git ls-remote --exit-code --heads origin comptes > /dev/null 2>&1 || rc=$?
+            if [ "$rc" = 2 ]; then ok=1; break; fi
+            sleep $((i * 10))
+          done
+          [ "$ok" = 1 ] || { echo "::error title=Restauration::branche comptes présente mais illisible après 3 essais : passage arrêté"; exit 1; }
       - uses: actions/download-artifact@v8
         with:
           name: cpt-liste
@@ -199,7 +208,11 @@ jobs:
           rm -rf "$GIT_DIR"; git init -q -b comptes
           git config user.name "fqt-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A && git commit -qm "Comptes $(date -u +'%d/%m/%Y %H:%M') UTC" && git push -q -f "$URL" HEAD:comptes
+          git add -A && git commit -qm "Comptes $(date -u +'%d/%m/%Y %H:%M') UTC" || exit 0
+          # republication forcée (commit unique) : refusée si la branche perd plus de 10 % de ses fichiers (restauration incomplète)
+          N0=$(cat /tmp/cpt_n0 2>/dev/null || echo 0); N1=$(git ls-files | wc -l)
+          if [ "$N0" -gt 0 ] && [ $((N1 * 10)) -lt $((N0 * 9)) ]; then echo "::error title=Branche comptes::$N1 fichiers au lieu de $N0 : publication refusée, version en ligne gardée"; exit 1; fi
+          git push -q -f "$URL" HEAD:comptes
       - name: Passage suivant si des documents restent à lire
         env:
           GH_TOKEN: ${{ github.token }}

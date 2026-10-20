@@ -88,6 +88,38 @@ def ingest(extra, add, have, log):
     def body(sub, sid):
         b = jload(os.path.join(extra, sub, sid + ".json"))
         return b if b and len(b.get("d", [])) > 30 else None
+    # scissions US (seed/scissions_us.json) : cours antérieurs ajustés (HON −50,9 % le 29/06/2026 sans ajustement : rendements
+    # 1 an, 6 mois, depuis janvier, drawdown et volatilité faux)
+    info["scissions"] = {}
+    SCI = (jload(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "scissions_us.json"), {}) or {}).get("rows") or {}
+
+    def body_adj(sid):
+        b = body("nasdaq", sid)
+        for op in (SCI.get(sid) or []) if b else []:
+            try:
+                k = int(op["d"].replace("-", ""))
+                i = b["d"].index(k) if k in b["d"] else -1
+                sp = body("nasdaq", op["detache"])
+                vs = sp["c"][sp["d"].index(k)] if sp and k in sp["d"] else None
+                if i < 1 or not vs:
+                    log(f"scission {sid} {op['d']} : séance ou cours de {op['detache']} absent, non ajustée")
+                    continue
+                if b["c"][i] / b["c"][i - 1] > 0.85:
+                    log(f"scission {sid} {op['d']} : pas de chute dans la série (déjà ajustée par la source), rien à faire")
+                    continue
+                f_ = 1 - op["parts"] * vs / b["c"][i - 1]
+                if not 0.05 < f_ < 0.95:
+                    log(f"scission {sid} {op['d']} : facteur {f_:.4f} invraisemblable, non ajusté")
+                    continue
+                b = dict(b)
+                for key in ("o", "h", "l", "c"):
+                    if b.get(key):
+                        b[key] = [x * f_ if j < i and x is not None else x for j, x in enumerate(b[key])]
+                info["scissions"][sid] = info["scissions"].get(sid, []) + [(k, round(f_, 6))]
+                log(f"scission {sid} {op['d']} : cours antérieurs × {f_:.5f} ({op['detache']} {vs:g} pour une veille à {b['c'][i - 1] / f_:g})")
+            except (KeyError, ValueError, TypeError, ZeroDivisionError) as e:
+                log(f"scission {sid} : ligne illisible ({e})")
+        return b
     n0 = [0]
     add0 = add
 
@@ -109,7 +141,7 @@ def ingest(extra, add, have, log):
     for s in sorted(info["ndx"]):
         if s in have:
             continue
-        b = body("nasdaq", s)
+        b = body_adj(s)
         if not b:
             continue
         sc = scr.get(s, {})
@@ -389,6 +421,9 @@ def to_weekly(d, v):
         fri = t + dt.timedelta(days=(4 - t.weekday()) % 7)
         out[d2i(fri)] = b
     k = sorted(out)
+    # semaine en cours (incomplète) datée de sa dernière observation, jamais d'un vendredi à venir (point au 23/10 affiché le 19/10)
+    if k and d and k[-1] > d[-1]:
+        out[d[-1]] = out.pop(k[-1]); k[-1] = d[-1]
     return k, [out[x] for x in k]
 
 
@@ -501,9 +536,19 @@ def fg(extra, out, files, ndx, us_ids, brvm_ids, dmeta, shares, F, log):
         comps["brd"] = {"n": "Largeur : volume McClellan (hausses − baisses, cumulé)", "src": "Nasdaq / Yahoo", "raw": summ}
         vix = files.get("VIX")
         if vix:
-            vs = sma_list(vix["c"], 50)
-            vv = [vix["c"][i] / vs[i] - 1 if vs[i] else None for i in range(len(vix["c"]))]
-            comps["vix"] = {"n": "Volatilité : VIX contre sa moyenne 50 séances", "src": "CBOE", "inv": True, "raw": ffill(vix["d"], vv, grid)}
+            vd, vc = list(vix["d"]), list(vix["c"])
+            # VIX du jour (cotation différée relevée à chaque passage) : l'historique officiel n'est relu que le soir, la composante
+            # reprenait sinon le VIX de la veille pour le score du jour
+            try:
+                q = next((r for r in (jload(os.path.join(out, "world_mkt.json"), {}) or {}).get("idx") or [] if r.get("s") == ".VIX"), None)
+                dq = int(str(q["t"])[:10].replace("-", "")) if q and q.get("last") and q.get("t") else 0
+                if vd and vd[-1] < dq <= grid[-1] and i2d(dq).weekday() < 5:
+                    vd.append(dq); vc.append(float(q["last"]))
+            except (TypeError, ValueError, KeyError):
+                pass
+            vs = sma_list(vc, 50)
+            vv = [vc[i] / vs[i] - 1 if vs[i] else None for i in range(len(vc))]
+            comps["vix"] = {"n": "Volatilité : VIX contre sa moyenne 50 séances", "src": "CBOE", "inv": True, "raw": ffill(vd, vv, grid)}
         bond = files.get("TLT") or files.get("IEF")
         if bond:
             sr = ret_n(c, 20)
@@ -536,7 +581,8 @@ def fg(extra, out, files, ndx, us_ids, brvm_ids, dmeta, shares, F, log):
         for k, cdef in comps.items():
             us["comp"][k] = {"n": cdef["n"], "src": cdef["src"], "inv": cdef.get("inv", False), "raw": [r_(x, 5) for x in cdef["raw"]], "s": [r_(x, 1) for x in cdef["s"]]}
         if cnn and cnn.get("fear_and_greed_historical", {}).get("data"):
-            pts = sorted((d2i(dt.datetime.utcfromtimestamp(p["x"] / 1000).date()), p["y"]) for p in cnn["fear_and_greed_historical"]["data"] if p.get("y") is not None)
+            # un point par jour : CNN renvoie parfois deux points le même jour UTC (clôture et relevé en cours), le dernier est gardé
+            pts = sorted({d2i(dt.datetime.utcfromtimestamp(p["x"] / 1000).date()): p["y"] for p in sorted(cnn["fear_and_greed_historical"]["data"], key=lambda q: q.get("x") or 0) if p.get("y") is not None}.items())
             us["cnn"] = {"d": [p[0] for p in pts], "v": [r_(p[1], 1) for p in pts]}
             fgn = cnn.get("fear_and_greed", {})
             us["cnn_now"] = {k: fgn.get(k) for k in ("score", "rating", "timestamp", "previous_close", "previous_1_week", "previous_1_month", "previous_1_year")}
@@ -689,6 +735,9 @@ def weekly_px(b, since):
         fri = t + dt.timedelta(days=(4 - t.weekday()) % 7)
         out[d2i(fri)] = c
     k = sorted(out)
+    # semaine en cours datée de sa dernière séance, jamais d'un vendredi à venir
+    if k and b["d"] and k[-1] > b["d"][-1]:
+        out[b["d"][-1]] = out.pop(k[-1]); k[-1] = b["d"][-1]
     return k, [out[x] for x in k]
 
 

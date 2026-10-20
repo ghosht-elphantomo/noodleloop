@@ -1,0 +1,9 @@
+{
+  "_": "Scissions de sociétés US (distribution d'actions d'une société détachée). Les cours antérieurs à la date sont multipliés par f = 1 − parts × clôture de la société détachée le jour de la distribution ÷ clôture de la veille (méthode usuelle) ; les dividendes antérieurs aussi (rendement total cohérent). Appliqué seulement si la chute est encore présente dans la série (source pas déjà ajustée). Chaque ligne cite le document officiel.",
+  "rows": {
+    "HON": [
+      {"d": "2026-06-29", "detache": "HONA", "parts": 1.0,
+       "doc": "Honeywell, communiqué du 05/06/2026 : 1 action Honeywell Aerospace (HONA) pour 2 actions Honeywell, distribution le 29/06/2026, regroupement des actions Honeywell 1 pour 2 le même jour ; les cours Honeywell de la série sont déjà exprimés en actions regroupées (2 anciennes = 1 nouvelle + 1 HONA), d'où 1 part HONA par action de la série"}
+    ]
+  }
+}

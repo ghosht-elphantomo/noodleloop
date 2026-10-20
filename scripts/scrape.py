@@ -825,6 +825,15 @@ def world_board(out_data):
     def bdays(a, b):  # jours ouvrés dans ]a ; b]
         a_, b_ = dt.date.fromisoformat(a), dt.date.fromisoformat(b)
         return sum(1 for i in range(1, (b_ - a_).days + 1) if (a_ + dt.timedelta(days=i)).weekday() < 5)
+    # taux : CNBC renvoie « UNCH » (variation vide) alors que le rendement a bougé (US2Y 4,778 contre 4,761) : la variation est
+    # alors celle du rendement affiché contre la clôture précédente donnée par la source (au plus 50 pb, sinon vide). Une variation
+    # donnée par la source est gardée (marché fermé : clôture précédente remise au dernier rendement, variation du jour conservée,
+    # CN10Y). La variation en % d'un taux (variation du prix, de signe opposé) est retirée.
+    for r in out.get("rt", []):
+        r["pct"] = None
+        l_, p_ = r.get("last"), r.get("prev")
+        if r.get("chg") is None and l_ is not None and p_ is not None and abs(l_ - p_) <= 0.5:
+            r["chg"] = round(l_ - p_, 4)
     for k in ("idx", "cmd", "fx"):
         for r in out.get(k, []):
             try:
