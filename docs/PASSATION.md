@@ -567,6 +567,22 @@ point de restauration avant chaque étape, tout le site testé après, accord du
    son remplaçant n'a pas lancé le Terminal à l'heure pendant plusieurs jours, vérifié en parallèle. Les actualisations toutes
    les 15 minutes ne doivent jamais s'interrompre.
 
+**8. Organisation retenue et règles de la migration** (propriétaire, 20/10/2026, 15 h 15-15 h 30).
+- *Deux dépôts.* `noodleloop` (public, l'actuel) devient le **moteur** : il garde les automatisations et le lien Vercel, et à
+  la fin ne contient plus qu'elles et la page compilée du site. `bloopface` (privé, créé par le propriétaire le 20/10) devient
+  le **coffre** : tous les autres fichiers (code, scripts, docs, `seed/`, branches de données), **sans aucune automatisation
+  active** (les fichiers de `.github/` y sont rangés, inertes, sous `automatisations/origine/` ; aucune minute payante).
+- *Clés* : jetons GitHub limités au seul dépôt `bloopface`, créés et rangés par le propriétaire (lecture seule pour récupérer le
+  code ; écriture pour publier les données ; lecture seule dans Vercel pour le site). Journaux publics neutres : noms d'étapes
+  génériques, tout ce qu'écrivent les scripts dans un fichier non publié.
+- *Règle absolue* : **rien n'est effacé ni supprimé dans `noodleloop`** (fichiers, branches, historique, réglages) tant que
+  le transfert vers `bloopface` n'est pas effectif, vérifié, testé, retesté et validé par le propriétaire.
+- *Avant la bascule* : audit complet de toutes les automatisations (déclencheurs, secrets, branches lues et écrites, adresses,
+  journaux, dépendances entre elles, métronome, Vercel).
+- *Historique de `noodleloop`* : à effacer seulement après la validation (façon à choisir par le propriétaire : nouvelle
+  branche `main` sans passé puis demande de purge au support GitHub, ou dépôt supprimé et recréé sous le même nom). Aucune
+  copie du dépôt n'existe (0 copie au 20/10).
+
 ## Tâches programmées
 
 - « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
