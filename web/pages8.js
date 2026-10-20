@@ -31,7 +31,8 @@ PAGES.DES = async (m, alive) => {
   if (tab === 'h') { await desPerf(m, s, S); return; }
   if (tab === 'p') {
     const L = hiLo52(S), yb = ytdBase(S), last = S.c[n - 1], tr = eq || etf ? await trSeries(s, S).catch(() => null) : null; if (!alive()) return;
-    const tr12 = tr && n > 252 ? tr[n - 1] / tr[n - 253] - 1 : s.r1y;
+    /* rendement total sur 12 mois calendaires (base : dernière séance à la date d'il y a un an ou avant, comme le résumé) */
+    const i12 = baseIdx(S.x, backMonths(S.x[n - 1], 12)), tr12 = tr && i12 >= 0 ? tr[n - 1] / tr[i12] - 1 : s.r1y;
     const myDv = DV.filter(x => x.t === s.id && x.dps).sort((a, b) => (b.ex || 0) - (a.ex || 0) || (b.pay || '').localeCompare(a.pay || ''));
     let dps = null, dpsG5 = null, lastDv = null, divLab = brvm ? 'Rendement net' : 'Rendement brut indicatif';
     if (brvm && eq) { lastDv = myDv.find(x => !x.exc) || null;  /* (dividende exceptionnel : hors dividende de référence) */ const ldD = lastDv ? (lastDv.pay || lastDv.det || (lastDv.ex ? (lastDv.ex + 1) + '-12-31' : '')) : '';
@@ -71,10 +72,14 @@ PAGES.DES = async (m, alive) => {
     return;
   }
   if (!F) { m.innerHTML = `<div class="pn">${head}<div class="empty">Comptes non disponibles pour ce titre.</div></div>`; return; }
-  const peersAll = IDX ? peersOf(s, IDX) : []; const med = k => { const v = peersAll.map(r => r[k]).filter(x => x != null && isFinite(x)).sort((a, b) => a - b); return v.length >= 3 ? v[Math.floor(v.length / 2)] : null; };
+  const peersAll = IDX ? peersOf(s, IDX) : []; const med = k => { const v = peersAll.map(r => r[k]).filter(x => x != null && isFinite(x)); return v.length >= 3 ? U.median(v) : null; };
   if (tab === 'i') {
-    const S60 = { v: S.v.slice(-60), val: S.val ? S.val.slice(-60) : null }, zero = S60.v.filter(v => !v).length;
-    const v20 = S.v.slice(-20).reduce((a, b) => a + b, 0) / 20, val60 = S.val ? S.val.slice(-60).reduce((a, b) => a + b, 0) / 60 : null;
+    /* BRVM : séances du marché (calendrier du BRVM Composite, comme LQA) ; un jour sans ligne dans la série = séance sans échange */
+    const CAL = brvm ? await series('BRVMC').catch(() => null) : null; if (!alive()) return;
+    const hv = new Map(S.x.map((d, i) => [d, i])), cal = CAL ? CAL.x.filter(d => d >= S.x[0] && d <= S.x[S.x.length - 1]) : S.x;
+    const at = (k, f) => cal.slice(-k).map(d => hv.has(d) ? f(hv.get(d)) || 0 : 0);
+    const zero = at(60, i => S.v[i]).filter(v => !v).length;
+    const v20 = at(20, i => S.v[i]).reduce((a, b) => a + b, 0) / 20, val60 = S.val ? at(60, i => S.val[i]).reduce((a, b) => a + b, 0) / 60 : null;
     const idxs = brvm ? ['BRVM Composite', 'BRVM 30 (si membre)', 'indice sectoriel ' + (s.grp || '')] : [s.ndx ? 'Nasdaq-100' : null].filter(Boolean);
     m.innerHTML = `<div class="pn">${head}<div class="dcols">
       <div>${dsec(1, 'Identification', '')}${dkv([['Code', esc(s.id)], ['Ticker', esc(ykey(s))], ['ISIN', P.isin ? esc(P.isin) : null], ['Place', brvm ? 'BRVM' : esc(P.exch || 'États-Unis')], ['Devise', esc(ccy)], ['Catégorie', 'Action ordinaire'], ['Pays', brvm ? esc(Q.sum.cty[s.cty] || s.cty) : esc(P.inc ? 'Constituée : ' + P.inc : 'États-Unis')], ['Statut', s.susp ? '<span class="dn">Cotation suspendue</span>' : 'Coté']])}</div>

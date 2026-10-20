@@ -2,6 +2,17 @@ const NA_RX = new RegExp(atob('dmVuZG9yfHphY2tzfHByb3ZpZGVk'), 'i');  // date de
 /* ================= FQT — quant engine (pure functions, no DOM) ================= */
 'use strict';
 
+/* Périodes de rendement (mêmes règles que le résumé, stats_block de build_terminal.py) : date de départ = même jour k mois plus
+   tôt (borné au dernier jour du mois), jamais par soustraction sur le nombre AAAAMMJJ ; cours de référence = dernière séance à
+   cette date ou avant, à 10 jours au plus (sinon pas de rendement : titre suspendu ou trop récent). */
+const ymdT = d => Date.UTC(Math.floor(d / 10000), Math.floor(d / 100) % 100 - 1, d % 100);
+function backMonths(d, k) { let y = Math.floor(d / 10000), mo = Math.floor(d / 100) % 100 - k; const dd = d % 100; while (mo < 1) { mo += 12; y--; } return y * 10000 + mo * 100 + Math.min(dd, new Date(Date.UTC(y, mo, 0)).getUTCDate()); }
+function idxAtOrBefore(x, d) { let lo = 0, hi = x.length - 1, r = -1; while (lo <= hi) { const mid = (lo + hi) >> 1; if (x[mid] <= d) { r = mid; lo = mid + 1; } else hi = mid - 1; } return r; }
+function baseIdx(x, d, gap = 10) { const i = idxAtOrBefore(x, d); return i >= 0 && (ymdT(d) - ymdT(x[i])) / 864e5 <= gap ? i : -1; }
+/* date de départ d'une période nommée (1S, 1M, 3M, 6M, YTD, 1A, 3A, 5A, 10A, 20A…) depuis la date AAAAMMJJ « last » */
+function perStart(last, p) { if (p === 'YTD') return (Math.floor(last / 10000) - 1) * 10000 + 1231; if (p === '1S') { const t = new Date(ymdT(last) - 7 * 864e5); return t.getUTCFullYear() * 10000 + (t.getUTCMonth() + 1) * 100 + t.getUTCDate(); }
+  const m = /^(\d+)([MA])$/.exec(p); return m ? backMonths(last, +m[1] * (m[2] === 'A' ? 12 : 1)) : 0; }
+
 /* Approximate effective Fed Funds rate by quarter (annual %). Used for cash yield and leveraged-ETF financing. */
 const RF_Y = { 2000: 6.2, 2001: 3.9, 2002: 1.7, 2003: 1.1, 2004: 1.35, 2005: 3.2, 2006: 5.0, 2007: 5.0, 2008: 1.9, 2009: .16, 2010: .18, 2011: .1, 2012: .14, 2013: .11, 2014: .09, 2015: .13, 2016: .4 };
 const RF_Q = {
@@ -37,6 +48,8 @@ const U = {
   std(a) { const m = U.mean(a); let s = 0; for (const v of a) s += (v - m) ** 2; return Math.sqrt(s / Math.max(1, a.length - 1)); },
   q(sorted, p) { if (!sorted.length) return NaN; const i = (sorted.length - 1) * p, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); },
   clamp(v, a, b) { return Math.max(a, Math.min(b, v)); },
+  /* médiane des valeurs renseignées (moyenne des deux valeurs centrales pour un nombre pair) ; null si aucune */
+  median(a) { const v = a.filter(x => x != null && isFinite(x)).sort((x, y) => x - y), n = v.length; return n ? (n % 2 ? v[(n - 1) / 2] : (v[n / 2 - 1] + v[n / 2]) / 2) : null; },
   rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; },
   hash(s) { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(16).padStart(8, '0'); },
   lgamma(x) { const g = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, .1208650973866179e-2, -.5395239384953e-5];

@@ -128,7 +128,7 @@ function bondCalc(b, today = new Date()) {
   const dirty = b.px + (b.cc || 0); const pv = r => cf.reduce((s, c) => s + c.v / Math.pow(1 + r, c.t), 0);
   let lo = -0.5, hi = 1.5; for (let k = 0; k < 120; k++) { const mid = (lo + hi) / 2; if (pv(mid) > dirty) lo = mid; else hi = mid; } const y = (lo + hi) / 2;
   const mac = cf.reduce((s, c) => s + c.t * c.v / Math.pow(1 + y, c.t), 0) / pv(y);
-  if (y > .25 || y < -.05) { Object.assign(o, { why: 'cours non représentatif (rendement hors norme)' }); return o; }
+  if (y > .25 || y < 0) { Object.assign(o, { why: 'cours non représentatif (rendement hors norme)' }); return o; }  /* (rendement négatif sur un emprunt de l'UEMOA : dernier cours non représentatif) */
   Object.assign(o, { ok: true, ytm: y, cy: N * b.cpn / b.px, mac, mod: mac / (1 + y), sens: -mac / (1 + y) * b.px / 100, life: (T - today) / 864e5 / 365, cf, par: Math.abs(b.px / N - 1) < .005, pctN: b.px / N });
   return o;
 }

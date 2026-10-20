@@ -66,7 +66,7 @@ function accountsTable(F, nY = 10, opts = {}) {
 }
 function faSrcNote(F) {
   return F.mkt === 'US' ? `Comptes publiés (${F.annual_only ? 'rapports annuels' : 'rapports annuels et trimestriels'}), devise ${F.ccy || 'USD'}. FCF = flux d’exploitation − acquisitions d’immobilisations corporelles. Dette financière hors obligations locatives.`
-    : `Millions de FCFA. <sup class="am">a</sup> = exercice présenté d’après ses chiffres clés publiés ; <sup class="am">r</sup> = comptes publiés dans l’autre norme (SYSCOHADA ou IFRS).${F.Y && F.Y.src && F.Y.src.some(x => /^converti/.test(x || '')) ? ' <sup class="am">$</sup> = comptes publiés en dollars US, convertis en FCFA (cours au survol de l’année).' : ''} FCF = flux d’exploitation − acquisitions d’immobilisations.${F.bank ? ' Banque : pas de FCF ni de valeur d’entreprise.' : ''}`;
+    : `Montants en milliards de FCFA (comptes publiés en millions de FCFA). <sup class="am">a</sup> = exercice présenté d’après ses chiffres clés publiés ; <sup class="am">r</sup> = comptes publiés dans l’autre norme (SYSCOHADA ou IFRS).${F.Y && F.Y.src && F.Y.src.some(x => /^converti/.test(x || '')) ? ' <sup class="am">$</sup> = comptes publiés en dollars US, convertis en FCFA (cours au survol de l’année).' : ''} FCF = flux d’exploitation − acquisitions d’immobilisations.${F.bank ? ' Banque : pas de FCF ni de valeur d’entreprise.' : ''}`;
 }
 
 /* Comptes publiés détaillés (BRVM) : postes des états financiers et ratios, sur tous les exercices lus.
@@ -173,7 +173,8 @@ async function RV_main(m, alive) {
   const hist = k => { const a = (MH[k] || []).slice(Math.max(0, k0)).filter(v => v != null && isFinite(v) && v > 0 && v < (k === 'fcfy' || k === 'dy' ? 1 : 500)); if (a.length < 20) return null; const mu = U.mean(a), sd = U.std(a); return { mu, sd, n: a.length, last: a[a.length - 1], pr: pctRank(a, a[a.length - 1]) }; };
   const rows = MULT.filter(([k]) => k !== 'fpe' || s.mkt === 'US').map(([k, l, t, hint]) => {
     const v = me[k], peers = P.map(r => r[k]).filter(x => x != null && isFinite(x) && (t !== 'x' || x > 0)), md = med(peers), H = hist(k), f = t === 'p' ? x => P1(x, 2) : x => x == null ? '—' : num(x, 1) + ' x';
-    const prem = v != null && md ? (t === 'p' ? md / v - 1 : v / md - 1) : null;
+    /* prime / décote seulement entre deux valeurs positives (un rendement ou un multiple négatif n'a pas de prime ni de décote) */
+    const prem = v != null && md && v > 0 && md > 0 ? (t === 'p' ? md / v - 1 : v / md - 1) : null;
     return `<tr><td class="l am">${l}</td><td class="yl">${v != null ? f(v) : NDc(k === 'fpe' ? 'pas de consensus' : 'non calculable (résultat négatif ou donnée absente)')}</td><td>${f(md)}</td><td>${peers.length > 3 ? f(qtl(peers, .25)) + ' – ' + f(qtl(peers, .75)) : '—'}</td>
       <td>${prem == null ? '—' : `<span class="${prem > 0 ? 'dn' : 'up'}">${prem > 0 ? 'prime ' : 'décote '}${num(Math.abs(prem) * 100, 0)} %</span>`}</td><td>${v != null ? num(pctRank(peers, v) * 100, 0) + 'e pct' : '—'}</td>
       <td>${H ? f(H.mu) : '—'}</td><td>${H ? f(H.mu - H.sd) + ' – ' + f(H.mu + H.sd) : '—'}</td><td>${H ? num(H.pr * 100, 0) + 'e pct' : '—'}</td><td class="l dm">${hint}</td></tr>`; }).join('');
@@ -279,10 +280,10 @@ PAGES.DVD = async (m, alive) => {
 PAGES.DDM = async (m, alive) => {
   const s = sec(ST.sec); const [S, F, E, DV] = await Promise.all([series(s.id), faJSON(s.id).catch(() => null), ecoLite().catch(() => null), getJSON('dividends.json')]); if (!alive()) return;
   const us = !isBRVM(s), price = s.last; let d0 = null, hist = [];
-  if (!us) { const byE = {}; DV.filter(x => x.t === s.id && x.dps && x.ex && !x.exc).forEach(x => { byE[x.ex] = (byE[x.ex] || 0) + x.dps; }); const yE = Object.keys(byE).map(Number).sort((a, b) => a - b); hist = yE.length ? Array.from({ length: yE[yE.length - 1] - yE[0] + 1 }, (_, i) => byE[yE[0] + i] ?? null) : [];  /* (dividendes ordinaires, un total par exercice) */ d0 = s.dps || hist[hist.length - 1]; }
+  if (!us) { const byE = {}; DV.filter(x => x.t === s.id && x.dps && x.ex && !x.exc).forEach(x => { byE[x.ex] = (byE[x.ex] || 0) + x.dps; }); const yE = Object.keys(byE).map(Number).sort((a, b) => a - b); hist = yE.length ? Array.from({ length: yE[yE.length - 1] - yE[0] + 1 }, (_, i) => byE[yE[0] + i] ?? null) : [];  /* (dividendes ordinaires, un total par exercice) */ d0 = s.yld != null ? s.dps || hist[hist.length - 1] : null; }  /* (dernier dividende de plus de deux ans : pas de modèle, comme le rendement) */
   else { const by = {}; for (let i = 0; i < S.x.length; i++) if (S.div[i]) { const y = Math.floor(S.x[i] / 10000); by[y] = (by[y] || 0) + S.div[i]; } const ys = Object.keys(by).sort(); const cy = String(new Date().getFullYear()); hist = ys.filter(y => y !== cy).map(y => by[y]); d0 = hist[hist.length - 1];
     if (!d0 && F && F.Y && F.Y.div) { const i = F.Y.div.length - 1; d0 = F.Y.div[i] && F.Y.sh[i] ? F.Y.div[i] / F.Y.sh[i] : null; } }
-  if (!d0) { m.innerHTML = pn(s.tk + ' · valeur par les dividendes', 'DDM', '<div class="empty">Ce titre ne verse pas de dividende recensé : le modèle ne s’applique pas.</div>'); return; }
+  if (!d0) { m.innerHTML = pn(s.tk + ' · valeur par les dividendes', 'DDM', `<div class="empty">${!us && s.dps ? 'Dernier dividende versé il y a plus de deux ans : le modèle ne s’applique pas.' : 'Ce titre ne verse pas de dividende recensé : le modèle ne s’applique pas.'}</div>`); return; }
   const t10 = E && E.meta ? E.meta.find(x => x.id === 'DGS10') : null, rf = us ? (t10 ? t10.last / 100 : .042) : .065, erp = us ? .045 : .095, beta = s.beta != null ? .67 * s.beta + .33 : 1;
   const gh = cagrA(hist, Math.min(5, hist.length - 1));
   const st = ST.ddm && ST.ddm.id === s.id ? ST.ddm : (ST.ddm = { id: s.id, d0, r: rf + beta * erp, g1: U.clamp(gh != null ? gh : .03, -.05, .15), n: 5, g2: us ? .025 : .03 });
@@ -315,23 +316,29 @@ PAGES.COMP = async (m, alive) => {
     const peers = secsWhere(x => x.id !== s.id && x.mkt === s.mkt && x.grp === s.grp && x.cls === s.cls).sort((a, b) => (b.mcap || 0) - (a.mcap || 0)).slice(0, 3); st.ids.push(...peers.map(x => x.id)); }
   const ids = [...new Set(st.ids.concat([st.bench]))].filter(id => Q.by[id]); const SS = await Promise.all(ids.map(id => series(id))); if (!alive()) return;
   const TR = st.tr ? await Promise.all(ids.map((id, i) => trSeries(Q.by[id], SS[i]))) : ids.map(() => null); if (!alive()) return;
-  const yrs = { '1A': 1, '3A': 3, '5A': 5, '10A': 10 }[st.per]; const end = Math.max(...SS.map(S => S.x[S.x.length - 1])), start = end - yrs * 10000;
-  const grid = SS[ids.indexOf(st.bench)].x.filter(d => d >= start); const cols = ['#ffd200', '#4fc3f7', '#ff7043', '#ab47bc', '#66bb6a', '#ec407a', '#90a4ae'];
+  const yrs = { '1A': 1, '3A': 3, '5A': 5, '10A': 10 }[st.per]; const end = Math.max(...SS.map(S => S.x[S.x.length - 1])), start = perStart(end, st.per);
+  /* base = dernière séance à la date de départ ou avant (comme le résumé) */
+  const BX = SS[ids.indexOf(st.bench)].x, grid = BX.slice(Math.max(0, idxAtOrBefore(BX, start))); const cols = ['#ffd200', '#4fc3f7', '#ff7043', '#ab47bc', '#66bb6a', '#ec407a', '#90a4ae'];
   const lines = ids.map((id, i) => { const S = SS[i], val = TR[i] || S.c, f = ffillJS(S.x, val, grid); const b0 = f.find(v => v != null); return { id, y: f.map(v => v != null && b0 ? v / b0 * 100 : null), tr: !!TR[i], S, val }; });
-  const stat = L => { const S = L.S, k0 = S.x.findIndex(d => d >= start); if (k0 < 0) return null; const v = L.val.slice(k0), x = S.x.slice(k0); const r = []; for (let i = 1; i < v.length; i++) r.push(v[i] / v[i - 1] - 1);
-    let pk = v[0], dd = 0; for (const p of v) { pk = Math.max(pk, p); dd = Math.min(dd, p / pk - 1); } const ret = v[v.length - 1] / v[0] - 1, ann = Math.pow(1 + ret, 1 / yrs) - 1; return { ret, ann, vol: U.std(r) * Math.sqrt(S.f === 'D' ? 252 : 12), dd, r, x }; };
-  const SB = stat(lines[ids.indexOf(st.bench)]);
+  /* titre coté après la date de départ : statistiques depuis sa première séance (marquées), annualisées sur sa durée réelle */
+  const stat = L => { const S = L.S; let k0 = idxAtOrBefore(S.x, start); const part = k0 < 0; if (part) k0 = 0; if (k0 >= S.x.length - 1) return null; const v = L.val.slice(k0), x = S.x.slice(k0); const r = []; for (let i = 1; i < v.length; i++) r.push(v[i] / v[i - 1] - 1);
+    const y = part ? (ymdT(x[x.length - 1]) - ymdT(x[0])) / 31557600000 : yrs;
+    let pk = v[0], dd = 0; for (const p of v) { pk = Math.max(pk, p); dd = Math.min(dd, p / pk - 1); } const ret = v[v.length - 1] / v[0] - 1, ann = y >= .98 ? Math.pow(1 + ret, 1 / y) - 1 : null; return { ret, ann, vol: U.std(r) * Math.sqrt(S.f === 'D' ? 252 : 12), dd, r, x, part }; };
+  const LB = lines[ids.indexOf(st.bench)], SB = stat(LB);
   const rows = lines.map((L, i) => { const a = stat(L); if (!a) return ''; let te = null, ir = null, beta = null, corr = null;
-    if (SB && L.id !== st.bench) { const mb = new Map(SB.x.map((d, j) => [d, SB.r[j - 1]])); const pr = []; a.x.forEach((d, j) => { if (j && mb.get(d) != null) pr.push([a.r[j - 1], mb.get(d)]); });
-      if (pr.length > 30) { const ex = pr.map(p => p[0] - p[1]); te = U.std(ex) * Math.sqrt(252); ir = te ? (a.ann - SB.ann) / te : null; const mx = U.mean(pr.map(p => p[1])), my = U.mean(pr.map(p => p[0])); const cv = U.mean(pr.map(p => (p[0] - my) * (p[1] - mx))), vx = U.mean(pr.map(p => (p[1] - mx) ** 2)), vy = U.mean(pr.map(p => (p[0] - my) ** 2)); beta = cv / vx; corr = cv / Math.sqrt(vx * vy); } }
-    const q = Q.by[L.id]; return `<tr data-sec="${L.id}" data-to="COMP"><td class="l"><i class="dot" style="background:${cols[i % cols.length]}"></i><span class="tk">${L.id}</span>${L.id === st.bench ? ' <span class="dm">indice</span>' : ''}</td><td class="l nm">${esc(q.short || q.n)}</td><td>${pc(a.ret, 1)}</td><td>${yrs > 1 ? pc(a.ann, 1) : '—'}</td><td>${L.id === st.bench ? '—' : sgn(a.ann - SB.ann, 1)}</td><td>${num(a.vol * 100, 1)} %</td><td>${pc(a.dd, 1)}</td><td>${beta != null ? num(beta, 2) : '—'}</td><td>${corr != null ? num(corr, 2) : '—'}</td><td>${te != null ? num(te * 100, 1) + ' %' : '—'}</td><td>${ir != null ? num(ir, 2) : '—'}</td><td class="dm">${L.tr ? 'oui' : 'non'}</td>
+    /* écart à l'indice, bêta, corrélation, écart de suivi, ratio d'information : cours contre cours quand l'indice ne réinvestit
+       pas les dividendes (sinon les dividendes du titre passeraient pour de la surperformance) */
+    const ac = L.tr && !LB.tr ? stat({ ...L, val: L.S.c }) : a;
+    if (SB && L.id !== st.bench && ac) { const mb = new Map(SB.x.map((d, j) => [d, SB.r[j - 1]])); const pr = []; ac.x.forEach((d, j) => { if (j && mb.get(d) != null) pr.push([ac.r[j - 1], mb.get(d)]); });
+      if (pr.length > 30) { const ex = pr.map(p => p[0] - p[1]); te = U.std(ex) * Math.sqrt(252); ir = te && ac.ann != null && SB.ann != null ? (ac.ann - SB.ann) / te : null; const mx = U.mean(pr.map(p => p[1])), my = U.mean(pr.map(p => p[0])); const cv = U.mean(pr.map(p => (p[0] - my) * (p[1] - mx))), vx = U.mean(pr.map(p => (p[1] - mx) ** 2)), vy = U.mean(pr.map(p => (p[0] - my) ** 2)); beta = cv / vx; corr = cv / Math.sqrt(vx * vy); } }
+    const q = Q.by[L.id]; return `<tr data-sec="${L.id}" data-to="COMP"><td class="l"><i class="dot" style="background:${cols[i % cols.length]}"></i><span class="tk">${L.id}</span>${L.id === st.bench ? ' <span class="dm">indice</span>' : ''}</td><td class="l nm">${esc(q.short || q.n)}${a.part ? ` <span class="dm">depuis le ${fd(a.x[0])}</span>` : ''}</td><td>${pc(a.ret, 1)}</td><td>${yrs > 1 && a.ann != null ? pc(a.ann, 1) : '—'}</td><td>${L.id === st.bench || !SB || ac.ann == null || SB.ann == null || yrs <= 1 && ac.part ? '—' : sgn(ac.ann - SB.ann, 1)}</td><td>${num(a.vol * 100, 1)} %</td><td>${pc(a.dd, 1)}</td><td>${beta != null ? num(beta, 2) : '—'}</td><td>${corr != null ? num(corr, 2) : '—'}</td><td>${te != null ? num(te * 100, 1) + ' %' : '—'}</td><td>${ir != null ? num(ir, 2) : '—'}</td><td class="dm">${L.tr ? 'oui' : 'non'}</td>
       <td>${L.id !== s.id && L.id !== st.bench ? `<button class="tb" data-rm="${L.id}">×</button>` : ''}</td></tr>`; }).join('');
   m.innerHTML = `<div class="tools" style="border:1px solid var(--line2)"><span class="tlab">Période</span>${['1A', '3A', '5A', '10A'].map(p => `<button class="tb ${st.per === p ? 'on' : ''}" data-per="${p}">${p}</button>`).join('')}
     <button class="tb ${st.tr ? 'on' : ''}" data-tr="1">Dividendes réinvestis</button><form class="pairf" id="coF" style="border:0;padding:0 0 0 10px"><span class="tlab">Ajouter</span><input list="coL" id="coI" placeholder="TICKER" spellcheck="false"><span class="tlab">Indice de référence</span><input list="coL" id="coB" value="${st.bench}" spellcheck="false"><button class="tb">OK</button>
     <datalist id="coL">${Q.sum.secs.filter(x => x.f === 'D').map(x => `<option value="${x.id}">${esc(x.short || x.n)}</option>`).join('')}</datalist></form></div>
     ${pn(`Performance comparée · base 100 au ${fd(grid[0])}${st.tr ? ' · dividendes réinvestis quand disponibles' : ''}`, 'COMP', cvb('coC', 360))}
     ${pn('Statistiques sur la période', 'COMP', `<div class="tw"><table class="t"><thead><tr><th class="l">Titre</th><th class="l">Nom</th><th>Perf.</th><th>Annualisée</th><th>Écart annuel / indice</th><th>Volatilité</th><th>Drawdown max</th><th>Bêta</th><th>Corrélation</th><th>Écart de suivi</th><th>Ratio d’information</th><th>Div. réinv.</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`,
-      { np: true, lect: `Indice de référence : <b>${st.bench}</b>. Bêta et corrélation sur rendements quotidiens communs. Ratio d’information = surperformance annuelle ÷ écart de suivi. « Div. réinv. » = non : dividendes non disponibles pour ce titre, performance de prix seule.` })}`;
+      { np: true, lect: `Indice de référence : <b>${st.bench}</b>. Bêta et corrélation sur rendements quotidiens communs. Ratio d’information = surperformance annuelle ÷ écart de suivi. Quand l’indice ne réinvestit pas les dividendes (BRVM Composite), l’écart à l’indice, le bêta, la corrélation, l’écart de suivi et le ratio d’information comparent les cours seuls. « Div. réinv. » = non : dividendes non disponibles pour ce titre, performance de prix seule.` })}`;
   new TSChart($('coC'), { panes: [{ h: 1, log: true, fmt: v => num(v, 0) }] }).set({ x: grid, series: lines.map((L, i) => ({ y: L.y, color: cols[i % cols.length], label: L.id, fmt: v => num(v, 1) })) }, [0, grid.length - 1]);
   m.querySelectorAll('[data-per]').forEach(b => b.onclick = () => { st.per = b.dataset.per; render(); }); m.querySelector('[data-tr]').onclick = () => { st.tr = !st.tr; render(); };
   m.querySelectorAll('[data-rm]').forEach(b => b.onclick = e => { e.stopPropagation(); st.ids = st.ids.filter(x => x !== b.dataset.rm); render(); });
@@ -358,7 +365,8 @@ PAGES.BETA = async (m, alive) => {
   const R = win.map(([l, f, n]) => ({ l, f, n, o: olsBeta(pairsOf(f, n)), d: f === 'D' ? olsBeta(pairsOf(f, n, true)) : null }));
   const dr = rs.D[0]; const rr = [...dr.values()].slice(-252); const vol = U.std(rr) * Math.sqrt(252), down = Math.sqrt(U.mean(rr.map(v => Math.min(0, v) ** 2))) * Math.sqrt(252);
   const so = rr.slice().sort((a, b) => a - b), var95 = so[Math.floor(so.length * .05)];
-  let pk = S.c[0], mdd = 0; const k5 = S.x.findIndex(d => d >= end - 50000); for (let i = Math.max(0, k5); i < S.c.length; i++) { pk = Math.max(pk, S.c[i]); mdd = Math.min(mdd, S.c[i] / pk - 1); }
+  /* drawdown maximal sur 5 ans : sommet cherché dans la fenêtre seulement (pas depuis le début de l'historique) */
+  const k5 = Math.max(0, idxAtOrBefore(S.x, backMonths(end, 60))); let pk = S.c[k5], mdd = 0; for (let i = k5; i < S.c.length; i++) { pk = Math.max(pk, S.c[i]); mdd = Math.min(mdd, S.c[i] / pk - 1); }
   const pd = pairsOf('D', 504); const bear = olsBeta(pd.filter(p => p[1] < 0)), bull = olsBeta(pd.filter(p => p[1] > 0));
   const peers = secsWhere(x => x.mkt === s.mkt && x.grp === s.grp && x.cls === s.cls && x.f === 'D').sort((a, b) => (b.mcap || 0) - (a.mcap || 0)).slice(0, 12);
   const benches = isBRVM(s) ? ['BRVMC', 'BRVM30', 'SPY', 'QQQ', 'EEM', 'AFK'] : ['SPY', 'QQQ', 'VTI', 'SOXX', 'EEM', 'BRVMC'];

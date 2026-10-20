@@ -104,12 +104,17 @@ jobs:
           restore-keys: bcache-
 
       - name: Relever les cours (BRVM, QQQ, US, crypto)
-        run: python3 scripts/scrape.py --mode "${{ steps.mode.outputs.mode }}" --state /tmp/state --out /tmp/site
+        env:
+          # clôture du jour (archive de la séance BRVM) : seulement la base programmée du soir, jamais un passage lancé en journée
+          FQT_CLOSE: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
+        # (délai propre : un relevé bloqué par le réseau ne retient plus la file des relevés jusqu'au délai du job, 95 min)
+        run: timeout 600 python3 scripts/scrape.py --mode "${{ steps.mode.outputs.mode }}" --state /tmp/state --out /tmp/site
 
       - name: Actualités, publications BRVM, dépôts SEC, obligations BRVM, capitalisations mondiales
         continue-on-error: true
         env:
           SEC_UA: ${{ secrets.SEC_UA }}
+          FQT_CLOSE: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
           FQT_MODE: ${{ steps.mode.outputs.mode }}
         run: |
           # Fear & Greed de CNN relevé à chaque passage en semaine (le soir, il est déjà relevé avec les sources complémentaires)
@@ -293,8 +298,8 @@ jobs:
           if [ "$SRC_T" -lt "$OLD_T" ]; then echo "Le site en ligne vient d'un code plus récent : pas de retour en arrière"; exit 0; fi
           git push -q -f "$URL" HEAD:site && echo "Site publié : Vercel redéploie"
 
-      - name: Archiver la séance BRVM sur main (EOD)
-        if: steps.mode.outputs.mode == 'eod'
+      - name: Archiver la séance BRVM sur main (base programmée du soir seulement)
+        if: steps.mode.outputs.mode == 'eod' && github.event.schedule == '35 22 * * 1-5'
         run: |
           git config user.name "fqt-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

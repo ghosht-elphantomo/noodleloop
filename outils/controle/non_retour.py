@@ -449,6 +449,114 @@ def b25(ctx):
     return ("rouge", "dossier controle/ non recopié par " + ", ".join(bad)) if bad else ("vert", "recopié")
 
 
+def _web(f):
+    try:
+        return open(os.path.join(DEPOT, "web", f), encoding="utf8").read()
+    except OSError:
+        return ""
+
+
+def _node_periodes():
+    """exécute les fonctions de période de web/engine.js pour chaque jour de 2024 à 2027 : dates de départ valides"""
+    import subprocess
+    js = ("const fs=require('fs'),vm=require('vm');const c={atob:s=>Buffer.from(s,'base64').toString()};vm.createContext(c);"
+          "vm.runInContext(fs.readFileSync(process.argv[1],'utf8')+';this.f=perStart;',c);const bad=[];"
+          "for(let t=Date.UTC(2024,0,1);t<Date.UTC(2028,0,1);t+=864e5){const d=new Date(t),x=d.getUTCFullYear()*1e4+(d.getUTCMonth()+1)*100+d.getUTCDate();"
+          "for(const p of ['1M','3M','6M','YTD','1A','3A','5A','10A']){const s=c.f(x,p),y=Math.floor(s/1e4),m=Math.floor(s/100)%100,j=s%100;"
+          "const ok=m>=1&&m<=12&&j>=1&&j<=new Date(Date.UTC(y,m,0)).getUTCDate()&&s<x;if(!ok)bad.push(x+' '+p+' '+s);}}console.log(JSON.stringify(bad.slice(0,5)));")
+    r = subprocess.run(["node", "-e", js, os.path.join(DEPOT, "web", "engine.js")], capture_output=True, text=True, timeout=60)
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr[:200])
+    return json.loads(r.stdout.strip() or "[]")
+
+
+@bug("B26", "2026-10-20", "Périodes 1M / 3M / 6M fausses une partie de l'année (TRA, HP, GP, COMP)",
+     "La date de départ des périodes était calculée en retranchant 100, 300 ou 600 au nombre AAAAMMJJ : de janvier à juin la "
+     "période « 6M » partait du début de l'année (SNTS +7,7 % au lieu de +12,4 % au 13/02) et HP affichait une date « 15/98/2026 ». "
+     "Depuis le 20/10/2026 : fonctions communes backMonths / perStart (web/engine.js), dates calendaires.",
+     "dates de départ valides pour chaque jour de 2024 à 2027 et chaque période ; plus aucune soustraction « last - 100/300/600 » dans la page")
+def b26(ctx):
+    pb = []
+    for f in ("pages1.js", "pages4.js", "pages9.js", "pages13.js"):
+        t = _web(f)
+        if re.search(r"last - (?:100|300|600|10000|30000|50000)\b|'1M': 100|end - yrs \* 10000", t):
+            pb.append(f"soustraction sur AAAAMMJJ dans {f}")
+    try:
+        bad = _node_periodes()
+        if bad:
+            pb.append("dates invalides : " + "; ".join(bad))
+    except Exception as e:  # noqa: BLE001
+        pb.append(f"essai des périodes impossible : {e}")
+    return ("rouge", "; ".join(pb)) if pb else ("vert", "dates de départ calendaires valides (2024-2027)")
+
+
+@bug("B27", "2026-10-20", "Rendement d'une période calculé depuis la première séance après la date de départ",
+     "TRA, GP, COMP et HP prenaient comme base la première séance après la date de départ (le rendement de cette séance était "
+     "perdu) : TRA « YTD » ORAC +47,6 % contre +45,6 % partout ailleurs. Depuis le 20/10/2026 : base = dernière séance à la date "
+     "ou avant (baseIdx, idxAtOrBefore), comme le résumé.",
+     "YTD et 1 an recalculés avec la règle de la page = ceux du résumé pour 10 actions BRVM (0,05 point près) ; TRA, GP et COMP utilisent la base commune")
+def b27(ctx):
+    pb = []
+    for f, k in (("pages9.js", "baseIdx(x, d)"), ("pages1.js", "idxAtOrBefore(S.x, perStart("), ("pages4.js", "idxAtOrBefore(S.x, start)")):
+        if k not in _web(f):
+            pb.append(f"base commune absente de {f}")
+    S = jl(ctx["D"], "summary.json") or {}
+    import bisect
+    n = 0
+    for s in [x for x in S.get("secs") or [] if x.get("mkt") == "BRVM" and x.get("cls") == "Equity"][:10]:
+        x = jl(ctx["D"], f"s/{s['id']}.json") or {}
+        d, c = x.get("d") or [], x.get("c") or []
+        if len(d) < 300 or s.get("ytd") is None:
+            continue
+        i = bisect.bisect_right(d, (d[-1] // 10000 - 1) * 10000 + 1231) - 1
+        if i >= 0 and abs(c[-1] / c[i] - 1 - s["ytd"]) > .0005:
+            pb.append(f"{s['id']} YTD {c[-1] / c[i] - 1:.4f} / résumé {s['ytd']:.4f}")
+        n += 1
+    return ("rouge", "; ".join(pb[:6])) if pb else ("vert", f"{n} actions : YTD de la page = résumé")
+
+
+@bug("B28", "2026-10-20", "Calculs d'affichage faux corrigés le 20/10/2026 (audit) : 12 mois en 252 séances, PER US, drawdown 5 ans, rendement absent à 0,00 %, secteurs, prime sur rendement négatif",
+     "DES et TECH comptaient « 12 mois » en 252 séances (la BRVM en a 250) ; GF divisait le cours du jour par le BPA de chaque "
+     "exercice US ; BETA mesurait le drawdown 5 ans depuis la première clôture de l'historique (UNLC −90,3 % au lieu de −64,9 %) ; "
+     "DIVC affichait 0,00 % pour un rendement absent ; le tableau des secteurs comptait 0 % pour un titre sans valeur ; RV donnait "
+     "une décote de 1 000 % sur un rendement FCF négatif ; HVT retirait les séances sans écart (Parkinson surestimée).",
+     "motifs corrigés absents du code de la page ; aucun « 0,00 % » dans les rendements de DIVC (parcours du site)")
+def b28(ctx):
+    pb = []
+    pats = [("pages8.js", r"tr\[n - 253\]"), ("pages15.js", r"roc\(252\)"), ("pages4.js", r"let pk = S\.c\[0\], mdd = 0; const k5"),
+            ("pages2.js", r"\$\{num\(s\.yld \* 100, 2\)\}%"), ("pages1.js", r"w\(s\) \* \(s\.ytd \|\| 0\)"),
+            ("pages4.js", r"prem = v != null && md \? \(t === 'p' \? md / v - 1"), ("pages11.js", r"S\.h\[i\] > S\.l\[i\]\) a\.push"),
+            ("pages11.js", r"const t = y \* 10000 \+ 1231;")]
+    for f, rx in pats:
+        if re.search(rx, _web(f)):
+            pb.append(f"{f} : {rx[:40]}")
+    pages = ctx.get("pages") or {}
+    for h, v in pages.items():
+        if h.startswith("DIVC") and re.search(r"\b0,00 ?%", (v or {}).get("text") or ""):
+            pb.append(f"{h} : rendement « 0,00 % »")
+            break
+    return ("rouge", "; ".join(pb[:6])) if pb else ("vert", "aucun des motifs corrigés")
+
+
+@bug("B29", "2026-10-20", "Passage complet lancé en journée traité comme la clôture du soir",
+     "Un passage complet déclenché par une modification du code archivait les cours de séance comme clôtures du jour "
+     "(seed/brvm_daily.csv : 221 clôtures fausses du 12 au 19/10/2026, réparées depuis les bulletins) et remettait la référence "
+     "« veille » des capitalisations mondiales à l'heure du passage (variations du jour fausses). Depuis le 20/10/2026, seule la "
+     "base programmée du soir (FQT_CLOSE=1) fait la clôture du jour ; une séance déjà archivée est remplacée par la lecture du soir.",
+     "terminal.yml : archive et référence réservées à la base programmée ; archive = bulletin (contrôle « Archive des séances / bulletin officiel ») ; "
+     "référence des capitalisations mondiales datée du soir")
+def b29(ctx):
+    pb = []
+    t = open(os.path.join(DEPOT, ".github", "workflows", "terminal.yml"), encoding="utf8").read()
+    if "if: steps.mode.outputs.mode == 'eod' && github.event.schedule == '35 22 * * 1-5'" not in t or t.count("FQT_CLOSE:") < 2:
+        pb.append("clôture du jour non réservée à la base programmée dans terminal.yml")
+    w = jl(ctx["D"], "world.json") or {}
+    ref = str(w.get("ref") or "")
+    if ref and not re.match(r"\d{4}-\d{2}-\d{2} (2[2-3]|0[0-1]):", ref):
+        pb.append(f"référence des capitalisations mondiales datée « {ref} » (attendue avec la base du soir, après 22 h UTC)")
+    return ("orange" if pb and not pb[0].startswith("clôture") else "rouge", "; ".join(pb)) if pb else ("vert", "clôture du jour réservée à la base du soir" + (f" ; référence mondiale {ref}" if ref else ""))
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

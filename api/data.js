@@ -35,8 +35,9 @@ const DOC_RW = [
   [/https?:\/\/www\.brvm\.org\/sites\/default\/files\//g, '/doc/b/'],
   [/https?:\/\/bfin\.brvm\.org\/boc\/BOC_JOUR\//g, '/doc/f/'],
   [/https?:\/\/(?:www\.)?richbourse\.com\//g, '/doc/r/'],
-  [/https?:\/\/(?:www\.)?sikafinance\.com\/[^"]*/g, ''],
-  [/https?:\/\/(?:[a-z]+\.)?brvm\.org\/[^"]*/g, ''],
+  // (adresse effacée jusqu'à la fin de l'adresse seulement : jamais au-delà d'un espace ou d'un guillemet échappé, sinon le JSON serait abîmé)
+  [/https?:\/\/(?:www\.)?sikafinance\.com\/[^"\\\s]*/g, ''],
+  [/https?:\/\/(?:[a-z]+\.)?brvm\.org\/[^"\\\s]*/g, ''],
   // libellés de provenance dans les données (jamais affichés, mais lisibles dans les fichiers)
   [/"src":"(?:bulletin officiel de la cote[^"]*|nasdaq\.com · sec\.gov|[^"]*\bbrvm\.org\b[^"]*)"/g, '"src":""'],
   [/archive SikaFinance/g, 'archive'],

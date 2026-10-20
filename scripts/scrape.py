@@ -340,16 +340,13 @@ def scrape_indices(idx_prev, sect_prev):
 def archive_brvm(b):
     """Append the session to seed/brvm_daily.csv (one line per stock per session)."""
     path = os.path.join(DATA, "brvm_daily.csv")
-    have = set()
+    # une séance déjà archivée est remplacée (la dernière lecture, celle du soir, l'emporte)
+    keep = []
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
-            have = {line.split(",", 1)[0] for line in f}
-    if b["asof"] in have:
-        return
-    new = not os.path.exists(path)
-    with open(path, "a", encoding="utf8") as f:
-        if new:
-            f.write("date,ticker,close,var_pct,volume,prev\n")
+            keep = [line for line in f if not line.startswith(b["asof"] + ",")]
+    with open(path, "w", encoding="utf8") as f:
+        f.writelines(keep or ["date,ticker,close,var_pct,volume,prev\n"])
         for r in b["rows"]:
             f.write(f'{b["asof"]},{r["t"]},{r["c"]},{r["vj"]},{r["vol"]},{r["prev"]}\n')
     log("archived BRVM session", b["asof"])
@@ -744,7 +741,8 @@ def main():
         log("BRVM", len(fresh["rows"]), "rows", fresh["asof"])
         brvm = fresh
         dump(brvm, os.path.join(st, "brvm.json"))
-        if a.mode == "eod":
+        # (clôture du jour : seulement la base programmée du soir ; un passage complet lancé en journée archivait des cours de séance)
+        if a.mode == "eod" and os.environ.get("FQT_CLOSE") == "1":
             archive_brvm(brvm)
             dump(brvm, os.path.join(DATA, "brvm.json"))
     except Exception as e:  # noqa: BLE001

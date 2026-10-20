@@ -2098,8 +2098,9 @@ def run_bochist(out):
         open(os.path.join(d_dir, "_samples", f"{y}.txt"), "w", encoding="utf8").write(t)
     save(ip, {"v": BOC_V, "cols": BOC_COLS, "done": sorted(done), "miss": sorted(miss), "bad": sorted(bad), "first": min(done) if done else None,
               "last": max(done) if done else None, "left": max(0, len(todo) - n_ok - n_miss), "ts": int(time.time())})
-    if n_ok:
-        note("bochist")
+    last_ok = max(done) if done else None
+    if n_ok or not todo or (last_ok and (TODAY - dt.date(int(last_ok[:4]), int(last_ok[4:6]), int(last_ok[6:]))).days <= 6):
+        note("bochist")  # (rien de nouveau à lire et dernier bulletin récent : pas une erreur)
     else:
         note("bochist", False, f"aucun bulletin lu ({n_miss} jours sans bulletin)")
     log(f"bulletins : {n_ok} lus, {n_miss} jours sans bulletin, reste {max(0, len(todo) - n_ok - n_miss)}")
@@ -3144,7 +3145,8 @@ def run_cmc(out, site_data=None):
     site = {"ts": now, "ref": eod.get("d"), "src": "companiesmarketcap.com", "rows": out_rows}
     if site_data:
         save(os.path.join(site_data, "world.json"), site)
-    if os.environ.get("FQT_MODE") == "eod" or not eod.get("px"):
+    # (référence « veille » : seulement la base programmée du soir ; un passage complet lancé en journée la remettait à l'heure du passage)
+    if (os.environ.get("FQT_MODE") == "eod" and os.environ.get("FQT_CLOSE") == "1") or not eod.get("px"):
         save(path, {"d": dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M"), "px": {k: v[3] for k, v in cur.items()}})
         open(os.path.join(out, ".dirty"), "w").close()  # relevé de référence à conserver (branche raw)
     note("cmc")

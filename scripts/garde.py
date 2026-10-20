@@ -14,7 +14,7 @@ Usage (étape « Publier les données » de terminal.yml, avant le commit) :
 """
 import json, os, subprocess, sys
 
-RETIRES = ("data/qlabp/",)  # QLAB Prévisions, retiré le 19/10/2026 à la demande du propriétaire
+RETIRES = ("data/qlabp/", "data/s/SPX.json")  # QLAB Prévisions, retiré le 19/10/2026 à la demande du propriétaire ; s/SPX.json : ancien nom de la série mensuelle SPXM, orphelin
 FOND = ("data/summary.json", "data/fundamentals.json", "data/dividends.json", "data/events.json", "data/search.json",
         "data/fa_index.json", "data/profiles.json", "data/ratings.json", "data/weekly.json", "data/breadth.json", "data/eco.json",
         "data/reports.json", "data/avis_brvm.json", "data/world_mkt.json", "data/calendar.json", "data/bonds.json",

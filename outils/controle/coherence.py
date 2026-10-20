@@ -205,6 +205,29 @@ def verifier(R, D, boc=None):
               (f"{len(out)} volume(s) différent(s) du bulletin sur les {len(rec)} dernières séances : " + _liste(out)) if out
               else f"{n} volumes identiques au bulletin sur les {len(rec)} dernières séances")
 
+    # 3 ter. archive des séances BRVM gardée sur main (seed/brvm_daily.csv) / bulletin officiel : des cours de séance archivés en
+    # journée (au lieu de la clôture) y étaient restés (corrigé le 20/10/2026)
+    if rec:
+        import csv as _csv
+        pa = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "seed", "brvm_daily.csv")
+        try:
+            with open(pa, encoding="utf8") as fh:
+                arch = list(_csv.DictReader(fh))
+        except OSError:
+            arch = []
+        bk = dict(rec)
+        out, n = [], 0
+        for r in arch:
+            b_ = (bk.get(r["date"].replace("-", "")) or {}).get(r["ticker"])
+            if not b_ or len(b_) < 3 or not b_[2]:
+                continue
+            n += 1
+            if abs(float(r["close"]) / b_[2] - 1) > 1e-6:
+                out.append(f"{r['ticker']} {r['date'][8:10]}/{r['date'][5:7]} : {_f(float(r['close']))} / bulletin {_f(b_[2])}")
+        if arch:
+            R.add("Archive des séances / bulletin officiel", "rouge" if out else "vert",
+                  (f"{len(out)} clôture(s) archivée(s) différente(s) du bulletin : " + _liste(out)) if out else f"{n} clôtures archivées identiques au bulletin")
+
     # 5. BNPA de chaque exercice / résultat net ÷ titres
     F = _jl(D, "fundamentals.json") or {}
     out = []

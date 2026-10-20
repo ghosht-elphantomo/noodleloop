@@ -153,18 +153,20 @@ async function marketDivs(id, s) { let div = s.div && s.div.some(v => v) ? s.div
   if (q && q.mkt === 'BRVM' && q.cls === 'Equity') { const DV = await getJSON('dividends.json').catch(() => []); for (const x of DV) { if (x.t !== id || !x.dps) continue; const d = x.det || x.pay; if (!d) continue; const k = s.x.findIndex(v => v >= s2i(d.slice(0, 10))); if (k > 0) div[k] += x.dps; } }
   return div; }
 /* mode : rien = dividendes de la série (inchangé) ; 'nodiv' = cours seul ; 'tr' = rendement total (BRVM : dividendes officiels ajoutés) */
-async function market(id, mode) { const key = mode ? id + '|' + mode : id; if (!Q.M[key]) { const s = await series(id); const div = mode === 'nodiv' ? new Array(s.c.length).fill(0) : mode === 'tr' ? await marketDivs(id, s) : s.div; Q.M[key] = buildMarket({ d: s.d, o: s.o, h: s.h, l: s.l, c: s.c, v: s.v, div }); } return Q.M[key]; }
+async function market(id, mode) { const key = mode ? id + '|' + mode : id; if (!Q.M[key]) { const s = await series(id); const div = mode === 'nodiv' ? new Array(s.c.length).fill(0) : mode === 'tr' ? await marketDivs(id, s) : s.div; Q.M[key] = buildMarket({ d: s.d, o: s.o, h: s.h, l: s.l, c: s.c, v: s.v, div });
+  /* (taux sans risque : Fed funds pour les titres en dollars ; aucun pour les titres en FCFA, plutôt qu'un taux d'une autre devise) */
+  if (Q.by[id] && Q.by[id].ccy !== 'USD') Q.M[key].rf = new Float64Array(s.c.length); } return Q.M[key]; }
 function sec(id) { return Q.by[id]; }
 function secsWhere(f) { return Q.sum.secs.filter(f); }
 function applyQuotes() {
   const q = Q.quotes && Q.quotes.q; if (!q) return;
   for (const [id, r] of Object.entries(q)) { const s = Q.by[id]; if (!s || !r.last) continue; const day = r.d ? s2i(r.d) : s.dt;
-    if (day > s.dt) { s.prev = r.prev || s.last; s.dt = day; } s.last = r.last; s.pct = r.pct != null ? r.pct : s.last / s.prev - 1; if (r.vol != null) s.shd = r.vol; s.live = true; s.q = r; }
+    if (day > s.dt) { s.prev = r.prev || s.last; s.dt = day; } s.last = r.last; s.pct = s.prev > 0 ? s.last / s.prev - 1 : r.pct != null ? r.pct : null;  /* (variation en % cohérente avec la variation nette : même cours précédent) */ if (r.vol != null) s.shd = r.vol; s.live = true; s.q = r; }
 }
 function applyQuoteToSeries(s) {
   const q = Q.quotes && Q.quotes.q && Q.quotes.q[s.id]; if (!q || !q.last || !q.d) return; const day = s2i(q.d), n = s.x.length;
   /* (série sans ouverture / plus haut / plus bas : o, h et l sont le tableau des clôtures lui-même, complété une seule fois) */
-  if (day > s.x[n - 1]) { s.x.push(day); s.d.push(q.d); s.c.push(q.last); if (s.o !== s.c) s.o.push(q.o || q.last); if (s.h !== s.c) s.h.push(Math.max(q.h || q.last, q.last)); if (s.l !== s.c) s.l.push(Math.min(q.l || q.last, q.last)); s.v.push(q.vol || 0); s.div.push(0); if (s.val) s.val.push(q.val || 0); s.prov = true; }
+  if (day > s.x[n - 1]) { s.x.push(day); s.d.push(q.d); s.c.push(q.last); if (s.o !== s.c) s.o.push(q.o || q.last); if (s.h !== s.c) s.h.push(Math.max(q.h || q.last, q.last, q.o || q.last)); if (s.l !== s.c) s.l.push(Math.min(q.l || q.last, q.last, q.o || q.last)); s.v.push(q.vol || 0); s.div.push(0); if (s.val) s.val.push(q.val || 0); s.prov = true; }
   else if (day === s.x[n - 1]) { s.c[n - 1] = q.last; s.h[n - 1] = Math.max(s.h[n - 1], q.last); s.l[n - 1] = Math.min(s.l[n - 1], q.last); if (q.vol != null) s.v[n - 1] = q.vol; }
 }
 

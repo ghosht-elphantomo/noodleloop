@@ -12,10 +12,10 @@ PAGES.HP = async (m, alive) => {
     else { cur.d = S.x[i]; cur.h = Math.max(cur.h, S.h[i]); cur.l = Math.min(cur.l, S.l[i]); cur.c = S.c[i]; cur.v += S.v[i] || 0; if (S.val) cur.val += S.val[i] || 0; } }
   if (cur) R.push(cur);
   const vma = U.sma(R.map(r => r.v), 15); R.forEach((r, i) => { r.vm = vma[i]; r.ch = i ? r.c - R[i - 1].c : null; r.pc = i && R[i - 1].c ? r.c / R[i - 1].c - 1 : null; });
-  const last = R[R.length - 1].d, back = { '1M': 100, '3M': 300, '6M': 600, '1A': 10000, '2A': 20000, '5A': 50000, '10A': 100000 };
+  const last = R[R.length - 1].d;
   /* période effective : 1M / 3M trop courts en hebdomadaire ou mensuel → 1A / 5A, sans écraser le choix (retour en quotidien = période choisie) */
   const rgE = st.f !== 'D' && ['1M', '3M'].includes(st.rg) ? (st.f === 'W' ? '1A' : '5A') : st.rg;
-  let d0 = st.d0, d1 = st.d1 || last; if (!d0) d0 = rgE === 'YTD' ? Math.floor(last / 10000) * 10000 + 101 : rgE === 'MAX' ? R[0].d : last - back[rgE];
+  let d0 = st.d0, d1 = st.d1 || last; if (!d0) d0 = rgE === 'YTD' ? Math.floor(last / 10000) * 10000 + 101 : rgE === 'MAX' ? R[0].d : perStart(last, rgE) + 1;  /* (date calendaire ; le lendemain de la date de départ : même nombre de séances que la période) */
   const W = R.filter(r => r.d >= d0 && r.d <= d1), hasV = W.some(r => r.v > 0), mk = { c: 'Dernier', o: 'Ouverture', h: 'Plus haut', l: 'Plus bas' }[st.mk];
   const V = r => r[st.mk];
   /* synthèse de la période (colonne de droite du terminal) */
