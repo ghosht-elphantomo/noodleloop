@@ -885,6 +885,143 @@ def b41(ctx):
         ("vert", "aucune séance manquante sur 20 séances")
 
 
+def _div_ctx(ctx):
+    """versements (dividends.json) et opérations sur le capital du résumé (split : [[date, facteur], …]) des actions BRVM"""
+    S = jl(ctx["D"], "summary.json") or {}
+    spl = {s["id"]: s.get("split") or [] for s in S.get("secs") or [] if s.get("mkt") == "BRVM" and s.get("cls") == "Equity"}
+    auj = int(S.get("asof")) if str(S.get("asof") or "").isdigit() else 99999999
+    return jl(ctx["D"], "dividends.json") or [], spl, auj
+
+
+def _i(s):
+    return int(str(s)[:10].replace("-", ""))
+
+
+@bug("B42", "2026-10-20", "Dividendes anciens non ajustés des opérations sur le capital (Sonatel, Onatel, BOA CI, BOA Niger, CBI BF)",
+     "Les fractionnements ×10 de Sonatel (23/11/2012) et d'Onatel (29/11/2013) n'étaient pas appliqués aux dividendes d'avant "
+     "(Sonatel 1998-2004 dix fois trop forts), et les actions gratuites de BOA CI (9 pour 41, 08/06/2016), BOA Niger (1 pour 19, "
+     "03/06/2016) et CBI BF (3 pour 125, 21/09/2017) manquaient (cours et dividendes d'avant non ajustés). Depuis le 20/10/2026, ces "
+     "opérations sont listées avec la date prouvée par les bulletins (seed/operations_historiques.json).",
+     "facteur d'ajustement de chaque versement = produit des opérations postérieures (à 1e-4) ; aucune opération lue dans un avis "
+     "et absente de la liste ; aucun saut de base (montant publié stable, montant ajusté ×3) sans opération entre deux exercices")
+def b42(ctx):
+    D, spl, auj = _div_ctx(ctx)
+    if not D:
+        return "orange", "dividends.json vide ou absent"
+    bad, sauts = [], []
+    for x in D:
+        ds = x.get("det") or x.get("det0") or x.get("pay") or (f"{x['ex'] + 1}-06-30" if x.get("ex") else None)
+        if not ds or x.get("t") not in spl:
+            continue
+        f = 1.0
+        for e, k in spl[x["t"]]:
+            if _i(ds) < e <= auj:
+                f *= k
+        if abs((x.get("adj") or 1.0) / f - 1) > 1e-4:
+            bad.append(f"{x['t']} {x.get('ex')} facteur {x.get('adj')} pour {f:.4g}")
+    by = collections.defaultdict(lambda: [0.0, 0.0, None])
+    for x in D:
+        if x.get("exc") or x.get("t") not in spl or not x.get("ex"):
+            continue
+        r = by[(x["t"], x["ex"])]
+        r[0] += x.get("dps0") or x["dps"]
+        r[1] += x["dps"]
+        r[2] = max(r[2] or 0, _i(x.get("det") or x.get("pay") or f"{x['ex'] + 1}-06-30"))
+    for t in spl:
+        ex = sorted(e for (t_, e) in by if t_ == t)
+        for a, b in zip(ex, ex[1:]):
+            p0, a0, d0 = by[(t, a)]
+            p1, a1, d1 = by[(t, b)]
+            if p0 and a0 and 0.5 <= p1 / p0 <= 2 and not 1 / 3 <= a1 / a0 <= 3 and not any(d0 < e <= d1 for e, _ in spl[t]):
+                sauts.append(f"{t} {a}→{b} publié {p0:g}→{p1:g}, ajusté {a0:g}→{a1:g}")
+    ost = (jl(ctx["D"], "boc_check.json") or {}).get("ost_non_listees") or []
+    pb = ([f"{len(bad)} facteur(s) faux : " + "; ".join(bad[:5])] if bad else []) + \
+         ([f"{len(sauts)} saut(s) de base : " + "; ".join(sauts[:4])] if sauts else []) + \
+         ([f"{len(ost)} opération(s) lue(s) dans un avis, absente(s) de la liste : " + "; ".join(map(str, ost[:4]))] if ost else [])
+    return ("rouge", " ; ".join(pb)) if pb else ("vert", f"{len(D)} versements ajustés des opérations listées")
+
+
+# dates de dividendes atypiques vérifiées sur document (avis, bulletin) : ne sont pas des erreurs
+DATES_DIV_CONNUES = {("SLBC", 2023): "paiement 14/08/2024 avant le détachement du 12/09/2024 (cotation suspendue)",
+                     ("CIEC", 2016): "paiement reporté au 20/09/2017 (avis n°161-2017)",
+                     ("SNTS", 2020): "détachement le 12/05/2021, marché fermé",
+                     ("BICC", 2000): "paiement un samedi, une seule source"}
+
+
+@bug("B43", "2026-10-20", "Dates de détachement fausses reprises de la base (dimanches, 65 jours avant le paiement)",
+     "Trois dates de détachement de la base tombaient un dimanche (BOABF 2016, PRSC 2015 et SGBC 2015, ces deux dernières 65 jours "
+     "avant le paiement) ; BOAB et BOABF 2010 étaient payés un jour férié par une lecture concurrente. Depuis le 20/10/2026, une date "
+     "de la base sans document officiel est retirée si elle n'est pas un jour de séance ou précède le paiement de plus de 15 jours ; "
+     "les dates lues dans un document officiel ne sont jamais retirées.",
+     "aucun détachement ni paiement un samedi ou un dimanche ; paiement entre 0 et 10 jours après le détachement ; détachement un "
+     "jour de séance (hors dates vérifiées de DATES_DIV_CONNUES)")
+def b43(ctx):
+    import datetime as _dt
+    D, spl, auj = _div_ctx(ctx)
+    # calendrier des séances : réunion des dates des séries des actions (l'indice BRVMC a lui-même des trous, 03/05/2023)
+    cal = set()
+    for t_ in spl:
+        cal |= set((jl(ctx["D"], f"s/{t_}.json") or {}).get("d") or [])
+    out = []
+    for x in D:
+        if (x.get("t"), x.get("ex")) in DATES_DIV_CONNUES:
+            continue
+        for k in ("det", "pay"):
+            if x.get(k) and _dt.date.fromisoformat(x[k][:10]).weekday() >= 5:
+                out.append(f"{x['t']} {x.get('ex')} {k} {x[k]} (week-end)")
+        if x.get("det") and x.get("pay"):
+            g = (_dt.date.fromisoformat(x["pay"][:10]) - _dt.date.fromisoformat(x["det"][:10])).days
+            if not 0 <= g <= 10:
+                out.append(f"{x['t']} {x.get('ex')} paiement {g} j après le détachement")
+        if x.get("det") and cal and min(cal) <= _i(x["det"]) <= max(cal) and _i(x["det"]) not in cal:
+            out.append(f"{x['t']} {x.get('ex')} détachement {x['det']} hors séance")
+    out = sorted(set(out))
+    return ("orange", f"{len(out)} date(s) à vérifier : " + "; ".join(out[:8])) if out else \
+        ("vert", f"dates cohérentes ({len(DATES_DIV_CONNUES)} cas vérifiés sur document)")
+
+
+@bug("B44", "2026-10-20", "Événements en double et dates d'événements différentes du versement officiel",
+     "events.json gardait 44 paires de quasi-doublons (versions successives du calendrier de paiement, documents « annule et "
+     "remplace », documents republiés) et des événements de détachement ou de paiement à une autre date que le versement officiel "
+     "(SOGC 2025 un mois plus tôt). Corrigé le 20/10/2026.",
+     "au plus 10 paires d'événements de même société, même intitulé et même rubrique à 5 jours près (6 « Transactions sur "
+     "dossier » et 4 paires sans preuve) ; aucune date « ex-dividende » un week-end")
+def b44(ctx):
+    import datetime as _dt
+    E = jl(ctx["D"], "events.json") or []
+    if not isinstance(E, list) or not E:
+        return "orange", "events.json vide ou absent"
+    by = collections.defaultdict(list)
+    for e in E:
+        if e.get("t") and e.get("d") and "annul" not in (e.get("ti") or "").lower():
+            by[(e["t"], e.get("c"), re.sub(r"\W+", " ", (e.get("ti") or "").lower()).strip())].append(_dt.date.fromisoformat(e["d"][:10]))
+    paires = sum(1 for v in by.values() for a, b in zip(sorted(v), sorted(v)[1:]) if (b - a).days <= 5)
+    we = [f"{e['t']} {e['d']}" for e in E if "ex-dividende" in (e.get("c") or "").lower() and e.get("d")
+          and _dt.date.fromisoformat(e["d"][:10]).weekday() >= 5]
+    pb = ([f"{paires} paires d'événements en double (au plus 10 attendues)"] if paires > 10 else []) + \
+         ([f"{len(we)} date(s) ex-dividende un week-end : " + ", ".join(we[:5])] if we else [])
+    return ("orange", " ; ".join(pb)) if pb else ("vert", f"{len(E)} événements, {paires} paire(s) proches tolérée(s)")
+
+
+@bug("B45", "2026-10-20", "Avis de dividendes numérisés comptés « lus » sans texte",
+     "Un avis numérisé dont la reconnaissance de caractères n'avait pas abouti (temps du passage épuisé) était marqué « lu » sans "
+     "texte et jamais relu : 134 documents, dont 67 avis de paiement de dividendes de 2017-2019 (parmi eux l'avis n°161-2017 du "
+     "report du paiement CIE CI). Depuis le 20/10/2026, il est mis « à OCR » et relu au passage suivant (trois échecs au plus).",
+     "branche dividendes : nombre d'avis de dividende sans texte en baisse d'un contrôle à l'autre tant qu'il n'est pas nul ; au plus "
+     "12 documents lus sans texte")
+def b45(ctx):
+    dn = ctx.get("div_n")
+    if dn is None:
+        return "vert", "non vérifié ici (seulement dans le contrôle de GitHub)"
+    n, r = dn.get("n") or {}, ctx.get("ref_div_n") or {}
+    a, a0, l = n.get("avis_dividende_sans_texte"), r.get("avis_dividende_sans_texte"), n.get("lus_sans_texte")
+    if a is None:
+        return "orange", "compteurs absents de dividendes.json (lecture des dividendes pas encore passée avec la correction)"
+    pb = ([f"{a} avis de dividende sans texte (contrôle précédent : {a0}), aucune relecture : " + ", ".join(x.rsplit('/', 1)[-1] for x in (dn.get('sans_texte') or [])[:3])]
+          if a and a0 is not None and a >= a0 else []) + ([f"{l} documents lus sans texte (au plus 12)"] if (l or 0) > 12 else [])
+    return ("orange", " ; ".join(pb)) if pb else ("vert", f"{a} avis de dividende sans texte" + (f" (précédent {a0})" if a0 is not None else "") + f", {l or 0} lus sans texte, {n.get('a_ocr', 0)} à relire")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

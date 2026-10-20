@@ -33,6 +33,7 @@ fi
 # taille des branches et annotations des passages du terminal (controle.yml)
 [ -n "$BRANCHES" ] && [ -f "$BRANCHES" ] && ARGS+=(--branches "$BRANCHES")
 [ -n "$ANNOT" ] && [ -f "$ANNOT" ] && ARGS+=(--annot "$ANNOT")
+[ -n "$DIVN" ] && [ -f "$DIVN" ] && ARGS+=(--divn "$DIVN")
 # cohérence : bulletins officiels de l'année (boc_px), quand controle.yml les fournit
 [ -n "$BOC" ] && [ -d "$BOC" ] && ARGS+=(--boc "$BOC")
 python3 "$H/controle.py" "$D" "$O/rapport.json" --md "$O/rapport.md" "${ARGS[@]}" --titre "${TITRE:-Contrôle du terminal}" || true

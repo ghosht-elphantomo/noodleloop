@@ -42,6 +42,9 @@ jobs:
           if git fetch -q --depth 1 origin probe 2>/dev/null; then git archive FETCH_HEAD controle 2>/dev/null | tar -x -C /tmp/prev || true; fi
           # bugs corrigés : index de la branche comptes et passages des dernières 24 h (rien d'affiché dans le journal)
           git fetch -q --depth 1 origin comptes 2>/dev/null && git show FETCH_HEAD:index.json > /tmp/prev/comptes_index.json 2>/dev/null || true
+          # documents sans texte de la branche dividendes (avis à relire par reconnaissance de caractères) : compteurs seulement
+          git fetch -q --depth 1 origin dividendes 2>/dev/null && git show FETCH_HEAD:dividendes.json 2>/dev/null \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); json.dump({'n': d.get('n') or {}, 'sans_texte': (d.get('sans_texte') or [])[:20]}, open('/tmp/prev/div_n.json', 'w'))" || rm -f /tmp/prev/div_n.json
           # cohérence des chiffres : bulletins officiels de l'année en cours et de la précédente
           mkdir -p /tmp/prev/boc
           if git fetch -q --depth 1 origin boc 2>/dev/null; then
@@ -77,7 +80,7 @@ jobs:
         run: |
           REF=""; [ -f /tmp/prev/controle/rapport.json ] && REF=/tmp/prev/controle/rapport.json
           export TITRE="Contrôle du $(date -u +'%d/%m/%Y %H:%M') UTC"
-          export RUNS=/tmp/prev/runs.json COMPTES=/tmp/prev/comptes_index.json BOC=/tmp/prev/boc BRANCHES=/tmp/prev/branches.json ANNOT=/tmp/prev/annot.json
+          export RUNS=/tmp/prev/runs.json COMPTES=/tmp/prev/comptes_index.json BOC=/tmp/prev/boc BRANCHES=/tmp/prev/branches.json ANNOT=/tmp/prev/annot.json DIVN=/tmp/prev/div_n.json
           if python3 -c "import playwright" 2>/dev/null && command -v terser > /dev/null; then
             timeout 3000 bash outils/controle/verifier.sh /tmp/d/data /tmp/ctl $REF
           else

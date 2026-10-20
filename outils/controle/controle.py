@@ -397,6 +397,7 @@ def main():
     ap.add_argument("--boc", help="dossier des bulletins officiels de l'année (boc_px), pour les contrôles de cohérence")
     ap.add_argument("--branches", help="nombre et taille des fichiers de chaque branche (JSON, controle.yml)")
     ap.add_argument("--annot", help="annotations des passages du terminal des dernières 24 h (JSON, controle.yml)")
+    ap.add_argument("--divn", help="compteurs de la branche dividendes (documents sans texte), JSON de controle.yml")
     a = ap.parse_args()
     maintenant = a.maintenant or time.time()
     R = Rapport()
@@ -439,9 +440,12 @@ def main():
         if br:
             inst["branches"] = {x["b"]: {"n": x.get("n"), "o": x.get("o"), "tronque": x.get("tronque")} for x in br if isinstance(x, dict) and x.get("b")}
         an = (charge(a.annot)[0] or {}).get("annot") if a.annot else None
+        dn = (charge(a.divn)[0] or {}) if a.divn else None
+        if dn:
+            inst["div_n"] = dn.get("n") or {}
         non_retour.verifier(R, {"D": a.data, "pages": pages, "inst": inst, "maintenant": maintenant, "runs": runs, "comptes": ci,
                                 "branches": inst.get("branches"), "ref_branches": (ref or {}).get("branches") if isinstance(ref, dict) else None,
-                                "annot": an})
+                                "annot": an, "div_n": dn, "ref_div_n": (ref or {}).get("div_n") if isinstance(ref, dict) else None})
     except Exception as e:  # noqa: BLE001
         R.add("Bugs corrigés", "orange", f"contrôle interrompu : {type(e).__name__} {e}")
     res = {"niveau": R.niveau, "date": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(maintenant)), "verifications": R.v,
