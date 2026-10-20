@@ -1,6 +1,6 @@
 {
  "v": 1,
- "note": "Valeurs d'un exercice corrigées après vérification sur le document officiel. Lignes sans « cpt » : série de la fiche (champ « bnpa » par défaut, ou « dividende », « cout_du_risque »… ; nouvelle valeur « apres », « bnpa » dans les premières lignes) ; un chiffre clé corrigé retire les ratios de la base calculés dessus. Lignes « cpt » (« périmètre/norme ») : poste des comptes lus (comptes.consolidate) corrigé avant sa reprise dans la série, qui suit (« avant » null : poste absent, ajouté ; « apres » null : valeur retirée, affichée « — »). Convention du BNPA : résultat net de la série (comptes affichés) ÷ nombre de titres actuel. Appliqué par build_terminal.py seulement si la valeur en place vaut encore « avant » (sinon signalé « à revoir » dans le journal) ; contrôles « BNPA / résultat net ÷ titres » et cohérence du matin.",
+ "note": "Valeurs d'un exercice corrigées après vérification sur le document officiel. Lignes sans « cpt » : série de la fiche (champ « bnpa » par défaut, ou « dividende », « cout_du_risque »… ; nouvelle valeur « apres », « bnpa » dans les premières lignes) ; un chiffre clé corrigé retire les ratios de la base calculés dessus. Lignes « cpt » (« périmètre/norme ») : poste des comptes lus (comptes.consolidate) corrigé avant sa reprise dans la série, qui suit (« avant » null : poste absent, ajouté ; « apres » null : valeur retirée, affichée « — »). Convention du BNPA : résultat net de la série (comptes affichés) ÷ nombre de titres actuel. Appliqué par build_terminal.py seulement si la valeur en place vaut encore « avant » (sinon signalé « à revoir » dans le journal) ; contrôles « BNPA / résultat net ÷ titres » et cohérence du matin. Convention du résumé et de FA (dernier exercice, audit du 20/10/2026) : le PER et le taux de distribution sont partout calculés sur le même BNPA ; c'est celui du bulletin officiel de la cote (pso « off »), sauf quand le résultat net du dernier exercice de la série vient d'un document vérifié et que le bulletin a calculé ce même exercice sur un autre résultat (comptes IFRS ou consolidés) : le résumé prend alors le BNPA de la série (pso « fqt », BNPA du bulletin gardé dans « bnpa_bul »). Quand le BNPA du bulletin reste au résumé alors qu'il diffère de plus de 2 % de celui de la série (résultat de la série non vérifié, ou bulletin encore sur l'exercice précédent), la mention de l'exercice dans FA le dit.",
  "rows": [
   {
    "t": "ORGT",
@@ -159,7 +159,7 @@
    "champ": "resultat_net",
    "avant": 1.989,
    "apres": 1989.166,
-   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (20090530, couche texte), tableau en millions de FCFA : résultat avant impôt 3 096 | 2 775, impôt sur le résultat −1 107 | −1 065, résultat net 1 989 | 1 710 (1998 | 1999) ; tableau en milliers « Résultat Net 1 989 166 | 1 710 314 »",
    "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
   },
   {
@@ -169,7 +169,7 @@
    "champ": "resultat_avant_impot",
    "avant": 3.096,
    "apres": 3096.0,
-   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (20090530, couche texte), tableau en millions de FCFA : résultat avant impôt 3 096 | 2 775, impôt sur le résultat −1 107 | −1 065, résultat net 1 989 | 1 710 (1998 | 1999) ; tableau en milliers « Résultat Net 1 989 166 | 1 710 314 »",
    "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
   },
   {
@@ -179,7 +179,7 @@
    "champ": "impots_resultat",
    "avant": 1.107,
    "apres": 1107.0,
-   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (20090530, couche texte), tableau en millions de FCFA : résultat avant impôt 3 096 | 2 775, impôt sur le résultat −1 107 | −1 065, résultat net 1 989 | 1 710 (1998 | 1999) ; tableau en milliers « Résultat Net 1 989 166 | 1 710 314 »",
    "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
   },
   {
@@ -188,8 +188,8 @@
    "cpt": "social/syscohada",
    "champ": "resultat_net",
    "avant": 1.71,
-   "apres": 1710.0,
-   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "apres": 1710.314,
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (20090530, couche texte) : « Le résultat de l'exercice clos le 31 décembre 1999 consiste en un bénéfice de FCFA 1 710 314 339 » (affectation du résultat) et tableau en milliers « Résultat Net 1 989 166 | 1 710 314 » (1998 | 1999)",
    "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
   },
   {
@@ -199,7 +199,7 @@
    "champ": "resultat_avant_impot",
    "avant": 2.775,
    "apres": 2775.0,
-   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (20090530, couche texte), tableau en millions de FCFA : résultat avant impôt 3 096 | 2 775, impôt sur le résultat −1 107 | −1 065, résultat net 1 989 | 1 710 (1998 | 1999) ; tableau en milliers « Résultat Net 1 989 166 | 1 710 314 »",
    "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
   },
   {
@@ -209,7 +209,7 @@
    "champ": "impots_resultat",
    "avant": 1.065,
    "apres": 1065.0,
-   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (« Le résultat bénéficiaire de FCFA 1 710 millions », tableau en millions : résultat avant impôt 3 096 / 2 775, impôt 1 107 / 1 065, résultat net 1 989 / 1 710) ; Rapport annuel Exercice 1998 (résultat net 1 989 165 737 FCFA, bilan CJ et compte de résultat UZ)",
+   "doc": "BOLLORE TRANSPORT & LOGISTICS CI (SAGA) : Rapport annuel Exercice 1999 (20090530, couche texte), tableau en millions de FCFA : résultat avant impôt 3 096 | 2 775, impôt sur le résultat −1 107 | −1 065, résultat net 1 989 | 1 710 (1998 | 1999) ; tableau en milliers « Résultat Net 1 989 166 | 1 710 314 »",
    "pourquoi": "tableau en millions de FCFA lu en francs : montants 1 000 fois trop petits (1,989 M de résultat pour 35 501 M de chiffre d'affaires)"
   },
   {
@@ -218,8 +218,8 @@
    "cpt": "social/syscohada",
    "champ": "resultat_net",
    "avant": 3.17,
-   "apres": 3376.0,
-   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "apres": 3375.636,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408, lecture OCR) en millions de FCFA, colonnes 31/12/2014 | 31/12/2013 : « Titres de placement 3.6 54 463 », « Résultat de l'exercice 3.17 3 376 2 650 » (bilan passif et compte de résultat ; 3.6 et 3.17 sont les numéros de note) ; Etats financiers provisoires 2015 (20160429), colonne 31/12/2014 : titres de placement 54 463, résultat 3 376 ; Rapport annuel 2014 (couche texte) : « RÉSULTAT DE L'EXERCICE 2 650 068 003 | 3 375 635 844 » (2013 | 2014) ; Rapport annuel 2013 : 2 650 068 003 pour 2013 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,5 × 1 200 000 titres = 3 376 M",
    "pourquoi": "numéro de note (3.17, 3.6) lu comme montant 2014, et le montant 2014 décalé sur 2013"
   },
   {
@@ -228,8 +228,8 @@
    "cpt": "social/syscohada",
    "champ": "resultat_bilan",
    "avant": 3.17,
-   "apres": 3376.0,
-   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "apres": 3375.636,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408, lecture OCR) en millions de FCFA, colonnes 31/12/2014 | 31/12/2013 : « Titres de placement 3.6 54 463 », « Résultat de l'exercice 3.17 3 376 2 650 » (bilan passif et compte de résultat ; 3.6 et 3.17 sont les numéros de note) ; Etats financiers provisoires 2015 (20160429), colonne 31/12/2014 : titres de placement 54 463, résultat 3 376 ; Rapport annuel 2014 (couche texte) : « RÉSULTAT DE L'EXERCICE 2 650 068 003 | 3 375 635 844 » (2013 | 2014) ; Rapport annuel 2013 : 2 650 068 003 pour 2013 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,5 × 1 200 000 titres = 3 376 M",
    "pourquoi": "numéro de note (3.17, 3.6) lu comme montant 2014, et le montant 2014 décalé sur 2013"
   },
   {
@@ -239,8 +239,8 @@
    "champ": "b_titres_placement",
    "avant": 3.6,
    "apres": 54463.0,
-   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
-   "pourquoi": "numéro de note (3.17, 3.6) lu comme montant 2014, et le montant 2014 décalé sur 2013"
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408, lecture OCR) en millions de FCFA, colonnes 31/12/2014 | 31/12/2013 : « Titres de placement 3.6 54 463 », « Résultat de l'exercice 3.17 3 376 2 650 » (bilan passif et compte de résultat ; 3.6 et 3.17 sont les numéros de note) ; Etats financiers provisoires 2015 (20160429), colonne 31/12/2014 : titres de placement 54 463, résultat 3 376 ; Rapport annuel 2014 (couche texte) : « RÉSULTAT DE L'EXERCICE 2 650 068 003 | 3 375 635 844 » (2013 | 2014) ; Rapport annuel 2013 : 2 650 068 003 pour 2013 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,5 × 1 200 000 titres = 3 376 M",
+   "pourquoi": "numéro de note (3.6) lu comme montant 2014 ; 54 463 confirmé par la colonne 2014 des comptes 2015"
   },
   {
    "t": "BOAS",
@@ -248,8 +248,8 @@
    "cpt": "social/syscohada",
    "champ": "resultat_net",
    "avant": 3376.0,
-   "apres": 2650.0,
-   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "apres": 2650.068,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408, lecture OCR) en millions de FCFA, colonnes 31/12/2014 | 31/12/2013 : « Titres de placement 3.6 54 463 », « Résultat de l'exercice 3.17 3 376 2 650 » (bilan passif et compte de résultat ; 3.6 et 3.17 sont les numéros de note) ; Etats financiers provisoires 2015 (20160429), colonne 31/12/2014 : titres de placement 54 463, résultat 3 376 ; Rapport annuel 2014 (couche texte) : « RÉSULTAT DE L'EXERCICE 2 650 068 003 | 3 375 635 844 » (2013 | 2014) ; Rapport annuel 2013 : 2 650 068 003 pour 2013 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,5 × 1 200 000 titres = 3 376 M",
    "pourquoi": "le montant 2014 (3 376) avait été placé en 2013 ; le document donne 2 650 pour 2013 (bilan et compte de résultat)"
   },
   {
@@ -258,8 +258,8 @@
    "cpt": "social/syscohada",
    "champ": "resultat_bilan",
    "avant": 3376.0,
-   "apres": 2650.0,
-   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408_-_efp_-_bank_of_africa_sn_-_exercice_2014.pdf), en millions de FCFA : « Résultat de l'exercice 3.17 | 3 376 | 2 650 » (bilan passif et compte de résultat), « Titres de placement 3.6 | 54 463 » ; Etats financiers provisoires 2015, colonne 2014 : 3 376 000 000 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,3 × 1 200 000 titres = 3 376 M",
+   "apres": 2650.068,
+   "doc": "BOA SENEGAL : Etats financiers provisoires Exercice 2014 (20150408, lecture OCR) en millions de FCFA, colonnes 31/12/2014 | 31/12/2013 : « Titres de placement 3.6 54 463 », « Résultat de l'exercice 3.17 3 376 2 650 » (bilan passif et compte de résultat ; 3.6 et 3.17 sont les numéros de note) ; Etats financiers provisoires 2015 (20160429), colonne 31/12/2014 : titres de placement 54 463, résultat 3 376 ; Rapport annuel 2014 (couche texte) : « RÉSULTAT DE L'EXERCICE 2 650 068 003 | 3 375 635 844 » (2013 | 2014) ; Rapport annuel 2013 : 2 650 068 003 pour 2013 ; bulletin officiel de la cote du 27/05/2015 : BNPA 2 813,5 × 1 200 000 titres = 3 376 M",
    "pourquoi": "le montant 2014 (3 376) avait été placé en 2013 ; le document donne 2 650 pour 2013 (bilan et compte de résultat)"
   },
   {
@@ -284,33 +284,203 @@
   },
   {
    "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "immo_incorp",
+   "avant": 9781.627,
+   "apres": 3818.387,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne AD",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "immo_corp",
+   "avant": 7963.369,
+   "apres": 8041.449,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne AI",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "actif_immobilise",
+   "avant": 17995.821,
+   "apres": 12110.66,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne AZ",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "stocks",
+   "avant": 5867.407,
+   "apres": 5904.746,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne BB",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "creances",
+   "avant": 23203.4,
+   "apres": 15918.823,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne BG",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "clients",
+   "avant": 10945.486,
+   "apres": 10009.627,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne BI",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "actif_circulant",
+   "avant": 29070.807,
+   "apres": 21823.569,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne BK",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "total_actif",
+   "avant": 48697.419,
+   "apres": 35565.021,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne BZ",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "capitaux_propres",
+   "avant": 1699.752,
+   "apres": -4390.829,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne CP",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "ressources_stables",
+   "avant": 8785.474,
+   "apres": 2694.893,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DF",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "clients_avances",
+   "avant": 953.007,
+   "apres": 933.981,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DI",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "fournisseurs",
+   "avant": 27076.653,
+   "apres": 20116.087,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DJ",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "dettes_fiscales_sociales",
+   "avant": 3336.828,
+   "apres": 3535.507,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DK",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "autres_dettes",
+   "avant": 675.445,
+   "apres": 414.541,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DM",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "passif_circulant",
+   "avant": 32041.933,
+   "apres": 25000.115,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DP",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "total_passif",
+   "avant": 48697.419,
+   "apres": 35565.021,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne DZ",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "valeur_ajoutee",
+   "avant": 2391.356,
+   "apres": 2384.614,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne XC",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "ebe",
+   "avant": -4573.997,
+   "apres": -4580.738,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne XD",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "cpt": "social/syscohada",
+   "champ": "dotations",
+   "avant": 3563.878,
+   "apres": 9527.119,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), colonne « EXERCICE AU 31/12/N-1 » (2021) du bilan et du compte de résultat : comptes 2021 approuvés par l'assemblée générale du 13/12/2022 (résultat net 175 130 FCFA ; capitaux propres « CP −4 390 828 949 » ; « BZ / DZ TOTAL GENERAL 35 565 020 655 ») ; confirmés par le Rapport d'activité provisoire 2022 (« profit 175 milles FCFA en 2021 ») et la notation financière Bloomfield de juillet 2023 (capitaux propres 2021 −4 391, résultat net 0) ; ligne RL",
+   "pourquoi": "l'exercice 2021 affiché mêlait les états du 20/05/2022 (non approuvés : résultat 6 090,8 M, capitaux propres +1 699,8, total 48 697,4) et les comptes approuvés (résultat 0,175 M, résultat d'exploitation −13 697,3, impôt 2 199,7) ; une seule version, celle des comptes approuvés : continuité 2020 → 2021 (−4 391,0 + 0,175 = −4 390,8) et 2021 → 2022 (−4 390,8 − 6 382,6 = −10 773,4) ; identités du document : actif 12 110,7 + 21 823,6 + 1 630,8 = 35 565,0 ; passif −4 390,8 + 7 085,7 + 25 000,1 + 7 848,6 + 21,4 = 35 565,0 ; EBE −4 580,7 + reprises 410,5 − dotations 9 527,1 = résultat d'exploitation −13 697,3"
+  },
+  {
+   "t": "UNLC",
    "ex": 2022,
    "cpt": "social/syscohada",
    "champ": "capitaux_propres",
    "avant": null,
    "apres": -10773.429,
-   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503), bilan passif CP « TOTAL CAPITAUX PROPRES » −10 773 429 335 FCFA",
-   "pourquoi": "la base affichait +10 773 (signe perdu) ; même document que le résultat (−6 382,6) et le total du bilan (22 361,4) affichés ; les comptes 2023 donnent en colonne N−1 la version retraitée (−11 299,2 avec un résultat de −6 908,4)"
-  },
-  {
-   "t": "UNLC",
-   "ex": 2021,
-   "cpt": "social/syscohada",
-   "champ": "resultat_net",
-   "avant": 0.175,
-   "apres": 6090.756,
-   "doc": "UNILEVER CI : Etats financiers Exercice 2021 (20220520), bilan CJ et compte de résultat XI : 6 090 755 732 FCFA",
-   "pourquoi": "0,175 M (175 130 FCFA) vient de la colonne N−1 incohérente des comptes 2022 ; le total du bilan (48 697,4), les capitaux propres (1 699,8) et le BNPA (663,24 = 6 090,8 M ÷ 9 183 400 titres) affichés sont ceux des comptes 2021"
-  },
-  {
-   "t": "UNLC",
-   "ex": 2021,
-   "cpt": "social/syscohada",
-   "champ": "resultat_bilan",
-   "avant": 0.175,
-   "apres": 6090.756,
-   "doc": "UNILEVER CI : Etats financiers Exercice 2021 (20220520), bilan CJ : 6 090 755 732 FCFA",
-   "pourquoi": "même correction (résultat inscrit au bilan)"
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503, couche texte), bilan passif « CP TOTAL CAPITAUX PROPRES ET RESSOURCES ASSIMILEES −10 773 429 335 | −4 390 828 949 » (2022 | 2021), même document que le résultat (−6 382 600 386) et le total du bilan (22 361 430 394) affichés",
+   "pourquoi": "la base affichait +10 773 (signe perdu) ; continuité : capitaux propres 2021 approuvés −4 390,8 + résultat 2022 −6 382,6 = −10 773,4 ; les comptes 2023 donnent en colonne N−1 une version retraitée (−11 299,2 avec un résultat de −6 908,4)"
   },
   {
    "t": "SCRC",
@@ -422,64 +592,64 @@
    "ex": 2015,
    "bnpa": 3.46,
    "avant": 1.68,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 62 483,9 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "Etats financiers provisoires - ECOBANK TG - Exercice 2015 (20160413) : résultat net consolidé 107 464 milliers de dollars US, converti au cours du jour de publication (1 USD = 581,44 FCFA) = 62 483,9 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2017,
    "bnpa": 7.38,
    "avant": 6.75,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 133 508,4 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "ETI TOGO : Etats financiers Exercice 2018 (20190329), colonne 2017 : résultat net de l'exercice 228 534 milliers de dollars US, converti au 29/03/2019 (1 USD = 584,195 FCFA) = 133 508,4 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2018,
    "bnpa": 10.62,
    "avant": 4.11,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 191 995,1 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "ETI TOGO : Etats financiers Exercice 2018 (20190329) : résultat net de l'exercice 328 649 milliers de dollars US, converti au 29/03/2019 (1 USD = 584,195 FCFA) = 191 995,1 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2019,
    "bnpa": 9.27,
    "avant": 4.56,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 167 612,4 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "ETI TOGO : Etats financiers exercice 2019 (20200323) : résultat net consolidé 274 934 milliers de dollars US, converti au 23/03/2020 (1 USD = 609,646 FCFA) = 167 612,4 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2020,
    "bnpa": 2.87,
    "avant": 2.99,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 51 896,8 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "ETI TOGO : États financiers audités exercice 2021 (20220330), colonne 2020 : résultat net consolidé 88 319 milliers de dollars US, converti au 30/03/2022 (1 USD = 587,606 FCFA) = 51 896,8 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2021,
    "bnpa": 11.89,
    "avant": 10.72,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 215 077,5 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "Ecobank Transnational Togo : États financiers exercice 2022 (20230330), colonne 2021 : résultat net consolidé 357 366 milliers de dollars US, converti au 30/03/2023 (1 USD = 601,841 FCFA) = 215 077,5 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2022,
    "bnpa": 12.2,
    "avant": 12.65,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 220 689,7 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "Ecobank Transnational Togo : États financiers exercice 2022 (20230330) : résultat net consolidé 366 691 milliers de dollars US, converti au 30/03/2023 (1 USD = 601,841 FCFA) = 220 689,7 M FCFA",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "ETIT",
    "ex": 2025,
    "bnpa": 19.11,
    "avant": 10.0,
-   "doc": "ETI : états financiers consolidés IFRS (résultat net de l'ensemble, contre-valeur FCFA de la série : 345 523,0 M) ; bulletins officiels de la cote (BNPA = résultat net total ÷ titres cotés : 19,1 en 2026)",
-   "pourquoi": "une seule convention pour la série, celle du bulletin et des exercices 2023-2024 : résultat net total ÷ 18 084 106 722 titres ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025, sur un plus grand nombre d'actions) et des BNPA d'anciens bulletins convertis à d'autres cours"
+   "doc": "ETI TG : Etats financiers IFRS - Exercice 2025 (20260413) : « Résultat net consolidé 594 122 | 345 523 » (milliers de dollars US | millions de FCFA) ; bulletin officiel de la cote du 13/04/2026 : BNPA 19,1",
+   "pourquoi": "une seule convention pour toute la série, celle du bulletin officiel et des exercices 2023-2024 : résultat net de l'ensemble consolidé affiché (montant ci-contre) ÷ 18 084 106 722 titres cotés ; la valeur d'avant mêlait le BNPA part du groupe publié par ETI (10,00 FCFA en 2025 : résultat part du groupe, 236 781 M, rapporté à l'ensemble des actions d'ETI, plus nombreuses que les titres cotés à la BRVM) et des BNPA d'anciens bulletins calculés sur un autre cours du dollar"
   },
   {
    "t": "SICC",
@@ -558,6 +728,14 @@
    "apres": 201307.697,
    "doc": "TOTALENERGIES MARKETING SENEGAL : Rapport annuel - Exercice 2024 (20250610, couche texte), états SYSCOHADA : « CP TOTAL CAPITAUX PROPRES ET RESSOURCES ASSIMILEES 22 262 894 022 | 22 394 548 276 », « DZ TOTAL GENERAL 201 307 696 890 | 203 539 372 960 » (colonnes 2024 | 2023) ; Etats financiers - Norme SYSCOHADA - Exercice 2024 : total du bilan 201 307,7",
    "pourquoi": "la base affichait 216 766, qui ne correspond à aucun document ; deux documents SYSCOHADA donnent 201 307,7 (IFRS : 214 404,9)"
+  },
+  {
+   "t": "UNLC",
+   "ex": 2021,
+   "bnpa": 0.01907,
+   "avant": 663.24,
+   "doc": "UNILEVER CÔTE D'IVOIRE : Etats financiers - Exercice 2022 (20230503), colonne 2021 : « Résultat net de l'exercice 175 130 » FCFA ; Rapport d'activité provisoire exercice 2022 : « une perte nette de 6 383 millions de FCFA contre un profit 175 milles FCFA en 2021 » ; notation financière Bloomfield (juillet 2023) : résultat net 2021 = 0, capitaux propres 2021 = −4 391",
+   "pourquoi": "résultat net 2021 de la série (0,175 M, comptes 2021 approuvés en assemblée le 13/12/2022) ÷ 9 183 400 titres = 0,01907 (gardé à cette précision : FA en déduit le nombre d'actions de l'exercice, résultat ÷ BNPA, pour ses données par action) ; 663,24 venait du résultat des états publiés le 20/05/2022 avant approbation (6 090,8 M), remplacé dans les comptes approuvés"
   }
  ]
 }
