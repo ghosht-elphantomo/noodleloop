@@ -85,14 +85,12 @@ def rnd(v, nd):
     return None if v is None or (isinstance(v, float) and not math.isfinite(v)) else round(v, nd)
 
 
-def montant_plausible(vol, val, px):
-    """Montant échangé d'un bulletin officiel vraisemblable : cours moyen (montant ÷ volume) à 15 % au plus du cours du jour (une
-    séance ne s'écarte pas de plus de 7,5 % du cours de référence ; transactions de bloc comprises). Règle unique, partagée avec
-    l'archive des bulletins (histo.py)."""
-    try:
-        return bool(vol and val and px and vol > 0 and val > 0 and px > 0 and .85 <= val / vol / px <= 1.15)
-    except (TypeError, ZeroDivisionError):
-        return False
+# bulletins officiels de la cote : montant vraisemblable et nombres imprimés en milliers, même règle que l'archive (histo.py)
+try:
+    from boc_regles import cours_moyen_ok, milliers as boc_milliers
+except ImportError:  # (script chargé hors de son dossier)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from boc_regles import cours_moyen_ok, milliers as boc_milliers
 
 
 # ------------------------------------------------------------------ loaders
@@ -321,7 +319,7 @@ def stats_block(d, c, freq="D", h=None, l=None, v=None, val=None, ann=None, seg=
     # février 2018 à juin 2019) : `seg` = début du dernier segment continu. Variations, rendements, volatilité, RSI, moyennes et
     # montant moyen ne sont calculés que sur ce segment (rien à travers le trou) ; plage 52 semaines non publiée si la fenêtre d'un
     # an contient le trou ; plus haut historique et écart au plus haut non publiés (le plus haut a pu être atteint dans le trou) ;
-    # première donnée et nombre de points : tout l'historique
+    # première donnée et nombre de points : tout l'historique ; volatilité non publiée non plus si la fenêtre d'un an contient le trou
     if seg and freq == "D" and 0 < seg < len(d):
         st = stats_block(d[seg:], c[seg:], freq, h[seg:] if h else None, l[seg:] if l else None, v[seg:] if v else None,
                          val[seg:] if val else None, ann)
@@ -331,7 +329,7 @@ def stats_block(d, c, freq="D", h=None, l=None, v=None, val=None, ann=None, seg=
         except ValueError:
             t1 = e_ - dt.timedelta(days=365)
         if d[seg] > t1.year * 10000 + t1.month * 100 + t1.day:
-            st.update(hi52=None, lo52=None)
+            st.update(hi52=None, lo52=None, vol=None)  # (volatilité « 1 an » : pas sur quelques semaines)
         if seg == len(d) - 1:
             st.update(prev=None, pct=None)  # (dernière valeur isolée après le trou : pas de variation du jour)
         st.update(first=d[0], nobs=len(d), ath=None, dd=None)
@@ -1109,24 +1107,40 @@ def main():
         log("dividendes brvm.org ignorés :", e)
     # bulletins officiels de la cote (BRVM) : contrôle et secours des cours et des dividendes
     BOC = {}
-    boc_milliers_ = []
+    boc_milliers_, BOC_DUP = [], []
     if a.boc and os.path.isdir(a.boc):
         cols = ("prev", "o", "c", "var", "vol", "val", "ref", "ytd", "div", "div_d", "yld", "per")
+        B0_ = {}
         for fn in sorted(os.listdir(a.boc)):
             if not re.match(r"^\d{4}\.json$", fn):
                 continue
-            for k, rows_ in json.load(open(os.path.join(a.boc, fn), encoding="utf8")).items():
-                for sym, v in rows_.items():
-                    rb0_ = dict(zip(cols, v))
-                    # valeur échangée imprimée en milliers (montants d'un milliard et plus, lus sans leur dernier groupe de chiffres) :
-                    # ramenée en FCFA quand elle redonne volume × cours à 2 % près (même règle que l'archive histo.py)
-                    vo_, va_, cl_ = rb0_.get("vol"), rb0_.get("val"), rb0_.get("c") or rb0_.get("ref")
-                    if vo_ and va_ and cl_ and not .7 < va_ / (vo_ * cl_) < 1.3 and .98 < va_ * 1000 / (vo_ * cl_) < 1.02:
-                        rb0_["val"], rb0_["val_k"] = va_ * 1000, 1
-                        boc_milliers_.append(f"{sym} {k}")
-                    BOC.setdefault(sym, {})[int(k)] = rb0_
+            B0_.update(json.load(open(os.path.join(a.boc, fn), encoding="utf8")))
+        prev_b_ = None
+        for k in sorted(B0_):
+            rows_ = B0_[k]
+            # bulletin identique au précédent (jour férié publié sous la date du lendemain, ex. 29/10/2020) : pas une séance (même
+            # règle que l'archive histo.py) ; sinon chaque titre de ce jour-là recopierait la veille
+            if prev_b_ is not None and rows_ == prev_b_:
+                BOC_DUP.append(int(k))
+                continue
+            prev_b_ = rows_
+            for sym, v in rows_.items():
+                if not isinstance(v, list):
+                    continue
+                rb0_ = dict(zip(cols, v))
+                # montant (ou volume) imprimé en milliers (Sonatel en 2026 : montants d'un milliard et plus lus sans leur dernier
+                # groupe de chiffres ; ETI le 17/09/2026 : volume) : rétabli s'il redonne un cours moyen vraisemblable (règle
+                # partagée avec l'archive histo.py, boc_regles.milliers)
+                vo_, va_, q_ = boc_milliers(rb0_.get("vol"), rb0_.get("val"), rb0_.get("c"), rb0_.get("o"), rb0_.get("prev"))
+                if q_:
+                    rb0_["vol"], rb0_["val"], rb0_[q_ + "_k"] = vo_, va_, 1
+                    boc_milliers_.append(f"{sym} {k}" + (" (volume)" if q_ == "vol" else ""))
+                BOC.setdefault(sym, {})[int(k)] = rb0_
+        del B0_
         if boc_milliers_:
-            log("bulletins : valeurs échangées lues en milliers ramenées en FCFA :", len(boc_milliers_), "; ".join(boc_milliers_[-8:]))
+            log("bulletins : nombres lus en milliers rétablis :", len(boc_milliers_), "; ".join(boc_milliers_[-8:]))
+        if BOC_DUP:
+            log("bulletins identiques au précédent écartés :", ", ".join(map(str, BOC_DUP)))
         log("bulletins officiels :", len(BOC), "titres,", sum(len(v) for v in BOC.values()), "lignes")
     # titre coté au dernier bulletin mais absent de la fiche (nouvelle introduction en bourse que la base n'a pas encore) : signalé
     BOC_NOUV = []
@@ -1300,6 +1314,28 @@ def main():
 
     # titres dont le cours de la base a varié, jour par jour (un jour de séance en compte toujours plusieurs)
     BASE_MOVED = collections.Counter()
+    import bisect
+    BOC_D_ = sorted(BOC_DAYS)  # (jours de bulletin, doublons écartés)
+    BOC_TR_ = {t_: sorted(k_ for k_, b_ in v_.items() if b_.get("c") and (b_.get("vol") or 0) > 0) for t_, v_ in BOC.items()}
+
+    def reprise_(t_, rr_, j_):
+        """La ligne j_ de la base reprend-elle une séance déjà connue du titre : même cours et même volume que sa ligne précédente,
+        ou même montant (volume × cours à 1 % près, insensible à l'ajustement d'un fractionnement) que sa dernière séance échangée
+        au bulletin officiel ?"""
+        r_ = rr_[j_]
+        if r_[4] == rr_[j_ - 1][4] and r_[5] == rr_[j_ - 1][5]:
+            return True
+        ks_ = BOC_TR_.get(t_) or []
+        i_ = bisect.bisect_left(ks_, r_[0]) - 1
+        if i_ < 0 or not r_[4] or not r_[5]:
+            return False
+        bp_ = BOC[t_][ks_[i_]]
+        return abs(r_[4] * r_[5] / (bp_["c"] * bp_["vol"]) - 1) < .01
+    # séances fantômes de la base un jour sans bulletin officiel, pendant la période couverte par les bulletins : jour férié (ou
+    # séance non relevée) où la base reprend la séance précédente pour presque tous les titres (01/12/2017 : les 28 titres
+    # reprennent le 30/11 ; 14/07 et 17/07/2015, 06/07, 12/09 et 12/12/2016, 22/06/2017…). Jour retenu si au moins 3 lignes
+    # échangées et 80 % d'entre elles reprennent une séance connue (les vraies séances sans bulletin lu en ont au plus 2 sur 15 à 33)
+    PH_N, PH_M = collections.Counter(), collections.Counter()
     for act_ in acts:
         try:
             rr_ = load_brvm_csv(os.path.join(src, act_["csv"] + ".csv"))
@@ -1308,12 +1344,34 @@ def main():
         for j_ in range(1, len(rr_)):
             if rr_[j_][4] != rr_[j_ - 1][4]:
                 BASE_MOVED[rr_[j_][0]] += 1
+            d_ = rr_[j_][0]
+            if BOC_D_ and BOC_D_[0] < d_ < BOC_D_[-1] and d_ not in BOC_DAYS and rr_[j_][5] > 0 \
+                    and dt.date(d_ // 10000, d_ // 100 % 100, d_ % 100).weekday() < 5:
+                PH_N[d_] += 1
+                PH_M[d_] += reprise_(act_.get("ticker"), rr_, j_)
+    PHANTOM_DAYS = {d_ for d_, n_ in PH_N.items() if n_ >= 3 and PH_M[d_] >= .8 * n_}
+    if PHANTOM_DAYS:
+        log("jours sans bulletin où la base reprend la séance précédente (séances fantômes retirées) :", ", ".join(map(str, sorted(PHANTOM_DAYS))))
 
     def no_session(d_):  # jour sans séance : aucun bulletin officiel et aucun titre dont le cours a varié dans la base (férié)
-        return d_ not in BOC_DAYS and not BASE_MOVED.get(d_)
+        return d_ not in BOC_DAYS and (not BASE_MOVED.get(d_) or d_ in PHANTOM_DAYS)
 
     def is_weekend(d_):
         return dt.date(d_ // 10000, d_ // 100 % 100, d_ % 100).weekday() >= 5
+
+    def non_confirme_(t_, d_):
+        """Le bulletin officiel du jour existe et ne confirme aucun échange du titre : titre absent du bulletin (format actuel, depuis
+        2018 ; avant, des titres manquent à la lecture des anciennes mises en page) ou présent sans cours ni volume (ligne
+        vérifiable d'elle-même avant 2018 : cours précédent = cours de référence, sans volume ni variation, règle de l'archive)."""
+        if d_ not in BOC_DAYS:
+            return False
+        b_ = (BOC.get(t_) or {}).get(d_)
+        if b_ is None:
+            return d_ >= 20180101
+        if b_.get("c") and (b_.get("vol") or 0) > 0:
+            return False
+        return d_ >= 20180101 or bool(not b_.get("c") and b_.get("prev") and b_.get("ref") and b_["prev"] == b_["ref"]
+                                      and not b_.get("vol") and not b_.get("var"))
     # jours de séance (bulletin officiel, ou titres dont le cours a varié dans la base) : une série d'indice sans valeur pendant plus
     # de 10 jours de séance a un trou de données (une fermeture du marché, sans aucun titre échangé, n'en est pas un)
     SESS_DAYS = sorted(d_ for d_ in set(BOC_DAYS) | set(BASE_MOVED) if not is_weekend(d_) and not no_session(d_))
@@ -1534,12 +1592,23 @@ def main():
             continue
         rows = load_brvm_csv(p)
         # séances fantômes de la base : week-end, ou jour sans bulletin officiel (férié) où la ligne recopie la veille (même cours,
-        # même volume) — retirées, la BRVM n'a pas coté ce jour-là
-        n0_ = len(rows)
-        rows = [r for j_, r in enumerate(rows) if not (is_weekend(r[0]) or (j_ and no_session(r[0]) and r[4] == rows[j_ - 1][4] and r[5] == rows[j_ - 1][5]))]
-        if len(rows) < n0_:
-            boc_chk["phantom"] = boc_chk.get("phantom", 0) + n0_ - len(rows)
-            boc_chk.setdefault("phantom_by", {})[t] = n0_ - len(rows)
+        # même volume) — retirées, la BRVM n'a pas coté ce jour-là. Aussi retirées : la ligne d'un jour fantôme (PHANTOM_DAYS) qui
+        # reprend une séance connue, et la ligne recopiée (reprise_) un jour où le bulletin officiel existe sans confirmer d'échange
+        # du titre (titre absent du bulletin, ou présent sans échange) : séance absente plutôt que volume fictif
+        rows0_, rows, why_ = rows, [], collections.Counter()
+        for j_, r in enumerate(rows0_):
+            if is_weekend(r[0]) or (j_ and r[0] not in BOC_DAYS and not BASE_MOVED.get(r[0]) and r[4] == rows0_[j_ - 1][4] and r[5] == rows0_[j_ - 1][5]):
+                why_["phantom"] += 1
+            elif j_ and r[0] in PHANTOM_DAYS and reprise_(t, rows0_, j_):
+                why_["fantome_jour"] += 1
+            elif j_ and r[5] > 0 and non_confirme_(t, r[0]) and reprise_(t, rows0_, j_):
+                why_["copie"] += 1
+            else:
+                rows.append(r)
+        for k_, n_ in why_.items():
+            boc_chk[k_] = boc_chk.get(k_, 0) + n_
+            boc_chk.setdefault(k_ + "_by", {})[t] = n_
+        base_d_ = {r[0] for r in rows} - {sess_d}  # (séances tirées de la base, pour lire sa façon de compter les volumes)
         if BOC.get(t) and rows:  # contrôle des clôtures, puis séances manquantes après la fin de la base complétées par les bulletins
             B_ = BOC[t]
             ck = [(r[4], B_[r[0]]["c"]) for r in rows if r[0] in B_ and B_[r[0]].get("c")]
@@ -1558,38 +1627,82 @@ def main():
                 import bisect
                 qd_ = sorted((r[0], r[4] / B_[r[0]]["c"]) for r in rows if r[4] and (B_.get(r[0]) or {}).get("c"))
                 ks_ = [x[0] for x in qd_]
-                ins_ = []
+                ins_, ins2_ = [], []
                 days_ = [r[0] for r in rows]
                 by_day_ = {r[0]: r for r in rows}
+                bks_ = sorted(B_)
+                # rapports possibles série / bulletin : 1 ÷ produit de toute combinaison des opérations connues (avis) — la base peut
+                # n'en avoir appliqué qu'une partie, la construction ajustant les autres plus loin
+                ops_g = [k_ for _, k_ in sorted(SPL.get(t, []))][:6]
+                m_cands_ = sorted({1.0 / math.prod(ops_g[i1] for i1 in range(len(ops_g)) if msk_ >> i1 & 1) for msk_ in range(1 << len(ops_g))})
                 for k in sorted(gaps_):
-                    i0 = bisect.bisect_left(ks_, k)
-                    win = sorted(q for _, q in qd_[max(0, i0 - 10):i0 + 10])
-                    if len(win) < 5:
-                        continue
-                    m_ = win[len(win) // 2]
-                    if sum(1 for q in win if abs(q / m_ - 1) <= .005) < .7 * len(win):
-                        continue  # (opération sur titres toute proche : facteur incertain, séance laissée manquante)
-                    from fractions import Fraction
-                    fr_ = Fraction(m_).limit_denominator(40)
-                    if abs(float(fr_) / m_ - 1) < .003:
-                        m_ = float(fr_)  # (rapport d'une opération sur titres : 1, 1/2, 2/3… exactement, sans bruit d'arrondi)
                     rb_ = B_[k]
-                    c_, o_ = round(rb_["c"] * m_, 2), round((rb_.get("o") or rb_["c"]) * m_, 2)
-                    # (séance cohérente avec ses voisines : cours précédent du bulletin = clôture de la veille dans la série, et cours
-                    # précédent du bulletin suivant = cette clôture ; un bulletin daté d'un jour férié qui reprend la séance de la veille,
-                    # ou une ligne identique à la veille, est écarté)
                     i_s = bisect.bisect_left(days_, k)
                     pv_ = by_day_[days_[i_s - 1]] if i_s > 0 else None
-                    nx_k = next((k2 for k2 in sorted(B_) if k2 > k), None)
-                    if pv_ and rb_.get("prev") and abs(rb_["prev"] * m_ / pv_[4] - 1) > .01:
-                        continue
-                    if nx_k and (B_[nx_k].get("prev")) and abs(B_[nx_k]["prev"] * m_ / c_ - 1) > .01:
-                        continue
-                    if pv_ and abs(pv_[4] - c_) < 1e-9 and pv_[5] == int(round((rb_.get("vol") or 0) / m_)):
-                        continue
-                    pk_ = next((k2 for k2 in sorted(B_, reverse=True) if k2 < k), None)
+                    nx_k = next((k2 for k2 in bks_ if k2 > k), None)
+                    pk_ = next((k2 for k2 in reversed(bks_) if k2 < k), None)
                     if pk_ and all(B_[pk_].get(c2) == rb_.get(c2) for c2 in ("prev", "o", "c", "vol", "val")):
                         continue  # (bulletin d'un jour férié qui recopie celui de la veille)
+                    i0 = bisect.bisect_left(ks_, k)
+                    win = sorted(q for _, q in qd_[max(0, i0 - 10):i0 + 10])
+                    m_ = win[len(win) // 2] if len(win) >= 5 else None
+                    # (opération sur titres toute proche : facteur incertain, voir plus bas)
+                    if m_ and sum(1 for q in win if abs(q / m_ - 1) <= .005) < .7 * len(win):
+                        m_ = None
+                    m_w = None  # (rapport stable des séances voisines, gardé pour le second essai)
+                    if m_:
+                        from fractions import Fraction
+                        fr_ = Fraction(m_).limit_denominator(40)
+                        if abs(float(fr_) / m_ - 1) < .003:
+                            m_ = float(fr_)  # (rapport d'une opération sur titres : 1, 1/2, 2/3… exactement, sans bruit d'arrondi)
+                        m_w = m_
+                        c_, o_ = round(rb_["c"] * m_, 2), round((rb_.get("o") or rb_["c"]) * m_, 2)
+                        # (séance cohérente avec ses voisines : cours précédent du bulletin = clôture de la veille dans la série, et cours
+                        # précédent du bulletin suivant = cette clôture)
+                        if (pv_ and rb_.get("prev") and abs(rb_["prev"] * m_ / pv_[4] - 1) > .01) \
+                                or (nx_k and (B_[nx_k].get("prev")) and abs(B_[nx_k]["prev"] * m_ / c_ - 1) > .01):
+                            m_ = None
+                    if not m_:
+                        # second essai, pour une séance proche d'une opération sur titres ou d'un dividende (BOABF 28/08/2024, ONTBF
+                        # 27/08/2018, SCRC 30/11/2017, SLBC 12/09/2024…) : rapport de la séance précédente ou de la suivante de la série
+                        # (deux séances du bulletin concordantes, rapport d'une combinaison des opérations connues) ou rapport stable des
+                        # séances voisines, retenu s'il est le
+                        # seul à raccorder le cours précédent du bulletin à la clôture de la veille dans la série (éventuellement abaissée
+                        # du dividende détaché entre les deux) ; ligne du bulletin vérifiable d'elle-même avant 2018 ; cours précédent du
+                        # bulletin suivant = cette clôture (ou le cours de référence imprimé), sauf séance de la série entre les deux
+                        if not pv_ or not rb_.get("prev") or (k < 20180101 and not (rb_.get("var") is not None and abs((rb_["c"] / rb_["prev"] - 1) * 100 - rb_["var"]) <= .06)):
+                            continue
+
+                        def side_(lst):
+                            if len(lst) < 2 or abs(lst[0] / lst[1] - 1) > .005:
+                                return None
+                            return next((x for x in m_cands_ if abs(lst[0] / x - 1) <= .003), None)
+                        mp_ = side_([q for _, q in reversed(qd_[max(0, i0 - 2):i0])])
+                        mn_ = side_([q for _, q in qd_[i0:i0 + 2]])
+                        def dd_i(x):
+                            try:
+                                return di(str(x.get("date_detachement") or "")[:10])
+                            except Exception:  # noqa: BLE001
+                                return 0
+                        dv_ = sum(x["dividende"] for x in divs if x.get("ticker") == t and x.get("dividende") and pv_[0] < dd_i(x) <= k)
+                        # (cours de référence changé dans la nuit par la BRVM, dividende absent de la liste : SLBC 12/09/2024, référence
+                        # 83 250 la veille, cours précédent 80 550 ; accepté si le bulletin de la veille, sans échange depuis la dernière
+                        # séance de la série, en reprend la clôture, et si le rapport est aussi celui des séances suivantes)
+                        pb_ = B_[pk_] if pk_ and pk_ > pv_[0] else None
+                        rf_ = (pb_.get("ref") or pb_.get("c")) if pb_ and not any((B_[k2].get("vol") or 0) > 0 for k2 in bks_ if pv_[0] < k2 < k) else None
+                        ma_ = mn_ or m_w  # (rapport des séances suivantes)
+                        ok_ = [m2 for m2 in {mp_, mn_, m_w} if m2 and (abs(rb_["prev"] * m2 / pv_[4] - 1) <= .01
+                                                                        or (dv_ and abs((pv_[4] / m2 - dv_) / rb_["prev"] - 1) <= .01)
+                                                                        or (rf_ and m2 == ma_ and abs(rf_ * m2 / pv_[4] - 1) <= .01))]
+                        if len(ok_) != 1:
+                            continue
+                        m_ = ok_[0]
+                        c_, o_ = round(rb_["c"] * m_, 2), round((rb_.get("o") or rb_["c"]) * m_, 2)
+                        if nx_k and B_[nx_k].get("prev") and not any(k < d2 < nx_k for d2 in days_[i_s:i_s + 1]) \
+                                and not any(m2 and abs(B_[nx_k]["prev"] * m2 / c_ - 1) <= .01 for m2 in (m_, ma_)) \
+                                and not (rb_.get("ref") and abs(B_[nx_k]["prev"] / rb_["ref"] - 1) <= .005):
+                            continue
+                        ins2_.append(k)
                     nr_ = (k, o_, max(o_, c_), min(o_, c_), c_, int(round((rb_.get("vol") or 0) / m_)), int(rb_.get("val") or 0))
                     ins_.append(nr_)
                     bisect.insort(days_, k)  # (plusieurs séances manquantes de suite : la suivante se raccorde à celle-ci)
@@ -1599,6 +1712,8 @@ def main():
                     boc_chk["gap_fill"] = boc_chk.get("gap_fill", 0) + len(ins_)
                     gfb_ = boc_chk.setdefault("gap_fill_by", {})
                     gfb_[t] = gfb_.get(t, 0) + len(ins_)
+                    if ins2_:
+                        boc_chk.setdefault("gap_fill2", {})[t] = ins2_
             last_d = rows[-1][0]
             for k in sorted(B_):
                 if k <= last_d:
@@ -1948,6 +2063,7 @@ def main():
             B_ = BOC[t]
             ops_f = sorted((e_, k_) for e_, k_ in SPL.get(t, []) if e_ <= rows[-1][0])
             facs_ = {1.0} | {math.prod(k_ for _, k_ in ops_f[i0:]) for i0 in range(len(ops_f))}
+            gq_ = {}  # séance de la base vérifiée par le bulletin -> (facteur f, volume de la base, volume du bulletin)
             for i_, r in enumerate(rows):
                 b_ = B_.get(r[0])
                 if not b_ or not b_.get("c") or not (b_.get("vol") or 0) > 0 or not r[4]:
@@ -1955,7 +2071,9 @@ def main():
                 q_ = r[4] / b_["c"]
                 f_ = min(facs_, key=lambda x: abs(math.log(q_ * x)))
                 f_ok = abs(math.log(q_ * f_)) < math.log(1.006)
-                if not f_ok or not montant_plausible(b_["vol"], b_.get("val"), b_["c"]):
+                if f_ok and r[0] in base_d_ and r[5] > 0:
+                    gq_[i_] = (f_, r[5], b_["vol"])
+                if not f_ok or not cours_moyen_ok(b_["vol"], b_.get("val"), b_["c"], b_.get("o"), b_.get("prev")):
                     boc_chk["vol_doute"] = boc_chk.get("vol_doute", 0) + 1
                     vdb_ = boc_chk.setdefault("vol_doute_by", {})
                     vdb_[t] = vdb_.get(t, 0) + 1
@@ -1984,6 +2102,58 @@ def main():
                         boc_chk["open_fix"] = boc_chk.get("open_fix", 0) + 1
                         ofb_ = boc_chk.setdefault("open_fix_by", {})
                         ofb_[t] = ofb_.get(t, 0) + 1
+            # séances de la base sans bulletin (avant les bulletins conservés, jours dont le bulletin n'a pas été lu) : la base y
+            # compte les volumes comme aux séances voisines vérifiées par le bulletin (titres d'avant un fractionnement non ramenés
+            # sur la base actuelle des actions : volume brut, montant = volume brut × cours ajusté). Si les 5 + 5 séances vérifiées
+            # qui l'entourent (ou les 10 suivantes, avant le premier bulletin) concordent toutes — même facteur f, même rapport g
+            # entre volume de la base et volume du bulletin (f divisé par les opérations dont la base n'a pas ajusté les volumes, à
+            # l'arrondi d'une action près) — et que les opérations connues donnent ce même facteur à la séance, volume et montant
+            # de la base (volume × cours) sont multipliés par f ÷ g ; sinon la ligne est gardée et comptée (vol_hb_doute)
+            cov_ = sorted(gq_)
+            nhb_, dhb_ = 0, 0
+            for i_, r in enumerate(rows):
+                if r[0] not in base_d_ or not r[5] > 0 or not r[4] or i_ in gq_:
+                    continue
+                b_ = B_.get(r[0])
+                if b_ and b_.get("c") and (b_.get("vol") or 0) > 0:
+                    continue  # (séance du bulletin : traitée plus haut)
+                j_ = bisect.bisect_left(cov_, i_)
+                av_ = cov_[max(0, j_ - 5):j_]
+                nb_ = av_ + cov_[j_:j_ + 5] if len(av_) >= 2 else cov_[j_:j_ + 10]
+                if len(nb_) < (5 if len(av_) >= 2 else 10):
+                    continue
+                f0_ = gq_[nb_[0]][0]
+                if all(abs(gq_[x][1] - gq_[x][0] * gq_[x][2]) < max(.999, .002 * gq_[x][0] * gq_[x][2]) for x in nb_):
+                    continue  # (base déjà sur la base actuelle des actions)
+                # (rapport g de la base : f ÷ produit des opérations dont elle n'a pas ajusté les volumes ; chaque séance voisine doit
+                # le vérifier à moins d'une action près — volumes ajustés d'un rapport non entier puis arrondis ou tronqués : BOAN
+                # 13 titres au bulletin, 20 dans la base pour 13 × 1,6 = 20,8)
+                ops_r = [k2 for e2, k2 in ops_f if e2 > rows[nb_[0]][0]][:6]
+                G_ = {f0_ / math.prod(ops_r[i1] for i1 in range(len(ops_r)) if msk_ >> i1 & 1) for msk_ in range(1 << len(ops_r))}
+                g_est = sum(gq_[x][1] for x in nb_) / sum(gq_[x][2] for x in nb_)
+                g0_ = min(G_, key=lambda x: abs(math.log(g_est / x)))
+                if any(gq_[x][0] != f0_ for x in nb_) or abs(math.log(g_est / g0_)) > math.log(1.01) \
+                        or any(abs(gq_[x][1] - g0_ * gq_[x][2]) >= max(.999, .002 * g0_ * gq_[x][2]) for x in nb_) \
+                        or abs(math.log(split_factor(t, r[0], rows[-1][0]) / f0_)) > math.log(1.006):
+                    dhb_ += 1
+                    continue
+                k_ = f0_ / g0_
+                vo_ = int(round(r[5] * k_))
+                if r[6] and abs(r[6] / (r[5] * r[4]) - 1) <= .02:
+                    va_ = int(round(r[6] * k_))  # (montant de la base calculé volume × cours : même rapport)
+                elif r[6] and abs(r[6] / (vo_ * r[4]) - 1) <= .02:
+                    va_ = r[6]  # (montant de la base déjà juste)
+                else:
+                    dhb_ += 1
+                    continue
+                rows[i_] = tuple(r[:5]) + (vo_, va_)
+                nhb_ += 1
+            if nhb_:
+                boc_chk["vol_hb"] = boc_chk.get("vol_hb", 0) + nhb_
+                boc_chk.setdefault("vol_hb_by", {})[t] = nhb_
+            if dhb_:
+                boc_chk["vol_hb_doute"] = boc_chk.get("vol_hb_doute", 0) + dhb_
+                boc_chk.setdefault("vol_hb_doute_by", {})[t] = dhb_
         # données officielles de la BRVM, prioritaires sur les sites tiers :
         # nombre de titres et capitalisation flottante (page « Capitalisations » de brvm.org), PER et dividende du bulletin officiel de la cote
         so_ = sess_rows.get(t) or {}
@@ -2168,6 +2338,34 @@ def main():
         IDX_STALE = {r[0] for j_, r in enumerate(rc_) if j_ and r[4] == rc_[j_ - 1][4] and BOC_DAYS.get(r[0], 0) >= 10}
     except Exception as e:  # noqa: BLE001
         log("contrôle des indices impossible :", e)
+    # relevé des indices sectoriels périmé : jour de bulletin où au moins 4 des 7 indices sectoriels de la base sont figés sur la
+    # veille (21/01/2025 : les 7) ; la valeur figée d'un indice dont au moins un titre du secteur a varié au bulletin ce jour-là est
+    # retirée (valeur du bulletin si elle est lue) — celle d'un secteur dont aucun titre n'a varié est juste et reste
+    SECT_IDX = {"BRVM-TEL": ("Télécoms", "Télécommunications"), "BRVM-CD": ("Consommation discrétionnaire",), "BRVM-SF": ("Services financiers",),
+                "BRVM-CB": ("Consommation de base",), "BRVM-IN": ("Industriels",), "BRVM-EN": ("Énergie",), "BRVM-SP": ("Services publics",)}
+    SECT_STALE = {}
+    try:
+        sect_t_ = collections.defaultdict(list)
+        for act_ in acts:
+            sect_t_[SECT_OFF.get(act_["ticker"]) or act_.get("secteur")].append(act_["ticker"])
+        fig_ = collections.defaultdict(set)
+        for e in rep["entries"]:
+            if e["code"] in SECT_IDX and os.path.exists(os.path.join(src, "indices", e["fichier"])):
+                rr_ = load_brvm_csv(os.path.join(src, "indices", e["fichier"]))
+                for j_ in range(1, len(rr_)):
+                    if rr_[j_][4] == rr_[j_ - 1][4] and rr_[j_][0] in BOC_DAYS:
+                        fig_[rr_[j_][0]].add(e["code"])
+        for d_, cs_ in fig_.items():
+            if len(cs_) < 4:
+                continue
+            mv_ = {c_ for c_ in cs_ for s_ in SECT_IDX[c_] for t_ in sect_t_.get(s_, ())
+                   if ((BOC.get(t_) or {}).get(d_) or {}).get("var") not in (None, 0, 0.0)}
+            if mv_:
+                SECT_STALE[d_] = mv_
+        if SECT_STALE:
+            log("indices sectoriels figés (relevé de la base périmé) :", "; ".join(f"{d_} {', '.join(sorted(v_))}" for d_, v_ in sorted(SECT_STALE.items())))
+    except Exception as e:  # noqa: BLE001
+        log("contrôle des indices sectoriels impossible :", e)
     for e in rep["entries"]:
         p = os.path.join(src, "indices", e["fichier"])
         if not os.path.exists(p):
@@ -2198,6 +2396,10 @@ def main():
                 drop_d.append(d_)
                 continue
             elif same_ and BOC_DAYS.get(d_, 0) >= 10 and (broad_ or d_ in IDX_STALE):
+                n_drop += 1
+                drop_d.append(d_)
+                continue
+            elif same_ and code in SECT_STALE.get(d_, ()):
                 n_drop += 1
                 drop_d.append(d_)
                 continue
@@ -2244,6 +2446,12 @@ def main():
             continue
         add({"id": code, "tk": f"{code} Index", "n": e["nom"], "cls": "Index", "typ": "Index", "mkt": "BRVM", "grp": "Indice " + e.get("type", ""), "ccy": "XOF", "bench": "BRVMC"},
             [r[0] for r in rows], [r[4] for r in rows], nd=2, val=[r[6] for r in rows], seg=seg_)
+        # échanges moyens par séance d'un indice : montant 0 = inconnu (seuls les bulletins lus le donnent) ; moyenne des montants
+        # connus des 63 dernières séances, publiée seulement s'ils en couvrent au moins 50 (BRVM-SF : 1 montant connu sur 63, la
+        # moyenne avec des zéros en donnait 63 fois moins)
+        kv_ = [r[6] for r in rows[-63:] if r[6]]
+        if secs and secs[-1].get("id") == code:
+            secs[-1]["liq"] = rnd(sum(kv_) / len(kv_), 0) if len(kv_) >= 50 else None
 
     # Macro -----------------------------------------------------------------
     def macro(sid, tk, name, grp, path, dcol, vcol, freq, nd=2, filt=None, ccy="USD", cls="Comdty", more=None):

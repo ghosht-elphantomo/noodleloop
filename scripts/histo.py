@@ -15,6 +15,10 @@ import glob
 import json
 import os
 import statistics
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import boc_regles as BR  # noqa: E402  (règles de lecture des bulletins partagées avec build_terminal.py)
 
 VERSION = 1
 
@@ -206,12 +210,12 @@ def main():
                     if c in BOC_MAP:
                         r[BOC_MAP[c]] = iso(v) if c == "div_d" else v
                 if lisible(r):
-                    # montants d'un milliard et plus imprimés en milliers dans certains bulletins (ex. Sonatel, sept.-oct. 2026) : remis en FCFA
-                    vol_, val_ = fl(r.get("volume")), fl(r.get("valeur"))
-                    px_ = fl(r.get("cloture")) or fl(r.get("ouverture")) or fl(r.get("precedent"))
-                    if vol_ and val_ and px_ and vol_ > 0 and val_ / vol_ < 0.01 * px_ and 0.85 <= val_ * 1000 / vol_ / px_ <= 1.15:
-                        r["valeur"] = val_ * 1000
-                        n_mill.append(f"{di} {tk}")
+                    # montants d'un milliard et plus (ou volumes de plus de dix millions) imprimés en milliers dans certains bulletins
+                    # (Sonatel en 2026, ETI le 17/09/2026) : rétablis, même règle que le terminal (boc_regles.milliers)
+                    vol_, val_, q_ = BR.milliers(fl(r.get("volume")), fl(r.get("valeur")), fl(r.get("cloture")), fl(r.get("ouverture")), fl(r.get("precedent")))
+                    if q_:
+                        r["volume" if q_ == "vol" else "valeur"] = vol_ if q_ == "vol" else val_
+                        n_mill.append(f"{di} {tk}" + (" (volume)" if q_ == "vol" else ""))
                     t.upsert(r)
                 else:
                     skipped[y] = skipped.get(y, 0) + 1
@@ -422,8 +426,7 @@ def main():
             flag(f_, tk, d, "valeur_sans_volume", f"valeur {fnum(val)} sans volume")
         if (vol or 0) > 0 and (val or 0) > 0:
             pm = val / vol
-            refs = [x for x in (c, p, o) if x and x > 0]
-            if refs and not (min(refs) * 0.85 <= pm <= max(refs) * 1.15):
+            if not BR.cours_moyen_ok(vol, val, c, p, o):  # (même règle que le terminal)
                 flag(f_, tk, d, "prix_moyen_hors_fourchette", f"valeur/volume = {pm:.2f} pour une clôture à {fnum(c)}")
         base = p if p else (pc[1] if pc else None)
         if c and base and var is not None and abs((c / base - 1) * 100 - var) > 0.06 and not (expl and not p):
