@@ -824,13 +824,14 @@ def main():
                                 pairs.append(("cout_du_risque", "_cdr"))
                         elif bank and v.get("b_cout_risque") is None and v.get("b_rbe") is not None and v.get("resultat_exploitation") is not None:
                             # coût du risque non lu, mais RBE et résultat d'exploitation publiés : la charge vaut RBE − résultat
-                            # d'exploitation. Un coût du risque de la base de signe contraire est faux : remplacé par cette différence
-                            # s'il en est l'opposé (signe perdu), retiré sinon (SGBC 2024 : −36 235 pour une charge de 36 236)
+                            # d'exploitation. Un coût du risque de la base de signe contraire est faux : son signe est rétabli s'il est
+                            # l'opposé de cette différence (signe perdu ; montant de la base gardé, c'est le montant publié : SGBC 2024,
+                            # « coût net du risque −36 235 » publié, RBE 163 484 − RE 127 248 = 36 236 à l'arrondi près), retiré sinon
                             d_cr = v["b_rbe"] - v["resultat_exploitation"]
                             x_cr = (ser.get("cout_du_risque") or {}).get(ys)
                             if isinstance(x_cr, (int, float)) and x_cr * d_cr < 0 and abs(d_cr) > max(1.0, abs(v["b_rbe"]) * .01):
                                 if abs(x_cr + d_cr) <= max(2.0, abs(d_cr) * .01):
-                                    v = dict(v, _cdr=d_cr)
+                                    v = dict(v, _cdr=-x_cr)
                                     pairs.append(("cout_du_risque", "_cdr"))
                                     corr_y.add("_cdr")
                                 else:
@@ -1396,6 +1397,7 @@ def main():
         log("opérations historiques illisibles :", e)
         print("::warning::Construction : seed/operations_historiques.json illisible (voir le journal)")
     split_log, force_write, PX_DATE = [], set(), {}
+    bnpa_notes = []  # (exercices dont le BNPA du bulletin, gardé au résumé, n'est pas celui de la série : mention dans FA)
     MIROIR = {}  # valeurs de la fiche et de la BRVM côte à côte (contrôle du matin : écarts signalés, rien de remplacé)
     SPL_DONE = set()  # opérations déduites des paliers du bulletin officiel (cours déjà ajustés par la base)
     SPL_FORCE = set()  # opérations vérifiées à la main que la base de cours n'a pas ajustées (cours antérieurs ramenés même sans saut net)
@@ -1963,6 +1965,50 @@ def main():
                     bnpa_bul, bnpa_, pso_ = bnpa_off, sb_l[y_l], "fqt"
         except Exception as e:  # noqa: BLE001  (en cas de doute, le BNPA du bulletin reste)
             log("BNPA du dernier exercice : contrôle impossible pour", t, e)
+        # le BNPA du bulletin reste au résumé (et le PER partout) quand le résultat du dernier exercice de la série n'est pas vérifié
+        # (BICB 2025 : comptes IFRS vérifiés au bulletin, SYSCOHADA de la base tierce dans la série) ou quand le bulletin porte encore
+        # sur un exercice plus ancien (SEMC : 2023 au bulletin, 2024 de la base tierce dans la série) : les deux BNPA ne sont alors
+        # pas ceux d'un même résultat, et la mention de l'exercice dans FA (src_years) le dit, avec le BNPA du bulletin et son origine
+        try:
+            sb_n = {int(y_): v_ for y_, v_ in ((f.get("series") or {}).get("bnpa") or {}).items() if v_ is not None and str(y_).isdigit()}
+            y_n = max(sb_n) if sb_n else None
+            if pso_ == "off" and bnpa_off and bnpa_ and y_n and abs(sb_n[y_n] - bnpa_) > .02 * abs(bnpa_):
+                k1_ = None  # (date où le BNPA du bulletin a pris sa valeur actuelle, à 1 % près : il porte sur l'exercice de l'année d'avant)
+                for kb in sorted(BOC.get(t) or {}, reverse=True):
+                    rb = BOC[t][kb]
+                    cb = rb.get("c") or rb.get("ref")
+                    if not (rb.get("per") and rb["per"] > 0 and cb):
+                        continue
+                    if abs(cb / rb["per"] / split_factor(t, kb, rows[-1][0]) / bnpa_off - 1) > .01:
+                        break
+                    k1_ = kb
+                y_b = k1_ // 10000 - 1 if k1_ else None
+                fr_ = lambda x_, d_=2: f"{x_:,.{d_}f}".replace(",", " ").replace(".", ",")  # noqa: E731
+                orig_, ver_n = "", False
+                cc_n = f.get("cpt") or {}
+                for g_ in (cc_n, cc_n.get("alt") or {}):
+                    e_ = (g_.get("y") or {}).get(y_n) or (g_.get("y") or {}).get(str(y_n)) or {}
+                    rv_ = (e_.get("v") or {}).get("resultat_net", (e_.get("v") or {}).get("resultat_bilan"))
+                    if rv_ is None:
+                        continue
+                    if abs(rv_ - ((f.get("series") or {}).get("resultat_net") or {}).get(str(y_n), float("nan"))) <= .6 and "resultat_net" not in (e_.get("w") or []):
+                        ver_n = True
+                    if y_b == y_n and shares and not orig_ and abs(rv_ * 1e6 / shares / bnpa_off - 1) <= .01:
+                        orig_ = (f" (comptes {'IFRS' if g_.get('std') == 'ifrs' else 'SYSCOHADA'} {'consolidés' if g_.get('per') == 'conso' else 'sociaux'}"
+                                 f" vérifiés : résultat net {fr_(rv_, 0)} M ÷ titres)")
+                note_ = None
+                if y_b == y_n:
+                    note_ = (f"BNPA {y_n} du bulletin officiel (résumé, PER) : {fr_(bnpa_off)} FCFA{orig_}, autre résultat que celui de la série"
+                             + ("" if ver_n else " (base tierce, aucun compte de cet exercice vérifié)"))
+                elif y_b and y_b < y_n:
+                    note_ = (f"exercice pas encore repris par le bulletin officiel : le BNPA du résumé ({fr_(bnpa_off)} FCFA) et le PER portent"
+                             f" sur l'exercice {y_b}" + ("" if ver_n else " ; comptes de cet exercice de la base tierce, non vérifiés"))
+                if note_ and note_ not in str((f.get("src_years") or {}).get(str(y_n)) or ""):
+                    sy_ = f.setdefault("src_years", {})
+                    sy_[str(y_n)] = (sy_[str(y_n)] + " ; " + note_) if sy_.get(str(y_n)) else note_
+                    bnpa_notes.append(f"{t} {y_n}")
+        except Exception as e:  # noqa: BLE001
+            log("BNPA du bulletin et de la série : mention impossible pour", t, e)
         cty = "BF" if t.endswith("BF") else CTY.get(t[-1], "CI")
         ld = last_div.get(t, (None, {}))[1]
         last = rows[-1][4]
@@ -2396,6 +2442,8 @@ def main():
         log("paiement officiel antérieur au détachement officiel, gardé :", "; ".join(pay_keep))
     if split_log:
         log("fractionnements :", "; ".join(split_log[:80]))
+    if bnpa_notes:
+        log("BNPA du bulletin différent de la série (mention de l'exercice dans FA) :", ", ".join(bnpa_notes))
     ev = json.load(open(os.path.join(src, "events.json"), encoding="utf8"))["events"]
     emeta = [{"d": x.get("published_at") or x.get("event_at"), "e": x.get("event_at"), "t": x.get("ticker"), "c": "Modification du dividende" if x.get("category") == "dividend_amount_change" else x.get("category_label"),
               "ti": x.get("title"), "u": x.get("document_url")} for x in ev if (x.get("published_at") or x.get("event_at"))]
