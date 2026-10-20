@@ -13,10 +13,12 @@ DEPOT = os.path.dirname(os.path.dirname(ICI))
 BUGS = []
 
 
-def bug(ident, date, titre, quoi, controle):
-    """déclare un bug corrigé ; `controle` est une fonction(ctx) -> (niveau, détail) ou un nom de vérification déjà faite"""
+def bug(ident, date, titre, quoi, controle, en_ligne=None):
+    """déclare un bug corrigé ; `controle` décrit ce qui est vérifié (la fonction décorée rend (niveau, détail)).
+    `en_ligne` (AAAA-MM-JJ) : la correction est écrite (branche brouillon) mais pas encore en production ; jusqu'à cette date,
+    un contrôle qui ne passe pas est rapporté orange « mise en ligne prévue » et non rouge."""
     def deco(fn):
-        BUGS.append({"id": ident, "date": date, "titre": titre, "quoi": quoi, "controle": controle, "fn": fn})
+        BUGS.append({"id": ident, "date": date, "titre": titre, "quoi": quoi, "controle": controle, "fn": fn, "en_ligne": en_ligne})
         return fn
     return deco
 
@@ -294,7 +296,8 @@ def b16(ctx):
      "Le payout des tableaux BRVM divisait le dernier dividende par le BNPA du dernier exercice, même quand le dividende était "
      "celui d'un exercice plus ancien (Filtisac 3 516 % au lieu de 88 %, BNBC 4 451 % au lieu de 55 %) ; champ pay calculé "
      "sur le BNPA du même exercice depuis le 19/10/2026.",
-     "pour chaque action BRVM, pay = dividende ÷ BNPA de l'exercice du dividende (série de la fiche) ; jamais le rapport à un autre exercice")
+     "pour chaque action BRVM, pay = dividende ÷ BNPA de l'exercice du dividende (série de la fiche) ; jamais le rapport à un autre "
+     "exercice ; taux absent admis quand le dernier dividende daté a plus de deux ans (règle du 21/10/2026)")
 def b18(ctx):
     S = jl(ctx["D"], "summary.json") or {}
     F = jl(ctx["D"], "fundamentals.json") or {}
@@ -311,6 +314,13 @@ def b18(ctx):
             ex = None
         eps = bn if ex is None or not ser or ex >= max(ser) else ser.get(ex)
         att = dps / eps if dps and eps and eps > 0 else None
+        # depuis le 21/10/2026 (brouillon, en ligne le 25/10) : comme le rendement, pas de taux quand le dernier dividende daté
+        # a plus de deux ans (Erium 796 % sur le dividende 2016) ; un dividende sans date (base tierce) garde le calcul
+        pay_d = str(s.get("dps_pay") or (f"{ex + 1}-12-31" if ex else ""))[:10]
+        if att is not None and pay_d and s.get("pay") is None and ctx.get("maintenant"):
+            import datetime as dt
+            if (dt.datetime.fromtimestamp(ctx["maintenant"], dt.timezone.utc).date() - dt.date.fromisoformat(pay_d)).days > 730:
+                att = None
         got = s.get("pay")
         if (att is None) != (got is None) or (att is not None and abs(got / att - 1) > 0.01):
             out.append(f"{s['id']} {got} (attendu {att and round(att, 4)})")
@@ -1231,14 +1241,231 @@ def b53(ctx):
     return ("rouge", f"{len(out)} exercice(s) : " + "; ".join(out[:10])) if out else ("vert", f"{len(RN_VERIFIES_20261020)} exercices relus présents")
 
 
+# ================================================================================================ audit du 21/10/2026
+# Contrôles ajoutés après l'audit complet du 20-21/10/2026 : ils lisent TOUS les fichiers de données servis au navigateur (et
+# non plus seulement les pages parcourues), après la réécriture du relais quand elle peut être simulée (node + api/data.js).
+import hashlib, shutil, subprocess, tempfile  # noqa: E402
+
+# noms de sites sources et de fournisseurs de données qui ne doivent apparaître nulle part dans les fichiers servis ; les noms
+# personnels sont dans interdits.sha (empreintes). Les éditeurs de presse (CNBC, Yahoo Finance… dans les actualités) sont
+# admis par décision du propriétaire du 20/10/2026, mais pas comme fournisseur dans un champ « src » / « u ».
+SOURCES_FICHIERS = re.compile(r"sika ?finance|richbourse|afribourse|brvmetrics|github\.com|githubusercontent|vercel\.app|@gmail|web\.archive\.org|wayback", re.I)
+FOURNISSEURS = re.compile(r"cnbc|yahoo|tradingview|investing\.com|marketwatch|coinbase|our world in data|owid|cnn\b|fred\b|stlouisfed|eia\.gov|nasdaq\.com|marketscreener|financialafrik|allafrica", re.I)
+CHAMPS_SOURCE = re.compile(r"(?:^|\.)(?:src|u|url|source|source_url|src_years\.\d{4})$")
+# fichiers où les noms d'éditeurs de presse sont admis (actualités : titre, extrait, éditeur, lien)
+PRESSE = ("news.json", "events_recent.json")
+MOJIBAKE = re.compile("Ã[\x80-\xbf€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ]|â€|�")
+ANGLAIS_PAGES = re.compile(r"\b(?:Market Open|Market Closed|After Hours|Pre-Market|Loading|Undefined|Not available|N/A)\b|EFFICIENCY|prév\. -?\d+\.\d|\d\.\d+%(?![\d,])")
+TAILLE_MAX = 2_500_000  # octets : au-delà, un fichier chargé par le navigateur mérite d'être scindé (N8 de l'audit)
+
+
+def _relayees(ctx):
+    """Dossier des données telles que le relais les sert : copie réécrite par outils/essais/rw.js + api/data.js (node), ou le
+    dossier du parcours du site (déjà réécrit), ou, faute de mieux, les données brutes (signalé)."""
+    if "Dr" in ctx:
+        return ctx["Dr"], ctx.get("Dr_note", "")
+    D = ctx["D"]
+    site = ctx.get("site")
+    if site and os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(site)), "site", "data")):
+        ctx["Dr"], ctx["Dr_note"] = os.path.join(os.path.dirname(os.path.abspath(site)), "site", "data"), ""
+        return ctx["Dr"], ""
+    rw, relais = os.path.join(DEPOT, "outils", "essais", "rw.js"), os.path.join(DEPOT, "api", "data.js")
+    if shutil.which("node") and os.path.isfile(rw) and os.path.isfile(relais):
+        out = tempfile.mkdtemp(prefix="relais_")
+        try:
+            r = subprocess.run(["node", rw, relais, D, out], capture_output=True, text=True, timeout=600)
+            if r.returncode == 0:
+                ctx["Dr"], ctx["Dr_note"] = out, ""
+                return out, ""
+            ctx["Dr"], ctx["Dr_note"] = D, f"réécriture du relais en échec ({(r.stderr or r.stdout).strip()[:120]}) : données brutes lues"
+        except Exception as e:  # noqa: BLE001
+            ctx["Dr"], ctx["Dr_note"] = D, f"réécriture du relais impossible ({type(e).__name__}) : données brutes lues"
+        return ctx["Dr"], ctx["Dr_note"]
+    ctx["Dr"], ctx["Dr_note"] = D, "relais non simulé (node ou api/data.js absent) : données brutes lues"
+    return D, ctx["Dr_note"]
+
+
+def _chaines(ctx, dossier):
+    """toutes les chaînes de tous les fichiers JSON d'un dossier : liste de (fichier, chemin, chaîne) ; en cache dans ctx"""
+    cache = ctx.setdefault("_chaines", {})
+    if dossier in cache:
+        return cache[dossier]
+    out, illisibles = [], []
+
+    def walk(o, path, f):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, f"{path}.{k}", f)
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, f"{path}[{i}]", f)
+        elif isinstance(o, str):
+            out.append((f, path, o))
+    for root, _, fs in os.walk(dossier):
+        for fn in fs:
+            if not fn.endswith(".json"):
+                continue
+            p = os.path.join(root, fn)
+            rel = os.path.relpath(p, dossier).replace(os.sep, "/")
+            try:
+                with open(p, encoding="utf8") as fh:
+                    walk(json.load(fh), "", rel)
+            except Exception:  # noqa: BLE001
+                illisibles.append(rel)
+    cache[dossier] = (out, illisibles)
+    return cache[dossier]
+
+
+def _empreintes_ctrl():
+    f = os.path.join(ICI, "interdits.sha")
+    try:
+        return {l.strip() for l in open(f, encoding="utf8") if re.fullmatch(r"[0-9a-f]{64}", l.strip())}
+    except FileNotFoundError:
+        return set()
+
+
+def _resume(items, n=6):
+    return "; ".join(items[:n]) + (f" … (+{len(items) - n})" if len(items) > n else "")
+
+
+@bug("B54", "2026-10-21", "Nom de source ou de fournisseur dans un fichier de données servi au navigateur (pas seulement dans les pages)",
+     "Le 20/10/2026, une mention citant le site de la Bourse était dans fa/BICB.json et le contrôle ne l'a pas vue : il ne lisait "
+     "que les textes des pages parcourues (10 titres). Des noms de fournisseurs de cours et de calendrier et l'adresse d'une base "
+     "ouverte restaient dans les champs « src » des fichiers relayés. Corrigé le 21/10/2026 (libellés neutres à la "
+     "construction) ; ce contrôle lit désormais toutes les chaînes de tous les fichiers servis, après la réécriture du relais.",
+     "aucun nom de site source ni nom de la liste de confidentialité dans les fichiers relayés (rouge) ; aucun fournisseur dans un "
+     "champ src / u / url hors actualités, aucune adresse du site de la Bourse en clair (orange) ; tous les fichiers restent lisibles "
+     "après la réécriture du relais", en_ligne="2026-10-25")
+def b54(ctx):
+    Dr, note = _relayees(ctx)
+    ch, illisibles = _chaines(ctx, Dr)
+    emp = _empreintes_ctrl()
+    srcs, four, priv, bourse = [], [], set(), []
+    for f, path, s in ch:
+        if SOURCES_FICHIERS.search(s):
+            srcs.append(f"{f} {path} « {s[:60]} »")
+        if "brvm.org" in s.lower():  # adresse du site de la Bourse en clair (le relais la remplace par /doc/ dans les liens) : mention N1
+            bourse.append(f"{f} {path} « {s[:60]} »")
+        if emp:
+            for tok in re.split(r"[^a-z0-9\-]+", s.lower()):
+                if len(tok) >= 4 and hashlib.sha256(tok.encode()).hexdigest() in emp:
+                    priv.add(tok[:2] + "…")
+        if f.split("/")[0] not in PRESSE and CHAMPS_SOURCE.search(path) and FOURNISSEURS.search(s):
+            four.append(f"{f} {path} « {s[:60]} »")
+    pb_rouge = ([f"{len(srcs)} nom(s) de source : " + _resume(srcs)] if srcs else []) + \
+               ([f"noms de la liste de confidentialité : {', '.join(sorted(priv))}"] if priv else []) + \
+               ([f"{len(illisibles)} fichier(s) illisible(s) après réécriture : " + _resume(illisibles)] if illisibles else [])
+    pb_or = ([f"{len(four)} libellé(s) de fournisseur dans un champ de source : " + _resume(four)] if four else []) + \
+            ([f"{len(bourse)} mention(s) de l'adresse du site de la Bourse : " + _resume(bourse)] if bourse else [])
+    if pb_rouge:
+        return "rouge", " ; ".join(pb_rouge + pb_or) + (f" ({note})" if note else "")
+    if pb_or:
+        return "orange", " ; ".join(pb_or) + (f" ({note})" if note else "")
+    return ("orange" if note else "vert"), f"{len(ch)} chaînes de {len({x[0] for x in ch})} fichiers lues, rien à signaler" + (f" ({note})" if note else "")
+
+
+@bug("B55", "2026-10-21", "Textes abîmés par l'encodage (« DÃ©pÃªches », « SOCI�T� ») affichés tels quels",
+     "Des dépêches d'un flux (« Les DÃ©pÃªches de Brazzaville »), deux noms d'actionnaires de CBI BF (« SOCI�T� FINANCI�RE DU FASO ») "
+     "et neuf intitulés d'archives 2013-2014 de MOTS CLES étaient affichés avec des caractères abîmés (UTF-8 lu comme du latin-1, "
+     "page mêlant deux encodages). Corrigé le 21/10/2026 : réparation à la collecte et à la construction (scripts/texte.py).",
+     "aucune chaîne des fichiers servis ne contient de séquence « Ã© / â€ » ni de caractère de remplacement (U+FFFD)", en_ligne="2026-10-25")
+def b55(ctx):
+    Dr, note = _relayees(ctx)
+    ch, _ = _chaines(ctx, Dr)
+    pb = [f"{f} {path} « {s[:50]} »" for f, path, s in ch if MOJIBAKE.search(s)]
+    return ("orange", f"{len(pb)} chaîne(s) abîmée(s) : " + _resume(pb)) if pb else ("vert", "aucun texte abîmé par l'encodage")
+
+
+@bug("B56", "2026-10-21", "Anglais résiduel et nombres non formatés dans les pages (« Market Open », « prév. 3.5 », « 76.58% », « EFFICIENCY »)",
+     "L'état de séance US était affiché tel que livré par la source (« Market Open », « After Hours »), les prévisions de l'agenda "
+     "du BRIEF et la détention institutionnelle des fiches US gardaient le point décimal, les signaux QLAB / BT étaient en anglais. "
+     "Corrigé le 21/10/2026 (traduction et formatage français).",
+     "parcours du site : aucun de ces libellés anglais ni nombre à point décimal dans les textes des pages", en_ligne="2026-10-25")
+def b56(ctx):
+    pages = ctx.get("pages")
+    if not pages:
+        return "orange", "parcours du site absent : contrôle non fait"
+    pb = []
+    for h, v in pages.items():
+        for m in ANGLAIS_PAGES.finditer(v.get("text") or ""):
+            pb.append(f"{h} « {m.group(0)} »")
+            break
+    return ("orange", f"{len(pb)} page(s) : " + _resume(pb)) if pb else ("vert", f"{len(pages)} pages relues, aucun anglais résiduel")
+
+
+@bug("B57", "2026-10-21", "Fichier orphelin ou retiré encore publié (s/SPX.json)",
+     "s/SPX.json (ancien nom d'une série) restait publié, sans entrée dans le résumé : la garde ne le remettait pas mais ne le "
+     "supprimait pas non plus, et le dossier à publier repart de la publication précédente. Corrigé le 21/10/2026 : la garde "
+     "supprime les fichiers retirés volontairement.",
+     "aucun fichier s/<id>.json sans entrée dans summary.json ; aucun fichier retiré (qlabp/, s/SPX.json) présent", en_ligne="2026-10-25")
+def b57(ctx):
+    D = ctx["D"]
+    S = jl(D, "summary.json") or {}
+    ids = {x.get("id") for x in S.get("secs") or []}
+    orph = sorted(f[:-5] for f in os.listdir(os.path.join(D, "s")) if f.endswith(".json") and f[:-5] not in ids) if os.path.isdir(os.path.join(D, "s")) else []
+    ret = [r for r in ("qlabp/", "s/SPX.json") if os.path.exists(os.path.join(D, r))]
+    pb = ([f"séries sans entrée dans le résumé : {', '.join(orph[:10])}"] if orph else []) + ([f"fichiers retirés présents : {', '.join(ret)}"] if ret else [])
+    return ("orange", " ; ".join(pb)) if pb else ("vert", "aucun fichier orphelin ni retiré")
+
+
+@bug("B58", "2026-10-21", "Fichier de données trop lourd pour le navigateur",
+     "search.json (1,9 Mo) et eco.json (1,75 Mo) sont chargés d'un bloc à l'ouverture de MOTS CLES et des écrans macro ; sur mobile "
+     "en 3G ils prennent plusieurs secondes. Point N8 de l'audit du 20/10/2026 (à scinder si la taille continue de croître).",
+     f"aucun fichier servi au navigateur au-dessus de {TAILLE_MAX // 1000} ko")
+def b58(ctx):
+    Dr, _ = _relayees(ctx)
+    gros = []
+    for root, _, fs in os.walk(Dr):
+        for fn in fs:
+            if fn.endswith(".json"):
+                t = os.path.getsize(os.path.join(root, fn))
+                if t > TAILLE_MAX:
+                    gros.append(f"{os.path.relpath(os.path.join(root, fn), Dr)} ({t // 1000} ko)")
+    return ("orange", "fichiers trop lourds : " + ", ".join(gros)) if gros else ("vert", f"aucun fichier au-dessus de {TAILLE_MAX // 1000} ko")
+
+
+@bug("B59", "2026-10-21", "Date impossible ou dans le futur dans les documents et les actualités",
+     "Une date de document ou de dépêche postérieure à aujourd'hui (nom de fichier mal lu, horodatage d'un flux en avance) la "
+     "classe en tête des listes. Contrôle ajouté le 21/10/2026 (audit) ; les échéances de contrats et les dates de réunions à venir "
+     "ne sont pas concernées.",
+     "search.json : aucune date de document après demain ; news.json : aucune dépêche datée de plus de deux heures dans le futur ; "
+     "aucune date AAAAMMJJ invalide")
+def b59(ctx):
+    import datetime as dt
+    now = ctx.get("maintenant") or 0
+    demain = int((dt.datetime.fromtimestamp(now, dt.timezone.utc) + dt.timedelta(days=1)).strftime("%Y%m%d")) if now else 99999999
+    pb = []
+    S = jl(ctx["D"], "search.json") or {}
+    for r in S.get("r") or []:
+        d = r[3] if len(r) > 3 else 0
+        if isinstance(d, int) and d:
+            if d > demain:
+                pb.append(f"document daté {d} : {str(r[4])[:50]}")
+            else:
+                try:
+                    dt.date(d // 10000, d // 100 % 100, d % 100)
+                except ValueError:
+                    pb.append(f"date invalide {d} : {str(r[4])[:50]}")
+    N = jl(ctx["D"], "news.json") or {}
+    fut = [x for x in N.get("items") or [] if isinstance(x.get("t"), (int, float)) and now and x["t"] > now + 7200]
+    if fut:
+        pb.append(f"{len(fut)} dépêche(s) dans le futur : " + _resume([str(x.get("ti"))[:50] for x in fut], 3))
+    return ("orange", f"{len(pb)} anomalie(s) : " + _resume(pb)) if pb else ("vert", "dates des documents et des dépêches plausibles")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R
+    import datetime as dt
+    auj = dt.datetime.fromtimestamp(ctx.get("maintenant") or dt.datetime.now().timestamp(), dt.timezone.utc).strftime("%Y-%m-%d")
     for b in BUGS:
         try:
             niv, det = b["fn"](ctx)
         except Exception as e:  # noqa: BLE001
             niv, det = "orange", f"contrôle impossible : {type(e).__name__} {str(e)[:120]}"
+        if niv != "vert" and b.get("en_ligne") and auj < b["en_ligne"]:
+            j = b["en_ligne"]
+            niv, det = "orange", f"correction écrite (brouillon), mise en ligne prévue le {j[8:]}/{j[5:7]} : {det}"
         R.add(f"Bug corrigé {b['id']} · {b['titre']}", niv, det)
 
 
@@ -1249,7 +1476,8 @@ def liste_md():
          "pour ajouter un bug : une entrée `@bug(...)` dans `outils/controle/non_retour.py`, puis régénérer cette liste.", "",
          "| Id | Corrigé le | Bug | Ce qui s'était passé | Ce qui est vérifié chaque matin |", "|---|---|---|---|---|"]
     for b in BUGS:
-        L.append(f"| {b['id']} | {b['date']} | {b['titre']} | {b['quoi']} | {b['controle']} |")
+        ctrl = b["controle"] + (f" (correction sur brouillon, mise en ligne prévue le {b['en_ligne'][8:]}/{b['en_ligne'][5:7]}/{b['en_ligne'][:4]})" if b.get("en_ligne") else "")
+        L.append(f"| {b['id']} | {b['date']} | {b['titre']} | {b['quoi']} | {ctrl} |")
     open(os.path.join(ICI, "BUGS_CORRIGES.md"), "w", encoding="utf8").write("\n".join(L) + "\n")
     print(f"{len(BUGS)} bugs listés dans BUGS_CORRIGES.md")
 
