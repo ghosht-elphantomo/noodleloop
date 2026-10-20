@@ -31,7 +31,10 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - name: Préparation
-        run: git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation"; exit 1; }
+        run: |
+          [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
+          [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3)"; exit 1; }
       - name: Étape 1
         run: bash "$M/dividendes.sh" passage
       - name: Suite
