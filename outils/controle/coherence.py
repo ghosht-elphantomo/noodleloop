@@ -135,11 +135,13 @@ def _hist_bulletins(R, D, boc, by):
             best = None
             for a_, b_ in zip(ks_, ks_[1:]):
                 if abs(math.log(cs_[a_] / cs_[b_] / kk)) < math.log(1.15) and abs(_jours(b_, e)) < 120 and \
-                        (best is None or abs(_jours(b_, e)) < abs(_jours(best, e))):
-                    best = b_
-            if best and abs(_jours(best, e)) > 5 and kk > 1.3:  # (avis et effet à quelques jours près : normal)
-                dec.append(f"{t} ×{kk:g} listé au {e}, palier du bulletin au {best}")
-            spl.append((best or e, kk))
+                        (best is None or abs(_jours(b_, e)) < abs(_jours(best[1], e))):
+                    best = (a_, b_)
+            # date listée acceptée entre la dernière clôture à l'ancienne base (5 jours de marge) et la première à la nouvelle
+            # (titre souvent suspendu entre les deux : Alios du 20/12/2018 au 07/01/2019)
+            if best and kk > 1.3 and not (_jours(e, best[0]) >= -5 and _jours(e, best[1]) <= 0):
+                dec.append(f"{t} ×{kk:g} listé au {e}, bulletin : dernière clôture ancienne base {best[0]}, première nouvelle base {best[1]}")
+            spl.append((best[1] if best else e, kk))
         for kb in sorted(B0):
             k = int(kb)
             r = B0[kb].get(t)

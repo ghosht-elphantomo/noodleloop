@@ -1491,6 +1491,13 @@ def main():
             if not (k_ > 0 and abs(k_ - 1) > 1e-9) or not o_.get("date_effet"):
                 continue
             e_ = di(o_["date_effet"])
+            if o_.get("date_listee"):  # opération déjà listée (avis de la base) à une mauvaise date : date d'effet corrigée
+                dl_ = di(o_["date_listee"])
+                j_ = next((j for j, (e0, k0) in enumerate(SPL[o_["t"]]) if abs((i2d_o(e0) - i2d_o(dl_)).days) <= 20 and abs(k0 - k_) < 1e-6), None)
+                if j_ is not None and SPL[o_["t"]][j_][0] != e_:
+                    SPL[o_["t"]][j_] = (e_, k_)
+                    oph_log.append(f'{o_["t"]} x{k_:.6g} : date d\'effet {dl_} → {e_} (bulletin)')
+                continue
             if all(abs((i2d_o(e_) - i2d_o(e0)).days) > 20 for e0, _ in SPL[o_["t"]]):
                 SPL[o_["t"]].append((e_, k_))  # (rapport exact de la parité : 50/41, pas d'arrondi sur les dividendes)
                 OPH[(o_["t"], e_)] = o_
