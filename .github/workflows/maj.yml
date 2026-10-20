@@ -7,9 +7,13 @@ on:
         type: choice
         options: [complet, rapide]
         default: complet
+      soir:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
 
 permissions:
-  actions: read
+  actions: write
   contents: read
 
 concurrency:
@@ -27,7 +31,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EV: ${{ github.event_name }}
-          SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
+          SOIR: ${{ inputs.soir || '0' }}
         run: |
           go=1
           if [ "$EV" = schedule ] && [ "$SOIR" != 1 ]; then
@@ -47,9 +51,10 @@ jobs:
       K2: ${{ secrets.K2 }}
       D1: ${{ secrets.D1 }}
       ESSAI: "1"
-      SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
+      SOIR: ${{ inputs.soir || '0' }}
       MODE: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet')) && 'eod' || 'live' }}
       M: /tmp/c/automatisations/moteur
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Préparation
         run: |
