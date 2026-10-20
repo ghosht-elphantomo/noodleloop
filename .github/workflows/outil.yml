@@ -5,7 +5,7 @@ on:
     inputs:
       tache:
         type: choice
-        options: ["1", "2", "3"]
+        options: ["1", "2", "3", "4"]
         default: "1"
 
 permissions:
@@ -22,7 +22,7 @@ env:
 jobs:
   a:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 90
     steps:
       - name: Préparation
         run: |
