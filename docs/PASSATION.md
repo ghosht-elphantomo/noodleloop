@@ -21,8 +21,11 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - Chaque bug corrigé reçoit, avec sa correction, son contrôle automatique dans `outils/controle/non_retour.py` (entrée `@bug`),
   puis `python3 outils/controle/non_retour.py --liste` régénère `outils/controle/BUGS_CORRIGES.md` : le contrôle du matin
   signale le bug s'il revient (règle du propriétaire, 19/10/2026).
-- Après chaque modification : tester TOUT le site et toutes les données ; signaler tout problème trouvé, même sans lien avec la
-  modification ; ne publier que si tout est bon. « Tant que ça ne casse rien, on peut le faire. »
+- Modifications demandées (règle du propriétaire précisée le 20/10/2026) : quand il en demande plusieurs, ou un cahier des
+  charges, les faire toutes d'abord ; après chaque modification, vérifier seulement que ce qui a été demandé fonctionne ; le
+  parcours complet du site (418 pages, iPhone, QLAB) se fait une seule fois, à la fin de la liste, avant la publication ;
+  signaler tout problème trouvé, même sans lien avec la modification. Le plus important : un point de retour avant chaque
+  lot (`SAUVEGARDES.md`), pour revenir en arrière si le résultat ne plaît pas. « Tant que ça ne casse rien, on peut le faire. »
 - Données : « pas de faux chiffres, en aucun cas » (outil pour professionnels). Tout montant affiché doit être lu dans un document
   officiel et vérifiable ; un montant calculé n'est accepté que si un autre montant publié le confirme ; dans le doute, la case
   reste vide. Une modification de la lecture ou de la consolidation ne doit qu'ajouter : comparer deux constructions
