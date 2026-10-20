@@ -618,6 +618,18 @@ point de restauration avant chaque étape, tout le site testé après, accord du
   3) Cadence remplace le Métronome ; 4) vérification complète comme un étranger ; 5) plus tard, avec l'accord explicite du
   propriétaire : nettoyage de `noodleloop` (façon 1 ou 2 du point 8).
 
+**10. Avancement (21/10/2026, 00 h 10).** Le détail est dans le coffre (`docs/PASSATION.md`, point 10, et les documents qu'il
+cite) ; ici seulement l'essentiel, sans rien de sensible.
+- *Essai de la base du soir* : tâche programmée une seule fois (01 h 45 Paris, 20/10) lançant la Mise à jour d'essai en mode
+  complet avec le choix « soir », en parallèle de la production ; résultat à lire le 21/10 au matin. Cadence toujours en rodage.
+- *Branche `brouillon` du coffre* : améliorations préparées pendant le gel du code du site (corrections de chiffres vérifiées sur
+  les documents, décisions du propriétaire), chacune vérifiée par une construction locale complète ; intégrées une par une après
+  la bascule, avec le test complet après chacune. Rien de tout cela n'est en production.
+- *Épuration des chiffres clés* : lot 1a lu en entier (méthode, état et corrections dans le coffre) ; lot 1b à suivre.
+- *Audit complet du site* (20/10 au soir) : test complet vert (418 pages, iPhone, QLAB) ; constats et ordre proposé dans le coffre.
+- *Reste avant la bascule* (inchangé) : rodage de Cadence, résultat de l'essai du soir, Secours (clé `K3` à créer par le
+  propriétaire samedi), relecture « en étranger » du moteur public, validation du propriétaire.
+
 ## Tâches programmées
 
 - « QLAB Prévisions : recalage sur tout l'historique » : **désactivée le 19/10/2026 à 17 h 24** (QLAB Prévisions retiré à la
