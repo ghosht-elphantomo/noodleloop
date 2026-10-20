@@ -1,5 +1,6 @@
 {
   "outputDirectory": "public",
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- public api vercel.json",
   "cleanUrls": false,
   "git": {
     "deploymentEnabled": {
