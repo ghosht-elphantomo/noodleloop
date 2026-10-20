@@ -2300,6 +2300,132 @@ def main():
         log(f"événements rattachés à la société nommée dans l'intitulé ou le fichier : {n_mv}")
     except Exception as e:  # noqa: BLE001
         log("rattachement des événements : non fait", e)
+    # quasi-doublons : même société, même intitulé (mention « annule et remplace » retirée), même rubrique, publiés à 5 jours près
+    # (document republié sous un autre nom de fichier, calendrier de paiement des dividendes remis à jour d'un jour à l'autre,
+    # convocation « annule et remplace ») : le plus récent est gardé. Deux assemblées de dates différentes restent deux événements,
+    # sauf si la plus récente annule et remplace l'autre ; les avis « Transactions sur dossier » et les annulations de transaction
+    # sont tous distincts
+    # (la base donne souvent le même intitulé générique à deux documents différents — deux nominations, une convocation et des projets
+    # de résolutions — : les noms de fichiers, date de tête, numéro de copie « _2 » et mention « annule et remplace » retirés, doivent
+    # aussi se ressembler — la moitié des mots en commun, sans les petits mots ni l'apostrophe codée « 27 » (« l27ago »), « 03 » = « 3 »
+    # —, sinon les deux événements restent)
+    try:
+        import urllib.parse as _up
+        AR_ = re.compile(r"\bannule (?:et )?remplace(?: le precedent)?(?: publie)?\b")
+        MV_ = {"de", "du", "des", "la", "le", "les", "et", "a", "au", "aux", "l", "d", "en"}
+
+        def fmots_(u_):
+            b_ = _up.unquote((u_ or "").rsplit("/", 1)[-1]).lower()
+            b_ = re.sub(r"\.pdf$", "", b_)
+            b_ = re.sub(r"^\d{8}\s*[-_]*", "", b_)
+            b_ = re.sub(r"(?<=[a-z])27(?=[a-z])", " ", b_)
+            return {w.lstrip("0") or "0" for w in AR_.sub(" ", _nm(b_)).split() if w not in MV_}
+
+        def meme_doc_(a_, b_):
+            ma_, mb_ = fmots_(a_.get("u")), fmots_(b_.get("u"))
+            return not ma_ or not mb_ or len(ma_ & mb_) >= .5 * len(ma_ | mb_)
+        kept_, out_, nd_rm = collections.defaultdict(list), [], []
+        for x in emeta:  # (du plus récent au plus ancien)
+            n_ti = _nm(x.get("ti"))
+            if re.search(r"transactions? sur dossier|annulation de transaction", n_ti) or x.get("c") == "Transaction annulée par la BRVM":
+                out_.append(x)
+                continue
+            try:
+                d0_ = dt.date.fromisoformat((x.get("d") or "")[:10])
+            except ValueError:
+                out_.append(x)
+                continue
+            k_ = (x.get("t"), re.sub(r"\s+", " ", AR_.sub(" ", n_ti)).strip(), x.get("c"))
+            hit_ = None
+            for y_, dy_ in kept_[k_]:
+                if abs((dy_ - d0_).days) > 5:
+                    continue
+                if x.get("e") and y_.get("e") and x["e"] != x.get("d") and y_["e"] != y_.get("d") and x["e"] != y_["e"] \
+                        and not AR_.search(_nm((y_.get("ti") or "") + " " + (y_.get("u") or ""))):
+                    continue  # (deux réunions à des dates différentes, sans « annule et remplace »)
+                if not meme_doc_(x, y_):
+                    continue  # (deux documents différents sous le même intitulé de la base)
+                hit_ = y_
+                break
+            if hit_ is not None:
+                nd_rm.append(f'{x.get("t") or "marché"} {x.get("d")} « {(x.get("ti") or "")[:60]} » (gardé : {hit_.get("d")})')
+                continue
+            kept_[k_].append((x, d0_))
+            out_.append(x)
+        if nd_rm:
+            emeta = out_
+            log(f"événements en double retirés (même société, même intitulé, 5 jours près) : {len(nd_rm)} ;", "; ".join(nd_rm[:60]))
+    except Exception as e:  # noqa: BLE001
+        log("quasi-doublons d'événements : non traités", e)
+    # événements « Détachement » et « Paiement » d'un exercice : date d'effet alignée sur celle du versement du même titre et du même
+    # exercice (dividends.json, documents officiels ; versement le plus proche, à 45 jours près) — la base d'avis décale parfois d'un
+    # mois ou tombe un week-end ; ancienne date gardée dans « e0 ». Un détachement que le bulletin officiel confirme (cours de référence
+    # abaissé du montant du dividende la séance d'avant) alors qu'il n'y confirme pas celui du versement est gardé et signalé
+    try:
+        byv_ = collections.defaultdict(list)
+        for v_ in dmeta:
+            if v_.get("t") and v_.get("ex"):
+                byv_[(v_["t"], int(v_["ex"]))].append(v_)
+
+        def ex_bulletin(t_, amt_, around):  # séances ex-dividende lues au bulletin (veille : référence abaissée du dividende)
+            B_ = BOC.get(t_) or {}
+            ks_ = sorted(B_)
+            a0_ = dt.date.fromisoformat(around[:10])
+            out2_ = set()
+            for j_, k2_ in enumerate(ks_[:-1]):
+                if abs((dt.date(k2_ // 10000, k2_ // 100 % 100, k2_ % 100) - a0_).days) > 15:
+                    continue
+                r_ = B_[k2_]
+                c_, ref_ = r_.get("c") or r_.get("prev"), r_.get("ref")
+                if c_ and ref_ and c_ > ref_ and abs((c_ - ref_) - amt_) <= max(5.5, amt_ * .06):
+                    n2_ = ks_[j_ + 1]
+                    out2_.add(f"{n2_ // 10000:04d}-{n2_ // 100 % 100:02d}-{n2_ % 100:02d}")
+            return out2_
+        ev_al, ev_kept, ev_rm, ev_nof = [], [], set(), []
+        for x in emeta:
+            if x.get("c") not in ("Détachement dividende", "Paiement dividende") or not x.get("t") or not x.get("e"):
+                continue
+            m_ = re.search(r"exercice\s*((?:19|20)\d\d)", x.get("ti") or "", re.I)
+            if not m_:
+                continue
+            kd_ = "det" if x["c"].startswith("Dét") else "pay"
+            try:
+                e0_ = dt.date.fromisoformat(x["e"][:10])
+                cands_ = [(abs((dt.date.fromisoformat(v_[kd_][:10]) - e0_).days), v_) for v_ in byv_.get((x["t"], int(m_.group(1))), []) if v_.get(kd_)]
+            except ValueError:
+                continue
+            if not cands_:
+                # (date ex-dividende de la base reconnue fausse plus haut — pas un jour de séance, ou bien plus de 15 jours avant le
+                # paiement — et retirée du versement : l'événement qui ne porte que cette date est retiré aussi)
+                if kd_ == "det" and any(v_.get("det0") == x["e"][:10] for v_ in byv_.get((x["t"], int(m_.group(1))), [])):
+                    ev_rm.add(id(x))
+                continue
+            gap_, v_ = min(cands_, key=lambda c2_: c2_[0])
+            if gap_ == 0 or gap_ > 45:
+                continue
+            if not (DOFF.get(id(v_)) or {}).get(kd_):
+                ev_nof.append(f'{x["t"]} {m_.group(1)} {kd_} {x["e"][:10]} (versement : {v_[kd_][:10]}, date de la base)')
+                continue  # (date du versement reprise de la base, sans document officiel : rien n'est aligné)
+            if kd_ == "det":
+                xs_ = ex_bulletin(x["t"], v_.get("dps0") or v_["dps"], v_["det"])
+                if x["e"][:10] in xs_ and v_["det"][:10] not in xs_:
+                    ev_kept.append(f'{x["t"]} {m_.group(1)} détachement {x["e"][:10]} (versement : {v_["det"][:10]})')
+                    continue
+            ev_al.append(f'{x["t"]} {m_.group(1)} {kd_} {x["e"][:10]} -> {v_[kd_][:10]}')
+            x["e0"], x["e"] = x["e"], v_[kd_][:10]
+        if ev_rm:
+            log("événements « Date ex-dividende » retirés (date reconnue fausse, retirée du versement) :",
+                "; ".join(f'{x["t"]} {x["e"]}' for x in emeta if id(x) in ev_rm))
+            emeta = [x for x in emeta if id(x) not in ev_rm]
+        if ev_al:
+            log(f"événements de dividende alignés sur le versement officiel : {len(ev_al)} ;", "; ".join(ev_al))
+        if ev_kept:
+            log("détachements de la base confirmés par le bulletin, versement à revoir :", "; ".join(ev_kept))
+            boc_chk["det_a_revoir"] = ev_kept
+        if ev_nof:
+            log("événements de dividende différents d'un versement sans date officielle, laissés :", "; ".join(ev_nof))
+    except Exception as e:  # noqa: BLE001
+        log("alignement des événements de dividende : non fait", e)
 
     # Calculs dérivés (macro, sentiment, liquidité, comptes, consensus, valorisation BRVM, UEMOA) ----
     # flux de trésorerie : uniquement ceux lus et vérifiés dans les états financiers publiés (pdf_cf). L'ancien fichier de départ
