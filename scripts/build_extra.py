@@ -1462,6 +1462,11 @@ def brvm_company(sid, s, fd_, fcf, dps_hist, b, tax):
         if len(alt.get("y") or {}) >= 2:  # l'autre référentiel publié par la société (sociaux / consolidés, SYSCOHADA / IFRS)
             Ya = sorted(int(y) for y in alt["y"])
             r["C2"] = {"y": Ya, "per": alt.get("per"), "std": alt.get("std"), "s": sections(alt, Ya)}
+            # ratios sur l'autre référentiel (demande du propriétaire du 20/10/2026 : lire les deux à sa discrétion) ; le BNPA publié
+            # porte sur le référentiel principal : PER et distribution non calculés ici (rendement = dividende ÷ cours, inchangé)
+            Yr2, groups2 = brvm_ratios({"y": {str(y): v for y, v in alt["y"].items()}}, bank, {}, dps_y, px_y)
+            if Yr2 and groups2:
+                r["R2"] = {"y": Yr2, "g": groups2, "k": []}
     return r
 
 
