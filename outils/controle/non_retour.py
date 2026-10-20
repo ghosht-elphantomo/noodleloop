@@ -1107,6 +1107,22 @@ def b49(ctx):
     return deja("Séries quotidiennes en retard sur leur marché")(ctx)
 
 
+@bug("B50", "2026-10-20", "UEMOA : « dette de l'État central » de la Côte d'Ivoire à 171 % (donnée de 1995)",
+     "Le tableau « dernière année disponible » d'UEMOA/DATA affichait pour la Côte d'Ivoire la dette de l'État central de 1995 "
+     "(171,1 % du PIB, seule donnée de la Banque mondiale pour ce pays), avec un simple exposant « 95 » : lue comme une valeur "
+     "actuelle. Depuis le 20/10/2026, une donnée de plus de dix ans s'affiche « — » (année et valeur au survol).",
+     "pages5.js : règle des dix ans présente ; aucune cellule « 171,1 » dans le tableau UEMOA du parcours du site")
+def b50(ctx):
+    pb = []
+    if "const vieux = y && +y < new Date().getFullYear() - 10" not in _web("pages5.js"):
+        pb.append("règle des dix ans absente de pages5.js")
+    for h, v in (ctx.get("pages") or {}).items():
+        if h.startswith("UEMOA") and "171,1" in ((v or {}).get("text") or ""):
+            pb.append(f"{h} : « 171,1 » affiché")
+            break
+    return ("orange", "; ".join(pb)) if pb else ("vert", "aucune donnée de plus de dix ans présentée comme la dernière valeur")
+
+
 def verifier(R, ctx):
     """ajoute au rapport une ligne par bug corrigé"""
     ctx["R"] = R

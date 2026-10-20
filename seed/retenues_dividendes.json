@@ -2,21 +2,64 @@
  "_note": "Retenue à la source sur les dividendes des sociétés cotées à la BRVM, par pays de la société qui paie (taux légaux), chaque taux lu sur un texte officiel (code général des impôts publié par l'administration fiscale du pays, ou avis de paiement de la BRVM). Rien d'estimé : un pays dont le texte en vigueur n'a pas été lu n'est pas listé. Le taux réellement retenu sur un paiement est celui de l'avis de la société (conventions fiscales, régime mère-fille ou régimes particuliers possibles). Affiché dans DIVC, onglet « Dividende net et encaissements ». Vérifié le 19/10/2026.",
  "d": "2026-10-19",
  "rows": [
-  {"pays": "CI", "nom": "Côte d'Ivoire", "pp": 12, "pm": 10, "exc_pp": 17, "exc_pm": 15,
+  {
+   "pays": "CI",
+   "nom": "Côte d'Ivoire",
+   "pp": 12,
+   "pm": 10,
+   "exc_pp": 17,
+   "exc_pm": 15,
    "texte": "Avis de paiement de dividendes de la BRVM (ex. avis n° 230-2025, Filtisac) : « IRVM applicable de 12 % pour les personnes physiques et 10 % pour les personnes morales » ; dividende exceptionnel : 17 % et 15 %",
-   "u": "https://www.brvm.org/sites/default/files/20250916_-_avis_ndeg230_brvmdg_-_paiement_de_dividendes_exercice_2024_et_paiement_de_dividendes_exceptionnels_-_filtisac_ci_0.pdf"},
-  {"pays": "SN", "nom": "Sénégal", "pp": 10, "pm": null,
+   "u": "https://www.brvm.org/sites/default/files/20250916_-_avis_ndeg230_brvmdg_-_paiement_de_dividendes_exercice_2024_et_paiement_de_dividendes_exceptionnels_-_filtisac_ci_0.pdf"
+  },
+  {
+   "pays": "SN",
+   "nom": "Sénégal",
+   "pp": 10,
+   "pm": null,
    "texte": "Code général des impôts du Sénégal (loi n° 2012-31, édition à jour de janvier 2025), art. 173-2 (loi n° 2022-19) : « 10 %, pour les produits des actions, parts sociales et parts d'intérêts des sociétés passibles de l'impôt sur les sociétés »",
-   "u": "https://www.dgid.sn/storage/docs/CGI-2025.pdf"},
-  {"pays": "ML", "nom": "Mali", "pp": 7, "pm": 7,
+   "u": "https://www.dgid.sn/storage/docs/CGI-2025.pdf"
+  },
+  {
+   "pays": "ML",
+   "nom": "Mali",
+   "pp": 7,
+   "pm": 7,
    "texte": "Code général des impôts du Mali, art. 42 (lois de finances 2012 et 2013) : 10 % pour les dividendes, « ramené à 7 % pour les dividendes distribués par les sociétés cotées sur une bourse des valeurs agréée par le CREPMF »",
-   "u": "https://www.dgi.gouv.ml/CGI/"},
-  {"pays": "NE", "nom": "Niger", "pp": 7, "pm": 7,
+   "u": "https://www.dgi.gouv.ml/CGI/"
+  },
+  {
+   "pays": "NE",
+   "nom": "Niger",
+   "pp": 7,
+   "pm": 7,
    "texte": "Code général des impôts du Niger, art. 74 : 10 % pour les dividendes ; « pour les dividendes distribués par les sociétés cotées par une bourse des valeurs mobilières agréée par le CREPMF au sein de l'UEMOA, le taux est de 7 % »",
-   "u": "https://niger.eregulations.org/media/code%20g%C3%A9n%C3%A9rale%20des%20imp%C3%B4ts.pdf"},
-  {"pays": "TG", "nom": "Togo", "pp": 3, "pm": 7,
+   "u": "https://niger.eregulations.org/media/code%20g%C3%A9n%C3%A9rale%20des%20imp%C3%B4ts.pdf"
+  },
+  {
+   "pays": "TG",
+   "nom": "Togo",
+   "pp": 3,
+   "pm": 7,
    "texte": "Code général des impôts du Togo (édition à jour 2025), art. 79 : dividendes des sociétés cotées sur une bourse agréée par le CREPMF, 3 % pour les personnes physiques (libératoire) et 7 % pour les personnes morales ; 13 % sinon",
-   "u": "https://www.otr.tg/index.php/en/impots/reglementations-fiscales/code-general-des-impots/600-code-general-des-impots-livre-des-procedures-fiscales-mis-a-jour-2025/file.html"}
+   "u": "https://www.otr.tg/index.php/en/impots/reglementations-fiscales/code-general-des-impots/600-code-general-des-impots-livre-des-procedures-fiscales-mis-a-jour-2025/file.html"
+  },
+  {
+   "pays": "BF",
+   "nom": "Burkina Faso",
+   "pp": 12.5,
+   "pm": 12.5,
+   "verif": "à vérifier",
+   "texte": "Code général des impôts, édition officielle 2023 (à jour de la loi de finances 2023), art. 140 : 12,5 % sur les revenus de valeurs mobilières, sans taux réduit pour les sociétés cotées. À vérifier : la fiscalité a pu changer depuis (loi de finances plus récente) et les avis de paiement de la BRVM ne donnent que le dividende net (Coris Bank 900 FCFA en 2026, Onatel 145,3214 FCFA)."
+  },
+  {
+   "pays": "BJ",
+   "nom": "Bénin",
+   "pp": 5,
+   "pm": 5,
+   "verif": "à vérifier",
+   "texte": "Code général des impôts (loi n° 2021-15 du 23/12/2021), art. 86 : 5 % pour les dividendes des sociétés cotées sur une bourse agréée par le CREPMF, 10 % pour les autres. À vérifier : les avis de paiement de la BRVM ne donnent que le dividende net (BIIC 254,60 FCFA, BOA Bénin 585 FCFA, Loterie nationale 164,1709 FCFA) et une loi de finances plus récente a pu changer le taux."
+  }
  ],
  "a_verifier": {
   "BF": "Code général des impôts, édition officielle 2023 (à jour de la loi de finances 2023), art. 140 : 12,5 % pour les revenus de valeurs mobilières, sans taux réduit pour les sociétés cotées. Mais Coris Bank paie 900 FCFA nets en 2026 (1 000 bruts à 10 % ?) : une loi de finances plus récente a pu changer le taux. Non affiché avant lecture du texte en vigueur.",

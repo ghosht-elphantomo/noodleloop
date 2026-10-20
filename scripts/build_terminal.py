@@ -3078,7 +3078,7 @@ def main():
     try:  # retenue à la source sur les dividendes des sociétés cotées, par pays (taux légaux lus sur les textes officiels, DIVC)
         rt_ = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "seed", "retenues_dividendes.json"), encoding="utf8"))
         with open(os.path.join(out, "retenues.json"), "w", encoding="utf8") as fh:
-            json.dump({"d": rt_.get("d"), "rows": [{k: r.get(k) for k in ("pays", "nom", "pp", "pm", "exc_pp", "exc_pm", "texte")} for r in rt_.get("rows") or []]},
+            json.dump({"d": rt_.get("d"), "rows": [{k: r.get(k) for k in ("pays", "nom", "pp", "pm", "exc_pp", "exc_pm", "texte", "verif")} for r in rt_.get("rows") or []]},
                       fh, separators=(",", ":"), ensure_ascii=False)
     except Exception as e:  # noqa: BLE001
         log("retenues par pays illisibles :", e)
