@@ -306,7 +306,26 @@ def series_from_csv(text, date_col, val_col, filt=None):
 
 
 # ------------------------------------------------------------------ metrics
-def stats_block(d, c, freq="D", h=None, l=None, v=None, val=None, ann=None):
+def stats_block(d, c, freq="D", h=None, l=None, v=None, val=None, ann=None, seg=0):
+    # série trouée (indice dont la source a cessé de publier : BRVM-SP du 29/01/2025 au 01/07/2026, anciens indices sectoriels de
+    # février 2018 à juin 2019) : `seg` = début du dernier segment continu. Variations, rendements, volatilité, RSI, moyennes et
+    # montant moyen ne sont calculés que sur ce segment (rien à travers le trou) ; plage 52 semaines non publiée si la fenêtre d'un
+    # an contient le trou ; plus haut historique et écart au plus haut non publiés (le plus haut a pu être atteint dans le trou) ;
+    # première donnée et nombre de points : tout l'historique
+    if seg and freq == "D" and 0 < seg < len(d):
+        st = stats_block(d[seg:], c[seg:], freq, h[seg:] if h else None, l[seg:] if l else None, v[seg:] if v else None,
+                         val[seg:] if val else None, ann)
+        e_ = dt.date(d[-1] // 10000, d[-1] // 100 % 100, d[-1] % 100)
+        try:
+            t1 = e_.replace(year=e_.year - 1)
+        except ValueError:
+            t1 = e_ - dt.timedelta(days=365)
+        if d[seg] > t1.year * 10000 + t1.month * 100 + t1.day:
+            st.update(hi52=None, lo52=None)
+        if seg == len(d) - 1:
+            st.update(prev=None, pct=None)  # (dernière valeur isolée après le trou : pas de variation du jour)
+        st.update(first=d[0], nobs=len(d), ath=None, dd=None)
+        return st
     n = len(c)
     per_year = ann or (252 if freq == "D" else 12)
     last, prev = c[-1], c[-2] if n > 1 else c[-1]
@@ -645,7 +664,7 @@ def main():
     os.makedirs(sdir, exist_ok=True)
     secs, files = [], {}
 
-    def add(meta, d, c, o=None, h=None, l=None, v=None, val=None, div=None, freq="D", nd=2, ann=None, replace=False):
+    def add(meta, d, c, o=None, h=None, l=None, v=None, val=None, div=None, freq="D", nd=2, ann=None, replace=False, seg=0):
         sid = meta["id"]
         if replace and sid in files:
             secs[:] = [x for x in secs if x["id"] != sid]
@@ -663,7 +682,7 @@ def main():
         if div and any(div):
             body["div"] = [rnd(x, 4) for x in div]
         files[sid] = body
-        st = stats_block(d, c, freq, h, l, v, val, ann)
+        st = stats_block(d, c, freq, h, l, v, val, ann, seg=seg)
         secs.append({**meta, "f": freq, **st})
 
     # US & Taiwan -----------------------------------------------------------
@@ -1285,6 +1304,10 @@ def main():
 
     def is_weekend(d_):
         return dt.date(d_ // 10000, d_ // 100 % 100, d_ % 100).weekday() >= 5
+    # jours de séance (bulletin officiel, ou titres dont le cours a varié dans la base) : une série d'indice sans valeur pendant plus
+    # de 10 jours de séance a un trou de données (une fermeture du marché, sans aucun titre échangé, n'en est pas un)
+    SESS_DAYS = sorted(d_ for d_ in set(BOC_DAYS) | set(BASE_MOVED) if not is_weekend(d_) and not no_session(d_))
+    IDX_TROUS = {}  # indice -> [(dernière valeur avant le trou, première après, jours de séance manquants)]
     if BOC:  # dividendes payés lus dans les bulletins, ajoutés seulement quand la base n'a aucun versement à ±120 jours
         # (la date du bulletin peut suivre de plusieurs semaines celle de l'avis : un même dividende ne doit pas compter deux fois ;
         # un dividende payé en plusieurs fractions espacées de plus de 4 mois reste compté une fois par fraction)
@@ -2160,10 +2183,22 @@ def main():
             # (montant du jour : celui de la base ou du bulletin pour cette séance, sinon inconnu (0) ; jamais celui de la veille)
             vl_ = rows[-1][6] if rows[-1][0] == sess_d else (OBV_.get(sess_d) or 0)
             rows = [r for r in rows if r[0] != sess_d] + [(sess_d, v, v, v, v, 0, vl_)]
+        # trous de données (plus de 10 jours de séance sans valeur : la base a cessé de publier, indice « gelé ») : statistiques sur le
+        # dernier segment continu seulement (stats_block) ; trous publiés pour le contrôle du matin
+        import bisect
+        seg_, trous_ = 0, []
+        for j_ in range(1, len(rows)):
+            n_s = bisect.bisect_left(SESS_DAYS, rows[j_][0]) - bisect.bisect_right(SESS_DAYS, rows[j_ - 1][0])
+            if n_s > 10:
+                seg_ = j_
+                trous_.append((rows[j_ - 1][0], rows[j_][0], n_s))
+        if trous_:
+            IDX_TROUS[code] = trous_
+            boc_chk.setdefault("idx_trous", {})[code] = trous_[-5:]
         if len(rows) < 30:
             continue
         add({"id": code, "tk": f"{code} Index", "n": e["nom"], "cls": "Index", "typ": "Index", "mkt": "BRVM", "grp": "Indice " + e.get("type", ""), "ccy": "XOF", "bench": "BRVMC"},
-            [r[0] for r in rows], [r[4] for r in rows], nd=2, val=[r[6] for r in rows])
+            [r[0] for r in rows], [r[4] for r in rows], nd=2, val=[r[6] for r in rows], seg=seg_)
 
     # Macro -----------------------------------------------------------------
     def macro(sid, tk, name, grp, path, dcol, vcol, freq, nd=2, filt=None, ccy="USD", cls="Comdty", more=None):
@@ -2320,7 +2355,9 @@ def main():
         if s["f"] != "D" or not bm or bm == s["id"] or bm not in wk:
             continue
         a_, b_ = wk[s["id"]], wk[bm]
-        keys = sorted(set(a_) & set(b_))[-105:]
+        # (indice troué : semaines du dernier segment continu seulement, aucun rendement à travers le trou)
+        k0_ = max([0] + [IDX_TROUS[x][-1][1] for x in (s["id"], bm) if x in IDX_TROUS])
+        keys = sorted(k for k in set(a_) & set(b_) if k >= k0_)[-105:]
         x = [math.log(a_[keys[i]] / a_[keys[i - 1]]) for i in range(1, len(keys))]
         y = [math.log(b_[keys[i]] / b_[keys[i - 1]]) for i in range(1, len(keys))]
         s["beta"], s["corr"] = (rnd(v, 3) for v in beta_corr(x, y))
@@ -2334,6 +2371,8 @@ def main():
         for k in allw:
             if k in ser:
                 last = ser[k]
+            elif any(a0 < k < b0 for a0, b0, _ in IDX_TROUS.get(sid, ())):
+                last = None  # (trou de données d'un indice : pas de valeur recopiée pendant le trou)
             col.append(rnd(last, 4) if last is not None else None)
         if sum(1 for v in col if v is not None) > 52:
             wm["s"][sid] = col
