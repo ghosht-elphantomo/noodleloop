@@ -94,7 +94,16 @@ l'espace de travail de la session ; chaque constat corrigé a son entrée dans `
   branches réécrites de force sans vérifier ce qu'on publie ; des contrôles qui vérifiaient l'archive contre elle-même et
   jamais la série publiée contre le bulletin ; des unités et des dates de sources différentes mélangées sans table de
   référence. Chaque cause a maintenant sa protection dans le code et son contrôle du matin.
+- **Décisions du propriétaire (20/10/2026, matin)** : ORGT, nombre de titres de la page brvm.org gardé ; flottant de l'avis
+  officiel n°303 (transcrit dans `seed/flottant_avis.json`) affiché quand la page brvm.org ne concorde pas (24 titres, dont
+  BOA Bénin 45,89 % au lieu de 22,61 %, Solibra 18,6 % au lieu de 1,86 %, Sicable 48,70 % concordant) ; BNPA des comptes
+  vérifiés au résumé quand le bulletin calcule le même exercice sur un autre résultat (`BNPA_SERIE_AU_RESUME = True` : CABC,
+  SDCC, TTLS, ONTBF ; BNPA du bulletin gardé dans « bnpa_bul ») ; réglages de fluidité désactivés par défaut, au choix de
+  l'utilisateur ; retenues Burkina et Bénin : « taux constaté sur les documents officiels » demandé, mais les avis ne donnent
+  que le net (brut introuvable) : question posée au propriétaire.
 - **Reste de l'audit** :
+  - Dates d'effet listées à plus de 5 jours du palier du bulletin (CFAC ×100 13/11 → 19/12/2017, SAFC ×25, SEMC ×40) :
+    signalées chaque matin (« Historique / bulletins : dates d'effet »), à corriger sur document.
   - Relais du métronome en plusieurs essais (R3) : seulement avec un essai en parallèle (règle du propriétaire).
   - Une base complète lancée en journée remplace pendant au plus 15 min des calculs plus récents (V13) : le relevé suivant
     les refait ; séparation complète à faire avec la migration.
