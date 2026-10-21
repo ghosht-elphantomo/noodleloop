@@ -112,8 +112,6 @@ cours/2015.csv,UNLC,2015-08-27,precedent_different,cours précédent 26105 ≠ c
 cours/2015.csv,UNXC,2015-03-16,precedent_different,cours précédent 70000 ≠ clôture du 2015-03-12 (65205)
 cours/2015.csv,UNXC,2015-04-17,precedent_different,cours précédent 60000 ≠ clôture du 2015-04-13 (64145)
 cours/2016.csv,BOABF,2016-01-13,precedent_different,cours précédent 118700 ≠ clôture du 2016-01-11 (118005)
-cours/2016.csv,BOAC,2016-06-08,variation_hors_seuil,"variation de -12.1 % (seuil quotidien ±7,5 %) : à rapprocher d'un avis"
-cours/2016.csv,BOAN,2016-06-03,variation_hors_seuil,"variation de -7.89 % (seuil quotidien ±7,5 %) : à rapprocher d'un avis"
 cours/2016.csv,SEMC,2016-09-30,precedent_different,cours précédent 48000 ≠ clôture du 2016-09-27 (49000)
 cours/2017.csv,ABJC,2017-07-03,precedent_different,cours précédent 2600 ≠ clôture du 2017-06-29 (2640)
 cours/2017.csv,BOAB,2017-07-03,precedent_different,cours précédent 95990 ≠ clôture du 2017-06-29 (95000)
@@ -126,7 +124,6 @@ cours/2017.csv,BOAS,2017-07-27,precedent_different,cours précédent 31000 ≠ c
 cours/2017.csv,CABC,2017-07-27,precedent_different,cours précédent 43475 ≠ clôture du 2017-07-25 (47000)
 cours/2017.csv,CBIBF,2017-07-03,precedent_different,cours précédent 50000 ≠ clôture du 2017-06-29 (49000)
 cours/2017.csv,CFAC,2017-07-04,precedent_different,cours précédent 57000 ≠ clôture du 2017-06-29 (61275)
-cours/2017.csv,CFAC,2017-12-19,variation_hors_seuil,"variation de -98.93 % (seuil quotidien ±7,5 %) : à rapprocher d'un avis"
 cours/2017.csv,CIEC,2017-07-28,precedent_different,cours précédent 68800 ≠ clôture du 2017-07-25 (66000)
 cours/2017.csv,ETIT,2017-07-03,precedent_different,cours précédent 18 ≠ clôture du 2017-06-29 (17)
 cours/2017.csv,FTSC,2017-07-03,precedent_different,cours précédent 17735 ≠ clôture du 2017-06-29 (16500)
@@ -256,19 +253,6 @@ cours/2024.csv,SNTS,2024-05-15,precedent_different,cours précédent 18995 ≠ c
 cours/2024.csv,SNTS,2024-05-15,variation_incoherente,variation publiée 5.97 % ; calculée 0.00 % (base 18995)
 cours/2024.csv,SPHC,2024-08-08,precedent_different,cours précédent 2950 ≠ clôture du 2024-08-06 (3010)
 cours/2025.csv,CFAC,2025-08-14,precedent_different,cours précédent 655 ≠ clôture du 2025-08-13 (660)
-cours/2026.csv,ETIT,2026-09-17,prix_moyen_hors_fourchette,valeur/volume = 66678.76 pour une clôture à 70
 cours/2026.csv,TTLC,2026-08-28,precedent_different,cours précédent 3415 ≠ clôture du 2026-08-27 (3550)
-dividendes.csv,ABJC,2018,avis_different_bulletin,avis 164.956003 FCFA ; bulletin 123.72 FCFA
-dividendes.csv,BOAB,2012,avis_different_bulletin,avis 116.25 FCFA ; bulletin 465 FCFA
-dividendes.csv,BOABF,2012,avis_different_bulletin,avis 151.55 FCFA ; bulletin 606.2 FCFA
-dividendes.csv,BOAC,2012,avis_different_bulletin,avis 67.5 FCFA ; bulletin 270 FCFA
-dividendes.csv,BOAN,2012,avis_different_bulletin,avis 122.9808 FCFA ; bulletin 255.8 FCFA
-dividendes.csv,ECOC,2021,avis_different_bulletin,avis 420.3 FCFA ; bulletin 549 FCFA
 dividendes.csv,FTSC,2015,avis_different_bulletin,avis 261.25 FCFA ; bulletin 375 FCFA
-dividendes.csv,FTSC,2016,avis_different_bulletin,avis 561.25 FCFA ; bulletin 261.25 FCFA
-dividendes.csv,SAFC,2010,avis_different_bulletin,avis 16.2808 FCFA ; bulletin 288 FCFA
-dividendes.csv,SHEC,2012,avis_different_bulletin,avis 10.71 FCFA ; bulletin 535.5 FCFA
-dividendes.csv,SLBC,2012,avis_different_bulletin,avis 549 FCFA ; bulletin 10980 FCFA
 dividendes.csv,SLBC,2023,dates_incoherentes,détachement 2024-09-12 après paiement 2024-08-14
-dividendes.csv,TTLC,2012,avis_different_bulletin,avis 72 FCFA ; bulletin 1440 FCFA
-dividendes.csv,UNXC,2012,avis_different_bulletin,avis 33.84 FCFA ; bulletin 169.2 FCFA

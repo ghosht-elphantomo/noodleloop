@@ -1,7 +1,7 @@
 {
  "version": 1,
- "maj": "2026-10-20T00:10:28Z",
- "derniere_seance": "2026-10-19",
+ "maj": "2026-10-21T00:09:07Z",
+ "derniere_seance": "2026-10-20",
  "fichiers": {
   "cours/2013.csv": {
    "lignes": 36,
@@ -69,43 +69,43 @@
    "corrigees": 0
   },
   "cours/2026.csv": {
-   "lignes": 9318,
+   "lignes": 9366,
    "ajoutees": 48,
-   "corrigees": 0
+   "corrigees": 1
   },
   "indices.csv": {
-   "lignes": 40646,
-   "ajoutees": 40,
+   "lignes": 40756,
+   "ajoutees": 123,
    "corrigees": 0
   },
   "dividendes.csv": {
-   "lignes": 747,
+   "lignes": 701,
    "ajoutees": 0,
-   "corrigees": 0
+   "corrigees": 48
   },
   "fractionnements.csv": {
-   "lignes": 57,
-   "ajoutees": 0,
+   "lignes": 62,
+   "ajoutees": 7,
    "corrigees": 0
   },
   "evenements.csv": {
    "lignes": 7295,
-   "ajoutees": 4,
-   "corrigees": 0
+   "ajoutees": 0,
+   "corrigees": 12
   },
   "resultats.csv": {
    "lignes": 934,
-   "ajoutees": 14,
-   "corrigees": 24
+   "ajoutees": 0,
+   "corrigees": 85
   },
   "etats_financiers.csv": {
-   "lignes": 23751,
-   "ajoutees": 407,
-   "corrigees": 110
+   "lignes": 24560,
+   "ajoutees": 809,
+   "corrigees": 225
   },
   "flottant.csv": {
-   "lignes": 46,
-   "ajoutees": 0,
+   "lignes": 48,
+   "ajoutees": 2,
    "corrigees": 0
   },
   "notations.csv": {
@@ -134,7 +134,7 @@
   "2023": 10542,
   "2024": 11033,
   "2025": 11575,
-  "2026": 9322
+  "2026": 9370
  },
  "bulletins_identiques_ecartes": [
   "2020-10-29"
@@ -152,6 +152,7 @@
   "2026-07-15 SNTS",
   "2026-08-04 SNTS",
   "2026-09-16 SNTS",
+  "2026-09-17 ETIT (volume)",
   "2026-09-18 SNTS",
   "2026-09-21 SNTS",
   "2026-09-22 SNTS",
@@ -162,18 +163,18 @@
   "2026-10-05 SNTS",
   "2026-10-06 SNTS",
   "2026-10-09 SNTS",
-  "2026-10-15 SNTS"
+  "2026-10-15 SNTS",
+  "2026-10-20 SNTS"
  ],
- "corrections_total": 9387,
- "corrections_du_jour": 135,
+ "corrections_total": 9910,
+ "corrections_du_jour": 523,
  "controles": {
   "precedent_different": 193,
-  "variation_hors_seuil": 22,
+  "variation_hors_seuil": 19,
   "variation_incoherente": 29,
   "seance_incomplete": 13,
   "cloture_absente": 1,
-  "prix_moyen_hors_fourchette": 1,
-  "avis_different_bulletin": 13,
+  "avis_different_bulletin": 1,
   "dates_incoherentes": 1
  }
 }

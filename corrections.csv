@@ -9386,3 +9386,526 @@ constate_le,fichier,cle,champ,ancienne_valeur,nouvelle_valeur
 2026-10-20,resultats.csv,SHEC | 2016,chiffre_affaires,271009,271008.6
 2026-10-20,resultats.csv,SHEC | 2016,ebitda,7.1,7068.4
 2026-10-20,resultats.csv,UNLC | 2020,bnpa,-2866,-262.38
+2026-10-21,cours/2026.csv,2026-09-17 | ETIT,volume,14762,14762000
+2026-10-21,dividendes.csv,ABJC | 2016 | avis |,annonce,2017-07-21,2017-07-10
+2026-10-21,dividendes.csv,ABJC | 2018 | bulletin |,ligne,"versement archivé : 123.72 net (123.72 ajusté), paiement 2019-05-27","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BICC | 2012 | bulletin |,ligne,"versement archivé : 2443 net (244.3 ajusté), paiement 2013-06-19","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BNBC | 2012 | bulletin |,ligne,"versement archivé : 4905 net (245.25 ajusté), paiement 2013-07-01","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BNBC | 2015 | avis |,detachement,2016-07-06,
+2026-10-21,dividendes.csv,BOAB | 2010 | avis |,paiement,2011-04-02,2011-05-02
+2026-10-21,dividendes.csv,BOAB | 2012 | bulletin |,ligne,"versement archivé : 4650 net (465 ajusté), paiement 2013-05-08","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BOABF | 2010 | avis |,paiement,2011-04-03,2011-05-03
+2026-10-21,dividendes.csv,BOABF | 2012 | bulletin |,ligne,"versement archivé : 6062 net (606.2 ajusté), paiement 2013-04-23","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BOABF | 2016 | avis |,detachement,2017-04-30,
+2026-10-21,dividendes.csv,BOAC | 2009 | avis |,dividende_ajuste,45,36.9
+2026-10-21,dividendes.csv,BOAC | 2009 | avis |,facteur_ajustement,40,48.780488
+2026-10-21,dividendes.csv,BOAC | 2012 | avis |,dividende_ajuste,67.5,55.35
+2026-10-21,dividendes.csv,BOAC | 2012 | avis |,facteur_ajustement,40,48.780488
+2026-10-21,dividendes.csv,BOAC | 2012 | bulletin |,ligne,"versement archivé : 2700 net (270 ajusté), paiement 2013-05-06","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BOAC | 2013 | bulletin |,dividende_ajuste,110,90.2
+2026-10-21,dividendes.csv,BOAC | 2013 | bulletin |,facteur_ajustement,40,48.780488
+2026-10-21,dividendes.csv,BOAC | 2014 | bulletin |,dividende_ajuste,155,127.1
+2026-10-21,dividendes.csv,BOAC | 2014 | bulletin |,facteur_ajustement,40,48.780488
+2026-10-21,dividendes.csv,BOAC | 2015 | bulletin |,dividende_ajuste,155,127.1
+2026-10-21,dividendes.csv,BOAC | 2015 | bulletin |,facteur_ajustement,40,48.780488
+2026-10-21,dividendes.csv,BOAN | 2003 | avis |,dividende_ajuste,86.5385,82.2115
+2026-10-21,dividendes.csv,BOAN | 2003 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2004 | avis |,dividende_ajuste,75.7212,71.9351
+2026-10-21,dividendes.csv,BOAN | 2004 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2005 | avis |,dividende_ajuste,86.5385,82.2115
+2026-10-21,dividendes.csv,BOAN | 2005 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2007 | avis |,dividende_ajuste,108.1731,102.7644
+2026-10-21,dividendes.csv,BOAN | 2007 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2008 | avis |,dividende_ajuste,118.9904,113.0409
+2026-10-21,dividendes.csv,BOAN | 2008 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2009 | avis |,dividende_ajuste,129.8077,123.3173
+2026-10-21,dividendes.csv,BOAN | 2009 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2010 | avis |,dividende_ajuste,108.1731,102.7644
+2026-10-21,dividendes.csv,BOAN | 2010 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2011 | avis |,dividende_ajuste,86.5385,82.2115
+2026-10-21,dividendes.csv,BOAN | 2011 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2012 | avis |,dividende_ajuste,122.9808,116.8317
+2026-10-21,dividendes.csv,BOAN | 2012 | avis |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2012 | bulletin |,ligne,"versement archivé : 2558 net (255.8 ajusté), paiement 2013-05-07","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,BOAN | 2013 | bulletin |,dividende_ajuste,142.3077,135.1923
+2026-10-21,dividendes.csv,BOAN | 2013 | bulletin |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2014 | bulletin |,dividende_ajuste,167.8846,159.4904
+2026-10-21,dividendes.csv,BOAN | 2014 | bulletin |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,BOAN | 2015 | bulletin |,dividende_ajuste,231.5865,220.0072
+2026-10-21,dividendes.csv,BOAN | 2015 | bulletin |,facteur_ajustement,20.8,21.894737
+2026-10-21,dividendes.csv,CABC | 2012 | bulletin |,ligne,"versement archivé : 5904 net (147.6 ajusté), paiement 2013-04-15","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CBIBF | 2016 | avis |,dividende_ajuste,224,218.75
+2026-10-21,dividendes.csv,CBIBF | 2016 | avis |,facteur_ajustement,5,5.12
+2026-10-21,dividendes.csv,CBIBF | 2016 | bulletin |,ligne,"versement archivé : 1120 net (224 ajusté), paiement 2017-06-09","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CBIBF | 2017 | bulletin |,ligne,"versement archivé : 336 net (336 ajusté), paiement 2018-07-05","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CBIBF | 2018 | bulletin |,ligne,"versement archivé : 402 net (402 ajusté), paiement 2019-07-05","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CBIBF | 2019 | bulletin |,ligne,"versement archivé : 420 net (420 ajusté), paiement 2020-07-08","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CBIBF | 2020 | bulletin |,ligne,"versement archivé : 406 net (406 ajusté), paiement 2021-07-06","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CFAC | 2012 | bulletin |,ligne,"versement archivé : 1629 net (16.29 ajusté), paiement 2013-06-27","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CIEC | 2012 | bulletin |,ligne,"versement archivé : 2691 net (134.55 ajusté), paiement 2013-06-03","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,CIEC | 2016 | avis |,paiement,2017-07-12,2017-09-20
+2026-10-21,dividendes.csv,CIEC | 2016 | bulletin |,ligne,"versement archivé : 3465 net (173.25 ajusté), paiement 2017-07-12","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,ECOC | 2021 | bulletin |,ligne,"versement archivé : 549 net (549 ajusté), paiement 2022-05-30","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,ETIT | 2012 | bulletin |,ligne,"versement archivé : 1.992 net (1.992 ajusté), paiement 2013-07-19","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,FTSC | 2012 | bulletin |,ligne,"versement archivé : 355 net (88.75 ajusté), paiement 2013-07-22","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,FTSC | 2016 | avis |,annonce,2018-01-09,2017-12-22
+2026-10-21,dividendes.csv,FTSC | 2016 | bulletin |,ligne,"versement archivé : 1045 net (261.25 ajusté), paiement 2017-07-31","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,NSBC | 2022 | bulletin |,ligne,"versement archivé : 363.6 net (363.6 ajusté), paiement 2023-07-07","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,NTLC | 2010 | bulletin |,ligne,"versement archivé : 630 net (31.5 ajusté), paiement 2011-08-12","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,NTLC | 2023 | bulletin |,ligne,"versement archivé : 675 net (675 ajusté), paiement 2024-08-20","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,ONTBF | 2012 | bulletin |,ligne,"versement archivé : 463 net (231.5 ajusté), paiement 2013-07-02","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,PALC | 2012 | bulletin |,ligne,"versement archivé : 1440 net (720 ajusté), paiement 2013-06-13","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,PRSC | 2012 | bulletin |,ligne,"versement archivé : 10710 net (167.3438 ajusté), paiement 2013-06-06","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,PRSC | 2015 | avis |,detachement,2016-05-01,
+2026-10-21,dividendes.csv,SAFC | 2010 | bulletin |,ligne,"versement archivé : 1440 net (288 ajusté), paiement 2011-07-29","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SDCC | 2012 | bulletin |,ligne,"versement archivé : 3510 net (351 ajusté), paiement 2013-06-03","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SDSC | 2012 | bulletin |,ligne,"versement archivé : 7562 net (151.24 ajusté), paiement 2013-06-06","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SDSC | 2017 | bulletin |,ligne,"versement archivé : 182 net (182 ajusté), paiement 2018-05-30","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SEMC | 2012 | bulletin |,ligne,"versement archivé : 1215 net (30.375 ajusté), paiement 2013-09-30","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SGBC | 2012 | bulletin |,ligne,"versement archivé : 5744 net (574.4 ajusté), paiement 2013-07-16","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SGBC | 2015 | avis |,detachement,2016-04-24,
+2026-10-21,dividendes.csv,SHEC | 2012 | bulletin |,ligne,"versement archivé : 535.5 net (535.5 ajusté), paiement 2013-09-30","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SHEC | 2016 | avis |,dividende_ajuste,33.3,33.7
+2026-10-21,dividendes.csv,SHEC | 2016 | avis |,dividende_net,33.3,33.7
+2026-10-21,dividendes.csv,SIVC | 2012 | bulletin |,ligne,"versement archivé : 630 net (63 ajusté), paiement 2013-07-26","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SLBC | 2012 | bulletin |,ligne,"versement archivé : 10980 net (10980 ajusté), paiement 2013-06-03","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SMBC | 2011 | bulletin |,ligne,"versement archivé : 450 net (112.5 ajusté), paiement 2012-07-18","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SNTS | 1998 | avis |,dividende_ajuste,2340,234
+2026-10-21,dividendes.csv,SNTS | 1998 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 1999 | avis |,dividende_ajuste,2560,256
+2026-10-21,dividendes.csv,SNTS | 1999 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2000 | avis |,dividende_ajuste,2610,261
+2026-10-21,dividendes.csv,SNTS | 2000 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2001 | avis |,dividende_ajuste,2610,261
+2026-10-21,dividendes.csv,SNTS | 2001 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2002 | avis |,dividende_ajuste,2668.5,266.85
+2026-10-21,dividendes.csv,SNTS | 2002 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2003 | avis |,dividende_ajuste,3960,396
+2026-10-21,dividendes.csv,SNTS | 2003 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2004 | avis |,dividende_ajuste,5085,508.5
+2026-10-21,dividendes.csv,SNTS | 2004 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2011 | avis |,dividende_net,1305,13050
+2026-10-21,dividendes.csv,SNTS | 2011 | avis |,facteur_ajustement,1,10
+2026-10-21,dividendes.csv,SNTS | 2012 | bulletin |,ligne,"versement archivé : 1350 net (1350 ajusté), paiement 2013-05-02","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SNTS | 2017 | bulletin |,ligne,"versement archivé : 1500 net (1500 ajusté), paiement 2018-05-23","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SNTS | 2022 | bulletin |,ligne,"versement archivé : 1500 net (1500 ajusté), paiement 2023-05-30","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SOGC | 2012 | bulletin |,ligne,"versement archivé : 3780 net (378 ajusté), paiement 2013-07-29","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,SPHC | 2012 | bulletin |,ligne,"versement archivé : 1440 net (288 ajusté), paiement 2013-07-05","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,STBC | 2012 | bulletin |,ligne,"versement archivé : 7831 net (391.55 ajusté), paiement 2013-04-19","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,STBC | 2020 | bulletin |,ligne,"versement archivé : 436.12 net (436.12 ajusté), paiement 2021-07-02","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,TTLC | 2012 | bulletin |,ligne,"versement archivé : 7200 net (1440 ajusté), paiement 2013-07-04","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,UNLC | 2011 | bulletin |,ligne,"versement archivé : 1233 net (1233 ajusté), paiement 2012-07-09","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,dividendes.csv,UNXC | 2012 | bulletin |,ligne,"versement archivé : 846 net (169.2 ajusté), paiement 2013-07-15","retirée : absente des versements du jour (dividends.json), l'exercice ne compte qu'une fois"
+2026-10-21,etats_financiers.csv,ABJC | 2021 | capital,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | capital,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | chiffre_affaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | chiffre_affaires,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | chiffre_affaires,valeur,8377,8377.373
+2026-10-21,etats_financiers.csv,ABJC | 2021 | fournisseurs,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | fournisseurs,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | fournisseurs,valeur,2567,2825.733
+2026-10-21,etats_financiers.csv,ABJC | 2021 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | immo_corp,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | immo_corp,valeur,1088,1084.401
+2026-10-21,etats_financiers.csv,ABJC | 2021 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | resultat_bilan,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | resultat_bilan,valeur,670,953.353
+2026-10-21,etats_financiers.csv,ABJC | 2021 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | resultat_net,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | resultat_net,valeur,670,953.353
+2026-10-21,etats_financiers.csv,ABJC | 2021 | stocks,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | stocks,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | stocks,valeur,449,449.565
+2026-10-21,etats_financiers.csv,ABJC | 2021 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | total_actif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | total_actif,valeur,8467,7929.826
+2026-10-21,etats_financiers.csv,ABJC | 2021 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,ABJC | 2021 | total_passif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2021 | total_passif,valeur,8467,7929.826
+2026-10-21,etats_financiers.csv,ABJC | 2022 | capital,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | capital,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | capitaux_propres,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | capitaux_propres,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | capitaux_propres,valeur,4924,4569.436
+2026-10-21,etats_financiers.csv,ABJC | 2022 | fournisseurs,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | fournisseurs,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | fournisseurs,valeur,3703,3702.561
+2026-10-21,etats_financiers.csv,ABJC | 2022 | immo_corp,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | immo_corp,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | immo_corp,valeur,874,851.313
+2026-10-21,etats_financiers.csv,ABJC | 2022 | resultat_bilan,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | resultat_bilan,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | resultat_bilan,valeur,1272,1268.616
+2026-10-21,etats_financiers.csv,ABJC | 2022 | resultat_net,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | resultat_net,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | resultat_net,valeur,1272,1268.616
+2026-10-21,etats_financiers.csv,ABJC | 2022 | stocks,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | stocks,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | stocks,valeur,615,614.707
+2026-10-21,etats_financiers.csv,ABJC | 2022 | total_actif,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | total_actif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | total_actif,valeur,10917,10181.992
+2026-10-21,etats_financiers.csv,ABJC | 2022 | total_passif,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2022 | total_passif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2022 | total_passif,valeur,10917,10181.992
+2026-10-21,etats_financiers.csv,ABJC | 2024 | capital,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | capital,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | capitaux_propres,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | capitaux_propres,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | capitaux_propres,valeur,4182,3808.534
+2026-10-21,etats_financiers.csv,ABJC | 2024 | chiffre_affaires,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | chiffre_affaires,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | chiffre_affaires,valeur,12467,12466.921
+2026-10-21,etats_financiers.csv,ABJC | 2024 | dividendes_verses,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | dividendes_verses,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | dividendes_verses,valeur,3302,3303.123
+2026-10-21,etats_financiers.csv,ABJC | 2024 | fournisseurs,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | fournisseurs,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | fournisseurs,valeur,3364,3363.716
+2026-10-21,etats_financiers.csv,ABJC | 2024 | immo_corp,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | immo_corp,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | immo_corp,valeur,569,571.572
+2026-10-21,etats_financiers.csv,ABJC | 2024 | immo_incorp,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | immo_incorp,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | immo_incorp,valeur,225,225.397
+2026-10-21,etats_financiers.csv,ABJC | 2024 | resultat_bilan,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | resultat_bilan,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | resultat_bilan,valeur,1515,1519.222
+2026-10-21,etats_financiers.csv,ABJC | 2024 | resultat_net,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | resultat_net,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | resultat_net,valeur,1515,1519.222
+2026-10-21,etats_financiers.csv,ABJC | 2024 | stocks,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | stocks,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | stocks,valeur,627,627.179
+2026-10-21,etats_financiers.csv,ABJC | 2024 | total_actif,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | total_actif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | total_actif,valeur,9760,9080.24
+2026-10-21,etats_financiers.csv,ABJC | 2024 | total_passif,documents_concordants,2,1
+2026-10-21,etats_financiers.csv,ABJC | 2024 | total_passif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2024 | total_passif,valeur,9760,9080.24
+2026-10-21,etats_financiers.csv,ABJC | 2025 | capital,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | chiffre_affaires,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | chiffre_affaires,valeur,13298,13298.319
+2026-10-21,etats_financiers.csv,ABJC | 2025 | fournisseurs,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | fournisseurs,valeur,2114,2114.398
+2026-10-21,etats_financiers.csv,ABJC | 2025 | resultat_bilan,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | resultat_bilan,valeur,1331,1350.661
+2026-10-21,etats_financiers.csv,ABJC | 2025 | resultat_net,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | resultat_net,valeur,1331,1350.661
+2026-10-21,etats_financiers.csv,ABJC | 2025 | stocks,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | stocks,valeur,675,674.882
+2026-10-21,etats_financiers.csv,ABJC | 2025 | total_actif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | total_actif,valeur,9632,9226.773
+2026-10-21,etats_financiers.csv,ABJC | 2025 | total_passif,norme,ifrs,syscohada
+2026-10-21,etats_financiers.csv,ABJC | 2025 | total_passif,valeur,9632,9226.773
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_caisse,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_commissions_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_commissions_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_cout_risque,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_creances_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_effets_publics,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_interets_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_interets_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_pnb,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_rbe,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | b_titres_placement,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | capital,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | capitaux_propres,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | ecart_reevaluation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | immo_incorp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | impots_resultat,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | provisions_reglementees,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | report_nouveau,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | reserves,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | resultat_avant_impot,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | resultat_exploitation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2019 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_caisse,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_charges_generales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_commissions_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_commissions_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_creances_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_dettes_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_effets_publics,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_interets_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_interets_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_pnb,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_rbe,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | b_titres_placement,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | capital,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | capitaux_propres,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | ecart_reevaluation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | immo_incorp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | impots_resultat,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | provisions_reglementees,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | report_nouveau,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | reserves,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | resultat_avant_impot,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | resultat_exploitation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAB | 2020 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOABF | 2019 | report_nouveau,valeur,17625.262,12128.223
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_caisse,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_charges_generales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_commissions_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_commissions_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_cout_risque,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_creances_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_effets_publics,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_interets_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_interets_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_pnb,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | b_rbe,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | immo_incorp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | impots_resultat,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | resultat_avant_impot,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | resultat_exploitation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,BOAM | 2024 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | actif_circulant,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | actif_immobilise,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | autres_dettes,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | capital,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | charges_personnel,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | dettes_fiscales_sociales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | dettes_sociales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | dotations,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | fournisseurs,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | frais_financiers,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | passif_circulant,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | primes_reserves,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | produits_accessoires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | ressources_stables,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | resultat_exploitation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | revenus_financiers,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | travaux_services,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,CABC | 2000 | tresorerie_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | capital,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | charges_personnel,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | chiffre_affaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | creances,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | dotations,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | ebe,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | ecart_conversion_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | ecart_reevaluation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | frais_financiers,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | immo_fin,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | immo_incorp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | impots_resultat,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | passif_circulant,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | produits_accessoires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | rao,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | report_nouveau,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | reserves_indisponibles,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | reserves_libres,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | resultat_exploitation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | revenus_financiers,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | stocks,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | travaux_services,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | tresorerie_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | tresorerie_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | valeur_ajoutee,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | ventes_marchandises,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,NTLC | 2017 | ventes_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SDSC | 1998 | resultat_net,valeur,1.989,1989.166
+2026-10-21,etats_financiers.csv,SGBC | 2001 | b_charges_generales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2001 | b_dettes_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2001 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2001 | b_interets_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2001 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2001 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2001 | ventes_marchandises,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_caisse,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_charges_generales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_creances_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_dettes_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_dettes_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_interets_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | b_titres_placement,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | immo_fin,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SGBC | 2002 | ventes_marchandises,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_caisse,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_charges_generales,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_commissions_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_commissions_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_cout_risque,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_creances_clientele,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_creances_interbancaires,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_effets_publics,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_interets_charges,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_interets_produits,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_pnb,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | b_rbe,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | capital,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | capitaux_propres,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | immo_corp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | immo_incorp,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | impots_resultat,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | reserves,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | resultat_avant_impot,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | resultat_bilan,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | resultat_exploitation,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | resultat_net,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | total_actif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,SIBC | 2023 | total_passif,documents_concordants,1,2
+2026-10-21,etats_financiers.csv,UNLC | 2021 | actif_circulant,valeur,29070.807,21823.569
+2026-10-21,etats_financiers.csv,UNLC | 2021 | actif_immobilise,valeur,17995.821,12110.66
+2026-10-21,etats_financiers.csv,UNLC | 2021 | creances,valeur,23203.4,15918.823
+2026-10-21,etats_financiers.csv,UNLC | 2021 | ebe,valeur,-4573.997,-4580.738
+2026-10-21,etats_financiers.csv,UNLC | 2021 | immo_corp,valeur,7963.369,8041.449
+2026-10-21,etats_financiers.csv,UNLC | 2021 | immo_incorp,valeur,9781.627,3818.387
+2026-10-21,etats_financiers.csv,UNLC | 2021 | stocks,valeur,5867.407,5904.746
+2026-10-21,etats_financiers.csv,UNLC | 2021 | total_actif,valeur,48697.419,35565.021
+2026-10-21,etats_financiers.csv,UNLC | 2021 | valeur_ajoutee,valeur,2391.356,2384.614
+2026-10-21,evenements.csv,2017-05-04 | BOAN | Détachement dividende | BANK OF AFRICA NG : Dividende exercice 2016 - Date ex-dividende | https://www.brvm.org/sites/default/files/20170504_-_avis_ndeg043_brvmdg_-_paiement_de_dividendes_exo_2016_-_boan.pdf,date_effet,2017-05-16,2017-05-17
+2026-10-21,evenements.csv,2018-05-29 | SLBC | Détachement dividende | SOLIBRA : Dividende exercice 2017 - Date ex-dividende | https://www.brvm.org/sites/default/files/20180529_-_avis_ndeg078_brvmdg_-_paiement_de_dividendes_exo_2017_-_solibra_ci.pdf,date_effet,2018-06-14,2018-06-12
+2026-10-21,evenements.csv,2020-07-21 | FTSC | Détachement dividende | FILTISAC CI : Dividende exercice 2019 - Date ex-dividende | https://www.brvm.org/sites/default/files/20200721_-_avis_ndeg127_brvmdg_-_paiement_de_dividendes_exercice_2019_-_filtisac_ci.pdf,date_effet,2020-07-04,2020-08-04
+2026-10-21,evenements.csv,2023-05-31 | ORAC | Détachement dividende | ORANGE CI : Dividende exercice 2022 - Date ex-dividende | https://www.brvm.org/sites/default/files/20230531_-_avis_ndeg101_brvmdg_-_paiement_de_dividendes_exercice_2022_-_orange_ci.pdf,date_effet,2023-06-16,2023-06-13
+2026-10-21,evenements.csv,2023-05-31 | ORAC | Paiement dividende | ORANGE CI : Dividende exercice 2022 - Paiement | https://www.brvm.org/sites/default/files/20230531_-_avis_ndeg101_brvmdg_-_paiement_de_dividendes_exercice_2022_-_orange_ci.pdf,date_effet,2023-06-13,2023-06-15
+2026-10-21,evenements.csv,2023-06-22 | NSBC | Détachement dividende | NSBC : Dividende exercice 2022 - Date ex-dividende | https://www.brvm.org/sites/default/files/20230622_-_avis_ndeg123_brvmdg_-_paiement_de_dividendes_exercice_2022_-_nsia_banque_ci.pdf,date_effet,2023-06-05,2023-07-05
+2026-10-21,evenements.csv,2023-06-22 | NSBC | Paiement dividende | NSBC : Dividende exercice 2022 - Paiement | https://www.brvm.org/sites/default/files/20230622_-_avis_ndeg123_brvmdg_-_paiement_de_dividendes_exercice_2022_-_nsia_banque_ci.pdf,date_effet,2023-06-07,2023-07-07
+2026-10-21,evenements.csv,2024-07-05 | ONTBF | Détachement dividende | ONATEL BF : Dividende exercice 2023 - Date ex-dividende | https://www.brvm.org/sites/default/files/20240705_-_avis_ndeg155_brvmdg_-_paiement_de_dividendes_-_onatel_bf.pdf,date_effet,2024-08-01,2024-07-29
+2026-10-21,evenements.csv,2024-07-12 | NTLC | Détachement dividende | NESTLE CI : Dividende exercice 2023 - Date ex-dividende | https://www.brvm.org/sites/default/files/20240712_-_avis_ndeg159_brvmdg_-_paiement_de_dividendes_exo_2023_-_nestle_ci.pdf,date_effet,2024-07-16,2024-08-16
+2026-10-21,evenements.csv,2024-07-12 | NTLC | Paiement dividende | NESTLE CI : Dividende exercice 2023 - Paiement | https://www.brvm.org/sites/default/files/20240712_-_avis_ndeg159_brvmdg_-_paiement_de_dividendes_exo_2023_-_nestle_ci.pdf,date_effet,2024-07-20,2024-08-20
+2026-10-21,evenements.csv,2025-05-31 | ECOC | Détachement dividende | ECOBANK CI : Dividende exercice 2024 - Date ex-dividende | https://www.brvm.org/sites/default/files/20240515_-_avis_ndeg107_brvmdg_-_paiement_de_dividendes_-_exercice_2024_-_ecobank_ci.pdf,date_effet,2025-05-31,2025-05-27
+2026-10-21,evenements.csv,2026-07-22 | SOGC | Détachement dividende | SOGB : Dividende exercice 2025 - Date ex-dividende | https://www.brvm.org/sites/default/files/20260722_-_avis_ndeg213_brvmdg_-_paiement_de_dividendes_exercice_2025_-_sogb_ci.pdf,date_effet,2026-07-05,2026-08-05
+2026-10-21,fractionnements.csv,BOABF | 2024-08-29,ligne,opération archivée,"retirée : date corrigée par le terminal (même opération, même rapport)"
+2026-10-21,fractionnements.csv,CFAC | 2017-11-13,ligne,opération archivée,"retirée : date corrigée par le terminal (même opération, même rapport)"
+2026-10-21,resultats.csv,ABJC | 1998,resultat_net,184506.1,184.5
+2026-10-21,resultats.csv,ABJC | 2021,resultat_net,670,953
+2026-10-21,resultats.csv,ABJC | 2021,total_bilan,8467,7930
+2026-10-21,resultats.csv,ABJC | 2022,capitaux_propres,4924,4569
+2026-10-21,resultats.csv,ABJC | 2022,dividende,82.8,92
+2026-10-21,resultats.csv,ABJC | 2022,ebit,1886,1870
+2026-10-21,resultats.csv,ABJC | 2022,resultat_net,1272,1268
+2026-10-21,resultats.csv,ABJC | 2022,total_bilan,10917,10182
+2026-10-21,resultats.csv,ABJC | 2023,capitaux_propres,5167,4789
+2026-10-21,resultats.csv,ABJC | 2023,ebit,1967,1867
+2026-10-21,resultats.csv,ABJC | 2023,ebitda,2557,2212.3
+2026-10-21,resultats.csv,ABJC | 2023,resultat_net,1358,1335
+2026-10-21,resultats.csv,ABJC | 2023,total_bilan,12884,12116
+2026-10-21,resultats.csv,ABJC | 2024,capitaux_propres,4182,3808
+2026-10-21,resultats.csv,ABJC | 2024,ebit,2142,2100
+2026-10-21,resultats.csv,ABJC | 2024,resultat_net,1515,1519
+2026-10-21,resultats.csv,ABJC | 2024,total_bilan,9760,9080
+2026-10-21,resultats.csv,ABJC | 2025,bnpa,123.78,121.98
+2026-10-21,resultats.csv,ABJC | 2025,resultat_net,1331,1351
+2026-10-21,resultats.csv,ABJC | 2025,total_bilan,9632,9227
+2026-10-21,resultats.csv,BICC | 2017,dividende,212,213.56
+2026-10-21,resultats.csv,BICC | 2018,dividende,180,182.9
+2026-10-21,resultats.csv,BICC | 2021,credits_clientele,457596,424284
+2026-10-21,resultats.csv,BICC | 2021,depots_clientele,751339,737120
+2026-10-21,resultats.csv,BOAB | 2019,dividende,206,218
+2026-10-21,resultats.csv,BOAB | 2021,dividende,218,273
+2026-10-21,resultats.csv,BOAB | 2022,dividende,273,313.5
+2026-10-21,resultats.csv,BOABF | 2019,dividende,95,185
+2026-10-21,resultats.csv,BOABF | 2021,dividende,185,224
+2026-10-21,resultats.csv,BOABF | 2022,dividende,224,288.5
+2026-10-21,resultats.csv,BOAC | 2014,dividende,155,127.1
+2026-10-21,resultats.csv,BOAC | 2015,dividende,155,127.1
+2026-10-21,resultats.csv,BOAC | 2017,bnpa,224.53,246.97
+2026-10-21,resultats.csv,BOAC | 2024,dividende,459,469
+2026-10-21,resultats.csv,BOAC | 2025,capitaux_propres,125340,127340
+2026-10-21,resultats.csv,BOAC | 2025,credits_clientele,430433,430432
+2026-10-21,resultats.csv,BOAC | 2025,depots_clientele,850548,850545
+2026-10-21,resultats.csv,BOAM | 2025,chiffre_affaires,37997,37996.3
+2026-10-21,resultats.csv,BOAN | 2014,dividende,167.88,159.49
+2026-10-21,resultats.csv,BOAN | 2019,dividende,258.6,268.54
+2026-10-21,resultats.csv,BOAN | 2021,dividende,343.13,354.56
+2026-10-21,resultats.csv,BOAN | 2022,cout_du_risque,-780,780
+2026-10-21,resultats.csv,BOAN | 2022,credits_clientele,192784,192784.7
+2026-10-21,resultats.csv,BOAN | 2022,dividende,354.56,383.62
+2026-10-21,resultats.csv,BOAN | 2022,total_bilan,357509,357608.8
+2026-10-21,resultats.csv,BOAN | 2023,credits_clientele,183082,183084.1
+2026-10-21,resultats.csv,BOAS | 2013,resultat_net,3376,2650.1
+2026-10-21,resultats.csv,BOAS | 2014,resultat_net,3.2,3375.6
+2026-10-21,resultats.csv,BOAS | 2023,bnpa,525.75,472.83
+2026-10-21,resultats.csv,CFAC | 2022,dividende,28.67,27.45
+2026-10-21,resultats.csv,CIEC | 2014,dividende,132.09,133.09
+2026-10-21,resultats.csv,ECOC | 2017,bnpa,482.27,414.82
+2026-10-21,resultats.csv,ETIT | 2015,bnpa,1.68,3.46
+2026-10-21,resultats.csv,ETIT | 2017,bnpa,6.75,7.38
+2026-10-21,resultats.csv,ETIT | 2018,bnpa,4.11,10.62
+2026-10-21,resultats.csv,ETIT | 2019,bnpa,4.56,9.27
+2026-10-21,resultats.csv,ETIT | 2020,bnpa,2.99,2.87
+2026-10-21,resultats.csv,ETIT | 2021,bnpa,10.72,11.89
+2026-10-21,resultats.csv,ETIT | 2022,bnpa,12.65,12.2
+2026-10-21,resultats.csv,ETIT | 2025,bnpa,10,19.11
+2026-10-21,resultats.csv,FTSC | 2018,dividende,119.33,110
+2026-10-21,resultats.csv,FTSC | 2019,dividende,133.5,125
+2026-10-21,resultats.csv,FTSC | 2023,dividende,130,143.1
+2026-10-21,resultats.csv,FTSC | 2024,dividende,1726.55,1161.6
+2026-10-21,resultats.csv,LNBB | 2023,ebit,5333,5122
+2026-10-21,resultats.csv,LNBB | 2023,ebitda,6197,6189
+2026-10-21,resultats.csv,ONTBF | 2011,ebit,0,8726.3
+2026-10-21,resultats.csv,ONTBF | 2020,resultat_net,31052,31051.5
+2026-10-21,resultats.csv,ONTBF | 2024,dividende,195,189.53
+2026-10-21,resultats.csv,ORGT | 2022,capitaux_propres,115056,165995
+2026-10-21,resultats.csv,ORGT | 2024,cout_du_risque,-69056,69056
+2026-10-21,resultats.csv,SCRC | 2019,chiffre_affaires,56656,56656.1
+2026-10-21,resultats.csv,SCRC | 2019,resultat_net,-5339,-5339.1
+2026-10-21,resultats.csv,SCRC | 2020,chiffre_affaires,63333,63333.3
+2026-10-21,resultats.csv,SCRC | 2020,ebitda,13200.2,13290.2
+2026-10-21,resultats.csv,SCRC | 2020,resultat_net,1788,1788.2
+2026-10-21,resultats.csv,SCRC | 2025,capitaux_propres,17243,13822
+2026-10-21,resultats.csv,SDSC | 1998,resultat_net,2,1989.2
+2026-10-21,resultats.csv,SDSC | 1999,resultat_net,1.7,1710.3
+2026-10-21,resultats.csv,SDSC | 2020,dividende,90,100
+2026-10-21,resultats.csv,SDSC | 2022,dividende,82.8,92
+2026-10-21,resultats.csv,SDSC | 2025,dividende,80.96,92
+2026-10-21,resultats.csv,SGBC | 2015,dividende,520,522.8
+2026-10-21,resultats.csv,SGBC | 2016,dividende,580.5,583.7
+2026-10-21,resultats.csv,SGBC | 2017,dividende,580.5,585
+2026-10-21,resultats.csv,SGBC | 2018,dividende,202.5,206
+2026-10-21,resultats.csv,SGBC | 2024,cout_du_risque,-36235,36235
+2026-10-21,resultats.csv,SHEC | 2016,dividende,33,33.7
+2026-10-21,resultats.csv,SHEC | 2019,dividende,64.29,63.9
+2026-10-21,resultats.csv,SHEC | 2021,bnpa,33.97,37.45
+2026-10-21,resultats.csv,SHEC | 2021,dividende,28.57,29
+2026-10-21,resultats.csv,SHEC | 2022,bnpa,59.56,56.33
+2026-10-21,resultats.csv,SICC | 2012,capitaux_propres,238.3,-162.9
+2026-10-21,resultats.csv,SICC | 2013,capitaux_propres,-162.9,-122.3
+2026-10-21,resultats.csv,SMBC | 2017,dividende,125,112.5
+2026-10-21,resultats.csv,SNTS | 2020,capitaux_propres,21525,749177
+2026-10-21,resultats.csv,SOGC | 2021,dividende,558,541.8
+2026-10-21,resultats.csv,SOGC | 2022,dividende,554.33,558
+2026-10-21,resultats.csv,STBC | 2019,bnpa,306.04,329.98
+2026-10-21,resultats.csv,STBC | 2022,dividende,540,551
+2026-10-21,resultats.csv,TTLS | 2014,dividende,79,88
+2026-10-21,resultats.csv,TTLS | 2015,dividende,92,93.5
+2026-10-21,resultats.csv,TTLS | 2022,dividende,234.13,241.01
+2026-10-21,resultats.csv,TTLS | 2024,capitaux_propres,29522,22262.9
+2026-10-21,resultats.csv,TTLS | 2024,total_bilan,216766,201307.7
+2026-10-21,resultats.csv,UNLC | 2021,bnpa,663.24,0.02
+2026-10-21,resultats.csv,UNLC | 2021,capitaux_propres,1700,-4390.8
+2026-10-21,resultats.csv,UNLC | 2021,ebitda,-4574,-4580.7
+2026-10-21,resultats.csv,UNLC | 2021,total_bilan,48697,35565
+2026-10-21,resultats.csv,UNLC | 2022,capitaux_propres,10773,-10773.4

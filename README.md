@@ -3,6 +3,13 @@
 Archive mise à jour chaque soir. Rien n'y est jamais effacé : une valeur qui change est remplacée
 et l'ancienne est conservée dans `corrections.csv`. Aucune donnée n'est estimée ni recalculée.
 
+Seule exception : `dividendes.csv` est dérivé chaque soir des versements publiés par le terminal. Une ligne dont la clé
+(titre, exercice, origine, type) n'y figure plus — versement rattaché depuis à un avis plutôt qu'à un bulletin, doublon de
+lecture retiré, montant mal lu — ferait compter l'exercice deux fois : elle est retirée et consignée dans `corrections.csv`
+(champ `ligne`, ancien montant et date de paiement). Rien n'est retiré si les versements du jour manquent ou couvrent nettement
+moins de clés que l'archive, ni pour un titre sans aucun versement du jour (titre radié). Une date de détachement que le terminal
+a reconnue fausse et retirée (dimanche, plus de 15 jours avant le paiement, avis de report) est effacée de la même façon, et consignée.
+
 Fichiers CSV en UTF-8, séparateur virgule, décimales avec un point
 (Excel : Données › À partir d'un fichier texte/CSV, origine « UTF-8 », délimiteur « virgule »).
 
@@ -29,7 +36,8 @@ Fichiers CSV en UTF-8, séparateur virgule, décimales avec un point
 - `prix_moyen_hors_fourchette` : valeur / volume éloigné des cours du jour (montant mal lu, par exemple en milliers).
 - `volume_sans_valeur`, `valeur_sans_volume`, `cloture_absente` : séance incomplète pour un titre.
 - `seance_incomplete` : bulletin avec nettement moins de titres que d'habitude.
-- `avis_different_bulletin` : dividende d'un même exercice différent entre l'avis et le bulletin.
+- `avis_different_bulletin` : dividende d'un même exercice différent entre l'avis et le bulletin (montant du bulletin encore
+  présent ; la ligne `bulletin` d'un exercice repris depuis par un avis est retirée, voir plus haut).
 - `dates_incoherentes` : annonce après détachement, ou détachement après paiement.
 - `flottant_incoherent`, `bnpa_signe_oppose` : chiffres contradictoires dans une même ligne.
 
@@ -59,7 +67,9 @@ Une alerte signale un point à vérifier, pas une erreur certaine.
   calendrier publié après un avis reprend une rectification), sinon l'avis du Dépositaire central. Un montant brut n'est converti
   en net qu'avec le taux d'IRVM écrit dans le document. Les montants restent ceux publiés (par action de l'époque) ; ils sont
   ramenés sur la base des actions actuelles pour les fractionnements et attributions d'actions gratuites connus (avis) ou lus sur
-  les paliers du rapport « cours du bulletin ÷ cours ajusté » ; pour les années antérieures aux bulletins conservés, le cours
+  les paliers du rapport « cours du bulletin ÷ cours ajusté », ou vérifiés à la main avec leur preuve (`seed/operations_historiques.json` :
+  attributions BOA CI et BOA Niger 2016, CBI BF 2017 ; fractionnements Sonatel du 23/11/2012 et Onatel du 29/11/2013, dates lues
+  dans les bulletins officiels) ; pour les années antérieures aux bulletins conservés, le cours
   imprimé à côté du dividende dans le premier bulletin après le paiement donne la base d'actions du montant (Sonatel, Onatel :
   fractionnements d'avant 2013). Les archives de l'ancien site (avis depuis 2002, bulletins, revues trimestrielles) complètent
   les années que la base ne couvre pas ; dans ces bulletins la virgule sépare les milliers (« 1,800 ») sauf deux décimales
