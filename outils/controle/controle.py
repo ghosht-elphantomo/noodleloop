@@ -363,6 +363,27 @@ def controle_site(R, a):
                  (["pages vides : " + ", ".join(vid[:6])] if vid else [])
             R.add("iPhone 13 : erreurs, débordements, textes", "rouge" if (ej or sus) else "orange" if (ov or vid) else "vert",
                   "; ".join(pb) if pb else f"{len(P)} pages sans erreur ni débordement")
+            # autres écrans et moteurs (Android, iPad, PC, Mac ; Safari et Firefox quand ils sont installés)
+            prof = {k: v for k, v in (M.get("profils") or {}).items() if k != "iPhone 13"}
+            if prof:
+                pb2, oks, rouge2, orange2 = [], [], False, False
+                for nom, v in prof.items():
+                    P2 = v.get("pages") or {}
+                    ov2 = sorted(((h, x.get("over")) for h, x in P2.items() if x.get("over") and x["over"] > 4), key=lambda y: -y[1])
+                    sus2 = [(h, x.get("bad")) for h, x in P2.items() if x.get("bad")]
+                    vid2 = [h for h, x in P2.items() if (x.get("len") or 0) < 150]
+                    ej2 = v.get("errs") or []
+                    if ej2 or sus2:
+                        rouge2 = True
+                    elif ov2 or vid2:
+                        orange2 = True
+                    d2 = (["erreurs JS : " + "; ".join(str(e)[:80] for e in ej2[:3])] if ej2 else []) + \
+                         (["débordement : " + ", ".join(f"{h} ({o} px)" for h, o in ov2[:5])] if ov2 else []) + \
+                         (["textes suspects : " + ", ".join(f"{h} {b}" for h, b in sus2[:3])] if sus2 else []) + \
+                         (["pages vides : " + ", ".join(vid2[:5])] if vid2 else [])
+                    (pb2 if d2 else oks).append(f"{nom} : " + " ; ".join(d2) if d2 else f"{nom} ({len(P2)} pages)")
+                R.add("Autres écrans : Android, iPad, PC, Mac (et Safari, Firefox sur GitHub)", "rouge" if rouge2 else "orange" if orange2 else "vert",
+                      ("; ".join(pb2) + (" | sans défaut : " + ", ".join(oks) if oks else "")) if pb2 else "sans défaut : " + ", ".join(oks))
     if a.qlab:
         try:
             L = open(a.qlab, encoding="utf8").read()

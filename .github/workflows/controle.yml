@@ -33,6 +33,7 @@ jobs:
           npm install -g terser@5.36.0 > /dev/null 2>&1 || echo "::warning title=Contrôle::terser indisponible"
           pip install --quiet --break-system-packages playwright==1.56.0 > /dev/null 2>&1 || pip install --quiet playwright==1.56.0 > /dev/null 2>&1 || true
           python3 -m playwright install --with-deps chromium > /dev/null 2>&1 || echo "::warning title=Contrôle::Chromium indisponible : parcours du site non fait"
+          python3 -m playwright install --with-deps firefox webkit > /dev/null 2>&1 && echo "MOBILE_MOTEURS=firefox,webkit" >> "$GITHUB_ENV" || echo "::notice title=Contrôle::Firefox / Safari non installés : autres moteurs non passés"
 
       - name: Données publiées et contrôle précédent
         continue-on-error: true
