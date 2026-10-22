@@ -1,0 +1,591 @@
+
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>Finance</title>
+
+    <link href="/css/site52.min.css?v=04102026" rel="stylesheet" />
+</head>
+
+
+<body>
+    
+        
+
+<div class="bk_bf marqueeout">
+    <div class="marquee3k" data-speed="0.80" data-pausable="true">
+        <ul>
+                    <li><a href="/chart/BRVMC">BRVM COMPOSITE</a><span class="quote_up">&#x2B; 0,33%</span></li>
+                    <li><a href="/chart/BRVM30">BRVM 30</a><span class="quote_up">&#x2B; 0,33%</span></li>
+                    <li><a href="/chart/NASI.ke">NAIROBI ALL SHARE INDEX</a><span class="quote_down"> -1,40%</span></li>
+                    <li><a href="/chart/NGSE.ng">NIGERIA ALL SHARE INDEX</a><span class="quote_down"> -0,32%</span></li>
+                    <li><a href="/chart/GSEC.gh">GHANA COMPOSITE INDEX</a><span class="quote_down"> -0,31%</span></li>
+                    <li><a href="/chart/PX1">TUNINDEX</a><span class="quote_down"> -0,26%</span></li>
+                    <li><a href="/chart/MASI.ma">MASI</a><span class="quote_up">&#x2B; 0,43%</span></li>
+
+        </ul>
+    </div>
+</div>
+    
+    <div class="headermain">
+        <div class="header1 clearfix">
+            <a href="/">
+                <img class="fl" src="/i/logosikapro.png" />
+            </a>
+            <div class="menu_out clearfix">
+                
+        <div class="langz">
+            <img src="/img/loupe_mini.png" alt="fr" id="searchValue" class="loupe" />
+            <img src="/i/fricon.png" width="30" height="30" alt="fr" id="langChange" class="mr10 ml10" />
+            <img src="/i/themeicon.png" width="30" height="30" alt="fr" id="themeicon" class="mr10 ml10" onclick="toggleTheme()" />
+        </div>
+        <ul class="menuhome menu2">
+            <li><a href="/login" class="ps_login">Connexion</a></li>
+        </ul>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+            <link href="/ext/chartjs.css" rel="stylesheet" />
+<style>
+    .fch_t1 tbody td:nth-of-type(1) img {
+        margin: 0 10px -2px 0
+    }
+    .changeperiodZn{float:right;cursor:pointer;text-align:center}
+
+    .dateperiod3, .dateperiod4 {
+        float: left;
+        padding: 5px;
+        width: 64px;
+        font-family: roboto-medium;
+    }
+
+    .dateperiod4 {
+        border-left: 1px solid #f8b133
+    }
+
+        .dateperiod3:hover, .dateperiod4:hover {
+            background-color: #f8b133;
+            color: #000
+        }
+</style>
+
+<div class="inpage3">
+    <img src="/img/symbol_mid2.png" class="mb10" alt="" />
+    <div class="clearfix">
+        <h1 style="float:left;margin-top:0">SONATEL</h1>
+        <div class="fch_dev">
+            <input type="radio" name="dev" id="devise_usd" class="radiodev" /><img src="/img/us.png" /><span>USD</span>
+            <input type="radio" name="dev" id="devise_eur" class="radiodev" /><img src="/img/eur.png" /><span>EUR</span>
+            <input type="radio" name="dev" id="devise_local" class="radiodev" /><img src="/img/flag/sn.png" width="25" height="17" class="flagopa" /><span>XOF</span>
+        </div>
+    </div>
+    <div class="navbar mb20">
+        <table>
+            <tr>
+                    <td><a href="/fiche/SNTS.sn" class="ps_fiche">FICHE VALEUR</a></td>
+                    <td><a href="/finance/SNTS.sn" class="selected">FINANCE</a></td>
+                        <td><a href="/valuation/SNTS.sn">ANALYSE</a></td>
+                    <td><a href="/news_valeur?s=SNTS.sn">NEWS</a></td>
+                <td><a class="ps_graphique" href="/chart/SNTS.sn">GRAPHIQUES</a></td>
+                <td><a href="/histo/SNTS.sn" class="ps_histodata">HISTORIQUES</a></td>
+                <td><a href="/quantitative/SNTS.sn" class="ps_quant">QUANT</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="fch_z4">
+        <div class="mtit"><span class="ps_donneesfi">Données financières</span> <span style="font-size:14px;float:right">Millions de  XOF</span></div>
+        <div class="clearfix">
+            <h2 class="ps_fiche_cr fch_h2">Compte de résultat</h2>
+            <div id="dtPeriod" class="clearfix changeperiodZn">
+                <div id="periodQ" class="dateperiod3">Quarter</div>
+                <div id="periodY" class="dateperiod4">Year</div>
+            </div>
+        </div>
+        <div class="fch_out">
+
+            <table class="fch_t1">
+                <thead>
+                    <tr>
+                        <th></th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>2025</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="wtab"><span class="bold ps_scr_ca2">Chiffre d&#x27;affaires</span></td>
+                            <td>1&#xA0;334&#xA0;874</td>
+                            <td>1&#xA0;455&#xA0;049</td>
+                            <td>1&#xA0;620&#xA0;701</td>
+                            <td>1&#xA0;776&#xA0;443</td>
+                            <td>1&#xA0;923&#xA0;122</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold ps_scr_sg">Croissance CA</span></td>
+                        <td></td>
+                            <td>9,00%</td>
+                            <td>11,38%</td>
+                            <td>9,61%</td>
+                            <td>8,26%</td>
+                    </tr>
+                                        <tr>
+                                            <td><span class="bold">EBIT</span></td>
+                                                <td>399&#xA0;655</td>
+                                                <td>437&#xA0;059</td>
+                                                <td>515&#xA0;709</td>
+                                                <td>619&#xA0;524</td>
+                                                <td>669&#xA0;792</td>
+                                        </tr>
+                                <tr>
+                                    <td><span class="bold">EBITDA</span></td>
+                                        <td>709&#xA0;377</td>
+                                        <td>773&#xA0;625</td>
+                                        <td>747&#xA0;500</td>
+                                        <td>839&#xA0;200</td>
+                                        <td>921&#xA0;200</td>
+                                </tr>
+                <tr>
+                    <td><span class="bold">Charges d'exploitation</span></td>
+                        <td>762&#xA0;211</td>
+                        <td>1&#xA0;017&#xA0;990</td>
+                        <td>1&#xA0;104&#xA0;992</td>
+                        <td>1&#xA0;156&#xA0;919</td>
+                        <td>1&#xA0;253&#xA0;330</td>
+                </tr>
+                <tr>
+                    <td><span class="bold ps_scr_rn2">Résultat net</span></td>
+                        <td>252&#xA0;459</td>
+                        <td>278&#xA0;912</td>
+                        <td>331&#xA0;748</td>
+                        <td>393&#xA0;662</td>
+                        <td>413&#xA0;588</td>
+                </tr>
+                <tr>
+                    <td><span class="bold ps_scr_nig">Croissance RN</span></td>
+                    <td></td>
+                        <td>10,48%</td>
+                        <td>18,94%</td>
+                        <td>18,66%</td>
+                        <td>5,06%</td>
+                </tr>
+                    <tr>
+                        <td><span class="bold ps_fiche_dvd">Dividende</span></td>
+                            <td>1&#xA0;400</td>
+                            <td>1&#xA0;500</td>
+                            <td>1&#xA0;575</td>
+                            <td>1&#xA0;655</td>
+                            <td>1&#xA0;740</td>
+                    </tr>
+                </tbody>
+            </table>
+           
+        </div>
+        <div class="clearfix mt30">
+            <h2 class="ps_fiche_bilan fch_h2">Bilan</h2>
+        </div>
+        <div class="fch_out">
+            <table class="fch_t1" style="margin-bottom:40px">
+                <thead>
+                    <tr>
+                        <th></th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>2025</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="wtab"><span class="bold">Capitaux propres</span></td>
+                            <td>821&#xA0;250</td>
+                            <td>743&#xA0;948</td>
+                            <td>1&#xA0;065&#xA0;724</td>
+                            <td>1&#xA0;274&#xA0;638</td>
+                            <td>1&#xA0;399&#xA0;263</td>
+                    </tr>
+                        <tr>
+                            <td><span class="bold ps_fiche_debt">Dette nette</span></td>
+                                <td>173&#xA0;093</td>
+                                <td>155&#xA0;366</td>
+                                <td>-18&#xA0;075</td>
+                                <td>25&#xA0;722</td>
+                                <td>-113&#xA0;285</td>
+                        </tr>
+                <tr>
+                    <td><span class="bold ps_fiche_treso">Trésorerie</span></td>
+                        <td>44&#xA0;514</td>
+                        <td>276&#xA0;791</td>
+                        <td>185&#xA0;205</td>
+                        <td>241&#xA0;279</td>
+                        <td>366&#xA0;079</td>
+                </tr>
+                <tr>
+                    <td><span class="bold ps_fiche_tb">Total bilan</span></td>
+                        <td>2&#xA0;063&#xA0;844</td>
+                        <td>2&#xA0;252&#xA0;192</td>
+                        <td>2&#xA0;573&#xA0;858</td>
+                        <td>3&#xA0;105&#xA0;287</td>
+                        <td>3&#xA0;270&#xA0;175</td>
+                </tr>
+                </tbody>
+            </table>
+           
+        </div>
+        <div class="clearfix fch_out mt30">
+            <div class="fl alct fch_g1">
+                <p class="ps_evolutionca">Chiffre d&#x27;affaires</p>
+                <span class="no" id="calabels">2021;2022;2023;2024;2025;</span>
+                <span class="no" id="cadata">1334874;1455049;1620701;1776443;1923122;</span>
+                <canvas width="380" height="320" id="chartCA"></canvas>
+            </div>
+            <div class="fl alct">
+                <p class="ps_evolutionrn">Résultat net</p>
+                <span class="no" id="rnlabels">2021;2022;2023;2024;2025;</span>
+                <span class="no" id="rndata">252459;278912;331748;393662;413588;</span>
+                <canvas width="380" height="320" id="chartRN"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="fch_z4 mt30">
+        <div class="clearfix">
+            <h2 class="ps_fiche_rat fch_h2">Ratios financiers</h2>
+        </div>
+        <div class="fch_out">
+            <table class="fch_t1">
+                <thead>
+                    <tr>
+                        <th></th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>2025</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="wtab"><span class="bold ps_scr_bnpa">BNPA</span></td>
+                            <td>2&#xA0;524,59</td>
+                            <td>2&#xA0;789</td>
+                            <td>3&#xA0;317</td>
+                            <td>3&#xA0;937</td>
+                            <td>4&#xA0;136</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">PER</span></td>
+                            <td>16,64</td>
+                            <td>15,06</td>
+                            <td>12,66</td>
+                            <td>10,67</td>
+                            <td>10,15</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold ps_scr_ntp">Marge nette</span></td>
+                            <td>18,91%</td>
+                            <td>19,17%</td>
+                            <td>20,47%</td>
+                            <td>22,16%</td>
+                            <td>21,51%</td>
+                    </tr>
+                            <tr>
+                                <td><span class="bold ps_scr_om">Marge d'exploitation</span></td>
+                                    <td>29,94%</td>
+                                    <td>30,04%</td>
+                                    <td>31,82%</td>
+                                    <td>34,87%</td>
+                                    <td>34,83%</td>
+                            </tr>
+                <tr>
+                    <td><span class="bold">Return on equity</span></td>
+                        <td>30,74%</td>
+                        <td>37,49%</td>
+                        <td>31,13%</td>
+                        <td>30,88%</td>
+                        <td>29,56%</td>
+                </tr>
+                <tr>
+                    <td><span class="bold">Return on assets</span></td>
+                        <td>12,23%</td>
+                        <td>12,38%</td>
+                        <td>12,89%</td>
+                        <td>12,68%</td>
+                        <td>12,65%</td>
+                </tr>
+                            <tr>
+                                <td><span class="bold ps_levierfi">Levier financier</span></td>
+                                    <td>0,24x</td>
+                                    <td>0,20x</td>
+                                    <td>-0,02x</td>
+                                    <td>0,03x</td>
+                                    <td>-0,12x</td>
+                            </tr>
+                <tr>
+                    <td><span class="bold ps_autonomiefi">Autonomie financière</span></td>
+                        <td>39,79%</td>
+                        <td>33,03%</td>
+                        <td>41,41%</td>
+                        <td>41,05%</td>
+                        <td>42,79%</td>
+                </tr>
+                        <tr>
+                            <td><span class="bold ps_scr_dr">Ratio endettement net</span></td>
+                                <td>21,08%</td>
+                                <td>20,88%</td>
+                                <td>-1,70%</td>
+                                <td>2,02%</td>
+                                <td>-8,10%</td>
+                        </tr>
+                </tbody>
+            </table>
+           
+        </div>
+
+            <div class="clearfix mt30">
+                <h2 class="fch_h2"><span class="ps_fiche_sect">Comparaison financière au secteur d'activité</span> (2025)</h2>
+            </div>
+            <div class="fch_out">
+                <table class="fch_t1">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>PER</th>
+                            <th>ROE</th>
+                            <th class="ps_scr_om">Marge exploit.</th>
+                            <th class="ps_scr_rdt">Rendement</th>
+                            <th>Price to book</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <td><img src="/img/br.png" /><a href="/fiche/ONTBF.bf">ONATEL BF</a></td>
+                                <td>13,23</td>
+                                <td>27,61%</td>
+                                <td>17,56%</td>
+                                <td>4,70%</td>
+                                <td>3,65</td>
+                            </tr>
+                            <tr>
+                                <td><img src="/img/br.png" /><a href="/fiche/ORAC.ci">ORANGE CI</a></td>
+                                <td>18,03</td>
+                                <td>23,71%</td>
+                                <td>23,99%</td>
+                                <td>3,50%</td>
+                                <td>4,28</td>
+                            </tr>
+                            <tr>
+                                <td><img src="/img/br.png" /><a href="/fiche/SNTS.sn">SONATEL</a></td>
+                                <td>10,15</td>
+                                <td>29,56%</td>
+                                <td>34,83%</td>
+                                <td>4,14%</td>
+                                <td>3,00</td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="clearfix mt30" style="page-break-before:always">
+                <h2 class="fch_h2">
+                    SONATEL et son secteur d'activité
+                </h2>
+            </div>
+            <div class="fch_out">
+                <table class="fch_t1" style="margin-bottom:30px;margin-top:30px">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="ps_scr_1j">Var.1er janvier</th>
+                            <th class="ps_scr_1m">Var. 1 mois</th>
+                            <th class="ps_scr_yc">Var. 1 an</th>
+                            <th class="ps_scr_3yc">Var. 3 ans</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td><span class="bold"><img src="/img/br.png" /><a href="/fiche/ONTBF.bf">ONATEL BF</a></span></td>
+                                    <td class="quote_up">+24,35%</td><td class="quote_up">+6,55%</td><td class="quote_up">+28,48%</td><td class="quote_up">+49,28%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="bold"><img src="/img/br.png" /><a href="/fiche/ORAC.ci">ORANGE CI</a></span></td>
+                                    <td class="quote_up">+40,98%</td><td class="quote_down">-2,95%</td><td class="quote_up">+33,93%</td><td class="quote_up">+89,35%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="bold"><img src="/img/br.png" /><a href="/fiche/SNTS.sn">SONATEL</a></span></td>
+                                    <td class="quote_up">+60,80%</td><td class="quote_up">+0,04%</td><td class="quote_up">+58,49%</td><td class="quote_up">+157,67%</td>
+                                </tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+
+
+    </div>
+
+    <div class="footer_out">
+    <div class="footer clearfix">
+        <div class="foot2">
+            <a href="/equipe" class="ps_quisommes">Qui sommes-nous ?</a>
+            <span>Copyright 2026 SikaFinance</span>
+        </div>
+    </div>
+</div>
+    <span class="no" id="userid">0</span>
+    <script src="/js/tools42.min.js"></script>
+    
+    <script src="/ext/chartjs.min.js"></script>
+    <script>
+        //lecture cookie et sélection case à cocher
+        var cookiedevise = getCookie("moneydisplay");
+        if (cookiedevise && cookiedevise != "") {
+            switch (cookiedevise) {
+                case "USD":
+                    VNA.gi("devise_usd").checked = true;
+                    break;
+                case "EUR":
+                    VNA.gi("devise_eur").checked = true;
+                    break;
+            }
+        }
+        else {
+            VNA.gi("devise_local").checked = true;
+        }
+
+        //changement devise
+        [].forEach.call(document.querySelectorAll(".radiodev"), function (el) {
+            el.addEventListener("click", changeDevise);
+        });
+
+        //périodes Y et Q
+        VNA.gi("periodQ").addEventListener("click", function () {
+            setCookie("periodFinance", "Q", 365);
+            //refresh page
+            location.reload(true);
+        });
+        VNA.gi("periodY").addEventListener("click", function () {
+            setCookie("periodFinance", "Y", 365);
+            //refresh page
+            location.reload(true);
+        });
+
+        function changeDevise() {
+
+            switch (this.id) {
+                case "devise_usd":
+                    setCookie("moneydisplay", "USD", 365);
+                    break;
+                case "devise_eur":
+                    setCookie("moneydisplay", "EUR", 365);
+                    break;
+                default:
+                    setCookie("moneydisplay", "", 365);
+                    break;
+            }
+            //refresh page
+            location.reload(true);
+        }
+
+        //charts CA et RN
+        var langue = getCookie("SikaproLang");
+
+        if (!langue)
+            langue = "fr";
+
+        var ctxCA = document.getElementById('chartCA').getContext('2d');
+        var myChartCA = new Chart(ctxCA, {
+            type: 'bar',
+            data: {
+                labels: VNA.gi("calabels").textContent.slice(0, -1).split(';'),
+                datasets: [{
+                    label: getTrad("ps_evolutionca", langue),
+                    data: VNA.gi("cadata").textContent.slice(0, -1).split(';'),
+                    //certaines propriétés sont "scriptables" pour ici gérer deux couleurs, bas-haut par exemple
+                    backgroundColor: function (context) {
+                        var index = context.dataIndex;
+                        var value = context.dataset.data[index];
+                        return value < 0 ? 'rgba(227, 7, 19, 0.9)' : 'rgba(255, 175, 34, 0.9)';
+                    },
+                    borderColor: function (context) {
+                        var index = context.dataIndex;
+                        var value = context.dataset.data[index];
+                        return value < 0 ? 'rgba(227, 7, 19, 1)' : 'rgba(255, 175, 34, 1)';
+                    },
+
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: { display: false },
+                //title: { display: true, text: getTrad("ps_evolutionca", langue), fontColor: "#fff", fontSize: 14 },
+                scales: {
+                    yAxes: [{
+                        scaleLabel: { display: true, labelString: "Mds ", fontColor: "#4d4d4d" },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        var ctxRN = document.getElementById('chartRN').getContext('2d');
+        var myChartRN = new Chart(ctxRN, {
+            type: 'bar',
+            data: {
+                labels: VNA.gi("rnlabels").textContent.slice(0, -1).split(';'), //je vire le ";"  à la fin
+                datasets: [{
+                    label: getTrad("ps_evolutionrn", langue),
+                    data: VNA.gi("rndata").textContent.slice(0, -1).split(';'),
+                    //certaines propriétés sont "scriptables" pour ici gérer deux couleurs, bas-haut par exemple
+                    backgroundColor: function (context) {
+                        var index = context.dataIndex;
+                        var value = context.dataset.data[index];
+                        return value < 0 ? 'rgba(227, 7, 19, 0.9)' : 'rgba(255, 175, 34, 0.9)';
+                    },
+                    borderColor: function (context) {
+                        var index = context.dataIndex;
+                        var value = context.dataset.data[index];
+                        return value < 0 ? 'rgba(227, 7, 19, 1)' : 'rgba(255, 175, 34, 1)';
+                    },
+
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: { display: false },
+                //title: { display: true, text: getTrad("ps_evolutionrn", langue), fontColor:"#fff", fontSize:14 },
+                scales: {
+                    yAxes: [{
+                        scaleLabel: { display: true, labelString: "Mds ", fontColor: "#4d4d4d" },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B6W82NVLSX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B6W82NVLSX');
+</script>
+</body>
+</html>
