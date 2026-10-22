@@ -1,0 +1,8 @@
+Bibliothèques gratuites et libres utilisées par l'import du portefeuille (lecture des photos et des PDF), hébergées ici et
+chargées seulement quand un relevé en image ou un PDF sans texte est importé ; tout reste dans le navigateur.
+
+- Tesseract.js 7.0.0 et tesseract.js-core 7.0.0 : licence Apache 2.0 (LICENSE-tesseract.js.txt, LICENSE-tesseract-core.txt)
+- Données de lecture du français (fra.traineddata, 4.0.0_best_int) : paquet @tesseract.js-data/fra 1.0.0, licence MIT ;
+  données d'origine du projet Tesseract, licence Apache 2.0
+- pdf.js (pdfjs-dist 6.3.289) : licence Apache 2.0 (pdf/LICENSE-pdfjs.txt) ; modules wasm OpenJPEG, JBIG2, QCMS : licences
+  dans pdf/wasm/

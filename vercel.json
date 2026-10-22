@@ -1,0 +1,110 @@
+{
+  "outputDirectory": "public",
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git cat-file -e \"$VERCEL_GIT_PREVIOUS_SHA\" 2>/dev/null && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- public api vercel.json",
+  "cleanUrls": false,
+  "git": {
+    "deploymentEnabled": {
+      "raw": false,
+      "data": false,
+      "probe": false,
+      "boc": false,
+      "site": false
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/data/:path*",
+      "destination": "/api/data?p=:path*"
+    },
+    {
+      "source": "/doc/b/:path(.*\\.[pP][dD][fF])",
+      "destination": "https://www.brvm.org/sites/default/files/:path"
+    },
+    {
+      "source": "/doc/f/:path(.*\\.[pP][dD][fF])",
+      "destination": "https://bfin.brvm.org/boc/BOC_JOUR/:path"
+    },
+    {
+      "source": "/doc/r/common/actualite/afficher-fichier/:path*",
+      "destination": "https://www.richbourse.com/common/actualite/afficher-fichier/:path*"
+    },
+    {
+      "source": "/doc/a/:ts/:t",
+      "destination": "/api/doc?k=a&ts=:ts&t=:t"
+    },
+    {
+      "source": "/doc/c/:ts/:t",
+      "destination": "/api/doc?k=c&ts=:ts&t=:t"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/doc/(.*)",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ]
+}
