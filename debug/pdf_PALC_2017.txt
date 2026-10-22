@@ -1,0 +1,90 @@
+https://www.brvm.org/sites/default/files/20180424_-_etats_financiers_2017_palm_ci.pdf
+                                                                                             PALMCI
+                                                                                Société Anonyme au Capital de 20 406 297 497 F CFA
+                                          Siège Social : Boulevard de Vridi, Immeuble PALMCI; 18 B.P 3321 ABIDJAN 18 - RC CI-ABJ-1996-B-2005 303 - CC 9702458 W
+
+
+                                                 ETATS FINANCIERS DE SYNTHESE AU 31 12 2017 (F CFA)
+                                                                                                  BILAN
+                             ACTIF                                   Exercice N            Exercice N-1                            PASSIF                          PASSIF
+                                                                                                                                                                      Exercice N       Exercice N-1
+Charges immobilisées                                                     950.341.007          1.584.499.093 Capital                                                   20.406.297.497     20.406.297.497
+Immobilisations incorporelles                                            358.786.026            447.787.033 Primes et réserves                                        59.094.798.292     57.028.403.793
+Immobilisations corporelles                                           85.329.861.935         91.234.876.038 Résultat net de l'exercice                                 8.707.734.117      4.132.788.998
+Avances & acomptes versés sur immobilisations                             32.401.864            568.792.146 Dettes financières                                        16.371.483.729     22.403.484.599
+Immobilisations financières                                              417.381.374            475.300.485
+
+Stocks                                                                20.767.297.484         18.236.868.000
+Actif circulant H.A.O.                                                             0                      0 Dettes circulantes H.A.O.                                              0                  0
+Créances et emplois assimilés                                         15.412.635.789         14.558.690.076 Passif circulant                                          21.929.205.918     18.182.229.118
+Trésorerie-Actif                                                       4.216.722.840          4.588.599.362 Trésorerie-Passif                                            989.662.762      9.644.312.121
+Ecart de conversion actif                                                 60.561.131            118.756.513 Ecart de conversion passif                                    46.807.135         16.652.620
+TOTAL ACTIF                                                        127.545.989.450        131.814.168.746 TOTAL PASSIF                                              127.545.989.450    131.814.168.746
+                                                                                     0                      0                                                        155.838.442.490
+                                                                                         COMPTES DE RESULTAT
+                          CHARGES                                    Exercice N            Exercice N-1                         PRODUITS                           PRODUITS
+                                                                                                                                                                     Exercice N        Exercice N-1
+Achats de marchandises et variations de stocks                                     0                      0 Ventes de marchandises                                    64.542.873.724     46.523.850.369
+Achats de matières premières et variations de stocks                  46.327.263.758         34.111.656.268 Ventes de produits fabriqués                              59.620.077.994     60.587.007.640
+Autres achats et variations stocks                                    18.335.711.590         17.338.478.640 Travaux, services vendus                                   7.381.906.496      5.350.085.822
+Transports                                                             9.462.380.795          7.461.289.622 Production stockée (ou déstockage)                           -98.506.770        289.997.959
+Services extérieurs                                                   12.660.088.848         11.773.043.653 Production immobilisée                                     3.428.005.282      3.035.210.930
+Impôts et taxes                                                        2.726.392.872          2.497.136.165 Produits accessoires                                       3.251.593.704      2.665.048.496
+Autres charges                                                         3.004.915.000          6.258.979.332 Autres produits                                               34.995.576      4.526.214.817
+TOTAL                                                                92.516.752.863         79.440.583.680 TOTAL                                                    138.160.946.006    122.977.416.033
+                                                                                                                VALEUR AJOUTEE                                        45.644.193.143     43.536.832.353
+Charges de personnel                                                  20.329.242.080         18.882.388.209
+                                                                                                                EXCEDENT BRUT D'EXPLOITATION                          25.314.951.063     24.654.444.144
+Dotations aux amortissements et aux provisions                        14.136.885.008         17.681.553.565
+                                                                                                            Reprises de provisions                                       535.112.396        265.036.103
+                                                                                                            Transfert de charges                                         756.664.515        173.558.140
+                                                                                                            RESULTAT D'EXPLOITATION                                   12.469.842.966      7.411.484.822
+Frais financiers                                                       1.169.090.366          2.124.060.939 Produits financiers                                           69.322.293          5.417.920
+Pertes de change                                                           8.710.168              3.094.664 Gain de change                                                  -197.047            195.847
+Dotations aux amortissements et aux provisions                            26.454.802             58.048.009 Reprises de provisions                                        58.048.009                  0
+TOTAL CHARGES FINANCIERES                                             1.204.255.336          2.185.203.612 TOTAL PRODUITS FINANCIERS                                    127.173.255          5.613.767
+                                                                                                            RESULTAT DES ACTIVITES ORDINAIRES                         11.392.760.885      5.231.894.977
+Valeur comptable des cessions d'immobilisation                            14.406.780                      0 Produits de cessions d'immobilisation                        -21.896.533         41.007.898
+Charges H.A.O.                                                                     0                      0 Produits H.A.O.                                                        0                  0
+Dotations H.A.O.                                                                   0                      0 Reprises H.A.O.                                                        0                  0
+Impôt sur le résultat                                                  2.648.723.455          1.140.113.877
+
+                                                                                                                RESULTAT NET                                          8.707.734.117      4.132.788.998
+
+                                                                    TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS
+                                                                                                            Excédent Brut d'Exploitation                              25.314.951.063     24.654.444.144
+Frais financiers                                                       1.169.090.366          2.124.060.939 Transfert de charges                                         756.664.515        173.558.140
+Perte de change                                                            8.710.168              3.094.664 Revenus financiers                                            69.322.293          5.417.920
+Charges H.A.O.                                                                     0                      0 Gains de change                                                 -197.047            195.847
+Impôt sur le résultat                                                  2.648.723.455          1.140.113.877 Produits H.A.O.                                                        0                  0
+TOTAL                                                                 3.826.523.989          3.267.269.480 TOTAL                                                     26.140.740.824     24.833.616.051
+CAPACITE D'AUTOFINANCEMENT GLOBALE                                                                                                                                   22.314.216.835     21.566.346.571
+
+                                                                           VARIATION DU BESOIN DE FINANCEMENT
+Variation globale nette des stocks                                     2.530.429.484                        Variation globale nette des stocks                                            2.629.011.534
+Variation globale nette des créances                                     795.750.331                        Variation globale nette des créances                                          2.487.778.051
+Variation globale nette des dettes circulantes                                                  809.287.506 Variation globale nette des dettes circulantes             3.777.131.315
+
+TOTAL                                                                 3.326.179.815            809.287.506 TOTAL                                                      3.777.131.315      5.116.789.585
+VARIATION DU BESOIN DE FINANCEMENT D'EXPLOITATION                                                                                                                        450.951.500      4.307.502.079
+Excédent brut d'exploitation                                                                                                                                          25.314.951.063     24.654.444.144
+Production immobilisée                                                                                                                                                -3.428.005.282     -3.035.210.930
+Excédent de Trésorerie d'Exploitation                                                                                                                                 22.337.897.281     25.926.735.293
+
+                                                                                         RESSOURCES DE FINANCEMENT
+Investisssement total                                                  6.744.216.160          7.308.882.558 Variation du besoin de financement globale                   450.951.500      4.307.502.079
+dividendes                                                             2.066.394.499                      0 Capacité d'autofinancement                                22.314.216.835     21.566.346.571
+Emplois ressources (B.F, H.A.O.)                                                                            Augmentations de capital
+Emplois financiers contraints                                          5.671.784.839          6.680.547.846 Autres dettes financières                                                                 0
+TOTAL                                                                14.482.395.498         13.989.430.404 TOTAL                                                     22.765.168.335     25.873.848.650
+VARIATION DE TRESORERIE                                                                                                                                               8.282.772.837     11.884.418.246
+                                                                                                                                                                       6.135.005.289     10.788.110.268
+                                                                             PROJET D'AFFECTATION DU RÉSULTAT
+                                                 Le conseil d'administration propose d'affecter les résultats de l'exercice clos le 31 Décembre 2017 comme suit:
+                                                                                                                 Report à nouveau antérieur                           52.940.469.095     50.874.074.596
+Dividendes                                                              4.353.867.059          2.066.394.499 Résultat de l'exercice                                    8.707.734.117      4.132.788.998
+Nouveau Report à nouveau                                              57.294.336.154          52.940.469.095
+TOTAL                                                                61.648.203.212         55.006.863.594 TOTAL                                                     61.648.203.212     55.006.863.594
+                                                           COMPTES CERTIFIES PAR LES COMMISSAIRES AUX COMPTES
+                                         ETATS FINANCIERS PROVISOIRES A SOUMETTRE A L'ASSEMBLEE GENERALE ORDINAIRE DU 08 MAI 2018
+

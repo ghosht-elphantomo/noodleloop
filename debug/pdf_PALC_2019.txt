@@ -1,0 +1,66 @@
+https://www.brvm.org/sites/default/files/20200515_-_etats_financiers_exercice_2019_-_palm_ci.pdf
+                                                                                         PALMCI
+                                                                         S.A au Capital de 20,4 milliards de F CFA
+                                                                        Boulevard de Vridi, 18 BP 3321 ABIDJAN 18
+                                                              RCCM: CI-ABJ-1996-B-2005.300 Compte Contribuable 9702458 W
+
+                                                                ETATS FINANCIERS DE SYNTHESE AU 31/12/2019
+En XOF
+
+                                                     BILAN                                                                                      COMPTE DE RESULTATS
+                                                                    Exercice N        Exercice N-1
+Libellés                                                                                                 Libellés                                                           Exercice N         Exercice N-1
+                                                                       NET                NET
+                                                                                                         Ventes de marchandises                                            48 691 739 895     42 665 903 372
+Immobilisations incorporelles                                       1 447 524 135        258 798 088     Achat & Variation de stocks de marchandises                                     0                    0
+Immobilisations corporelles                                        84 290 930 528     84 147 753 816     MARGE COMMERCIALE                                                 48 691 739 895     42 665 903 372
+Avances et acomptes versés sur immobilisations                          32 401 864        32 401 864     Ventes de produits fabriqués                                      50 376 045 547     49 450 264 860
+Immobilisations financières                                            106 098 207       280 774 868     Travaux, services vendus                                           4 395 044 036      5 197 176 429
+ACTIF IMMOBILISE                                                   85 876 954 734     84 719 728 636     Produits accessoires                                               1 125 105 301      3 479 764 385
+Actifs circulants HAO                                                            0                   0   CHIFFRE D'AFFAIRES                                               104 587 934 779    100 793 109 046
+Stocks et encours                                                  17 169 238 138     17 448 811 882     Production stockée (ou déstockage)                                 1 149 252 805     -1 486 543 207
+Créances et emplois assimilés                                      17 858 112 963     11 590 682 240     Production immobilisée                                             3 220 988 533      3 897 182 527
+ACTIF CIRCULANT                                                    35 027 351 101     29 039 494 122     Autres produits                                                      791 940 226      1 562 964 523
+Trésorerie - actif                                                  5 696 036 547      3 539 602 468     Transferts de charges d'exploitation                                  49 938 607          66 286 595
+
+TOTAL ACTIF                                                       126 600 342 382    117 298 825 226     Achats de matières premières et fournitures liées                -38 401 478 147    -36 655 276 566
+                                                                                                         Variation de stocks de matières premières et fournitures liées       513 963 934          79 192 924
+Capital social                                                     20 406 297 497     20 406 297 497     Autres achats                                                    -17 798 304 939    -18 905 558 633
+Primes et réserves                                                 63 448 665 351      6 154 329 197     Variation de stocks d’autres approvisionnements                     -723 369 603     -1 826 099 583
+Résultat net                                                        -5 562 420 807   -12 612 926 295     Transports                                                        -6 331 435 090     -5 533 958 237
+Report à nouveau                                                  -12 612 926 296     57 294 336 153     Services extérieurs                                              -13 413 356 380    -13 769 767 867
+CAPITAUX PROPRES ET RESSOURCES ASSIMILEES                          65 679 615 745     71 242 036 552     Impôts et taxes                                                   -2 447 724 287     -2 785 293 654
+                                                                                                         Autres charges                                                    -2 882 577 827     -2 556 498 713
+Dettes financières et ressources assimilées                         9 517 506 097     12 734 228 042     VALEUR AJOUTEE                                                    28 315 772 611     22 879 739 155
+RESSOURCES STABLES                                                 75 197 121 842     83 976 264 594     Charges de personnel                                             -22 034 606 854    -20 809 778 144
+Passif circulant                                                   26 834 166 040     16 104 548 764     EXCEDENT BRUT D'EXPLOITATION                                       6 281 165 757      2 069 961 011
+Trésorerie - passif                                                24 569 054 500     17 218 011 868     Reprises d’amortissements, provisions et dépréciations             1 320 230 179        402 741 365
+TOTAL PASSIF                                                      126 600 342 382    117 298 825 226     Dotations aux amortissements, aux provisions et dépréciations    -11 580 342 979    -14 078 244 520
+                                                                                                         RESULTAT D'EXPLOITATION                                           -3 978 947 043    -11 605 542 144
+                                                                                                         Revenus financiers et assimilés                                           558 104       228 739 570
+                              TABLEAU DE FLUX DE TRESORERIE (TFT)                                        Reprises de provisions et dépréciations financières                             0                    0
+LIBELLES                                                           EXERCICE N         EXERCICE N-1       Frais financiers et charges assimilées                            -1 564 046 211     -1 179 128 895
+Trésorerie nette au 1er janvier                                    -13 678 409 400     3 227 060 078     Dotations aux provisions et aux dépréciations financières            -17 304 470         -35 470 067
+Capacité d'Autofinancement Globale (CAFG)                           4 672 329 017      1 098 665 989     RESULTAT FINANCIER                                                -1 580 792 577       -985 859 392
+- Variation des stocks                                                 279 573 744     3 318 485 602     RESULTAT DES ACTIVITES ORDINAIRES                                 -5 559 739 620    -12 591 401 536
+- Variation des créances                                            -6 267 430 723     4 832 855 687     Produits des cessions d'immobilisations                               45 399 765             -619 062
++ Variation du passif circulant                                    10 729 617 276     -5 871 464 289     Autres Produits HAO                                                             0         14 094 303
+Variation du BF lié aux activités opérationnelles                   4 741 760 297      2 279 877 000     Valeurs comptables des cessions d'immobilisations                     -2 732 319                     0
+Flux de trésorerie provenant des activités opérationnelles          9 414 089 314      3 378 542 989     Autres Charges HAO                                                   -10 348 633                     0
+- Décaissements pour immobilisations incorporelles                               0        -76 746 969    RESULTAT HORS ACTIVITES ORDINAIRES                                    32 318 813          13 475 241
+- Décaissements pour immobilisations corporelles                   -12 194 258 880   -11 576 921 966     Impôts sur le résultat                                               -35 000 000         -35 000 000
+- Décaissements pour immobilisations financières                                 0      -123 434 953     RESULTAT NET                                                      -5 562 420 807    -12 612 926 295
++ Encaissements liés aux cessions d’immob incorp et corp                45 399 765            -619 062
++ Encaissements liés aux cessions d’immobilisations financ                       0                   0                             PROJET D'AFFECTATION DU RESULTAT
+Flux de trésorerie provenant des activités d’investissement        -12 148 859 115   -11 777 722 950     ORIGINES                                                          Exercice N        Exercice N-1
++ Augmentations de capital par apports nouveaux                                  0                   0   Report à nouveau                                                 -12 612 926 296     57 294 336 153
+- Dividendes versés                                                              0    -4 353 867 059     Résultat net de l'exercice                                        -5 562 420 807    -12 612 926 295
++ Emprunts                                                                       0                   0   Total origines                                                   -18 175 347 103    44 681 409 858
++ Autres dettes financières diverses                                             0                       AFFECTATIONS
+- Remboursements des emprunts et autres dettes financières          -2 459 838 752    -4 152 422 458     Réserve libre                                                                        57 294 336 154
+
+Flux de trésorerie provenant des activités de financement           -2 459 838 752    -8 506 289 517     Dividendes
+
+VARIATION DE LA TRÉSORERIE NETTE DE LA PÉRIODE                      -5 194 608 553   -16 905 469 478     Report à nouveau                                                 -18 175 347 103    -12 612 926 296
+Trésorerie nette au 31 Décembre                                    -18 873 017 953   -13 678 409 400     Total affectations                                               -18 175 347 103    44 681 409 858
+

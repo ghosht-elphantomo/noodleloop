@@ -1,0 +1,778 @@
+                                                                      -8-                              BILAN SYSTEME NORMAL
+                                                                                                              PAGE 1/4
+                                                                 BILAN
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                        Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                         01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :           6900765R       Exercice clos le :       31/12/2016       Durée (en mois) :      12
+
+                                                                                Exercice N                           Ex. N - 1
+ Réf.                           ACTIF
+                                                               Brut             Amort/Prov             Net             Net
+
+
+         ACTIF IMMOBILISE (1)
+
+
+ AA      Charges immobilisées
+
+ AX      Frais d'établissement                                              0                                    0               0
+
+ AY      Charges à répartir                                                 0                                    0               0
+
+ AC      Primes de remboursement des obligations                            0                                    0               0
+
+
+ AD      Immobilisations incorporelles
+
+ AE      Frais de recherche et de développement                             0                0                   0               0
+
+ AF      Brevets, licences, logiciels                       3 375 829 828        3 073 237 638        302 592 190     1 004 460 404
+
+ AG      Fonds commercial                                   9 781 326 807                    0       9 781 326 807    9 781 326 807
+
+ AH      Autres immobilisations incorporelles                               0                0                   0               0
+
+
+  AI     Immobilisations corporelles
+
+  AJ     Terrains                                             585 085 299                    0        585 085 299      585 085 299
+
+ AK      Bâtiments                                          7 794 822 572        5 200 019 140       2 594 803 432    1 205 155 011
+
+  AL     Installations et agencements                                       0                0                   0               0
+
+ AM      Matériel                                          31 798 584 660       15 524 572 299     16 274 012 361    17 302 105 484
+
+ AN      Matériel de transport                              2 107 239 904        1 307 720 500        799 519 404      706 077 683
+
+
+ AP      Avances et acomptes versés sur                                     0                0                   0               0
+         immobilisations
+
+ AQ      Immobilisations financières
+
+ AR      Titres de participation                              408 025 286          267 814 410        140 210 876      374 434 410
+
+ AS      Autres immobilisations financières                 2 665 174 051                    0       2 665 174 051    2 912 895 622
+
+
+
+ AW      (1) dont H.A.O.:
+
+         Brut :                                    0
+
+         Net :                                     0
+
+
+ AZ      TOTAL ACTIF IMMOBILISÉ (I)                        58 516 088 407       25 373 363 987     33 142 724 420    33 871 540 720
+                                                                     -9-                              BILAN SYSTEME NORMAL
+                                                                                                             PAGE 2/4
+                                                                BILAN
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                       Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                        01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :           6900765R      Exercice clos le :       31/12/2016       Durée (en mois) :         12
+
+                                                                               Exercice N                              Ex. N - 1
+ Réf.                           ACTIF
+                                                              Brut             Amort/Prov             Net                Net
+
+ AZ      Report Total Actif immobilisé                    58 516 088 407       25 373 363 987     33 142 724 420       33 871 540 720
+
+
+         ACTIF CIRCULANT
+
+
+ BA      Actif circulant H.A.O.                                            0                0                     0                0
+
+
+ BB      Stocks
+ BC      Marchandises                                      2 664 021 733                    0       2 664 021 733       2 579 849 544
+
+ BD      Matières première et autres                       3 423 396 422        1 312 393 524       2 111 002 898       2 520 639 768
+         approvisionnements
+
+ BE      En-cours                                            162 993 834                    0        162 993 834         530 722 357
+
+ BF      Produits fabriqués                                1 713 249 924          832 241 056        881 008 868        1 122 280 433
+
+
+ BG      Créances et emplois assimilés
+
+ BH      Fournisseurs, avances versées                    12 849 946 595           83 170 998     12 766 775 597        1 444 592 133
+
+  BI     Clients                                          14 682 730 708        2 189 912 151     12 492 818 557       11 332 536 021
+
+  BJ     Autres créances                                   3 304 934 030                    0       3 304 934 030       4 463 211 693
+
+
+ BK      TOTAL ACTIF CIRCULANT (II)                       38 801 273 246        4 417 717 729     34 383 555 517       23 993 831 949
+
+
+
+         TRESORERIE-ACTIF
+
+
+ BQ      Titres de placement                                 277 939 315          277 939 315                     0      349 140 900
+
+ BR      Valeurs à encaisser                                 400 816 951                    0        400 816 951                   0
+
+ BS      Banques, chèques postaux, caisse                  7 628 510 512                    0       7 628 510 512       2 497 027 333
+
+ BT      TOTAL TRÉSORERIE-ACTIF (III)                      8 307 266 778          277 939 315       8 029 327 463       2 846 168 233
+
+
+
+
+ BU      Ecarts de conversion - Actif (IV)                      3 051 377                   0              3 051 377               0
+         (perte probable de change)
+
+ BZ      TOTAL GÉNÉRAL (I + II + III + IV)               105 627 679 808       30 069 021 031     75 558 658 777       60 711 540 902
+                                                                      - 10 -                             BILAN SYSTEME NORMAL
+                                                                                                                PAGE 3/4
+                                                                    BILAN
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                          Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                           01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R             Exercice clos le :     31/12/2016        Durée (en mois) :       12
+
+                                                 PASSIF                                                Exercice         Exercice
+ Réf.                                       (avant répartition)                                           N              N-1
+
+
+         CAPITAUX PROPRES ET RESSOURCES
+         ASSIMILEES
+
+
+ CA      Capital                                                                                       8 053 000 000    8 053 000 000
+
+ CB      Actionnaires capital non appelé                                                                           0                0
+
+
+ CC      Primes et réserves
+ CD      Primes d'apport, d'émission, de fusion                                                         808 326 636       808 326 636
+
+ CE      Ecarts de réévaluation                                                                                    0                0
+
+ CF      Réserves indisponibles                                                                        1 774 219 647    1 774 219 647
+
+ CG      Réserves libres                                                                                           0                0
+
+ CH      Report à nouveau                                                             + ou -         -18 375 652 723   -15 764 349 684
+
+  CI     Résultat net de l'exercice                                  (bénéfice + ou perte -)         -10 633 332 122    -2 611 303 039
+
+
+ CK      Autres capitaux propres
+
+ CL      Subventions d'investissement                                                                              0                0
+
+ CM      Provisions réglementées et fonds assimilés                                                                0                0
+
+
+ CP       TOTAL CAPITAUX PROPRES (I)                                                                 -18 373 438 562    -7 740 106 440
+
+
+         DETTES FINANCIERES ET RESSOURCES
+         ASSIMILEES (1)
+
+ DA      Emprunts                                                                                                  0                0
+
+ DB      Dettes de crédit-bail et contrats assimilés                                                    533 621 990       543 690 820
+
+ DC      Dettes financières diverses                                                                               0                0
+
+ DD      Provisions financières pour risques et charges                                                2 084 980 044    2 395 447 051
+
+
+ DE      (1) dont H.A.O. :                                                                0
+
+
+
+
+ DF       TOTAL DETTES FINANCIÈRES (II)                                                                2 618 602 034    2 939 137 871
+
+ DG       TOTAL RESSOURCES STABLES (I + II)                                                          -15 754 836 528    -4 800 968 569
+                                                                      - 11 -                         BILAN SYSTEME NORMAL
+                                                                                                            PAGE 4/4
+                                                                    BILAN
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                      Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                        01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R             Exercice clos le :   31/12/2016      Durée (en mois) :      12
+
+                                                 PASSIF                                            Exercice        Exercice
+ Réf.                                       (avant répartition)                                       N             N-1
+
+ DG      Report Total ressources stables                                                         -15 754 836 528   -4 800 968 569
+
+
+
+         PASSIF CIRCULANT
+
+
+ DH      Dettes circulantes et ressources assimilées H.A.O.                                                    0               0
+
+  DI     Clients, avances reçues                                                                   1 240 155 562    1 751 638 756
+
+  DJ     Fournisseurs d'exploitation                                                             46 079 226 158    20 840 350 527
+
+ DK      Dettes fiscales                                                                           1 630 158 509     624 252 551
+
+ DL      Dettes sociales                                                                           1 115 720 278    1 115 674 858
+
+ DM      Autres dettes                                                                           13 828 434 661    13 993 631 151
+
+ DN      Risques provisionnés                                                                                  0               0
+
+
+ DP       TOTAL PASSIF CIRCULANT (III)                                                           63 893 695 168    38 325 547 843
+
+
+         TRESORERIE PASSIF
+
+
+ DQ      Banques, crédits d'escompte                                                                           0               0
+
+ DR      Banques, crédits de trésorerie                                                          26 827 709 504    26 780 110 111
+
+ DS      Banques, découverts                                                                        577 605 685      397 977 223
+
+
+ DT       TOTAL TRÉSORERIE-PASSIF (IV)                                                           27 405 315 189    27 178 087 334
+
+
+ DU      Ecarts de conversion - passif (V)                                                            14 484 948        8 874 294
+
+         (gain probable de change)
+
+
+ DZ       TOTAL GÉNÉRAL (I + II + III + IV + V)                                                  75 558 658 777    60 711 540 902
+                                                                     - 12 -            COMPTE DE RESULTAT SYSTEME NORMAL
+                                                                                                    PAGE 1/4
+
+                                                   COMPTE DE RESULTAT
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                          Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                           01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :           6900765R         Exercice clos le :      31/12/2016        Durée (en mois) :      12
+
+                                                                                                       Exercice        Exercice
+ Réf.                                      CHARGES (1re partie)                                           N             N-1
+
+
+         ACTIVITE D'EXPLOITATION
+
+
+ RA      Achats de marchandises                                                                      10 449 640 265     7 724 843 546
+
+ RB      - Variation de stocks                                                      (- ou +)             -84 172 189      -61 657 402
+
+                                                   (Marge brute sur marchandises voir TB)
+
+ RC      Achats de matières premières et fournitures liées                                           19 621 020 932    18 072 443 373
+
+ RD      - Variation de stocks                                                      (- ou +)            558 794 281      -245 299 763
+
+                                                       (Marge brute sur matières voir TG)
+
+ RE      Autres achats                                                                                 2 416 408 893    7 519 060 416
+
+ RH      - Variation de stocks                                                      (- ou +)             -49 338 594     -920 512 965
+
+  RI     Transports                                                                                     997 280 285     1 536 985 566
+
+  RJ     Services extérieurs                                                                         12 260 365 965    11 390 922 994
+
+ RK      Impôts et taxes                                                                               1 002 153 776     472 469 523
+
+ RL      Autres charges                                                                                1 342 646 287    3 593 929 922
+
+                                                                    (Valeur ajoutée voir TN)
+
+
+ RP      Charges de personnel                                                                        10 495 981 578     8 470 977 518
+
+
+ RQ      (1) dont personnel extérieur                    1 090 850 013          854 840 207
+
+                                                     (Excédent brut d'exploitation voir TQ)
+
+
+ RS      Dotations aux amortissements et provisions                                                    3 166 527 680     885 454 499
+
+
+ RW      Total des charges d'exploitation                                                            62 177 309 159    58 439 617 227
+
+                                                           (Résultat d'exploitation voir TX)
+                                                                        - 13 -            COMPTE DE RESULTAT SYSTEME NORMAL
+                                                                                                       PAGE 2/4
+
+                                                     COMPTE DE RESULTAT
+Dénomination sociale de l'entreprise :    UNILEVER COTE D'IVOIRE
+                                                                                            Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                             01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :          6900765R             Exercice clos le :      31/12/2016       Durée (en mois) :      12
+
+                                                                                                         Exercice        Exercice
+ Réf.                                      PRODUITS (1re partie)                                            N             N-1
+
+
+         ACTIVITE D'EXPLOITATION
+
+
+
+ TA      Vente de marchandises                                                                         13 559 881 532    15 465 551 527
+
+ TB             MARGE BRUTE SUR MARCHANDISES                       3 194 413 456     7 802 365 383
+
+
+ TC      Vente de produits fabriqués                                                                   43 409 533 747    40 099 879 294
+
+ TD      Travaux, services vendus                                                                         -518 651 502      -45 030 376
+
+ TE      Production stockée (ou déstockage)                                               (+ ou -)      -4 755 002 935   -4 240 141 303
+
+  TF     Production immobilisée                                                                                      0               0
+
+ TG                        MARGE BRUT SUR MATIÈRES                17 956 064 097    17 987 564 005
+
+
+ TH      Produits accessoires                                                                            1 038 371 225     388 855 377
+
+
+
+  TI     CHIFFRE D'AFFAIRES (1) (TA+TC+TD+TH)                     57 489 135 002    55 909 255 822
+
+
+  TJ     (1) dont à l'exportation              18 934 625 379     19 448 959 295
+
+
+
+ TK      Subventions d'exploitation                                                                                  0               0
+
+  TL     Autres produits                                                                                  479 265 746     1 355 964 847
+
+ TN                                      VALEUR AJOUTÉE            4 698 597 912     3 941 894 156
+
+
+ TQ                 EXCÉDENT BRUT D'EXPLOITATION                   -5 797 383 666   -4 529 083 362
+
+
+ TS      Reprises de provisions                                                                          1 593 490 978     112 172 279
+
+  TT     Transferts de charges                                                                                       0               0
+
+
+ TW       Total des produits d'exploitation                                                            54 806 888 791    53 137 251 645
+
+
+ TX                             RESULTAT D'EXPLOITATION            -7 370 420 368   -5 302 365 582
+
+                                      Bénéfice (+) ; Perte (-)
+                                                                    - 14 -             COMPTE DE RESULTAT SYSTEME NORMAL
+                                                                                                    PAGE 3/4
+
+                                                 COMPTE DE RESULTAT
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                         Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                          01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R           Exercice clos le :      31/12/2016        Durée (en mois) :      12
+
+                                                                                                      Exercice        Exercice
+ Réf.                                     CHARGES (2e partie)                                            N             N-1
+
+ RW                                               Report Total des charges d'exploitation           62 177 309 159    58 439 617 227
+
+
+         ACTIVITE FINANCIERE
+
+ SA      Frais financiers                                                                             1 213 786 638    1 368 503 634
+
+ SC      Pertes de change                                                                              154 007 422      668 410 213
+
+ SD      Dotations aux amortissements et aux provisions                                                247 814 410                0
+
+ SF       Total des charges financières                                                               1 615 608 470    2 036 913 847
+
+                                                               (Résultat financier voir UG)
+
+ SH       Total des charges des activités ordinaires                                                63 792 917 629    60 476 531 074
+
+                                                 (Résultat des activités ordinaires voir UI)
+
+
+         HORS ACTIVITES ORDINAIRES (H.A.O)
+
+
+ SK      Valeurs comptables des cessions d'immobilisations                                            1 881 612 055     660 088 418
+
+  SL     Charges H.A.O.                                                                                           0               0
+
+ SM      Dotations H.A.O                                                                                          0               0
+
+ SO       Total des charges H.A.O.                                                                    1 881 612 055     660 088 418
+
+                                                                 (Résultat H.A.O. voir UP)
+
+ SQ      Participation des travailleurs                                                                           0               0
+
+ SR      Impôts sur le résultat                                                                          35 000 000      35 000 000
+
+
+ SS       Total participation et impôts                                                                  35 000 000      35 000 000
+
+ ST       TOTAL GÉNÉRAL DES CHARGES                                                                 65 709 529 684    61 171 619 492
+
+                                                                     (Résultat net voir UZ)
+                                                                       - 15 -           COMPTE DE RESULTAT SYSTEME NORMAL
+                                                                                                     PAGE 4/4
+
+                                                   COMPTE DE RESULTAT
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                           Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                            01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R              Exercice clos le :      31/12/2016       Durée (en mois) :      12
+
+                                                                                                        Exercice        Exercice
+ Réf.                                     PRODUITS (2e partie)                                             N             N-1
+
+ TW                                                 Report Total des produits d'exploitation          54 806 888 791    53 137 251 645
+
+
+
+         ACTIVITE FINANCIERE
+
+ UA      Revenus financiers                                                                                69 586 936      98 878 626
+
+ UC      Gains de change                                                                                   55 825 395     102 126 614
+
+ UD      Reprises de provisions                                                                                     0               0
+
+ UE      Transferts de charges                                                                                      0               0
+
+
+ UF       Total des produits financiers                                                                  125 412 331      201 005 240
+
+ UG         RÉSULTAT FINANCIER                     (+ ou -)       -1 490 196 139   -1 835 908 607
+
+
+ UH Total des produits des activités ordinaires                                                       54 932 301 122    53 338 256 885
+
+
+  UI     RÉSULTAT DES ACTIVITÉS ORDINAIRES
+
+                                                   (+ ou -)       -8 860 616 507   -7 138 274 189
+
+         (1) dont impôt correspondant            35 000 000           35 000 000
+
+
+
+         HORS ACTIVITES ORDINAIRES (H.A.O)
+
+ UK      Produits des cessions d'immobilisations                                                         143 896 440     5 222 059 568
+
+ UL      Produits H.A.O.                                                                                            0               0
+
+ UM      Reprises H.A.O.                                                                                            0               0
+
+ UN      Transferts de charges                                                                                      0               0
+
+ UO       Total des produits H.A.O.                                                                      143 896 440     5 222 059 568
+
+
+ UP      RÉSULTAT H.A.O.                           (+ ou -)       -1 737 715 615    4 561 971 150
+
+
+ UT       TOTAL GÉNÉRAL DES PRODUITS                                                                  55 076 197 562    58 560 316 453
+
+ UZ                                RÉSULTAT NET                 -10 633 332 122    -2 611 303 039
+
+                                Bénéfice (+) ; Perte (-)
+                                                                                 - 16 -                              TAFIRE SYSTEME NORMAL
+                                                                                                                             PAGE 1/4
+
+              TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS (TAFIRE)
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                                     Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                                      01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :         6900765R                     Exercice clos le :       31/12/2016          Durée (en mois) :                12
+
+
+            1re PARTIE : DETERMINATION DES SOLDES FINANCIERS DE L'EXERCICE N
+            CAPACITE D'AUTOFINANCEMENT GLOBALE (C.A.F.G.)
+                                  CAFG = EBE
+                                                            - Charges décaissables restantes }            à l'exclusion des cessions
+
+                                                            + Produits encaissables restants         }    d'actif immobilisé
+
+
+                                                                                                E.B.E.                                       -5 797 383 666
+
+  (SA) Frais financiers                                         1 213 786 638      (TT) Transferts de charges d'exploitation                             0
+
+  (SC) Pertes de change                                          154 007 422       (UA) Revenus financiers                                       69 586 936
+
+  (SL) Charges H.A.O.                                                        0     (UE) Transferts de charges financières                                0
+
+  (SQ) Participation                                                         0     (UC) Gains de change                                          55 825 395
+
+  (SR) Impôt sur le résultat                                      35 000 000       (UL) Produits H.A.O.                                                  0
+
+                                                                                   (UN) Transferts de charges H.A.O                                      0
+
+                                         Total (I)              1 402 794 060                                             Total (II)         -5 671 971 335
+
+
+                         CAFG :    Total (II) - Total (I)                                   =            -7 074 765 395        (N - 1):      -6 399 991 969
+
+
+            AUTOFINANCEMENT (A.F.)
+
+      AF = CAFG - Distributions de dividendes dans l'exercice (1)
+
+                         AF =         -7 074 765 395        -                           0   =            -7 074 765 395        (N - 1):      -6 399 991 969
+
+            VARIATION DU BESOIN DE FINANCEMENT D'EXPLOITATION (B.F.E.)
+
+      Var. B.F.E. = Var. Stocks (2) + Var. Créances (2) + Var. Dettes circulantes (2)
+
+
+                                                                                                    Emplois                            Ressources
+                          Variation des stocks : N - (N - 1)
+                                                                                                 augmentation (+)                      diminution (-)
+
+  (BC) Marchandises                                                                                         84 172 189 ou                                0
+
+
+  (BD) Matières premières                                                                                             0 ou                     409 636 870
+
+
+  (BE) En-cours                                                                                                       0 ou                     367 728 523
+
+
+  (BF) Produits fabriqués                                                                                             0 ou                     241 271 565
+
+
+  (A) Variation globale nette des stocks                                                                              0 ou                     934 464 769
+
+
+(1) Dividendes mis en paiement au cours de l'exercice y compris les acomptes sur dividendes.
+(2) A l'exclusion des éléments H.A.O.
+                                                                  - 17 -                        TAFIRE SYSTEME NORMAL
+                                                                                                        PAGE 2/4
+
+              TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS (TAFIRE)
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                  Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                    01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R         Exercice clos le :   31/12/2016      Durée (en mois) :   12
+                                                                          - 18 -                           TAFIRE SYSTEME NORMAL
+                                                                                                                   PAGE 3/4
+
+              TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS (TAFIRE)
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                          Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                            01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R              Exercice clos le :      31/12/2016         Durée (en mois) :             12
+
+(suite)
+
+                                                                                          Emplois                         Ressources
+                        Variation des créances : N - (N - 1)
+                                                                                       augmentation (+)                   diminution (-)
+
+  (BH) Fournisseurs, avances versées                                                        11 322 183 464 ou                                  0
+
+  (BI) Clients                                                                                  1 160 282 536 ou                               0
+
+  (BJ) Autres créances                                                                                     0 ou                  1 158 277 663
+
+  (BU) Ecart de conversion - Actif                                                                  3 051 377 ou                               0
+
+  (B) Variation globale nette des créances                                                  11 327 239 714 ou                                  0
+
+
+
+                                                                                          Emplois                         Ressources
+                  Variation des dettes circulantes : N - (N - 1)
+                                                                                       augmentation (+)                   diminution (-)
+
+  (DI) Clients, avances versées                                                                  511 483 194 ou                                0
+
+  (DJ) Fournisseurs d'exploitation                                                                         0 ou                25 238 875 631
+
+  (DK) Dettes fiscales                                                                                     0 ou                  1 005 905 958
+
+  (DL) Dettes sociales                                                                                     0 ou                            45 420
+
+  (DM) Autres dettes                                                                             165 196 490 ou                                0
+
+  (DN) Risques provisionnés                                                                                0 ou                                0
+
+  (DU) Ecart de conversion - Passif                                                                        0 ou                      5 610 654
+
+  (C) Variation globale nette des dettes circulantes                                                       0 ou                25 573 757 979
+
+
+
+  VARIATION DU B.F.E. = (A) + (B) + (C)                                                                    0 ou                15 180 983 034
+
+
+
+            EXCEDENT DE TRESORERIE D'EXPLOITATION (E.T.E.)
+
+            ETE = EBE - variation BFE - Production immobilisée
+
+
+                                                                                                N                             N-1
+
+  Excédent brut d'exploitation                                                                   -5 797 383 666                 -4 529 083 362
+
+  - Variation du B.F.E. (- si emplois ; + si ressources)       (- ou +)                         15 180 983 034                   7 751 157 146
+
+  - Production immobilisée                                                                                    0                                0
+
+  EXCEDENT DE TRESORERIE D'EXPLOITATION                                                          9 383 599 368                   3 222 073 784
+                                                                  - 19 -                        TAFIRE SYSTEME NORMAL
+                                                                                                        PAGE 4/4
+
+              TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS (TAFIRE)
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                  Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                    01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R         Exercice clos le :   31/12/2016      Durée (en mois) :   12
+                                                                        - 20 -                            TAFIRE SYSTEME NORMAL
+                                                                                                                  PAGE 5/4
+
+              TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS (TAFIRE)
+Dénomination sociale de l'entreprise :   UNILEVER COTE D'IVOIRE
+                                                                                         Sigle usuel : UCI
+Adresse :    BOULEVARD DE VRIDI TREICHVILLE                                          01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :        6900765R              Exercice clos le :    31/12/2016         Durée (en mois) :        12
+
+   2e PARTIE : TABLEAU
+
+                                                                                                                          Exercice
+                                                                                            Exercice N                     N-1
+ Réf.
+                                                                                  Emplois               Ressources       (E - ; R +)
+
+
+         I. INVESTISSEMENTS ET
+         DESINVESTISSEMENTS
+
+ FA      Charges immobilisées
+                                                                                               0                                       0
+
+         Croissance interne
+
+ FB      Acquisitions/Cessions d'immobilisations
+         incorporelles                                                                         0                     0                 0
+
+ FC      Acquisitions/Cessions d'immobilisations
+         corporelles                                                             14 774 629 968            143 896 440    -3 460 961 571
+
+         Croissance externe
+
+ FD      Acquisitions/Cessions d'immobilisations
+         financières                                                              3 512 889 952          3 747 020 647      408 909 830
+
+
+  FF     INVESTISSEMENT TOTAL                                                    14 396 602 833                      0    -3 052 051 741
+
+
+ FG      II. VARIATION DU BESOIN DE FINANCEMENT
+         D'EXPLOITATION (cf. Supra : Var. B.F.E.)                                              0        15 180 983 034    7 751 157 146
+
+                                                                                                   ou
+ FH      A - EMPLOIS ÉCONOMIQUES A FINANCER (FF + FG)                                          0           784 380 201    4 699 105 405
+
+
+                                                                                                   ou
+  FI     III. EMPLOIS/RESSOURCES (B.F., H.A.O.)                                                0                     0                 0
+
+
+
+  FJ     IV. EMPLOIS FINANCIERS CONTRAINTS                       (1)                267 755 338                           -1 960 607 917
+
+
+
+         Remboursements (selon échéancier) des
+         emprunts et dettes financières
+
+         (1) A l'exclusion des remboursements anticipés portés en VII
+
+
+ FK      B - EMPLOIS TOTAUX A FINANCER                                                         0           516 624 863    2 738 497 488
+                                                                                    - 21 -                              TAFIRE SYSTEME NORMAL
+                                                                                                                                PAGE 6/4
+
+              TABLEAU FINANCIER DES RESSOURCES ET EMPLOIS (TAFIRE)
+Dénomination sociale de l'entreprise :        UNILEVER COTE D'IVOIRE
+                                                                                                       Sigle usuel : UCI
+Adresse :     BOULEVARD DE VRIDI TREICHVILLE                                                       01 BP : 1751 ABIDJAN 01
+N° d'identification fiscale :              6900765R                   Exercice clos le :      31/12/2016          Durée (en mois) :           12
+
+    2e PARTIE : TABLEAU
+
+                                                                                                                                           Exercice
+                                                                                                          Exercice N                        N-1
+ Réf.
+                                                                                                Emplois            Ressources             (E - ; R +)
+
+          V. FINANCEMENT INTERNE
+
+  FL      Dividendes (emplois) / C.A.F.G. (Ressources)                                                       0       -5 730 242 746        -6 399 991 969
+
+          VI. FINANCEMENT PAR LES CAPITAUX
+          PROPRES
+
+ FM       Augmentations de capital par apports nouveaux                                                                           0                     0
+
+ FN       Subventions d'investissement                                                                                            0                     0
+
+  FP      Prélèvements sur le capital                                                                        0                                          0
+
+          VII. FINANCEMENT PAR DE NOUVEAUX
+          EMPRUNTS
+
+ FQ       Emprunts (2)                                                                                       0                    0                     0
+
+ FR       Autres dettes financières (2)                                                                      0          257 686 508         1 583 583 565
+
+          (2) Remboursements anticipés inscrits séparément en
+          emplois
+
+
+  FS      C - RESSOURCES NETTES DE FINANCEMENT                                                  5 472 556 238                         0    -4 816 408 404
+
+                                                                                                            o u
+         D - EXCÉDENTS OU INSUFISANCE DE RESSOURCES DE
+  FT                                                                                            4 955 931 375                     0        -2 077 910 916
+        FINANCEMENT (C - B)
+
+          VIII. VARIATION DE LA TRESORERIE
+
+         Trésorerie nette
+ FU       à la clôture de l'exercice + ou -                               -19 375 987 726
+
+  FV      à l'ouverture de l'exercice + ou -                              -24 331 919 101
+                                                                                                            o u
+ FW       Variation Trésorerie : (+ si Emplois; - si Ressources)                                4 955 931 375                     0        -2 077 910 916
+
+
+          Contrôle : D = VIII avec signe opposé
+Nota : I, IV, V, VI, VII : en termes de flux ; II, III, VIII : différences " bilantielles "
+
+         CONTROLE                   (à partir des masses des bilans N et N - 1)                                        Emplois            Ressources
+                                                                                                                                 o u
+  Variation du fonds de roulement (F.d.R.)                              : FdR(N) - FdR(N-1)                         10 225 051 659                      0
+                                                                                                                                  o u
+  Variation du B.F. global (B.F.G.)                                     : BFG(N) - BFG(N - 1)                                     0       15 180 983 034
+                                                                                                                                   o u
+  Variation de la trésorerie (T)                                        : T(N) - T(N - 1)                              4 955 931 375                    0
+
+                                                                                                TOTAL               15 180 983 034        15 180 983 034
+

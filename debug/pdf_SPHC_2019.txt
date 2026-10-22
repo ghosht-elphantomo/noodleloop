@@ -1,0 +1,188 @@
+https://www.brvm.org/sites/default/files/20201216_-_etats_financiers_ifrs_au_31_12_2019_-_saph_ci.pdf
+       ETATS FINANCIERS IFRS
+           PROVISOIRES
+
+
+
+
+       EXERCICE CLOS LE 31 DECEMBRE 2019
+        ____________________________________________
+
+
+
+
+            Société Africaine de Plantations d'Hévéas
+             Société anonyme avec conseil d'administration
+                Au capital social de 14.593.620.855 FCFA
+Siège social : Abidjan ‐ Treichville RCCM Abidjan N°CI‐ABJ‐1962‐B‐2059
+                                 ***
+Toutes les données présentées dans ce document sont en milliers de Francs CFA, sauf indication
+contraire.
+
+Etat de la situation financière
+
+SAPH ‐ BILAN IFRS ‐ 31 Décembre 2019
+
+En milliers de FCFA                          Notes    31‐déc‐19       31‐déc‐18       01‐janv‐18
+ACTIFS
+Immobilisations incorporelles               Note 4           16 933          35 139         695 473
+Ecarts d'acquisition                        Note 5        6 107 616       6 107 616       6 107 616
+Immobilisations corporelles                 Note 6       37 399 718      38 041 062      36 618 818
+Droits d'usage des immobilisations louées   Note 7        1 800 987       2 111 898       2 422 809
+Actifs biologiques plantes productrices     Note 8       42 948 175      41 570 746      39 398 515
+Actifs financiers non courants              Note 9          223 049         357 425         246 962
+Impot différé actif                         Note 21               0               0               0
+Actifs non courants                                      88 496 477      88 223 885      85 490 193
+Stocks                                      Note 10      31 701 980      26 465 044      26 953 990
+Créances clients                            Note 11      14 618 779      11 455 518      15 218 695
+Autres actifs courants                      Note 11       5 502 543       4 235 498       5 760 606
+Trésorerie et équivalents de trésorerie     Note 13       7 163 565       4 546 680       4 708 767
+Actifs courants                                          58 986 867      46 702 739      52 642 058
+Total actif                                             147 483 344     134 926 624     138 132 251
+
+
+
+En milliers de FCFA                          Notes    31‐déc‐19       31‐déc‐18       01‐janv‐18
+PASSIFS
+Capitaux propres                                         74 752 393      71 759 571      74 765 401
+Capital social                              Note 14      14 593 621      14 593 621      14 593 621
+Reserves                                    Note 15      57 602 723       8 123 138       7 906 846
+Report à nouveau                            Note 15        ‐847 996      50 410 251      39 764 399
+Resultat                                                  3 404 046      ‐1 367 439      12 500 535
+Emprunt long terme                          Note 16      13 172 500      12 994 434      19 047 421
+Passifs locatifs                            Note 18       1 628 980       1 852 300       2 111 898
+Provision                                                    81 169         105 960         559 663
+Autres passifs financiers                                         0               0               0
+Impot différé passif                        Note 21       2 366 666       2 334 374       2 238 304
+Passifs non courants                                     92 001 708      89 046 639      98 722 686
+Concours bancaires                          Note 17      25 561 173      20 794 773      17 074 747
+Emprunt part court terme                    Note 16       6 802 149       6 180 753       6 218 439
+Passif de location à court terme            Note 18         223 320         259 598         310 911
+Fournisseurs et autres créditeurs           Note 20      21 507 466      18 569 990      15 508 997
+Autres passifs courants                     Note 20       1 387 529          74 871         296 470
+Passifs courants                                         55 481 636      45 879 985      39 409 564
+Total passif                                            147 483 344     134 926 624     138 132 251
+
+
+
+
+                                                                                                   2
+Compte de résultat
+
+SAPH ‐ COMPTE DE RESULTAT IFRS ‐ 31 Décembre 2019
+En milliers de FCFA
+COMPTE DE RESULTAT                                   Notes      31‐déc‐19        31‐déc‐18
+Chiffre d'affaires                                  Note 22      143 735 241      129 854 699
+Achats consommés                                    Note 23       ‐90 721 429      ‐87 891 283
+Marge brute                                                        53 013 812       41 963 416
+Charges de personnel                                Note 24       ‐19 031 494      ‐16 856 736
+Charges externes                                    Note 25       ‐13 987 100      ‐13 909 159
+Impots et taxes                                     Note 26        ‐2 794 269       ‐1 820 047
+Dotations aux amortissements et provisions          Note 27        ‐8 907 425       ‐8 442 699
+Reprises provisions                                                   227 257          477 514
+Autres produits d'exploitation                                        268 875          744 286
+Autres charges d'exploitation                       Note 28        ‐1 949 256       ‐1 420 087
+Resultat opérationnel courant                                       6 840 400          736 488
+Autres produits opérationnels                                         35 557           63 965
+Autres charges opérationnels                        Note 29         ‐258 879         ‐261 107
+Resultat opérationnel                                              6 617 079          539 345
+Charge d'intérêt des passifs locatifs               Note 30         ‐134 014          ‐82 700
+Charges financières                                 Note 30       ‐1 697 293       ‐1 651 178
+Autres produits financiers                          Note 30            6 531           18 911
+Autres charges financières                          Note 30                0                0
+Cout de l'endettement financier net                               ‐1 824 776       ‐1 714 968
+Resultat avant impot                                               4 792 302       ‐1 175 623
+Charge/Produit d'impot sur les sociétés             Note 31       ‐1 388 257         ‐191 817
+Résultat net                                                       3 404 046       ‐1 367 439
+
+
+
+Compte de résultat par action
+
+Resultat par action
+                                                              31‐déc‐19         31‐déc‐18
+Dilué                                                                0,666             ‐0,268
+Non dilué                                                            0,666             ‐0,268
+
+
+
+
+                                                                                             3
+Etat du résultat global
+
+SAPH ‐ ETAT DU RESULTAT GLOBAL
+
+                                                                En milliers de FCFA    31/12/2019      31/12/2018
+Résultat net de la période                                                                 3 404 046      ‐1 367 439
+
+I. Eléments ultérieurement recyclables en compte de résultat:
+Variation de juste valeur des instruments de couverture                                    ‐673 966         ‐309 757
+Effet d'impôt                                                                               168 492           77 439
+
+                                                                      Sous‐total I         ‐505 475         ‐232 318
+Résultat global consolidé au titre de la période, net d'impôt                              2 898 571      ‐1 599 757
+
+
+
+Tableau des flux de trésorerie
+
+SAPH ‐ Tableau de flux de trésorerie ‐ 31 Décembre 2019
+
+En milliers de FCFA                                                 Notes        31‐déc‐19             31‐déc‐18
+Résultat net                                                                         3 404 046            ‐1 367 439
+Elimination des amortissements et provisions                                         8 662 418             7 952 094
+Elimination des profits/pertes de réévaluation (juste valeur)                         ‐372 330               531 514
+Elimination variation impôts différés                                                   22 256                32 141
+Elimination des plus ou moins values de cession                                        223 322               197 142
+Total marge brute d'autofinancement                                                 11 939 712             7 345 452
+Incidence de la variation des stocks et en cours                   Note 32          ‐5 236 936               488 946
+Incidence de la variation des créances & emplois assimilés         Note 32          ‐4 430 306             5 288 285
+Incidence de la var. des fournisseurs & ressources assimilés       Note 32           4 250 134             2 839 394
+Flux net généré par (affecté à) l'activité                                           6 522 603            15 962 077
+Acquisition d'immobilisations                                                       ‐9 431 603           ‐11 456 440
+Cession d'immobilisations                                                               73 166               175 959
+Total flux net provenant des (affecté aux) investissements                          ‐9 358 438           ‐11 280 481
+Dividendes versés                                                                                         ‐2 215 112
+Emissions d'emprunts                                                                    7 000 000
+Remboursements d'emprunts                                                              ‐6 313 680         ‐6 348 597
+Variation nette des concours bancaires
+Total flux net provenant du (affecté au) financement                                     686 320          ‐8 563 709
+Variation de trésorerie                                            Note 32             ‐2 149 515         ‐3 882 113
+Trésorerie d'ouverture                                             Note 32            ‐16 248 093        ‐12 365 980
+Trésorerie de clôture                                              Note 32            ‐18 397 608        ‐16 248 093
+
+
+
+
+                                                                                                                    4
+Tableau de variation des capitaux propres
+
+
+SAPH ‐ Variation des capitaux propres
+
+                                                                         Report à      Résultat de      Capitaux
+               En milliers de FCFA            Capital      Réserves
+                                                                         nouveau        l'exercice      propres
+Capitaux propres au 1er janvier 2018          14 593 621     7 906 846    39 764 399      12 500 535     74 765 401
+Affectation du résultat 2017 en réserves                                  10 645 852     ‐10 645 852              0
+Dividendes versés                                                                          ‐2 215 112    ‐2 215 112
+Juste valeur instruments financiers                             86 329                                       86 329
+Impot différé sur JV instruments financiers                    ‐14 990                                      ‐14 990
+IFRS 1 Première adoption                                        89 642                                       89 642
+Impot différé sur différence temporaire                         55 311                                       55 311
+Résultat 2018                                                                             ‐1 007 010     ‐1 007 010
+Capitaux propres au 31 décembre 2018          14 593 621     8 123 138    50 410 251      ‐1 367 439     71 759 571
+Capitaux propres au 1er janvier 2019          14 593 621     8 123 138    50 410 251      ‐1 367 439     71 759 571
+Affectation du résultat 2018 en réserves                    50 410 251   ‐51 258 247       1 367 439        519 444
+Dividendes versés                                                                                                 0
+Juste valeur instruments financiers                          ‐673 966                                      ‐673 966
+Impot différé sur JV instruments financiers                   ‐42 177                                       ‐42 177
+Juste valeur actifs biologiques                              ‐214 523                                      ‐214 523
+Résultat 2019                                                                              3 404 046      3 404 046
+Capitaux propres au 31 décembre 2019          14 593 621    57 602 723      ‐847 996       3 404 046     74 752 393
+
+
+
+
+                                                                                                                  5
+

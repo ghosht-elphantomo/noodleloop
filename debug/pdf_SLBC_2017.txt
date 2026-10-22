@@ -1,0 +1,52 @@
+https://www.brvm.org/sites/default/files/etats_financiers_-_exercice_2017_-_solibra.pdf
+                             SOCIETE DE LIMONADERIES ET BRASSERIES D' AFRIQUE
+                                                SOLIBRA
+
+                     Compte de résultat au 31/12/2017                                            Tableau de Financement au 31/12/2017
+(en millions de FCFA)                                      2017      2016       (en millions de FCFA)                                 2017           2016
+CHIFFRE D'AFFAIRES ET AUTRES PRODUITS                      193 372    191 441                    RESSOURCES
+ Achats de matières, marchandises & variation de stocks     70 178     64 484   Capacité d'autofinancement globale                       24 875         45 001
+Autres Achats & charges externes                            77 693     57 517   Cessions d'immobilisations incorporelles
+VALEUR AJOUTEE                                              45 501     69 439   Cessions d'immobilisations corporelles                      630             28
+Charges de personnel                                        18 159     16 384   Cessions d'immobilisations Financières                        0              0
+EXCEDENT BRUT D'EXPLOITATION                                27 341     53 055   Augmentation de Capital par apports nouveaux                251
+Transfert de charges                                           935        943   Augmentation Autres dettes Financières                   63 422            895
+Dotations aux amortissements et aux provisions nettes       20 635     17 441   Variation du besoin de financement                            0              0
+RESULTAT D'EXPLOITATION                                      7 642     36 558   Total Ressources                                         89 178         45 923
+Produits Financiers                                              0          3
+Charges Financières                                          3 062      1 721                      EMPLOIS
+RESULTAT FINANCIER                                          -3 062     -1 718   Dividendes                                                7 501          7 501
+RESULAT DES ACTIVITES ORDINAIRES                             4 580     34 840   Charges immobilisées                                      1 061
+Résultat hors activités ordinaires                             -43          3   Acquisition d'immobilisations incorporelles              23 820            853
+Impôts sur le résultat                                         287      7 280   Acquisition d'immobilisations corporelles                67 786         10 272
+BENIFICE NET                                                4 250     27 563    Acquisition d'immobilisations Financières                   120             11
+                                                                                Remboursement autres dettes Financières                       0              0
+                                Bilan au 31/12/2017                             VNC/cessions d'immobilisations
+(en millions de FCFA)                                      2017      2016       Variation du besoin de Financement                       13 444          1 444
+                        ACTIF                                                   Total Emplois                                           113 733         20 081
+Charges Immobilisées                                           246              Variation de trésorerie                                 -24 555         25 843
+Immobilisations incorporelles                               27 239      3 737
+Immobilisations corporelles                                139 347     91 960   Projet d'affectation des résultats de l'exercice 2017 non approuvé par A.G.O.
+Immobilisations Financières                                    620        538                                                         (en FCFA)
+Actif Immobilisé                                           167 451     96 235   Résultat net de l'exercice                           4 250 478 260
+Stocks                                                      63 416     46 169   Report à nouveau antérieur                          42 935 230 242
+Créances et emplois assimilés                               26 905     29 468   Résultat distribuable                               47 185 708 502
+Actif circulant                                             90 321     75 637   Dividendes Bruts                                     4 246 896 720
+Trésorerie - Actif                                             957      8 036   Report à nouveau                                    42 938 811 782
+Total Actif                                               258 729    179 908
+                                                                                NB: "Comptes certifiés par les commissaires aux comptes"
+                         PASSIF                            2017      2016
+Capital primes et réserves                                  97 353     77 041
+Résultat net de l'exercice                                  4 250     27 563
+Autres capitaux propres                                          0          0
+Capitaux propres                                           101 604    104 604
+Dettes financières diverses                                 82 951     19 591
+Provisions financières pour risques et charges               3 483      3 738
+Dettes financières et ressources assimilées                 86 434     23 328
+Clients avances reçues                                         104      7 053
+Fournisseurs d'exploitation & d'investissement              29 372     13 139
+Dettes Fiscales, sociales et autres dettes                   5 234     13 278
+Passif Circulant                                            34 709     33 469
+Trésorerie - Passif                                         35 982     18 506
+Total Passif                                              258 729    179 908
+

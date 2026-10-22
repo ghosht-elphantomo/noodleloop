@@ -1,0 +1,1 @@
+{"nasdaq-ndx":{"ok":86,"err":0,"errors":[]},"nasdaq-screener":{"ok":1,"err":0,"errors":[]},"nasdaq-etf":{"ok":68,"err":1,"errors":["NGE: NGE: 0 lignes"]},"nasdaq-idx":{"ok":2,"err":2,"errors":["SPX: SPX: 0 lignes","RUT: RUT: 0 lignes"]},"_steps":{"nasdaq":100},"_":{"ts":1792625275,"secs":100}}
