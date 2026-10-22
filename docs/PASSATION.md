@@ -1,6 +1,6 @@
 # Passation — où en est le travail, ce qui reste
 
-À lire en premier par toute nouvelle session. Mis à jour : 20/10/2026, matin (Paris).
+À lire en premier par toute nouvelle session. Mis à jour : 22/10/2026, 11 h 30 (Paris).
 Une session qui termine une étape importante met ce fichier à jour (état, reste à faire, pièges).
 
 ## Démarrer une session
@@ -63,6 +63,38 @@ Une session qui termine une étape importante met ce fichier à jour (état, res
 - L'espace de travail a 2 processeurs : un seul parcours Playwright à la fois.
 - Les branches de données se récupèrent avec un refspec explicite (`git fetch origin +refs/heads/data:refs/remotes/origin/data`) ;
   sans lui, `origin/data` reste sur une ancienne version (piège constaté le 20/10 : branche `histo` crue en retard).
+
+## État au 22/10/2026, 11 h 30 (session sans accès au coffre)
+
+Session née de la tâche programmée « contrôle de mardi 9 h » (dépôt `noodleloop` seulement : le coffre `bloopface` lui était
+refusé, et l'outil d'attachement d'un dépôt n'existe pas dans une session issue d'une tâche programmée). Le propriétaire a
+ouvert une nouvelle session avec les deux dépôts : **c'est elle qui reprend**, à partir d'ici et de `docs/SITES_OFFICIELS.md`.
+
+- **Contrôles du 20/10 (9 h) et du 22/10 (9 h 20)** : verts (passages, comptes, données, site). Seul écart : BOA BF 2018 passé
+  de vérifié à non vérifié au passage du 22/10 (lecteur corrigé le 20/10, prévu dans « Comptes non vérifiés : fait », sans
+  effet sur les séries). 1 619 documents avec au moins un exercice vérifié, 34 documents de l'archive lus (21 / 6 / 7).
+- **Décisions du propriétaire (22/10)** : retenues Burkina et Bénin : rien d'affiché tant que le taux n'est pas connu (on
+  laisse) ; réglages de fluidité **désactivés par défaut** (confirmé) ; codes des éditeurs dans le bandeau d'actualités :
+  **gardés**. Exercices écartés, montants douteux, ruptures et valeurs extrêmes : à revoir **un par un sur les documents** ;
+  chercher aussi les états financiers sur les **sites officiels des sociétés** (ou leurs archives officielles) pour
+  reconstruire des exercices manquants, et vérifier la concordance avec nos chiffres ; au plus **un agent** en parallèle de
+  la session, jamais au détriment de la lecture ni des règles de cohérence (« aucun client ne doit appeler pour dire que
+  mes chiffres sont faux »).
+- **Fait (lecture seule sur les données)** : recherche sur les sites officiels (13 sociétés, 39 entrées) ; sonde des 25
+  documents (branche `probe`, `urls/`) ; vérification sur pièces : **PNB NSIA Banque 2016 et 2017 faux dans nos séries**
+  (base tierce 59 439 / 62 672 contre 58 691 / 63 576 dans les états certifiés 2017 déposés à la BRVM, confirmés par les
+  rapports 2016 et 2017) et PNB Coris BF 2018 à trancher (57 545 contre 56 705 au rapport annuel) ; 4 PDF de brvm.org absents
+  de notre registre ; causes des exercices écartés (BOA Niger 2016-2017, SIB 2016, Erium 2023…). Tout est dans
+  `docs/SITES_OFFICIELS.md` et `docs/sites_officiels_2026-10-22.json`. Aucun chiffre modifié, aucune donnée touchée.
+- **Incident Vercel (22/10, 08 h 55 UTC, causé par cette session)** : l'envoi de la sonde sur main a réveillé Vercel, dont
+  la commande « ignoreCommand » de `vercel.json` a échoué (« bad object » : le commit du déploiement précédent, `d0b1cdc4`
+  du 20/10, n'était plus dans le clone peu profond de Vercel, à dix commits automatiques en arrière) : e-mail « Production
+  deployment failed » au propriétaire, production intacte (un déploiement en échec ne remplace rien). **Corrigé à sa
+  demande** (`9920befa`) : commit précédent introuvable = construction au lieu d'échec ; déploiement de production `9920befa`
+  réussi à 09 h 05 UTC avec `public/`, `api/` et `vercel.json` identiques à `d0b1cdc4` (vérifié par `git diff`). Ce
+  changement a aussi lancé le passage « Terminal » (push) de 09 h 04 UTC, normal. Règle tirée : **tout envoi sur main
+  réveille Vercel** ; prévenir le propriétaire avant, même pour une sonde.
+- **Tâche programmée « contrôle de mardi 9 h »** : exécutée le 20/10 (compte rendu donné) ; cette session l'a prolongée.
 
 ## État au 20/10/2026 (audit complet de la nuit)
 

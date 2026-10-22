@@ -1,0 +1,1535 @@
+[
+ {
+  "ticker": "BOABF",
+  "exercice": 2012,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/web-rapport_burkina_faso_2014.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Burkina Faso – Rapport annuel 2014 (Chiffres clés au 31/12/2014)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "En millions de F CFA",
+  "page": "15",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan* 348 130 (graphique)",
+    "valeur_millions": 348130
+   },
+   "resultat_net": {
+    "texte": "Résultat net* 7 916 (graphique)",
+    "valeur_millions": 7916
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "PNB et fonds propres 2012 non imprimés"
+ },
+ {
+  "ticker": "BOABF",
+  "exercice": 2013,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/rapport_burkina_2013-14_pages.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Burkina Faso – Rapport annuel 2013 (Chiffres clés au 31/12/2013)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "En millions de F CFA",
+  "page": "11 (PNB aussi p.22)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan* / Total Assets* 414 027",
+    "valeur_millions": 414027
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres après répartition* 27 050",
+    "valeur_millions": 27050
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire* / Net operating income* 25 024",
+    "valeur_millions": 25024
+   },
+   "resultat_net": {
+    "texte": "Résultat Net* / Net income* 10 153",
+    "valeur_millions": 10153
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Fonds propres = après répartition"
+ },
+ {
+  "ticker": "BOABF",
+  "exercice": 2014,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/web-rapport_burkina_faso_2014.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Burkina Faso – Rapport annuel 2014 (Chiffres clés au 31/12/2014)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "En millions de F CFA",
+  "page": "15",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan* 497 141",
+    "valeur_millions": 497141
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres après répartition* 36 793",
+    "valeur_millions": 36793
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire* 26 686",
+    "valeur_millions": 26686
+   },
+   "resultat_net": {
+    "texte": "Résultat net* 10 478",
+    "valeur_millions": 10478
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "p.28 du texte : fonds propres 36 729 après affectation (incohérence interne du rapport) ; le rapport 2015 (note 2.9.1) donne 44 128 avant répartition"
+ },
+ {
+  "ticker": "BOABF",
+  "exercice": 2015,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/etats_financiers_2015_-_burkina_faso_.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Burkina Faso – États financiers 2015",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "Chiffres clés en millions de F CFA ; bilan/CR en F CFA",
+  "page": "3-4 (chiffres clés), 6 (bilan), 8 (CR)",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL DE L'ACTIF 656 796 951 122 (F CFA) ; chiffres clés 656 797",
+    "valeur_millions": 656797
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 49 528",
+    "valeur_millions": 49528
+   },
+   "ca": {
+    "texte": "PNB 31 317",
+    "valeur_millions": 31317
+   },
+   "resultat_net": {
+    "texte": "BÉNÉFICE 12 028 246 505 (F CFA)",
+    "valeur_millions": 12028
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": ""
+ },
+ {
+  "ticker": "BOABF",
+  "exercice": 2016,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2021/10/annual_report_2016.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BANK OF AFRICA Group – Annual report 2016, page BOA-BURKINA FASO (2016 key figures)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "in CFAF million",
+  "page": "42",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Assets 656,797 714,127 8.7 %",
+    "valeur_millions": 714127
+   },
+   "capitaux_propres": {
+    "texte": "Shareholders' equity 49,528 54,398 9.8 %",
+    "valeur_millions": 54398
+   },
+   "ca": {
+    "texte": "Net operating income 31,317 33,685 7.6 %",
+    "valeur_millions": 33685
+   },
+   "resultat_net": {
+    "texte": "Net income 12,028 12,443 3.5 %",
+    "valeur_millions": 12443
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Colonnes 2015 / 2016 ; les valeurs 2015 concordent avec les états financiers 2015"
+ },
+ {
+  "ticker": "BOAM",
+  "exercice": 2012,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/rapport_mali_2013-14_pages_1.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Mali – Rapport annuel 2013",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "En millions de F CFA",
+  "page": "11 (graphique) ; 26 (texte PNB)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan* 214 255 (graphique 2012)",
+    "valeur_millions": 214255
+   },
+   "resultat_net": {
+    "texte": "Résultat Net* 1 506 (graphique 2012)",
+    "valeur_millions": 1506
+   },
+   "ca": {
+    "texte": "« contre 17 257 millions de F CFA en décembre 2012 »",
+    "valeur_millions": 17257
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "resultat_net": null,
+   "ca": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "ca": "absent chez nous"
+  },
+  "remarque": "Fonds propres 2012 non imprimés"
+ },
+ {
+  "ticker": "BOAM",
+  "exercice": 2013,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/rapport_mali_2013-14_pages_1.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Mali – Rapport annuel 2013 (Chiffres clés)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "En millions de F CFA",
+  "page": "11",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan* / Total Assets* 312 189",
+    "valeur_millions": 312189
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres après répartition* 16 984",
+    "valeur_millions": 16984
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire* / Net operating income* 20 084",
+    "valeur_millions": 20084
+   },
+   "resultat_net": {
+    "texte": "Résultat Net* / Net income* 2 230",
+    "valeur_millions": 2230
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Le texte p.26 donne un PNB 2013 de 20 220 (incohérence interne)"
+ },
+ {
+  "ticker": "BOAM",
+  "exercice": 2014,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/rapport_mali_2014_0.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Mali – Rapport annuel 2014 (Chiffres clés)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de F CFA",
+  "page": "15",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan* 501 938",
+    "valeur_millions": 501938
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres après répartition* 22 465",
+    "valeur_millions": 22465
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire* / Net operating income* 26 405",
+    "valeur_millions": 26405
+   },
+   "resultat_net": {
+    "texte": "Résultat net* / Net income* 4 021",
+    "valeur_millions": 4021
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": ""
+ },
+ {
+  "ticker": "BOAM",
+  "exercice": 2015,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/etats_financiers_2015_-_mali.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Mali – États financiers 2015",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "bilan/CR en F CFA ; chiffres clés et note 2.9.1 en millions de F CFA",
+  "page": "6 (bilan), 8 (CR), 4 (chiffres clés), 13 (note 2.9.1)",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL DE L'ACTIF 535 666 075 028 (F CFA)",
+    "valeur_millions": 535666
+   },
+   "capitaux_propres": {
+    "texte": "note 2.9.1 TOTAL ... 38 009",
+    "valeur_millions": 38009
+   },
+   "ca": {
+    "texte": "PNB 30 210 (chiffres clés)",
+    "valeur_millions": 30210
+   },
+   "resultat_net": {
+    "texte": "BENEFICE 7 126 312 102 (F CFA)",
+    "valeur_millions": 7126
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": 30210.0,
+   "resultat_net": 7126.0
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)"
+  },
+  "remarque": "Fonds propres après répartition (texte p.4) : 33 029 ; colonne 2014 : total actif 501 937 957 232, bénéfice 4 021 212 202, fonds propres 24 073"
+ },
+ {
+  "ticker": "BOAN",
+  "exercice": 2015,
+  "url": "https://bank-of-africa.net/wp-content/uploads/2020/10/etats_financiers_2015_-_niger.pdf",
+  "domaine": "bank-of-africa.net",
+  "titre": "BOA-Niger – États financiers 2015",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "chiffres clés en millions de F CFA ; bilan/CR en F CFA",
+  "page": "3-4 (chiffres clés), 5-6 (bilan), 7-8 (CR)",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL DE L'ACTIF 262 943 619 529 (F CFA) ; chiffres clés « Total bilan 262 944 »",
+    "valeur_millions": 262944
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 27 402",
+    "valeur_millions": 27402
+   },
+   "ca": {
+    "texte": "PNB 18 053",
+    "valeur_millions": 18053
+   },
+   "resultat_net": {
+    "texte": "BÉNÉFICE 5 795 370 022 (F CFA)",
+    "valeur_millions": 5795
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": 18053.0,
+   "resultat_net": 5795.0
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)"
+  },
+  "remarque": "Colonne 2014 : TOTAL DE L'ACTIF 233 126 138 696 ; BÉNÉFICE 5 096 214 126 (concordent avec nos 233 126 et 5 096)"
+ },
+ {
+  "ticker": "ORGT",
+  "exercice": 2012,
+  "url": "https://www.orabank.net/sites/default/files/2020-12/rapport_annuel_oragroup_2014.pdf",
+  "domaine": "orabank.net",
+  "titre": "Oragroup – Rapport annuel 2014 (chiffres clés consolidés)",
+  "perimetre": "Consolidé groupe (référentiel non nommé ; pré-IFRS)",
+  "unite": "En millions de FCFA",
+  "page": "9",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan 701 420",
+    "valeur_millions": 701420
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire 53 287",
+    "valeur_millions": 53287
+   },
+   "resultat_net": {
+    "texte": "Résultat Net 17 292",
+    "valeur_millions": 17292
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres 65 486",
+    "valeur_millions": 65486
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": null,
+   "resultat_net": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": ""
+ },
+ {
+  "ticker": "ORGT",
+  "exercice": 2013,
+  "url": "https://www.orabank.net/sites/default/files/2020-12/rapport_annuel_oragroup_2014.pdf",
+  "domaine": "orabank.net",
+  "titre": "Oragroup – Rapport annuel 2014 (chiffres clés consolidés)",
+  "perimetre": "Consolidé groupe",
+  "unite": "En millions de FCFA",
+  "page": "9 (et 37-38 en milliers)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan 921 817",
+    "valeur_millions": 921817
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire 62 980",
+    "valeur_millions": 62980
+   },
+   "resultat_net": {
+    "texte": "Résultat Net 14 902 (dont part du groupe 12 414 616 milliers)",
+    "valeur_millions": 14902
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres 93 555",
+    "valeur_millions": 93555
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": null,
+   "resultat_net": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Résultat net total ; part du groupe 12 415 M"
+ },
+ {
+  "ticker": "ORGT",
+  "exercice": 2014,
+  "url": "https://www.orabank.net/sites/default/files/2020-12/rapport_annuel_oragroup_2014.pdf",
+  "domaine": "orabank.net",
+  "titre": "Oragroup – Rapport annuel 2014 (chiffres clés consolidés)",
+  "perimetre": "Consolidé groupe",
+  "unite": "En millions de FCFA",
+  "page": "9 (et 37-38 en milliers)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total Bilan 1 239 047",
+    "valeur_millions": 1239047
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire 81 484",
+    "valeur_millions": 81484
+   },
+   "resultat_net": {
+    "texte": "Résultat Net 7 193 (part du groupe 7 457 982 milliers)",
+    "valeur_millions": 7193
+   },
+   "capitaux_propres": {
+    "texte": "Fonds Propres 100 569",
+    "valeur_millions": 100569
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": null,
+   "resultat_net": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Le rapport 2015 retraite le total bilan 2014 à 1 238 286 et les capitaux propres totaux 2014 à 100 613"
+ },
+ {
+  "ticker": "ORGT",
+  "exercice": 2015,
+  "url": "https://www.orabank.net/sites/default/files/2020-12/rapport_annuel_2015_vf_0.pdf",
+  "domaine": "orabank.net",
+  "titre": "Oragroup – Rapport annuel 2015 (états consolidés)",
+  "perimetre": "Consolidé groupe",
+  "unite": "millions F CFA",
+  "page": "46 (CR), 47 (bilan)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total actif 1 492 922",
+    "valeur_millions": 1492922
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire 94 213",
+    "valeur_millions": 94213
+   },
+   "resultat_net": {
+    "texte": "Résultat net de l'exercice 7 972",
+    "valeur_millions": 7972
+   },
+   "capitaux_propres": {
+    "texte": "Total capitaux propres 103 018",
+    "valeur_millions": 103018
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": 94213.0,
+   "resultat_net": 7971.0,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Résultat total (part du groupe non isolée)"
+ },
+ {
+  "ticker": "ORGT",
+  "exercice": 2016,
+  "url": "https://www.orabank.net/sites/default/files/2020-12/rapport_annuel_integre_2016_groupe_orabank.pdf",
+  "domaine": "orabank.net",
+  "titre": "Groupe Orabank – Rapport annuel intégré 2016",
+  "perimetre": "Consolidé groupe",
+  "unite": "milliards de F CFA (arrondis dans le texte)",
+  "page": "7, 14",
+  "montants": {
+   "total_bilan": {
+    "texte": "« 1 637 milliards de F CFA »",
+    "valeur_millions": 1637000
+   },
+   "ca": {
+    "texte": "« 102 milliards de F CFA »",
+    "valeur_millions": 102000
+   },
+   "resultat_net": {
+    "texte": "« 15,1 milliards de F CFA »",
+    "valeur_millions": 15100
+   },
+   "capitaux_propres": {
+    "texte": "« Fonds propres … 107 milliards F CFA »",
+    "valeur_millions": 107000
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": 102216.0,
+   "resultat_net": 15150.0,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Montants arrondis au milliard : écarts < arrondi non significatifs ; états détaillés (section 5.2) non lus"
+ },
+ {
+  "ticker": "NSBC",
+  "exercice": 2012,
+  "url": "https://www.nsiabanque.ci/wp-content/uploads/2020/05/RAPPORT-ANNUEL-NSIA-BANQUE-2014.pdf",
+  "domaine": "nsiabanque.ci",
+  "titre": "NSIA Banque – Rapport annuel 2014 (chiffres clés)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions FCFA",
+  "page": "13",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 474 069",
+    "valeur_millions": 474069
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous"
+  },
+  "remarque": "Fonds propres effectifs 24 907 (mesure prudentielle, pas capitaux propres comptables) ; PNB et RN 2012 non imprimés"
+ },
+ {
+  "ticker": "NSBC",
+  "exercice": 2013,
+  "url": "https://www.nsiabanque.ci/wp-content/uploads/2020/05/RAPPORT-ANNUEL-NSIA-BANQUE-2014.pdf",
+  "domaine": "nsiabanque.ci",
+  "titre": "NSIA Banque – Rapport annuel 2014",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions FCFA",
+  "page": "13, 14, 30, 43-44",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL DE L'ACTIF 515 517",
+    "valeur_millions": 515517
+   },
+   "ca": {
+    "texte": "Produit net bancaire 36 052",
+    "valeur_millions": 36052
+   },
+   "resultat_net": {
+    "texte": "RESULTAT DE L'EXERCICE 5 249",
+    "valeur_millions": 5249
+   },
+   "capitaux_propres": {
+    "texte": "somme passif capital+réserves+RAN+résultat = 35 173 (calcul)",
+    "valeur_millions": null
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": null,
+   "resultat_net": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Fonds propres effectifs 27 987 ; capitaux propres non imprimés en total"
+ },
+ {
+  "ticker": "NSBC",
+  "exercice": 2014,
+  "url": "https://www.nsiabanque.ci/wp-content/uploads/2020/05/RAPPORT-ANNUEL-NSIA-BANQUE-2014.pdf",
+  "domaine": "nsiabanque.ci",
+  "titre": "NSIA Banque – Rapport annuel 2014",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions FCFA",
+  "page": "13, 14, 30, 43-44",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL DE L'ACTIF 628 578",
+    "valeur_millions": 628578
+   },
+   "ca": {
+    "texte": "Produit net bancaire 38 881",
+    "valeur_millions": 38881
+   },
+   "resultat_net": {
+    "texte": "RESULTAT DE L'EXERCICE 11 224",
+    "valeur_millions": 11224
+   },
+   "capitaux_propres": {
+    "texte": "résolution d'affectation : total 46 398 168 111 FCFA (y c. résultat)",
+    "valeur_millions": 46398
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": 38881.0,
+   "resultat_net": 11224.0,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Ambiguïté : le rapport 2015 p.23 indique « CAPITAUX PROPRES 35 174 » pour 2014 (hors résultat ?). Fonds propres effectifs 43 617. Total bilan brut 662 989 (tableau p.25)"
+ },
+ {
+  "ticker": "NSBC",
+  "exercice": 2015,
+  "url": "https://www.nsiabanque.ci/wp-content/uploads/2019/09/RAPPORT-ANNUEL-2015-NSIA-BANQUE.pdf",
+  "domaine": "nsiabanque.ci",
+  "titre": "NSIA Banque – Rapport annuel 2015",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions FCFA",
+  "page": "11, 13, 23, 40, 44",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 750 062",
+    "valeur_millions": 750062
+   },
+   "ca": {
+    "texte": "PRODUIT NET BANCAIRE 48 143",
+    "valeur_millions": 48143
+   },
+   "resultat_net": {
+    "texte": "RESULTAT DE L'EXERCICE 14 296",
+    "valeur_millions": 14296
+   },
+   "capitaux_propres": {
+    "texte": "CAPITAUX PROPRES 36 898 (Rapport du CA, tableau passif)",
+    "valeur_millions": 36898
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": 48143.0,
+   "resultat_net": 14296.0,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Capitaux propres 36 898 semblent hors résultat ; fonds propres effectifs 44 486"
+ },
+ {
+  "ticker": "NSBC",
+  "exercice": 2016,
+  "url": "https://www.nsiabanque.ci/wp-content/uploads/2019/09/RAPPORT-ANNUEL-2016-NSIA-BANQUE.pdf",
+  "domaine": "nsiabanque.ci",
+  "titre": "NSIA Banque – Rapport annuel 2016",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de F CFA",
+  "page": "15, 27, 41, 43",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL DE L'ACTIF 843 226",
+    "valeur_millions": 843226
+   },
+   "ca": {
+    "texte": "PRODUIT NET BANCAIRE 58 691 (p.15) ; P.N.B 58 656 (p.27)",
+    "valeur_millions": 58691
+   },
+   "resultat_net": {
+    "texte": "RESULTAT DE L'EXERCICE (+/-) 17 120",
+    "valeur_millions": 17120
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": 843226.0,
+   "ca": 59439.0,
+   "resultat_net": 17120.0
+  },
+  "ecart": {
+   "total_bilan": "ok (<0,5 %)",
+   "ca": 1.27,
+   "resultat_net": "ok (<0,5 %)"
+  },
+  "remarque": "ÉCART PNB : notre 59 439 vs 58 691/58 656 publiés (≈ +1,3 %). Possible différence de définition du PNB (agrégat recalculé) — à vérifier"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2012,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/2014_RAPPORT_ANNUEL.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2014",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de F CFA",
+  "page": "17-21 (approx.)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 408 318",
+    "valeur_millions": 408318
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 20 589",
+    "valeur_millions": 20589
+   },
+   "ca": {
+    "texte": "Produit net bancaire 27 117",
+    "valeur_millions": 27117
+   },
+   "resultat_net": {
+    "texte": "Résultat net 15 017",
+    "valeur_millions": 15017
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Fonds propres (revue financière), distincts des fonds propres effectifs prudentiels"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2013,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/2014_RAPPORT_ANNUEL.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2014",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de F CFA",
+  "page": "17-21 (approx.)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 452 629",
+    "valeur_millions": 452629
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 38 075",
+    "valeur_millions": 38075
+   },
+   "ca": {
+    "texte": "Produit net bancaire 32 656",
+    "valeur_millions": 32656
+   },
+   "resultat_net": {
+    "texte": "Résultat net 15 575",
+    "valeur_millions": 15575
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Fonds propres (revue financière), distincts des fonds propres effectifs prudentiels"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2014,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/2014_RAPPORT_ANNUEL.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2014",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de F CFA",
+  "page": "17-21 (approx.)",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 533 640",
+    "valeur_millions": 533640
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 43 319",
+    "valeur_millions": 43319
+   },
+   "ca": {
+    "texte": "Produit net bancaire 32 472",
+    "valeur_millions": 32472
+   },
+   "resultat_net": {
+    "texte": "Résultat net 15 055",
+    "valeur_millions": 15055
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "2014 : graphique p.18 donne 533 634 vs bilan 533 640 ; le RA 2016 donne PNB 2014 = 32 463"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2015,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/2016-RAPPORT-ANNUEL.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2016",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de FCFA (total bilan en milliards dans le texte)",
+  "page": "17, 19",
+  "montants": {
+   "total_bilan": {
+    "texte": "« 648.2 milliards »",
+    "valeur_millions": 648200
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire 33 505",
+    "valeur_millions": 33505
+   },
+   "resultat_net": {
+    "texte": "Résultat net 15 000",
+    "valeur_millions": 15000
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Total bilan arrondi (texte) ; capitaux propres 2015 non imprimés"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2016,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/2016-RAPPORT-ANNUEL.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2016",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de FCFA",
+  "page": "19, 25",
+  "montants": {
+   "total_bilan": {
+    "texte": "884 998 (rapport des CAC)",
+    "valeur_millions": 884998
+   },
+   "ca": {
+    "texte": "Produit Net Bancaire 33 569",
+    "valeur_millions": 33569
+   },
+   "resultat_net": {
+    "texte": "Résultat net 16 380",
+    "valeur_millions": 16380
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": 884998.0,
+   "ca": null,
+   "resultat_net": 16380.0
+  },
+  "ecart": {
+   "total_bilan": "ok (<0,5 %)",
+   "ca": "absent chez nous",
+   "resultat_net": "ok (<0,5 %)"
+  },
+  "remarque": "Le RA 2018 présente un RN 2016 retraité de 16 632. Capitaux propres : 94,5 Mds avant résultat 2016 (texte)"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2018,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/Rapport-Annuel-CBI-2018.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2018",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de FCFA",
+  "page": "22-23 (approx.)",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 1 152 245 (bilan comparé)",
+    "valeur_millions": 1152245
+   },
+   "ca": {
+    "texte": "Produit net bancaire 56 705",
+    "valeur_millions": 56705
+   },
+   "resultat_net": {
+    "texte": "Résultat net 24 531",
+    "valeur_millions": 24531
+   },
+   "capitaux_propres": {
+    "texte": "« 105,1 milliards » (texte, avant résultat 2018)",
+    "valeur_millions": 105100
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "ca": 57545.0,
+   "resultat_net": 24531.0,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "ca": 1.48,
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "ÉCART PNB : notre 57 545 vs 56 705 publié (+1,5 %). Capitaux propres hors résultat de l'exercice. Colonne 2017 : TA 1 132 011, PNB 45 269, RN 19 571"
+ },
+ {
+  "ticker": "CBIBF",
+  "exercice": 2017,
+  "url": "https://burkina.coris.bank/wp-content/uploads/2020/01/Rapport-Annuel-CBI-2018.pdf",
+  "domaine": "burkina.coris.bank",
+  "titre": "Coris Bank International – Rapport annuel 2018 (colonne N-1)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "millions de FCFA",
+  "page": "22-23",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 1 132 011",
+    "valeur_millions": 1132011
+   },
+   "ca": {
+    "texte": "Produit net bancaire 45 269",
+    "valeur_millions": 45269
+   },
+   "resultat_net": {
+    "texte": "Résultat net 19 571",
+    "valeur_millions": 19571
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": 1132011.0,
+   "ca": null,
+   "resultat_net": 19571.0
+  },
+  "ecart": {
+   "total_bilan": "ok (<0,5 %)",
+   "ca": "absent chez nous",
+   "resultat_net": "ok (<0,5 %)"
+  },
+  "remarque": ""
+ },
+ {
+  "ticker": "SIBC",
+  "exercice": 2012,
+  "url": "https://entreprises.sib.ci/wp-content/uploads/2022/07/SIB_RA_2014.pdf",
+  "domaine": "entreprises.sib.ci",
+  "titre": "SIB – Rapport annuel 2014 (chiffres clés)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "milliards de FCFA",
+  "page": "12",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 371,7",
+    "valeur_millions": 371700
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 27,8",
+    "valeur_millions": 27800
+   },
+   "ca": {
+    "texte": "Produit net bancaire 32,0",
+    "valeur_millions": 32000
+   },
+   "resultat_net": {
+    "texte": "Résultat net 8,7",
+    "valeur_millions": 8700
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Arrondis au 100 M"
+ },
+ {
+  "ticker": "SIBC",
+  "exercice": 2013,
+  "url": "https://entreprises.sib.ci/wp-content/uploads/2022/07/SIB_RA_2014.pdf",
+  "domaine": "entreprises.sib.ci",
+  "titre": "SIB – Rapport annuel 2014 (chiffres clés)",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "milliards de FCFA",
+  "page": "12",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 479,8",
+    "valeur_millions": 479800
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 28,1",
+    "valeur_millions": 28100
+   },
+   "ca": {
+    "texte": "Produit net bancaire 34,6",
+    "valeur_millions": 34600
+   },
+   "resultat_net": {
+    "texte": "Résultat net 10,5",
+    "valeur_millions": 10500
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Arrondis au 100 M"
+ },
+ {
+  "ticker": "SIBC",
+  "exercice": 2014,
+  "url": "https://entreprises.sib.ci/wp-content/uploads/2022/07/SIB_RA_2014.pdf",
+  "domaine": "entreprises.sib.ci",
+  "titre": "SIB – Rapport annuel 2014",
+  "perimetre": "Comptes sociaux, plan comptable bancaire UMOA",
+  "unite": "chiffres clés en milliards ; comptes sociaux en FCFA",
+  "page": "12, 46, 52-53",
+  "montants": {
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 499 791 566 504 (FCFA) ; chiffres clés 500,8",
+    "valeur_millions": 499792
+   },
+   "capitaux_propres": {
+    "texte": "Fonds propres 34,1",
+    "valeur_millions": 34100
+   },
+   "ca": {
+    "texte": "Produit net bancaire 39,6",
+    "valeur_millions": 39600
+   },
+   "resultat_net": {
+    "texte": "Bénéfice de l'exercice 8 451 686 536 (FCFA)",
+    "valeur_millions": 8452
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": null,
+   "capitaux_propres": null,
+   "ca": null,
+   "resultat_net": null
+  },
+  "ecart": {
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous"
+  },
+  "remarque": "Total bilan : chiffres clés 500,8 Mds ≠ bilan 499,79 Mds"
+ },
+ {
+  "ticker": "SCRC",
+  "exercice": 2016,
+  "url": "https://groupesifca.com/wp-content/uploads/2022/07/ra-sucrivoire-2016.pdf",
+  "domaine": "groupesifca.com",
+  "titre": "Sucrivoire – Rapport annuel 2016",
+  "perimetre": "Comptes sociaux SYSCOHADA",
+  "unite": "millions FCFA",
+  "page": "Rapport du CA I.1, I.4",
+  "montants": {
+   "ca": {
+    "texte": "Chiffre d'affaires 52 799",
+    "valeur_millions": 52799
+   },
+   "resultat_net": {
+    "texte": "Résultat net 4 269",
+    "valeur_millions": 4269
+   },
+   "capitaux_propres": {
+    "texte": "Capitaux propres 49 160",
+    "valeur_millions": 49160
+   }
+  },
+  "notre_valeur": {
+   "ca": 52799.0,
+   "resultat_net": 4269.0,
+   "capitaux_propres": 49160.0
+  },
+  "ecart": {
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "ok (<0,5 %)"
+  },
+  "remarque": "Colonne 2015 : CA 47 728, RN 5 867, CP 48 896 (concordent). Aucune donnée 2012-2014 dans les rapports Sucrivoire en ligne (série 2016-2025 seulement)"
+ },
+ {
+  "ticker": "SHEC",
+  "exercice": 2012,
+  "url": "https://www.brvm.org/sites/default/files/20130712_-_efa_-_vivo_energy_ci_-_exercice_2012.pdf",
+  "domaine": "brvm.org",
+  "titre": "Vivo Energy CI – États financiers approuvés exercice 2012",
+  "perimetre": "Comptes sociaux SYSCOHADA",
+  "unite": "en milliers de F. CFA (Kfcfa)",
+  "page": "n.p. (sections 1-3)",
+  "montants": {
+   "ca": {
+    "texte": "Chiffre d'Affaires 151 142 579",
+    "valeur_millions": 151142.579
+   },
+   "resultat_net": {
+    "texte": "RESULTAT NET 2 313 625",
+    "valeur_millions": 2313.625
+   },
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 44 584 735",
+    "valeur_millions": 44584.735
+   },
+   "capitaux_propres": {
+    "texte": "pas de total ; somme capital 3 150 000 + primes & réserves 8 292 642 + autres 500 377 + résultat 2 313 625 = 14 256 644 (calcul)",
+    "valeur_millions": 14256.644
+   }
+  },
+  "notre_valeur": {
+   "ca": null,
+   "resultat_net": null,
+   "total_bilan": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Document sur brvm.org (contrairement à l'hypothèse) ; colonne 2011 : CA 81 975 210, RN -1 140 000, TA 33 268 487"
+ },
+ {
+  "ticker": "SHEC",
+  "exercice": 2013,
+  "url": "https://www.brvm.org/sites/default/files/20150526_-_efp_-_vivo_energy_ci_-_exercice_2014.pdf",
+  "domaine": "brvm.org",
+  "titre": "Vivo Energy CI – États financiers provisoires au 31/12/2014 (colonne 2013)",
+  "perimetre": "Comptes sociaux SYSCOHADA",
+  "unite": "en milliers de FCFA",
+  "page": "n.p.",
+  "montants": {
+   "ca": {
+    "texte": "Chiffre d'Affaires … 214 350 169",
+    "valeur_millions": 214350.169
+   },
+   "resultat_net": {
+    "texte": "RESULTAT NET … 3 043 368",
+    "valeur_millions": 3043.368
+   },
+   "total_bilan": {
+    "texte": "TOTAL ACTIF … 59 776 655",
+    "valeur_millions": 59776.655
+   },
+   "capitaux_propres": {
+    "texte": "somme 3 150 000 + 9 856 566 + 500 377 + 3 043 368 = 16 550 311 (calcul)",
+    "valeur_millions": 16550.311
+   }
+  },
+  "notre_valeur": {
+   "ca": null,
+   "resultat_net": null,
+   "total_bilan": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": ""
+ },
+ {
+  "ticker": "SHEC",
+  "exercice": 2014,
+  "url": "https://www.brvm.org/sites/default/files/20150526_-_efp_-_vivo_energy_ci_-_exercice_2014.pdf",
+  "domaine": "brvm.org",
+  "titre": "Vivo Energy CI – États financiers PROVISOIRES au 31/12/2014",
+  "perimetre": "Comptes sociaux SYSCOHADA (provisoires)",
+  "unite": "en milliers de FCFA",
+  "page": "n.p.",
+  "montants": {
+   "ca": {
+    "texte": "Chiffre d'Affaires 259 353 529",
+    "valeur_millions": 259353.529
+   },
+   "resultat_net": {
+    "texte": "RESULTAT NET 2 962 394",
+    "valeur_millions": 2962.394
+   },
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 72 702 616",
+    "valeur_millions": 72702.616
+   },
+   "capitaux_propres": {
+    "texte": "somme 3 150 000 + 11 999 034 + 500 377 + 2 962 394 = 18 611 805 (calcul)",
+    "valeur_millions": 18611.805
+   }
+  },
+  "notre_valeur": {
+   "ca": null,
+   "resultat_net": null,
+   "total_bilan": null,
+   "capitaux_propres": null
+  },
+  "ecart": {
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "total_bilan": "absent chez nous",
+   "capitaux_propres": "absent chez nous"
+  },
+  "remarque": "Provisoires, soumis à l'AGO"
+ },
+ {
+  "ticker": "TTLS",
+  "exercice": 2015,
+  "url": "https://www.brvm.org/sites/default/files/20160616_-_ra_-_total_sn_-_exercice_2015.pdf",
+  "domaine": "brvm.org",
+  "titre": "Total Sénégal – Rapport annuel 2015",
+  "perimetre": "Comptes sociaux SYSCOHADA système normal",
+  "unite": "FCFA",
+  "page": "37-43",
+  "montants": {
+   "ca": {
+    "texte": "CHIFFRE D'AFFAIRES 357 211 299 091",
+    "valeur_millions": 357211.3
+   },
+   "resultat_net": {
+    "texte": "RÉSULTAT NET 3 953 007 560",
+    "valeur_millions": 3953.0
+   },
+   "capitaux_propres": {
+    "texte": "TOTAL CAPITAUX PROPRES (I) 20 440 214 193",
+    "valeur_millions": 20440.2
+   },
+   "total_bilan": {
+    "texte": "TOTAL GÉNÉRAL 122 126 972 806",
+    "valeur_millions": 122127.0
+   }
+  },
+  "notre_valeur": {
+   "ca": 357211.3,
+   "resultat_net": 3953.0,
+   "capitaux_propres": null,
+   "total_bilan": 122127.0
+  },
+  "ecart": {
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous",
+   "total_bilan": "ok (<0,5 %)"
+  },
+  "remarque": ""
+ },
+ {
+  "ticker": "TTLS",
+  "exercice": 2014,
+  "url": "https://www.brvm.org/sites/default/files/20160616_-_ra_-_total_sn_-_exercice_2015.pdf",
+  "domaine": "brvm.org",
+  "titre": "Total Sénégal – Rapport annuel 2015 (colonne 2014)",
+  "perimetre": "Comptes sociaux SYSCOHADA système normal",
+  "unite": "FCFA",
+  "page": "37-43",
+  "montants": {
+   "ca": {
+    "texte": "CHIFFRE D'AFFAIRES 422 987 745 058",
+    "valeur_millions": 422987.7
+   },
+   "resultat_net": {
+    "texte": "RÉSULTAT NET 4 900 721 273",
+    "valeur_millions": 4900.7
+   },
+   "capitaux_propres": {
+    "texte": "TOTAL CAPITAUX PROPRES (I) 19 614 665 833",
+    "valeur_millions": 19614.7
+   },
+   "total_bilan": {
+    "texte": "TOTAL GÉNÉRAL 120 209 819 616",
+    "valeur_millions": 120209.8
+   }
+  },
+  "notre_valeur": {
+   "ca": 422988.0,
+   "resultat_net": 4901.0,
+   "capitaux_propres": null,
+   "total_bilan": null
+  },
+  "ecart": {
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous",
+   "total_bilan": "absent chez nous"
+  },
+  "remarque": "2012-2013 : non trouvés (EF provisoires 2014 sur brvm.org = PDF scanné illisible)"
+ },
+ {
+  "ticker": "UNLC",
+  "exercice": 2016,
+  "url": "https://www.brvm.org/sites/default/files/20170616-etats_financiers_exercice_2016-_unilever_ci.pdf",
+  "domaine": "brvm.org",
+  "titre": "Unilever Côte d'Ivoire – États financiers exercice 2016",
+  "perimetre": "Comptes sociaux SYSCOHADA",
+  "unite": "unité non indiquée (montants en FCFA d'après l'ordre de grandeur)",
+  "page": "10-13",
+  "montants": {
+   "ca": {
+    "texte": "TI CHIFFRE D'AFFAIRES 57 489 135 002",
+    "valeur_millions": 57489.1
+   },
+   "resultat_net": {
+    "texte": "CI Résultat net de l'exercice -10 633 332 122",
+    "valeur_millions": -10633.3
+   },
+   "capitaux_propres": {
+    "texte": "CP TOTAL CAPITAUX PROPRES (I) -18 373 438 562",
+    "valeur_millions": -18373.4
+   },
+   "total_bilan": {
+    "texte": "BZ TOTAL GÉNÉRAL 75 558 658 777",
+    "valeur_millions": 75558.7
+   }
+  },
+  "notre_valeur": {
+   "ca": 57489.0,
+   "resultat_net": -10633.0,
+   "capitaux_propres": null,
+   "total_bilan": null
+  },
+  "ecart": {
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)",
+   "capitaux_propres": "absent chez nous",
+   "total_bilan": "absent chez nous"
+  },
+  "remarque": "Colonne 2015 : CA 55 909 255 822, RN -2 611 303 039, CP -7 740 106 440 (concordent) ; total général 2015 non imprimé"
+ },
+ {
+  "ticker": "SMBC",
+  "exercice": 2015,
+  "url": "https://www.brvm.org/sites/default/files/20170419-etas_financiers_provisoires_exercice_2016_-_smb_ci.pdf",
+  "domaine": "brvm.org",
+  "titre": "SMB CI – États financiers provisoires exercice 2016 (colonne 2015)",
+  "perimetre": "Comptes sociaux SYSCOHADA",
+  "unite": "en millions de FCFA",
+  "page": "n.p.",
+  "montants": {
+   "ca": {
+    "texte": "CHIFFRE D'AFFAIRES 92 255 133 378 → 2015 : 133 378",
+    "valeur_millions": 133378
+   },
+   "resultat_net": {
+    "texte": "RESULTAT NET 6 860 5 535 → 2015 : 5 535",
+    "valeur_millions": 5535
+   },
+   "capitaux_propres": {
+    "texte": "CAPITAUX PROPRES 175 (6 685) → 2015 : -6 685",
+    "valeur_millions": -6685
+   },
+   "total_bilan": {
+    "texte": "TOTAL ACTIF 83 466 76 217 → 2015 : 76 217",
+    "valeur_millions": 76217
+   }
+  },
+  "notre_valeur": {
+   "ca": null,
+   "resultat_net": null,
+   "capitaux_propres": null,
+   "total_bilan": null
+  },
+  "ecart": {
+   "ca": "absent chez nous",
+   "resultat_net": "absent chez nous",
+   "capitaux_propres": "absent chez nous",
+   "total_bilan": "absent chez nous"
+  },
+  "remarque": "Alignement des colonnes inféré par l'extracteur ; colonne 2016 concorde exactement avec nos chiffres 2016"
+ },
+ {
+  "ticker": "BBGC",
+  "exercice": 2025,
+  "url": "https://www.bridgebankgroup.com/documents/ipo/IPO-BBGCI-Note-dinformation-20260709.pdf",
+  "domaine": "bridgebankgroup.com",
+  "titre": "Bridge Bank Group CI – Note d'information IPO (juillet 2026)",
+  "perimetre": "Comptes sociaux PCB révisé UMOA",
+  "unite": "Mds FCFA (arrondis)",
+  "page": "18, 45",
+  "montants": {
+   "total_bilan": {
+    "texte": "Total bilan 1 428 (graphique) / 1 427 (texte)",
+    "valeur_millions": 1427000
+   },
+   "capitaux_propres": {
+    "texte": "105",
+    "valeur_millions": 105000
+   },
+   "ca": {
+    "texte": "PNB 67,8",
+    "valeur_millions": 67800
+   },
+   "resultat_net": {
+    "texte": "27,2",
+    "valeur_millions": 27200
+   }
+  },
+  "notre_valeur": {
+   "total_bilan": 1427417,
+   "capitaux_propres": 105139,
+   "ca": 67824,
+   "resultat_net": 27197
+  },
+  "ecart": {
+   "total_bilan": "ok (<0,5 %)",
+   "capitaux_propres": "ok (<0,5 %)",
+   "ca": "ok (<0,5 %)",
+   "resultat_net": "ok (<0,5 %)"
+  },
+  "remarque": "Arrondis ; 2021-2024 concordent aussi à l'arrondi près (710/908/837/1 120 ; 53/66/77/90 ; 42,4/49,4/59,1 ; 17,5/19,8/22,8). Aucune donnée 2012-2020 dans la note"
+ }
+]
