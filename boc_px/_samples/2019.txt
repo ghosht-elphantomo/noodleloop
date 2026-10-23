@@ -1,0 +1,361 @@
+BRVM 10                                  149,11                                                                                                                                                                         BRVM Composite                                   159,24
+
+
+Variation Jour                               0,80 %
+                                                                             BULLETIN OFFICIEL DE                                                                                                                       Variation Jour                                    1,35 %
+
+                                                                                   LA COTE
+Variation annuelle                        -3,40 % N° 249                                     mardi 31 décembre 2019                                                                        Site : www.brvm.org Variation annuelle                                        -7,55 %
+
+
+
+
+Actions                                                                 Niveau                          Evol. Jour                            Obligations                                                                       Niveau                        Evol. Jour
+Capitalisation boursière (FCFA)(Actions & Droits)                      4 740 600 242 893                               1,35 %                 Capitalisation boursière (FCFA)                                                  4 232 646 444 423                           0,25 %
+Volume échangé (Actions & Droits)                                                2 675 809                          631,19 %                  Volume échangé                                                                                  19 450                 1 359,11 %
+Valeur transigée (FCFA) (Actions & Droits)                                   4 995 184 110                          410,43 %                  Valeur transigée (FCFA)                                                                    190 492 940                 1 986,11 %
+Nombre de titres transigés                                                                  35                        -5,41 %                 Nombre de titres transigés                                                                           17                    325,00 %
+Nombre de titres en hausse                                                                  21                       90,91 %                  Nombre de titres en hausse                                                                           14                1 300,00 %
+Nombre de titres en baisse                                                                    5                     -61,54 %                  Nombre de titres en baisse                                                                             1                     0,00 %
+Nombre de titres inchangés                                                                    9                     -30,77 %                  Nombre de titres inchangés                                                                             2                     0,00 %
+
+PLUS FORTES HAUSSES                                                                                                                          PLUS FORTES BAISSES
+Titres                                                            Cours                Evol. Jour                  Evol.                      Titres                                                                   Cours                Evol. Jour             Evol.
+                                                                                                                  annuelle                                                                                                                                        annuelle
+SOGB CI (SOGC)                                                               2 580                7,50 %              12,91 %                 BANK OF AFRICA ML (BOAM)                                                              1 150           -4,96 %               -53,06 %
+FILTISAC CI (FTSC)                                                           1 725                7,48 %            -18,63 %                  TOTAL SN (TTLS)                                                                       1 700           -2,86 %               17,24 %
+NSIA BANQUE COTE D'IVOIRE (NSBC)                                             6 470                7,48 %               7,83 %                 BANK OF AFRICA BN (BOAB)                                                              3 610           -1,10 %               -14,05 %
+CFAO MOTORS CI (CFAC)                                                          435                7,41 %            -32,03 %                  SERVAIR ABIDJAN CI (ABJC)                                                             1 250           -0,40 %                4,17 %
+VIVO ENERGY CI (SHEC)                                                          800                7,38 %            -15,34 %                  SOCIETE IVOIRIENNE DE BANQUE (SIBC)                                                   2 820           -0,18 %                4,44 %
+
+
+INDICES SECTORIELS
+Base = 100 au 14 juin 1999                               Nombre de sociétés                             Valeur                        Evol. Jour               Evol. annuelle                    Volume                         Valeur                       PER moyen
+BRVM - INDUSTRIE                                                      12                                  37,66                           2,25 %                      -34,24 %                    70 817                      115 575 610                         14,29
+BRVM - SERVICES PUBLICS                                                4                                 495,38                           0,75 %                        0,01 %                    341 951                     912 738 755                         10,29
+BRVM - FINANCES                                                       15                                  60,99                           1,18 %                       -9,46 %                    85 805                      429 133 665                          9,17
+BRVM - TRANSPORT                                                       2                                 366,76                           0,33 %                      -24,61 %                     8 503                      11 904 500                           7,84
+BRVM - AGRICULTURE                                                     5                                  85,88                           5,66 %                      -32,48 %                    20 153                      40 865 965                          10,19
+BRVM - DISTRIBUTION                                                    7                                 253,26                           4,17 %                       -5,44 %                   2 148 580                  3 484 965 615                          9,30
+BRVM - AUTRES SECTEURS                                                 1                                 302,30                           0,00 %                       44,12 %                        0                              0                             9,00
+BRVM - PETITES CAPITALISATIONS                                         -                                      -                               -                             -                         -                              -                               -
+
+
+Indicateurs                                                  1er et 2è Comp.                           BRVM PC                                Indicateurs                                                          1er et 2è Comp.                          BRVM PC
+PER moyen du marché                                                   10,30                                                                   Ratio moyen de liquidité                                                      102,91
+Taux de rendement moyen du marché                                     10,11                                                                   Ratio moyen de satisfaction                                                    40,84
+Taux de rentabilité moyen du marché                                   12,04                                                                   Ratio moyen de tendance                                                        39,69
+Nombre de sociétés cotées                                               46                                                                    Ratio moyen de couverture                                                     251,96
+Nombre de lignes obligataires                                           58                                                                    Taux de rotation moyen du marché                                               0,25
+Volume moyen annuel par séance                                      3 342,00                                                                  Prime de risque du marché                                                      3,21
+Valeur moyenne annuelle par séance                               5 641 024,58                                                                 Nombre de SGI participantes                                                      29
+
+Définitions
+Volume moyen annuel par séance            = Volume annuel échangé / nombre de séances                                                                Taux moyen de rotation                      = moyenne des taux de rotation des actions cotées (volume transigé/capi flottante)
+Valeur moyenne annuelle par séance        = Valeur annuelle échangée / nombre de séances                                                             PER moyen du marché                         = moyenne des PER des actions cotées ayant un PER positif
+Ratio moyen de liquidité                  = Moyenne des ratios de liquidité (Titres échangés / Volume des ordres de vente)                           Taux de rendement moyen                     = moyenne des taux de rendement des actions cotées ayant distribué un dividende
+Ratio moyen de satisfaction               = Moyenne des ratios de satisfaction (Titres échangés / Volume des ordres d'achat)                         Taux de rentabilité moyen                   = moyenne des taux de rentabilité des actions cotées
+Ratio moyen de tendance                   = Moyenne des ratios de tendance (Volume des ordres d'achat / Volume des ordres de vente)                  Prime de risque du marché                   = (1 / le PER moyen du marché) - le taux de référence actuel des emprunts d'Etat
+Ratio moyen de couverture                 = Moyenne des ratios de couverture (Volume des ordres de vente / Volume des ordres d'achat)
+
+
+
+
+                                                                                                            BRVM - BOURSE REGIONALE DES VALEURS MOBILIERES
+                                                                                 BRVM - Société Anonyme au capital de 3.062.040.000 CFA - RC : CI - ABJ - 1997 - B - 208435 - CC : 9819725 - E
+                                                                                     Siège Social : Abidjan - CÔTE D'IVOIRE. Adresse : 18,Rue Joseph ANOMA (Rue des Banques) - Abidjan
+                                                                                    Tél : +225 20 32 66 85 / 86, Fax : +225 20 32 66 84, Mail : brvm@brvm.org, Site Web : www.brvm.org
+                                                                                                                                                              mardi 31 décembre 2019
+
+
+
+
+                                                    Cours du jour                   Séance de cotation                        Variation de       Dernier dividende
+                                        Cours                          Variation                                   Cours
+Symbole                 Titre                                                                                                    l'année               payé                  Rdt. Net    PER
+                                      Précédent                          jour                                    Référence
+                                                    Ouv.      Clôt.                 Volume          Valeur                     précédente      Montant net     Date
+
+SECTEUR - INDUSTRIE                   37,66         points               2,25 %
+
+CABC      SICABLE CI                          625      610       630       0,80 %     3 875          2 421 555         630          -36,36 %         75,00      3-juin-19      11,90 %    4,89
+
+FTSC      FILTISAC CI                      1 605      1 725    1 725       7,48 %    44 697         77 102 325        1 725         -18,63 %        110,00     31-juil.-19      6,38 %   14,46
+
+NEIC      NEI-CEDA CI                         140       NC       NC        0,00 %                                      140          -17,65 %          9,00     28-juin-01                 2,31
+
+NTLC      NESTLE CI                           395       NC       NC        0,00 %                                      395          -60,89 %         31,50    12-août-11                 10,64
+
+SEMC      CROWN SIEM CI                       130       NC       NC        0,00 %                                      130          -56,67 %         16,92 29-sept.-17         13,02 %
+
+SIVC      AIR LIQUIDE CI                      180      185       185       2,78 %        77            14 245          185          -65,42 %         63,00 29-sept.-17         34,05 %
+
+SLBC      SOLIBRA CI                      45 000        NC       NC        0,00 %                                    45 000         -19,64 %       1 368,00     6-juin-19       3,04 %   56,76
+
+SMBC      SMB CI                           2 500      2 500    2 500       0,00 %       813          2 032 500        2 500         -48,72 %        450,00    30-août-19       18,00 %    2,47
+
+STBC      SITAB CI                            605       NC       NC        0,00 %                                      605          -67,03 %        206,20     19-juin-17      34,08 %
+
+TTRC      TRITURAF CI-Ste en                  490       SP        SP       0,00 %                                      490            0,00 %       1 440,00    19-juil.-02
+          Liquidation
+
+UNLC      UNILEVER CI                      3 500        SP        SP       0,00 %                                     2 500         -44,79 %       1 233,00     9-juil.-12
+
+UNXC      UNIWAX CI                        1 610      1 500    1 725       7,14 %    21 355         34 004 985        1 725         -15,02 %        181,80     11-juil.-19     10,54 %    8,53
+
+TOTAL                                                                                 70 817       115 575 610                                                                            14,29
+
+
+SECTEUR - SERVICES PUBLICS            495,38        points               0,75 %
+
+CIEC      CIE CI                           1 510      1 500    1 600       5,96 %   317 491        507 837 250        1 600          10,73 %         79,23     9-août-19        4,95 %   18,18
+
+ONTBF     ONATEL BF                        2 700      2 740    2 705       0,19 %       586          1 595 110        2 705         -34,82 %        409,36      3-juin-19      15,13 %    5,78
+
+SDCC      SODE CI                          2 800      2 800    2 800       0,00 %         5            14 000         2 800         -27,93 %        270,00     29-oct.-19       9,64 %    8,80
+
+SNTS      SONATEL SN                      16 900     16 495   16 995       0,56 %    23 869        403 292 395       16 995           6,22 %       1 500,00    14-mai-19        8,83 %    8,40
+
+TOTAL                                                                                341 951       912 738 755                                                                            10,29
+
+
+SECTEUR - FINANCES                    60,99         points               1,18 %
+
+BICC      BICI CI                          6 795      6 800    6 800       0,07 %     6 106         41 520 800        6 800         -13,92 %        182,90     17-juil.-19      2,69 %   11,57
+
+BOAB      BANK OF AFRICA BN                3 650      3 650    3 610      -1,10 %       842          3 065 830        3 610         -14,05 %        416,00     22-mai-19       11,52 %    5,75
+
+BOABF     BANK OF AFRICA BF                3 695      3 700    3 790       2,57 %     2 173          8 202 195        3 790         -27,12 %        366,00      2-mai-19        9,66 %    4,82
+
+BOAC      BANK OF AFRICA CI                3 990      3 945    3 995       0,13 %     5 025         20 073 625        3 995          -4,88 %        306,00     20-mai-19        7,66 %    6,83
+
+BOAM      BANK OF AFRICA ML                1 210      1 200    1 150      -4,96 %     1 746          2 102 150        1 150         -53,06 %        271,00     15-mai-19       23,57 %    2,80
+
+BOAN      BANK OF AFRICA NG                3 205      3 205    3 385       5,62 %     4 334         14 599 105        3 385         -13,21 %        385,95     27-mai-19       11,40 %    5,74
+
+BOAS      BANK OF AFRICA SENEGAL           1 545      1 550    1 545       0,00 %     5 558          8 614 255        1 545         -23,51 %        160,00      3-juin-19      10,36 %    3,26
+
+CBIBF     CORIS BANK INTERNATIONAL         8 000      7 500    8 000       0,00 %       861          6 845 970        8 000          -7,99 %        402,00      5-juil.-19      5,03 %   10,44
+
+ECOC      ECOBANK COTE D''IVOIRE           3 990      3 700    3 990       0,00 %     6 685         26 400 160        3 990          -5,90 %        241,00     15-mai-19        6,04 %   10,61
+
+ETIT      ECOBANK TRANS. INCORP. TG            14       14        14       0,00 %       150              2 100          14          -22,22 %          1,21     28-avr.-17       8,63 %    1,39
+
+NSBC      NSIA BANQUE COTE D'IVOIRE        6 020      5 660    6 470       7,48 %    33 106        212 905 635        6 470           7,83 %        194,20      9-juil.-19      3,00 %   12,29
+
+ORGT      ORAGROUP TOGO                    4 000      3 995    4 150       3,75 %    14 587         59 028 860        4 150          -1,19 %         56,73      1-juil.-19      1,37 %    9,68
+
+SAFC      SAFCA CI                            335       NC       NC        0,00 %                                      335           55,81 %         23,04     29-juil.-11               40,60
+
+SGBC      SOCIETE GENERALE COTE            7 700      7 600    7 700       0,00 %     2 625         20 162 220        7 700           4,05 %        206,00     31-juil.-19      2,68 %    5,73
+          D'IVOIRE
+
+SIBC      SOCIETE IVOIRIENNE DE            2 825      2 825    2 820      -0,18 %     2 007          5 610 760        2 820           4,44 %        252,00      5-juil.-19      8,94 %    6,08
+          BANQUE
+
+TOTAL                                                                                 85 805       429 133 665                                                                             9,17
+
+
+SECTEUR - TRANSPORT                   366,76        points               0,33 %
+
+SDSC      BOLLORE                          1 495      1 400    1 500       0,33 %     8 503         11 904 500        1 500         -25,00 %        184,00      6-juin-19      12,27 %    7,84
+
+SVOC      MOVIS CI                         2 395        SP        SP       0,00 %                                     2 395          -4,20 %        270,00      5-juil.-99
+
+
+
+                                                                                               2
+                                 mardi 31 décembre 2019
+TOTAL   8 503       11 904 500                      7,84
+
+
+
+
+                3
+                                                                                                                                                                                                       mardi 31 décembre 2019
+
+
+
+
+                                                                              Cours du jour                                 Séance de cotation                          Variation de       Dernier dividende
+                                                             Cours                                    Variation                                              Cours
+Symbole                         Titre                                                                                                                                      l'année               payé                 Rdt. Net      PER
+                                                           Précédent                                    jour                                               Référence
+                                                                              Ouv.         Clôt.                            Volume           Valeur                      précédente      Montant net     Date
+
+
+SECTEUR - AGRICULTURE                                      85,88             points                      5,66 %
+
+PALC          PALM CI                                               1 695       1 820        1 820          7,37 %             8 877         16 156 140         1 820          -4,21 %        253,47 24-sept.-18        13,93 %
+
+SCRC          SUCRIVOIRE                                              590          600         605          2,54 %             1 245           750 225            605         -36,32 %         72,00 28-sept.-18        11,90 %
+
+SICC          SICOR CI                                              2 740           NC          NC          0,00 %                                              2 740         -23,89 %       1 919,00 25-sept.-00                        1,66
+
+SOGC          SOGB CI                                               2 400       2 500        2 580          7,50 %             8 541         22 007 700         2 580          12,91 %        126,00    15-juil.-19      4,88 %         18,72
+
+SPHC          SAPH CI                                               1 275       1 310        1 310          2,75 %             1 490          1 951 900         1 310         -64,50 %         78,00 27-sept.-18         5,95 %
+
+TOTAL                                                                                                                          20 153        40 865 965                                                                                 10,19
+
+
+SECTEUR - DISTRIBUTION                                     253,26            points                      4,17 %
+
+ABJC          SERVAIR ABIDJAN CI                                    1 255       1 255        1 250         -0,40 %               605           758 075          1 250           4,17 %        164,96 30-sept.-19        13,20 %          9,04
+
+BNBC          BERNABE CI                                              700          700         700          0,00 %               416           291 200            700         -70,83 %         45,00    19-juil.-19      6,43 %          2,81
+
+CFAC          CFAO MOTORS CI                                          405          405         435          7,41 %           119 895         49 831 195           435         -32,03 %         31,50    23-juil.-19      7,24 %         12,16
+
+PRSC          TRACTAFRIC MOTORS CI                                  2 695       2 695        2 695          0,00 %               222           598 290          2 695          39,11 %        150,36 18-sept.-19         5,58 %         13,71
+
+SHEC          VIVO ENERGY CI                                          745          745         800          7,38 %            12 861         10 272 720           800         -15,34 %         64,29    2-août-19        8,04 %          9,35
+
+TTLC          TOTAL CI                                              1 600       1 595        1 700          6,25 %            76 444        128 436 755         1 700          25,46 %        108,40    11-oct.-19       6,38 %          9,29
+
+TTLS          TOTAL SN                                              1 750       1 690        1 700         -2,86 %          1 938 137   3 294 777 380           1 700          17,24 %        105,30    29-juil.-19      6,19 %          8,73
+
+TOTAL                                                                                                                       2 148 580    3 484 965 615                                                                                   9,30
+
+
+AUTRES SECTEURS                                            302,30            points                      0,00 %
+
+STAC          SETAO CI                                                245           NC          NC          0,00 %                                                245          44,12 %                                                   9,00
+
+TOTAL                                                                                                                              0                   0                                                                                 9,00
+
+TOTAL - Marché des actions                                                                                                  2 675 809    4 995 184 110
+
+
+
+
+                                                                                Cours du jour                               Séance de cotation                          Variation                           Periode de négociation
+                                                              Cours                                     Variation                                            Cours
+Symbole                         Titre                                                                                                                                     depuis            Parité
+                                                            Précédent                                     jour                                             Référence
+                                                                               Ouv.         Clôt.                           Volume           Valeur                      l'origine                               Début            fin
+
+
+TOTAL
+
+
+TOTAL - Marché des droits
+
+
+
+
+                                                                                Cours du jour                                Séance de cotation                         Variation
+                                                              Cours                                     Variation                                            Cours
+Symbole                         Titre                                                                                                                                     depuis
+                                                            Précédent                                     jour                                             Référence
+                                                                               Ouv.         Clôt.                           Volume            Valeur                     l'origine
+
+
+TOTAL
+
+
+TOTAL - 3ème Compartiment - BRVM PC
+
+Légende:
+(#) Fractionnement du titre - Valeur théorique
+Cours du jour: Ouv.: Ouverture Clôt.: Clôture Moy.: Moyen
+Mentions : NC: Non Coté         Ex-c: Ex-coupon Ex-d: Ex-droit         SP: Suspendu    Val-T: Valeur Théorique
+PER = Cours / BNPA selon les données disponibles       Rdt. Net: Rendement net (DNPA / Cours)
+Comp.: 1 - Premier Compartiment        2 - Second Compartiment        3 - Compartiment de croissance
+Ratio de liquidité = Titres échangés / Volume des ordres de vente
+: Progression de l'indice sectoriel             : Stabilité de l'indice sectoriel            : Recul de l'indice sectorie
+
+
+
+
+                                                                                                                                        4
+                                                                                                                                                     mardi 31 décembre 2019
+
+
+
+                                                   Valeur        Cours   Cours du      Cours       Séance de cotation       Coupon            Coupon d'intérêt
+ Symbole                   Titre                                                                                                                                           Type Amort
+                                                  nominale     Précédent   jour      Référence      Volume    Valeur         couru     Période Montant net Eché.
+OBLIGATIONS D'ETAT
+EOM.O1     ETAT DU MALI 6.20% 2016-2023                6 666        6 633    6 732      6 732.66         2        13 465      250,69      A         413,29    23-mai-20       ACD
+EOM.O2     Etat du Mali 6.50% 2017-2024               10 000       10 000      NC        10 000                               452,87      A         650,00    20-avr.-20       AC
+EOM.O3     ETAT DU MALI 6,50 % 2018-2025              10 000       10 000      NC        10 000                               150,96      A         650,00     7-oct.-20       AC
+EOM.O4     ETAT DU MALI 6,50% 2019-2027               10 000       10 000      NC        10 000                               305,46      A         650,00   12-juil.-20       AC
+EOS.O5     ETAT SENEGAL 6.50% 2013-2023               10 000        9 999   10 000       10 000          2        20 000      273,78      S         325,00   29-janv.-20      ACD
+EOS.O6     ETAT SENEGAL 6.50% 2014-2021                4 000        4 030    4 040        4 040         50       202 000       24,29      S         130,00    27-mai-20       ACD
+EOS.O7     ETAT SENEGAL 6.30% 2015-2025               10 000       10 000   10 100       10 100         50       505 000       61,97      S         313,28    25-mai-20       ACD
+TPBF.O3    TPBF 6,50% 2013-2020                       10 000       10 000      NC        10 000                                57,14      S         325,00    29-mai-20       ACD
+TPBF.O4    TPBF 6.50% 2017-2027                       10 000       10 000      NC        10 000                               271,72      S         326,78   31-janv.-20      ACD
+TPBF.O5    TPBF 6,50% 2017-2024                       10 000       10 000   10 100       10 100         50       505 000        3,55      S         325,00    29-juin-20      ACD
+TPBF.O6    TPBF 6.50% 2018-2025                       10 000       10 000      NC        10 000                                46,17      S         325,00     5-juin-20      ACD
+TPBF.O7    TPBF 6,50% 2018-2025                       10 000       10 000      NC        10 000                                82,14      S         325,00    15-mai-20        AC
+TPBF.O8    TPBF 6,50% 2019-2027                       10 000       10 000      NC        10 000                                97,68      S         323,22     6-mai-20       ACD
+TPBF.O9    TPBF 6,50% 2019 - 2027                     10 000       10 000      NC        10 000                               149,18      S         325,00     8-avr.-20      ACD
+TPBJ.O1    TPBJ 6.50% 2017-2027                       10 000       10 060   10 100       10 100         52       525 200      475,96      A         650,00     7-avr.-20      ACD
+TPBJ.O2    TPBJ 6.50% 2018-2025                       10 000       10 100   10 100       10 100         53       535 300       57,14      S         325,00    29-mai-20        AC
+TPCI.O16   TPCI 6.55% 2014-2022                       10 000        9 900      NC         9 900                               402,66      A         655,00    20-mai-20       ACD
+TPCI.O17   TPCI 3% 2014-2024                          10 000       10 000      NC        10 000                                 9,84      S         150,00    19-juin-20      ACD
+TPCI.O18   TPCI 5.85% 2014-2021                       10 000       10 000      NC        10 000                                19,18      S         292,50    19-juin-20      ACD
+TPCI.O19   TPCI 5.99% 2015-2025                       10 000       10 000      NC        10 000                               378,06      A         599,00    14-mai-20       ACD
+TPCI.O20   TPCI 5.85% 2015-2022                       10 000       10 000   10 000       10 000     18 710    183 360 000     139,06      S         292,50     5-avr.-20      ACD
+TPCI.O21   TPCI 6% 2016-2028                          10 000        9 925   10 000       10 000          2        20 000      437,70      A         600,00     8-avr.-20      ACD
+TPCI.O22   TPCI 5.90% 2016 - 2026                     10 000        9 880   10 000       10 000          2        20 000      320,79      A         590,00    15-juin-20      ACD
+TPCI.O23   TPCI 5.90% 2016-2026                       10 000       10 000      NC        10 000                                70,93      A         590,00   17-nov.-20       ACD
+TPCI.O24   TPCI 6.25% 2017-2029                       10 000       10 000   10 100       10 100         50       505 000      157,10      S         312,50   31-mars-20       ACD
+TPCI.O25   TPCI 5,95% 2017-2024 A                     10 000       10 000      NC        10 000                               110,55      S         297,50    24-avr.-20      ACD
+TPCI.O26   TPCI 5,95% 2017-2024 B                     10 000       10 000      NC        10 000                                83,37      S         297,50    10-mai-20       ACD
+TPCI.O27   TPCI 6% 2017-2025                          10 000       10 000      NC        10 000                                 3,28      S         300,00    29-juin-20      ACD
+TPCI.O28   TPCI 6% 2018 - 2026                        10 000       10 000   10 100       10 100         64       641 100      247,54      A         600,00    2-août-20       ACD
+TPCI.O29   TPCI 6% 2018-2026                          10 000       10 000      NC        10 000                               119,67      A         600,00    19-oct.-20      ACD
+TPCI.O30   TPCI 5,95% 2018-2025                       10 000       10 000      NC        10 000                                29,26      S         297,50    13-juin-20      ACD
+TPCI.O31   TPCI 5,75% 2019-2026                       10 000       10 000      NC        10 000                               304,78      A         575,00    20-juin-20      ACD
+TPCI.O32   TPCI 2,23% 2019-2026                       10 000                   NC                                               0,00      A           0,00    20-juin-20      ACD
+TPCI.O33   TPCI 5.75% 2019-2026                       10 000       10 000      NC        10 000                               449,32      A         575,00   20-mars-20       ACD
+TPCI.O34   TPCI 6% 2019-2029                          10 000       10 000      NC        10 000                               468,85      A         600,00   20-mars-20       ACD
+TPNE.O1    TRESOR PUBLIC DU NIGER 6,50%               10 000       10 100      NC        10 100                               493,72      A         650,00   28-mars-20       ACD
+           2019-2026
+TPNE.O2    TRESOR PUBLIC DU NIGER 6,50%               10 000       10 100      NC        10 100                               269,95      A         650,00    1-août-20       ACD
+           2019 - 2026
+TPTG.O1    TPTG 6,90% 2018-2023                       10 000       10 000   10 100       10 100         60       606 000      296,25      S         345,00   26-janv.-20       AC
+TOTAL                                                                                                19 147   187 458 065
+
+
+OBLIGATIONS REGIONALES
+BIDC.O3    BIDC-EBID 6.50% 2014-2021                  10 000       10 000    9 975        9 975         57       568 575      167,86      S         325,00   28-mars-20       ACD
+BIDC.O4    BIDC-EBID 6.10% 2017-2027                  10 000       10 000      NC        10 000                               330,00      A         610,00    16-juin-20      ACD
+BOAD.O12   BOAD 5.95% 2014-2021                       10 000        9 999   10 000       10 000         96       960 000        8,13      A         595,00   26-déc.-20       ACD
+CRRH.O1    CRRH-UEMOA 6.10% 2012-2022                 10 000        9 980      NC         9 980                               232,07      S         305,00   13-févr.-20       AC
+CRRH.O2    CRRH-UEMOA 6.10% 2012-2024                 10 000       10 000      NC        10 000                               276,82      S         305,00   17-janv.-20       AC
+CRRH.O3    CRRH-UEMOA 6% 2013-2023                    10 000       10 000      NC        10 000                               108,20      S         300,00    26-avr.-20       AC
+CRRH.O4    CRRH-UEMOA 6% 2014-2024                    10 000        9 950      NC         9 950                                 1,64      S         300,00    30-juin-20       AC
+CRRH.O5    CRRH-UEMOA 5.85% 2015-2025       (*)       10 000        9 980      NC         9 980                               287,70      S         294,10    4-janv.-20       AC
+CRRH.O6    CRRH-UEMOA 5.85% 2016-2026       (*)       10 000       10 000      NC        10 000                               287,73      S         292,50    3-janv.-20      ACD
+CRRH.O7    CRRH-UEMOA 5.95% 2017-2029                  8 333        8 333      NC         8 333                                59,94      S         247,92    17-mai-20        AC
+CRRH.O8    CRRH-UEMOA 5.95% 2018-2030                  9 167        9 145      NC       9 144.67                               14,90      S         272,71    21-juin-20       AC
+CRRH.O9    CRRH-UEMOA 6.05% 2018-2033                  9 333        9 333      NC         9 333                                15,43      S         282,33    21-juin-20       AC
+SHAF.O3    SHELTER AFRIQUE 6.6% 2014-2021              3 000        3 000      NC         3 000                                67,62      S          99,54   28-févr.-20      ACD
+TOTAL                                                                                                  153      1 528 575
+
+
+
+
+                                                                                              5
+                                                                                                                                                                            mardi 31 décembre 2019
+OBLIGATIONS PRIVEES
+BHSN.O1        DIASPORA BONDS BHS 6,25% 2019-                          10 000           10 000            NC           10 000                                 297,13   S   314,21   10-janv.-20   ACD
+               2024
+SIFC.O1        SIFCA 6.90% 2013-2021                                   10 000           10 000            NC           10 000                                 267,89   A   676,20    8-août-20    ACD
+
+SNLC.O1        SENELEC 6,50% 2018-2025                                 10 000           10 100            NC           10 100                                 169,64   S   325,00   27-mars-20    AC
+
+TOTAL                                                                                                                                    0                0
+
+
+SUKUK ET TITRES ASSIMILES
+SUKCI.S1       SUKUK CI 5.75% 2015-2020                                10 000             9 990           NC            9 990                                   4,79   S   292,29    28-juin-20   AC
+
+SUKCI.S2       SUKUK CI 5.75% 2016-2023                                10 000           10 000            NC           10 000                                 183,68   S   290,69    7-mars-20    ACD
+
+SUKSN.S2       SUKUK SN 6% 2016-2026                                   10 000           10 050        10 100           10 100         100       1 001 300     263,33   S   306,67   26-janv.-20   ACD
+
+SUKTG.S1 
