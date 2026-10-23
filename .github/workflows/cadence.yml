@@ -19,7 +19,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       P: ${{ inputs.parent }}
-      CIBLE: ping.yml
+      CIBLE: maj.yml
     steps:
       - name: Étape 1
         id: chk

@@ -7,6 +7,10 @@ on:
         type: choice
         options: ["1", "2", "3"]
         default: "1"
+      essai:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
 
 permissions:
   contents: read
@@ -20,7 +24,7 @@ env:
   K2: ${{ secrets.K2 }}
   K4: ${{ secrets.K4 }}
   D1: ${{ secrets.D1 }}
-  ESSAI: "1"
+  ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
   TACHE: ${{ inputs.tache || '1' }}
   M: /tmp/c/automatisations/moteur
 

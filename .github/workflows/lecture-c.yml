@@ -1,7 +1,14 @@
 name: Lecture C
 
 on:
-  workflow_dispatch: {}
+  schedule:
+    - cron: "41 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      essai:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
 
 permissions:
   contents: read
@@ -14,7 +21,7 @@ env:
   K1: ${{ secrets.K1 }}
   K2: ${{ secrets.K2 }}
   D1: ${{ secrets.D1 }}
-  ESSAI: "1"
+  ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
   M: /tmp/c/automatisations/moteur
 
 jobs:

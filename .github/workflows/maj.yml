@@ -1,13 +1,16 @@
 name: Mise à jour
 
 on:
+  schedule:
+    - cron: "*/15 * * * *"
+    - cron: "35 22 * * 1-5"
   workflow_dispatch:
     inputs:
       mode:
         type: choice
         options: [complet, rapide]
         default: complet
-      soir:
+      essai:
         type: choice
         options: ["0", "1"]
         default: "0"
@@ -31,7 +34,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EV: ${{ github.event_name }}
-          SOIR: ${{ inputs.soir || '0' }}
+          SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
         run: |
           go=1
           if [ "$EV" = schedule ] && [ "$SOIR" != 1 ]; then
@@ -50,8 +53,8 @@ jobs:
       K1: ${{ secrets.K1 }}
       K2: ${{ secrets.K2 }}
       D1: ${{ secrets.D1 }}
-      ESSAI: "1"
-      SOIR: ${{ inputs.soir || '0' }}
+      ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
+      SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
       MODE: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet')) && 'eod' || 'live' }}
       M: /tmp/c/automatisations/moteur
       GH_TOKEN: ${{ github.token }}

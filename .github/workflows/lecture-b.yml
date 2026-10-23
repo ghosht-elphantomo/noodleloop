@@ -1,9 +1,15 @@
 name: Lecture B
 
 on:
+  schedule:
+    - cron: "29 5 * * *"
   workflow_dispatch:
     inputs:
       chain:
+        default: "0"
+      essai:
+        type: choice
+        options: ["0", "1"]
         default: "0"
 
 permissions:
@@ -18,7 +24,7 @@ env:
   K1: ${{ secrets.K1 }}
   K2: ${{ secrets.K2 }}
   D1: ${{ secrets.D1 }}
-  ESSAI: "1"
+  ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
   M: /tmp/c/automatisations/moteur
   CHAIN: ${{ inputs.chain || '0' }}
   WF: lecture-b.yml
