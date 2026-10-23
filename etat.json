@@ -1,7 +1,7 @@
 {
  "version": 1,
- "maj": "2026-10-22T00:08:30Z",
- "derniere_seance": "2026-10-21",
+ "maj": "2026-10-23T00:09:33Z",
+ "derniere_seance": "2026-10-22",
  "fichiers": {
   "cours/2013.csv": {
    "lignes": 36,
@@ -69,13 +69,13 @@
    "corrigees": 0
   },
   "cours/2026.csv": {
-   "lignes": 9414,
+   "lignes": 9462,
    "ajoutees": 48,
    "corrigees": 0
   },
   "indices.csv": {
-   "lignes": 40776,
-   "ajoutees": 20,
+   "lignes": 40797,
+   "ajoutees": 21,
    "corrigees": 0
   },
   "dividendes.csv": {
@@ -134,7 +134,7 @@
   "2023": 10542,
   "2024": 11033,
   "2025": 11575,
-  "2026": 9418
+  "2026": 9466
  },
  "bulletins_identiques_ecartes": [
   "2020-10-29"
