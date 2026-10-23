@@ -1,0 +1,22 @@
+MY BBG TERMINAL — copie complète et autonome
+=============================================
+
+Ce dossier contient tout le terminal : le site (index.html), toutes ses données (dossier data/) et la base historique
+complète (dossier base_historique/ : cours officiels, dividendes, résultats, états financiers, fractionnements, événements,
+flottant, notations, au format CSV). La date de la copie est dans DATE_EXPORT.txt. Une nouvelle copie est faite chaque nuit.
+
+OUVRIR SUR VOTRE ORDINATEUR (sans connexion Internet)
+  - Windows : double-cliquez sur « Ouvrir le terminal (Windows).bat ».
+  - Mac : double-cliquez sur « Ouvrir le terminal (Mac).command » (la première fois : clic droit > Ouvrir).
+  Le terminal s'ouvre dans votre navigateur à l'adresse http://localhost:8765/ . Fermez la fenêtre noire pour l'arrêter.
+  (Ouvrir index.html directement par double-clic ne suffit pas : les navigateurs bloquent la lecture des données depuis
+  un fichier local ; le lanceur démarre un petit serveur sur votre ordinateur, rien ne sort de votre machine.)
+
+METTRE EN LIGNE AILLEURS
+  Déposez le contenu de ce dossier tel quel sur n'importe quel hébergement de fichiers statiques (Vercel, Netlify,
+  Cloudflare Pages, GitHub Pages, un serveur web…). Aucune base de données ni aucun service particulier n'est nécessaire.
+  Les données de cette copie sont figées à la date de l'export ; l'actualisation toutes les 15 minutes reste assurée par
+  les tâches automatiques du dépôt d'origine.
+
+BASE HISTORIQUE
+  base_historique/README.md décrit chaque fichier, ses colonnes et les contrôles de cohérence.

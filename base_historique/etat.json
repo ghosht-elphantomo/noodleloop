@@ -1,0 +1,181 @@
+{
+ "version": 1,
+ "maj": "2026-10-23T00:09:33Z",
+ "derniere_seance": "2026-10-22",
+ "fichiers": {
+  "cours/2013.csv": {
+   "lignes": 36,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2014.csv": {
+   "lignes": 791,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2015.csv": {
+   "lignes": 9184,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2016.csv": {
+   "lignes": 9841,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2017.csv": {
+   "lignes": 10470,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2018.csv": {
+   "lignes": 9387,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2019.csv": {
+   "lignes": 9509,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2020.csv": {
+   "lignes": 9283,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2021.csv": {
+   "lignes": 10639,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2022.csv": {
+   "lignes": 10764,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2023.csv": {
+   "lignes": 10536,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2024.csv": {
+   "lignes": 10854,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2025.csv": {
+   "lignes": 11575,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "cours/2026.csv": {
+   "lignes": 9462,
+   "ajoutees": 48,
+   "corrigees": 0
+  },
+  "indices.csv": {
+   "lignes": 40797,
+   "ajoutees": 21,
+   "corrigees": 0
+  },
+  "dividendes.csv": {
+   "lignes": 701,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "fractionnements.csv": {
+   "lignes": 62,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "evenements.csv": {
+   "lignes": 7295,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "resultats.csv": {
+   "lignes": 934,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "etats_financiers.csv": {
+   "lignes": 24560,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "flottant.csv": {
+   "lignes": 48,
+   "ajoutees": 0,
+   "corrigees": 0
+  },
+  "notations.csv": {
+   "lignes": 333,
+   "ajoutees": 0,
+   "corrigees": 0
+  }
+ },
+ "bulletins_lignes_non_retenues": {
+  "2013": 1,
+  "2015": 24,
+  "2016": 19,
+  "2017": 64
+ },
+ "bulletins_lignes_lues": {
+  "2013": 37,
+  "2014": 791,
+  "2015": 9208,
+  "2016": 9860,
+  "2017": 10534,
+  "2018": 9389,
+  "2019": 9513,
+  "2020": 9321,
+  "2021": 10639,
+  "2022": 10828,
+  "2023": 10542,
+  "2024": 11033,
+  "2025": 11575,
+  "2026": 9466
+ },
+ "bulletins_identiques_ecartes": [
+  "2020-10-29"
+ ],
+ "montants_en_milliers_convertis": [
+  "2018-04-17 ONTBF",
+  "2020-09-09 CBIBF",
+  "2022-08-24 ORGT",
+  "2026-03-04 SGBC",
+  "2026-04-10 SNTS",
+  "2026-04-14 SNTS",
+  "2026-04-17 SGBC",
+  "2026-07-07 ECOC",
+  "2026-07-14 SNTS",
+  "2026-07-15 SNTS",
+  "2026-08-04 SNTS",
+  "2026-09-16 SNTS",
+  "2026-09-17 ETIT (volume)",
+  "2026-09-18 SNTS",
+  "2026-09-21 SNTS",
+  "2026-09-22 SNTS",
+  "2026-09-24 SNTS",
+  "2026-09-25 SNTS",
+  "2026-09-28 SNTS",
+  "2026-10-02 SNTS",
+  "2026-10-05 SNTS",
+  "2026-10-06 SNTS",
+  "2026-10-09 SNTS",
+  "2026-10-15 SNTS",
+  "2026-10-20 SNTS",
+  "2026-10-21 SNTS"
+ ],
+ "corrections_total": 9910,
+ "corrections_du_jour": 0,
+ "controles": {
+  "precedent_different": 193,
+  "variation_hors_seuil": 19,
+  "variation_incoherente": 29,
+  "seance_incomplete": 13,
+  "cloture_absente": 1,
+  "avis_different_bulletin": 1,
+  "dates_incoherentes": 1
+ }
+}
