@@ -1,4 +1,7 @@
 name: Mise à jour
+# nom du passage (lisible dans la liste des passages et par le rattrapage de Cadence) : base du soir programmée,
+# base du soir relancée par le rattrapage, mise à jour complète lancée à la main, ou relevé des 15 min
+run-name: ${{ github.event.schedule == '35 22 * * 1-5' && 'Base du soir' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1') && 'Base du soir (rattrapage)' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet') && 'Mise à jour complète' || 'Relevé' }}
 
 on:
   schedule:
@@ -10,6 +13,10 @@ on:
         type: choice
         options: [complet, rapide]
         default: complet
+      soir:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
       essai:
         type: choice
         options: ["0", "1"]
@@ -20,7 +27,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.event.schedule == '35 22 * * 1-5' && 'maj-soir' || (((github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'rapide')) && 'maj-rapide' || 'maj-complet') }}
+  group: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && 'maj-soir' || (((github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'rapide')) && 'maj-rapide' || 'maj-complet') }}
   cancel-in-progress: false
 
 jobs:
@@ -34,7 +41,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EV: ${{ github.event_name }}
-          SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
+          SOIR: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && '1' || '0' }}
         run: |
           go=1
           if [ "$EV" = schedule ] && [ "$SOIR" != 1 ]; then
@@ -54,8 +61,8 @@ jobs:
       K2: ${{ secrets.K2 }}
       D1: ${{ secrets.D1 }}
       ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
-      SOIR: ${{ github.event.schedule == '35 22 * * 1-5' && '1' || '0' }}
-      MODE: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet')) && 'eod' || 'live' }}
+      SOIR: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && '1' || '0' }}
+      MODE: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'complet' || inputs.soir == '1'))) && 'eod' || 'live' }}
       M: /tmp/c/automatisations/moteur
       GH_TOKEN: ${{ github.token }}
     steps:
