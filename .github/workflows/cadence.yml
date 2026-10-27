@@ -55,8 +55,13 @@ jobs:
         id: chk
         run: |
           case "$P" in ''|*[!0-9]*) P=0;; esac
-          n=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/cadence.yml/runs?status=in_progress&per_page=20" \
-                --jq "[.workflow_runs[] | select(.id != $GITHUB_RUN_ID and .id != $P and ((.run_started_at // .created_at) | fromdateiso8601) > (now - 21600))] | length" 2> /dev/null || echo 0)
+          # (exécutions en cours ET en file : une Cadence encore « queued » n'était pas comptée et une 2e boucle démarrait ; audit B17)
+          n=0
+          for st in in_progress queued; do
+            k=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/cadence.yml/runs?status=$st&per_page=20" \
+                  --jq "[.workflow_runs[] | select(.id != $GITHUB_RUN_ID and .id != $P and ((.run_started_at // .created_at) | fromdateiso8601) > (now - 21600))] | length" 2> /dev/null || echo 0)
+            n=$((n + ${k:-0}))
+          done
           if [ "${n:-0}" -gt 0 ]; then echo "run=0" >> "$GITHUB_OUTPUT"; else echo "run=1" >> "$GITHUB_OUTPUT"; fi
       - name: Étape 2
         if: steps.chk.outputs.run == '1'

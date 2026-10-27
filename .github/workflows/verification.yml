@@ -41,7 +41,7 @@ jobs:
           [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
           if [ -n "${K2:-}" ]; then c2=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K2" "https://api.github.com/repos/$D1"); [ "$c2" = 200 ] || echo "::warning::préparation (4-$c2)"; fi
           git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
           path: m
           persist-credentials: false
