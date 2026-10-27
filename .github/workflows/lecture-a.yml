@@ -1,0 +1,154 @@
+name: Lecture A
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+    inputs:
+      chain:
+        default: "0"
+      shards:
+        default: ""
+      essai:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: lecture-a
+  cancel-in-progress: false
+
+env:
+  K1: ${{ secrets.K1 }}
+  K2: ${{ secrets.K2 }}
+  D1: ${{ secrets.D1 }}
+  ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
+  SHARDS_IN: ${{ inputs.shards }}
+  CHAIN: ${{ inputs.chain || '0' }}
+  WF: lecture-a.yml
+  M: /tmp/c/automatisations/moteur
+
+jobs:
+  a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      shards: ${{ steps.n.outputs.shards }}
+      parts: ${{ steps.n.outputs.parts }}
+      sha: ${{ steps.n.outputs.sha }}
+    steps:
+      - name: Préparation
+        run: |
+          [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
+          [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          if [ -n "${K2:-}" ]; then c2=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K2" "https://api.github.com/repos/$D1"); [ "$c2" = 200 ] || echo "::warning::préparation (4-$c2)"; fi
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
+      - name: Étape 1
+        id: n
+        run: bash "$M/etape.sh" A 1
+      - uses: actions/upload-artifact@v7
+        with:
+          name: a1
+          path: /tmp/x/a1.bin
+          retention-days: 1
+
+  b:
+    needs: a
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      SHA: ${{ needs.a.outputs.sha }}
+    steps:
+      - name: Préparation
+        run: |
+          [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
+          [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          if [ -n "${K2:-}" ]; then c2=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K2" "https://api.github.com/repos/$D1"); [ "$c2" = 200 ] || echo "::warning::préparation (4-$c2)"; fi
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
+      - name: Étape 2
+        run: bash "$M/etape.sh" A 2
+      - uses: actions/upload-artifact@v7
+        with:
+          name: a2
+          path: /tmp/x/a2.bin
+          retention-days: 1
+
+  c:
+    needs: a
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      matrix:
+        part: ${{ fromJSON(needs.a.outputs.parts) }}
+    env:
+      SHA: ${{ needs.a.outputs.sha }}
+      SHARDS: ${{ needs.a.outputs.shards }}
+      PART: ${{ matrix.part }}
+    steps:
+      - name: Préparation
+        run: |
+          [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
+          [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          if [ -n "${K2:-}" ]; then c2=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K2" "https://api.github.com/repos/$D1"); [ "$c2" = 200 ] || echo "::warning::préparation (4-$c2)"; fi
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
+      - uses: actions/download-artifact@v8
+        with:
+          name: a1
+          path: /tmp/x/in
+      - name: Étape 3
+        run: bash "$M/etape.sh" A 3
+      - uses: actions/upload-artifact@v7
+        with:
+          name: p${{ matrix.part }}
+          path: /tmp/x/p${{ matrix.part }}.bin
+          if-no-files-found: error
+          retention-days: 1
+
+  d:
+    needs: [a, b, c]
+    if: ${{ always() && needs.a.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      SHA: ${{ needs.a.outputs.sha }}
+      SHARDS: ${{ needs.a.outputs.shards }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Préparation
+        run: |
+          [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
+          [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          if [ -n "${K2:-}" ]; then c2=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K2" "https://api.github.com/repos/$D1"); [ "$c2" = 200 ] || echo "::warning::préparation (4-$c2)"; fi
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
+      - uses: actions/download-artifact@v8
+        with:
+          name: a1
+          path: /tmp/x/in
+      - uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: a2
+          path: /tmp/x/in
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: p*
+          path: /tmp/x/in
+          merge-multiple: true
+      - name: Étape 4
+        run: bash "$M/etape.sh" A 4
+      - name: Suite
+        run: bash "$M/etape.sh" A 5
+      - name: Suite
+        if: failure()
+        env:
+          ECHEC: "1"
+        run: bash "$M/etape.sh" A 5

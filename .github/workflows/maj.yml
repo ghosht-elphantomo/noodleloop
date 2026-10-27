@@ -1,0 +1,106 @@
+name: Mise à jour
+# nom du passage (lisible dans la liste des passages et par le rattrapage de Cadence) : base du soir programmée,
+# base du soir relancée par le rattrapage, mise à jour complète lancée à la main, ou relevé des 15 min
+run-name: ${{ github.event.schedule == '35 22 * * 1-5' && 'Base du soir' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1') && 'Base du soir (rattrapage)' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet') && 'Mise à jour complète' || 'Relevé' }}
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+    - cron: "35 22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [complet, rapide]
+        default: complet
+      soir:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
+      essai:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && 'maj-soir' || (((github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'rapide')) && 'maj-rapide' || 'maj-complet') }}
+  cancel-in-progress: false
+
+jobs:
+  porte:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 3
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EV: ${{ github.event_name }}
+          SOIR: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && '1' || '0' }}
+        run: |
+          go=1
+          if [ "$EV" = schedule ] && [ "$SOIR" != 1 ]; then
+            n=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/maj.yml/runs?event=workflow_dispatch&per_page=5" \
+                  --jq '[.workflow_runs[] | select((.created_at | fromdateiso8601) > (now - 900))] | length' 2> /dev/null || echo 0)
+            [ "${n:-0}" -gt 0 ] && go=0
+          fi
+          echo "go=$go" >> "$GITHUB_OUTPUT"
+
+  maj:
+    needs: porte
+    if: needs.porte.outputs.go == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ ((github.event_name == 'schedule' && github.event.schedule != '35 22 * * 1-5') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'rapide')) && 30 || 120 }}
+    env:
+      K1: ${{ secrets.K1 }}
+      K2: ${{ secrets.K2 }}
+      D1: ${{ secrets.D1 }}
+      ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
+      SOIR: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && '1' || '0' }}
+      MODE: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'complet' || inputs.soir == '1'))) && 'eod' || 'live' }}
+      M: /tmp/c/automatisations/moteur
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Préparation
+        run: |
+          [ -n "$K1" ] || { echo "::error::préparation (1)"; exit 1; }
+          [ -n "$D1" ] || { echo "::error::préparation (2)"; exit 1; }
+          [[ "$D1" =~ ^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$ ]] || { echo "::error::préparation (2b)"; exit 1; }
+          if [ -n "${K2:-}" ]; then c2=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K2" "https://api.github.com/repos/$D1"); [ "$c2" = 200 ] || echo "::warning::préparation (4-$c2)"; fi
+          git clone -q --depth 1 "https://x-access-token:${K1}@github.com/${D1}.git" /tmp/c > /dev/null 2>&1 || { echo "::error::préparation (3-$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $K1" "https://api.github.com/repos/$D1"))"; exit 1; }
+      - uses: actions/cache/restore@v6
+        with:
+          path: /tmp/cc
+          key: c1${{ env.ESSAI == '1' && 'e' || '' }}-${{ github.run_id }}
+          restore-keys: c1${{ env.ESSAI == '1' && 'e' || '' }}-
+      - name: Étape 1
+        run: bash "$M/etape.sh" M 1
+      - name: Étape 2
+        run: bash "$M/etape.sh" M 2
+      - name: Étape 3
+        continue-on-error: true
+        env:
+          SEC_UA: ${{ secrets.SEC_UA }}
+        run: bash "$M/etape.sh" M 3
+      - name: Étape 4
+        continue-on-error: true
+        env:
+          SEC_UA: ${{ secrets.SEC_UA }}
+        run: bash "$M/etape.sh" M 4
+      - name: Calcul
+        run: bash "$M/etape.sh" M 5
+      - name: Publication
+        run: bash "$M/etape.sh" M 6
+      - name: Fin
+        if: always()
+        run: bash "$M/etape.sh" M 7
+      - uses: actions/cache/save@v6
+        if: always()
+        with:
+          path: /tmp/cc
+          key: c1${{ env.ESSAI == '1' && 'e' || '' }}-${{ github.run_id }}
