@@ -1,0 +1,30 @@
+name: Entretien
+
+on:
+  schedule:
+    - cron: "23 4 1,11,21 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: entretien
+  cancel-in-progress: false
+
+jobs:
+  a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Étape 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ "$GH_TOKEN" != serveur ] || { echo "::notice::rien à faire"; exit 0; }
+          git clone -q --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" m > /dev/null 2>&1 || { echo "::error::étape 1 (1)"; exit 1; }
+          cd m && date -u +%Y-%m > .github/entretien && git add .github/entretien
+          git diff --cached --quiet && { echo "::notice::rien à faire"; exit 0; }
+          git -c user.name=fqt-bot -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -qm automatisations
+          git push -q origin HEAD:main > /dev/null 2>&1 || { echo "::error::étape 1 (2)"; exit 1; }
+          echo "::notice::fait"
