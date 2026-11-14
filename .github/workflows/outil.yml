@@ -5,7 +5,11 @@ on:
     inputs:
       tache:
         type: choice
-        options: ["1", "2", "3", "4"]
+        options: ["1", "2", "3", "4", "5"]
+        default: "1"
+      machine:
+        type: choice
+        options: ["1", "2", "3"]
         default: "1"
       essai:
         type: choice
@@ -23,9 +27,13 @@ env:
   M: /tmp/c/automatisations/moteur
   T: ${{ inputs.tache }}
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   a:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.machine == '2' && 'macos-latest' || inputs.machine == '3' && 'windows-latest' || 'ubuntu-24.04' }}
     timeout-minutes: 90
     steps:
       - name: Préparation
