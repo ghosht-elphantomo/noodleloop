@@ -68,7 +68,7 @@ jobs:
         run: |
           end=$(( $(date +%s) + 340 * 60 ))
           while :; do
-            now=$(date +%s); next=$(( (now / 900 + 1) * 900 + 15 ))
+            now=$(date +%s); next=$(( ((now - 215) / 900 + 1) * 900 + 215 ))
             [ "$next" -ge "$end" ] && break
             sleep $(( next - now ))
             for k in 1 2 3; do
