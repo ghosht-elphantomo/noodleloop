@@ -51,6 +51,7 @@ jobs:
           Sortie|sortie.yml|00:47|1234567|
           Secours|secours.yml|03:38|1234567|
           Lecture A|lecture-a.yml|04:17|1234567|
+          Recalculs|recalculs.yml|05:05|1234567|
           Lecture B|lecture-b.yml|05:29|1234567|
           Vérification|verification.yml|06:10|1234567|
           EOF
