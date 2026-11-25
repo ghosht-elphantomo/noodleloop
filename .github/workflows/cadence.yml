@@ -49,6 +49,7 @@ jobs:
           Base du soir|maj.yml|22:35|12345|-f inputs[soir]=1 -f inputs[mode]=complet
           Archive|archive.yml|23:55|1234567|
           Sortie|sortie.yml|00:47|1234567|
+          Tests|tests.yml|02:13|1234567|
           Secours|secours.yml|03:38|1234567|
           Lecture A|lecture-a.yml|04:17|1234567|
           Recalculs|recalculs.yml|05:05|1234567|
