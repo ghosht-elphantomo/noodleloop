@@ -5,6 +5,12 @@ on:
     - cron: "10 6 * * *"
   workflow_dispatch:
     inputs:
+      # complet : tout, parcours des écrans compris (contrôle du matin) ; donnees : contrôle rapide (≈ 3 minutes), les points du parcours
+      # des écrans sont repris du rapport précédent — c'est la relance d'un point depuis le tableau de bord
+      mode:
+        type: choice
+        options: [complet, donnees]
+        default: complet
       essai:
         type: choice
         options: ["0", "1"]
@@ -25,6 +31,7 @@ env:
   K5: ${{ secrets.K5 }}
   D1: ${{ secrets.D1 }}
   ESSAI: ${{ github.event_name == 'workflow_dispatch' && inputs.essai || '0' }}
+  CTL_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'complet' }}
   M: /tmp/c/automatisations/moteur
 
 jobs:
