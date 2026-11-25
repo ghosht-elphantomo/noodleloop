@@ -1,7 +1,7 @@
 name: Mise à jour
-# nom du passage (lisible dans la liste des passages et par le rattrapage de Cadence) : base du soir programmée,
-# base du soir relancée par le rattrapage, mise à jour complète lancée à la main, ou relevé des 15 min
-run-name: ${{ github.event.schedule == '35 22 * * 1-5' && 'Base du soir' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1') && 'Base du soir (rattrapage)' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet') && 'Mise à jour complète' || 'Relevé' }}
+# nom du passage (lisible dans la liste des passages et par le rattrapage de Cadence) : base du soir programmée ou lancée à son heure
+# par la Cadence (heure=1), base du soir relancée par le rattrapage, mise à jour complète lancée à la main, ou relevé des 15 min
+run-name: ${{ github.event.schedule == '35 22 * * 1-5' && 'Base du soir' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1') && (inputs.heure == '1' && 'Base du soir' || 'Base du soir (rattrapage)') || (github.event_name == 'workflow_dispatch' && inputs.mode == 'complet') && 'Mise à jour complète' || 'Relevé' }}
 
 on:
   schedule:
@@ -14,6 +14,10 @@ on:
         options: [complet, rapide]
         default: complet
       soir:
+        type: choice
+        options: ["0", "1"]
+        default: "0"
+      heure:
         type: choice
         options: ["0", "1"]
         default: "0"
@@ -41,6 +45,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EV: ${{ github.event_name }}
+          QUI: ${{ github.triggering_actor }}
           SOIR: ${{ (github.event.schedule == '35 22 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.soir == '1')) && '1' || '0' }}
         run: |
           go=1
@@ -48,6 +53,26 @@ jobs:
             n=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/maj.yml/runs?event=workflow_dispatch&per_page=5" \
                   --jq '[.workflow_runs[] | select((.created_at | fromdateiso8601) > (now - 900))] | length' 2> /dev/null || echo 0)
             [ "${n:-0}" -gt 0 ] && go=0
+          fi
+          # base du soir programmée (elle arrive souvent des heures après son heure) ou lancée par la Cadence : sautée si une base du même soir
+          # (passages créés depuis 22 h 25 UTC) a déjà réussi — tâche « maj » réussie, pas seulement un passage sauté — ou tourne ;
+          # lancée à la main : toujours faite ; liste des passages injoignable ou muette (délai borné) : faite
+          if [ "$SOIR" = 1 ] && { [ "$EV" = schedule ] || [ "$QUI" = "github-actions[bot]" ]; }; then
+            set +e  # (une erreur ici ne doit jamais empêcher la base : dans le doute, elle est faite)
+            now=$(date -u +%s)
+            for d in 0 1; do slot=$(date -u -d "$(date -u -d "@$((now - d * 86400))" +%F) 22:35" +%s); [ "$slot" -le $((now + 600)) ] && break; done
+            depuis=$(date -u -d "@$((slot - 600))" +%Y-%m-%dT%H:%M:%SZ)
+            vus=$(timeout 30 gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows/maj.yml/runs?per_page=100&created=>=$depuis" \
+                  --jq ".workflow_runs[] | select(.id != $GITHUB_RUN_ID and (.display_title | startswith(\"Base du soir\"))) | \"\(.id) \(.status) \(.conclusion)\"" 2> /dev/null || true)
+            while read -r id st cl; do
+              [ -n "$id" ] || continue
+              if [ "$st" = in_progress ]; then go=0
+              elif [ "$cl" = success ]; then
+                j=$(timeout 20 gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id/jobs" --jq '.jobs[] | select(.name == "maj") | .conclusion' 2> /dev/null || true)
+                if [ "$j" = success ]; then go=0; fi
+              fi
+            done <<< "$vus"
+            set -e
           fi
           echo "go=$go" >> "$GITHUB_OUTPUT"
 

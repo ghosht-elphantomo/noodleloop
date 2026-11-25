@@ -20,6 +20,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       P: ${{ inputs.parent }}
       CIBLE: maj.yml
+      BASE: maj.yml
+      BASE_H: "22:35"
+      BASE_J: "12345"
     steps:
       - name: Rattrapage
         # tâches qui ne dépendent que de la programmation de GitHub (parfois en retard, rarement oubliée) : si le dernier créneau
@@ -65,12 +68,39 @@ jobs:
           if [ "${n:-0}" -gt 0 ]; then echo "run=0" >> "$GITHUB_OUTPUT"; else echo "run=1" >> "$GITHUB_OUTPUT"; fi
       - name: Étape 2
         if: steps.chk.outputs.run == '1'
+        # base du soir : lancée ici à son heure (BASE_H, UTC ; jours BASE_J), une fois par soir — la programmation de GitHub arrive souvent des
+        # heures après ; boucle reprise dans les 10 minutes qui suivent l'heure : lancée seulement si aucun passage du soir n'existe ; la base
+        # programmée, quand elle arrive, est sautée par la « porte » de maj.yml si une base du soir a déjà réussi ; le rattrapage reste le secours
         run: |
-          end=$(( $(date +%s) + 340 * 60 ))
+          end=$(( $(date +%s) + 340 * 60 )); fait=0
           while :; do
             now=$(date +%s); next=$(( ((now - 180) / 900 + 1) * 900 + 180 ))
-            [ "$next" -ge "$end" ] && break
-            sleep $(( next - now ))
+            s=0
+            if [ -n "$BASE" ]; then
+              s=$(date -u -d "$(date -u -d "@$now" +%F) $BASE_H" +%s)
+              case "$BASE_J" in *$(date -u -d "@$s" +%u)*) ;; *) s=0;; esac
+            fi
+            if [ "$s" -gt 0 ] && [ "$fait" != "$s" ] && [ "$now" -ge "$s" ] && [ "$now" -lt $((s + 600)) ]; then
+              fait=$s; deja=""
+              if [ "$now" -gt $((s + 5)) ]; then
+                deja=$(timeout 30 gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows/$BASE/runs?per_page=100&created=>=$(date -u -d "@$((s - 600))" +%Y-%m-%dT%H:%M:%SZ)" \
+                       --jq '.workflow_runs[] | select(.display_title | startswith("Base du soir")) | .id' 2> /dev/null) || deja=""
+              fi
+              if [ -z "$deja" ]; then
+                for k in 1 2 3; do
+                  if timeout 30 gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/$BASE/dispatches" -f ref=main -f "inputs[soir]=1" -f "inputs[mode]=complet" -f "inputs[heure]=1" > /dev/null 2>&1; then
+                    echo "$(date -u +%H:%M:%S) soir"; break
+                  fi
+                  sleep 20
+                done
+              fi
+              continue
+            fi
+            cible=$next
+            if [ "$s" -gt 0 ] && [ "$fait" != "$s" ] && [ "$now" -lt "$s" ] && [ "$s" -lt "$next" ]; then cible=$s; fi
+            [ "$cible" -ge "$end" ] && break
+            sleep $(( cible - now ))
+            [ "$cible" = "$next" ] || continue
             for k in 1 2 3; do
               if gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/$CIBLE/dispatches" -f ref=main -f "inputs[mode]=rapide" > /dev/null 2>&1; then
                 echo "$(date -u +%H:%M:%S)"; break
